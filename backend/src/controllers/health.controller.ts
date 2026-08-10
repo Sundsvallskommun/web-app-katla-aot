@@ -1,8 +1,10 @@
-import ApiService from '@/services/api.service';
-import { logger } from '@/utils/logger';
+import { APIS } from '@config';
 import { Controller, Get } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
-import { APIS } from '@config';
+
+import { HttpException } from '@/exceptions/HttpException';
+import ApiService from '@/services/api.service';
+import { logger } from '@/utils/logger';
 
 @Controller()
 export class HealthController {
@@ -11,16 +13,20 @@ export class HealthController {
 
   @Get('/health/up')
   @OpenAPI({ summary: 'Return health check' })
-  async up() {
+  async up(): Promise<{ status: string } | undefined> {
+    if (!this.api) {
+      throw new HttpException(500, 'Health check API is not configured');
+    }
     const url = `${this.api.name}/${this.api.version}/simulations/response?status=200%20OK`;
     const data = {
       status: 'OK',
     };
-    const res = await this.apiService.post<{ status: string }>({ url, data }).catch(e => {
+    try {
+      const res = await this.apiService.post<{ status: string }>({ url, data });
+      return res.data;
+    } catch (e) {
       logger.error('Error when doing health check:', e);
-      return e;
-    });
-
-    return res.data;
+      return undefined;
+    }
   }
 }

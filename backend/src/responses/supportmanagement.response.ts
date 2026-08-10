@@ -1,3 +1,6 @@
+import { Type } from 'class-transformer';
+import { IsArray, IsBoolean, IsEnum, IsInt, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+
 import {
   Classification,
   Errand,
@@ -10,8 +13,6 @@ import {
   SortObject,
   Stakeholder,
 } from '@/data-contracts/supportmanagement/data-contracts';
-import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsEnum, IsInt, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 export class ErrandsQueryDTO {
   @IsOptional()
@@ -96,7 +97,7 @@ export class ClassificationDTO implements Classification {
 
 export class ParameterDTO implements Parameter {
   @IsString()
-  key: string;
+  key!: string;
   @IsString()
   @IsOptional()
   displayName?: string;
@@ -111,17 +112,17 @@ export class ParameterDTO implements Parameter {
 
 export class ExternalTagDTO implements ExternalTag {
   @IsString()
-  key: string;
+  key!: string;
   @IsString()
-  value: string;
+  value!: string;
 }
 
 export class JsonParameterDTO {
   @IsString()
-  key: string;
-  value: any;
+  key!: string;
+  value!: unknown;
   @IsString()
-  schemaId: string;
+  schemaId!: string;
 }
 
 export class ErrandLabelDTO implements ErrandLabel {

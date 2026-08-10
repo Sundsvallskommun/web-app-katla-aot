@@ -18,11 +18,10 @@ export const CreatedErrand: React.FC = () => {
   const pathName = usePathname();
 
   useEffect(() => {
-    getErrandUsingErrandNumber(pathName?.split('/')[2]).then((res) => {
+    void getErrandUsingErrandNumber(pathName?.split('/')[2]).then((res) => {
       const errandFormData = jsonParametersToErrandFormData(res.jsonParameters);
       context.reset({ ...res, errandFormData });
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

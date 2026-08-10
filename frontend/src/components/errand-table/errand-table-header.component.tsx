@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useSortStore } from 'src/stores/sort-store';
 
 export const ErrandTableHeader: React.FC = () => {
-  const sortOrders: { [key: string]: 'ascending' | 'descending' } = {
+  const sortOrders: Record<string, 'ascending' | 'descending'> = {
     asc: 'ascending',
     desc: 'descending',
   };
@@ -55,7 +55,9 @@ export const ErrandTableHeader: React.FC = () => {
               <Table.SortButton
                 isActive={isActive}
                 sortOrder={isActive ? (sortOrders[sortOrder] as SortMode) : null}
-                onClick={() => setSort(header.property)}
+                onClick={() => {
+                  setSort(header.property);
+                }}
               >
                 {header.label}
               </Table.SortButton>

@@ -1,6 +1,7 @@
 'use client';
 import type { WidgetProps } from '@rjsf/utils';
 import { Checkbox, FormControl } from '@sk-web-gui/react';
+
 import { getCommonProps } from './types';
 
 const DEFAULT_CLASS = 'w-full';
@@ -13,7 +14,9 @@ export function CheckboxWidget(props: WidgetProps) {
       <Checkbox
         id={id}
         checked={!!value}
-        onChange={(e) => onChange(e.currentTarget.checked)}
+        onChange={(e) => {
+          onChange(e.currentTarget.checked);
+        }}
       />
     </FormControl>
   );

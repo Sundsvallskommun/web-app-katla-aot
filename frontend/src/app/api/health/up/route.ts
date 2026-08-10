@@ -21,14 +21,14 @@ export const GET = async () => {
       rejectUnauthorized: false,
     });
     const health = await axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/health/up`, { httpsAgent: agent })
+      .get<unknown>(`${process.env.NEXT_PUBLIC_API_URL}/health/up`, { httpsAgent: agent })
       .then((res) => res.data);
 
     return new NextResponse(JSON.stringify(health), { status: 200 });
   } catch (error) {
     return new NextResponse(
       JSON.stringify({
-        error: (error as object).toString(),
+        error: error instanceof Error ? error.toString() : String(error),
         status: 'ERROR!',
       }),
       { status: 500 }

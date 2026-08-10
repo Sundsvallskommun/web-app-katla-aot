@@ -1,10 +1,11 @@
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 import { useEffect, useState } from 'react';
+
 import { loadFormSchema } from '../utils/schema-utils';
 
 interface UseFormSchemaResult {
   schema: RJSFSchema | null;
-  uiSchema: UiSchema | undefined;
+  uiSchema: UiSchema<Record<string, unknown>> | undefined;
   schemaId: string | undefined;
   loading: boolean;
   error: string | null;
@@ -12,7 +13,7 @@ interface UseFormSchemaResult {
 
 export function useFormSchema(schemaName: string): UseFormSchemaResult {
   const [schema, setSchema] = useState<RJSFSchema | null>(null);
-  const [uiSchema, setUiSchema] = useState<UiSchema | undefined>(undefined);
+  const [uiSchema, setUiSchema] = useState<UiSchema<Record<string, unknown>> | undefined>(undefined);
   const [schemaId, setSchemaId] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,8 +26,8 @@ export function useFormSchema(schemaName: string): UseFormSchemaResult {
         setSchemaId(schemaId);
         setLoading(false);
       })
-      .catch((err) => {
-        setError(err.message);
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : String(err));
         setLoading(false);
       });
   }, [schemaName]);

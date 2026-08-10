@@ -17,6 +17,7 @@ import { customizeValidator } from '@rjsf/validator-ajv8';
 import Ajv from 'ajv';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
 import createJsonErrorTransformer from '../utils/schema-form-error-handling';
 
 // Custom AJV class that counts text length without HTML tags for minLength/maxLength
@@ -41,11 +42,11 @@ class HtmlAwareAjv extends Ajv {
   }
 }
 
-const validator = customizeValidator({
+const validator = customizeValidator<Record<string, unknown>>({
   ajvOptionsOverrides: {
     allErrors: true,
   },
-  AjvClass: HtmlAwareAjv as typeof Ajv,
+  AjvClass: HtmlAwareAjv,
 });
 
 const widgets: RegistryWidgetsType = {
@@ -72,7 +73,7 @@ const fields: RegistryFieldsType = {
 
 interface SchemaFormProps {
   schema: RJSFSchema;
-  uiSchema?: UiSchema;
+  uiSchema?: UiSchema<Record<string, unknown>>;
   formData?: Record<string, unknown>;
   onChange?: (data: Record<string, unknown>, e?: IChangeEvent) => void;
   onSubmit?: (payload: Record<string, unknown>, e: IChangeEvent) => void;
@@ -115,7 +116,7 @@ export default function SchemaForm({
   const handleSubmit = useCallback(
     (e: IChangeEvent<Record<string, unknown>>) => {
       setHasSubmitted(true);
-      onSubmit?.(e.formData || {}, e);
+      onSubmit?.(e.formData ?? {}, e);
     },
     [onSubmit]
   );
@@ -128,14 +129,12 @@ export default function SchemaForm({
   return (
     <Form
       schema={schema}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      uiSchema={uiSchema as any}
+      uiSchema={uiSchema}
       formData={data}
       formContext={formContext}
       onChange={handleChange}
       onSubmit={handleSubmit}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      validator={validator as any}
+      validator={validator}
       widgets={widgets}
       fields={fields}
       templates={{

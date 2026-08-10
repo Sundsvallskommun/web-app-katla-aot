@@ -1,12 +1,12 @@
 'use client';
 
 import { ErrandFilterQuery } from '@components/filtering/errand-filter-query.component';
+import Filtering from '@components/filtering/filtering.component';
 import { Button, Link } from '@sk-web-gui/react';
 import { ListFilter } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
-import Filtering from '@components/filtering/filtering.component';
 
 export const ErrandFilter: React.FC = () => {
   const { t } = useTranslation();
@@ -18,7 +18,9 @@ export const ErrandFilter: React.FC = () => {
         <ErrandFilterQuery />
         {appConfig.features.errandFilter && (
           <Button
-            onClick={() => setShow(!show)}
+            onClick={() => {
+              setShow(!show);
+            }}
             data-cy="Show-filters-button"
             color="vattjom"
             variant={show ? 'tertiary' : 'primary'}

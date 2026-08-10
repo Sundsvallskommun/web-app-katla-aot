@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, StorageValue } from 'zustand/middleware';
 
 interface WizardState {
   currentStep: number;
@@ -20,8 +20,7 @@ export const useWizardStore = create<WizardState>()(
       goNext: () => set((state) => ({ currentStep: state.currentStep + 1 })),
       goBack: () => set((state) => ({ currentStep: Math.max(0, state.currentStep - 1) })),
       goToStep: (step) => set({ currentStep: step }),
-      setStepErrors: (step, errors) =>
-        set((state) => ({ stepErrors: { ...state.stepErrors, [step]: errors } })),
+      setStepErrors: (step, errors) => set((state) => ({ stepErrors: { ...state.stepErrors, [step]: errors } })),
       clearStepErrors: (step) =>
         set((state) => {
           const { [step]: _, ...rest } = state.stepErrors;
@@ -34,10 +33,14 @@ export const useWizardStore = create<WizardState>()(
       storage: {
         getItem: (name) => {
           const str = sessionStorage.getItem(name);
-          return str ? JSON.parse(str) : null;
+          return str ? (JSON.parse(str) as StorageValue<WizardState>) : null;
         },
-        setItem: (name, value) => sessionStorage.setItem(name, JSON.stringify(value)),
-        removeItem: (name) => sessionStorage.removeItem(name),
+        setItem: (name, value) => {
+          sessionStorage.setItem(name, JSON.stringify(value));
+        },
+        removeItem: (name) => {
+          sessionStorage.removeItem(name);
+        },
       },
     }
   )

@@ -1,15 +1,19 @@
 import type { RJSFSchema, RJSFValidationError } from '@rjsf/utils';
 import type { TFunction } from 'i18next';
 
-type LimitParams = { limit: number };
-type FormatParams = { format: string };
+interface LimitParams {
+  limit: number;
+}
+interface FormatParams {
+  format: string;
+}
 
-const hasLimit = (e: RJSFValidationError): e is RJSFValidationError & { params: LimitParams } => {
+const hasLimit = (e: RJSFValidationError): e is Omit<RJSFValidationError, 'params'> & { params: LimitParams } => {
   const p = e.params as unknown;
   return !!p && typeof (p as LimitParams).limit === 'number';
 };
 
-const hasFormat = (e: RJSFValidationError): e is RJSFValidationError & { params: FormatParams } => {
+const hasFormat = (e: RJSFValidationError): e is Omit<RJSFValidationError, 'params'> & { params: FormatParams } => {
   const p = e.params as unknown;
   return !!p && typeof (p as FormatParams).format === 'string';
 };
@@ -41,7 +45,7 @@ function getLimitFromSchema(
   if (!props) return undefined;
   const propSchema = props[property];
   if (!propSchema) return undefined;
-  return propSchema[keyword] as number | undefined;
+  return propSchema[keyword];
 }
 
 export function createJsonErrorTransformer(schema: RJSFSchema, t: TFunction) {
@@ -54,9 +58,8 @@ export function createJsonErrorTransformer(schema: RJSFSchema, t: TFunction) {
       // Handle minLength/maxLength - both standard AJV and custom keyword
       if (e.name === 'minLength' || e.name === 'maxLength' || e.message?.includes(`"${e.name}"`)) {
         const keyword = e.name as 'minLength' | 'maxLength';
-        const limit = hasLimit(e)
-          ? e.params.limit
-          : getLimitFromSchema(schema, e.property?.replace('.', '') || '', keyword);
+        const limit =
+          hasLimit(e) ? e.params.limit : getLimitFromSchema(schema, e.property?.replace('.', '') ?? '', keyword);
         if (limit !== undefined) {
           const translationKey = keyword === 'minLength' ? 'min_length' : 'max_length';
           return { ...e, message: t(translationKey, { limit }) };
@@ -64,7 +67,7 @@ export function createJsonErrorTransformer(schema: RJSFSchema, t: TFunction) {
       }
 
       // Handle other limit-based errors using lookup table
-      const limitTranslationKey = limitErrorMap[e.name || ''];
+      const limitTranslationKey = limitErrorMap[e.name ?? ''];
       if (limitTranslationKey && hasLimit(e)) {
         return { ...e, message: t(limitTranslationKey, { limit: e.params.limit }) };
       }
@@ -75,7 +78,10 @@ export function createJsonErrorTransformer(schema: RJSFSchema, t: TFunction) {
 
       if (e.name === 'format' && hasFormat(e)) {
         const translationKey = formatMap[e.params.format];
-        return { ...e, message: t(translationKey || 'format', translationKey ? undefined : { format: e.params.format }) };
+        return {
+          ...e,
+          message: t(translationKey || 'format', translationKey ? undefined : { format: e.params.format }),
+        };
       }
 
       if (e.name === 'enum' || e.name === 'not') {

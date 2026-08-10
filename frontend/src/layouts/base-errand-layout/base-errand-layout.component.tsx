@@ -3,8 +3,8 @@ import { ErrandDTO } from '@data-contracts/backend/data-contracts';
 import { PageHeader } from '@layouts/page-header.component';
 import { userMenuGroups } from '@layouts/userMenuGroup';
 import { useUserStore } from '@services/user-service/user-service';
-import { Menu } from 'lucide-react';
 import { Button, Divider, Link, Logo, PopupMenu, UserMenu } from '@sk-web-gui/react';
+import { Menu } from 'lucide-react';
 import { Fragment } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +22,8 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
   const errandNumber = watch('errandNumber');
   const status = watch('status');
 
-  const SingleErrandTitle = () => (
+  // Bugfix (static-components): JSX-variabel i stället för komponent skapad under rendering
+  const singleErrandTitle = (
     <div className="flex items-center gap-12 md:gap-24 py-8 md:py-10">
       {registerNewErrand ?
         <Logo variant="symbol" className="h-32 md:h-40" />
@@ -50,12 +51,12 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
       <div className="bg-background-100 h-screen min-h-screen max-h-screen overflow-hidden w-full flex flex-col">
         <div className="relative z-[15] bg-background-content">
           <PageHeader
-            logo={<SingleErrandTitle />}
+            logo={singleErrandTitle}
             userMenu={
               <div className="flex items-center h-fit">
                 <span data-cy="usermenu">
                   <UserMenu
-                    initials={`${user.initials}`}
+                    initials={user.initials}
                     menuTitle={`${user.name} (${user.username})`}
                     menuSubTitle=""
                     menuGroups={userMenuGroups}
@@ -69,10 +70,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
                   href={`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/registrera`}
                   data-cy="register-new-errand-button"
                 >
-                  <Button
-                    color={'primary'}
-                    variant={'tertiary'}
-                  >
+                  <Button color={'primary'} variant={'tertiary'}>
                     {t('filtering:new_errand')}
                   </Button>
                 </Link>

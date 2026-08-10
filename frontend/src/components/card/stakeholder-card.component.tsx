@@ -1,8 +1,8 @@
 import { StakeholderFormModal } from '@components/misc/stakeholder-modal.component';
 import { StakeholderDTO } from '@data-contracts/backend/data-contracts';
-import { Pen, X } from 'lucide-react';
 import { Button } from '@sk-web-gui/react';
 import { getStakeholderRoleDisplayName, shouldShowContactDetails } from '@utils/stakeholder';
+import { Pen, X } from 'lucide-react';
 import { useState } from 'react';
 import { useMetadataStore } from 'src/stores/metadata-store';
 
@@ -70,7 +70,9 @@ export const StakeholderCard: React.FC<{
                 leftIcon={<Pen size={16} />}
                 variant="tertiary"
                 size="sm"
-                onClick={() => setIsOpen(true)}
+                onClick={() => {
+                  setIsOpen(true);
+                }}
               >
                 Redigera uppgifter
               </Button>
@@ -94,9 +96,11 @@ export const StakeholderCard: React.FC<{
         index={index}
         initialValues={stakeholder}
         show={isOpen}
-        roles={roles as string[]}
+        roles={roles ?? []}
         editableFields={editableFields}
-        onClose={() => setIsOpen(false)}
+        onClose={() => {
+          setIsOpen(false);
+        }}
       />
     </>
   );

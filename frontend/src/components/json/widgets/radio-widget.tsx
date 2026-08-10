@@ -2,6 +2,7 @@
 import type { WidgetProps } from '@rjsf/utils';
 import { FormControl, RadioButton } from '@sk-web-gui/react';
 import { useId } from 'react';
+
 import { getCommonProps, getWidgetOptions } from './types';
 
 const DEFAULT_CLASS = 'w-full';
@@ -22,7 +23,9 @@ export function RadiobuttonWidget(props: WidgetProps) {
             value={String(option.value)}
             checked={value === option.value}
             disabled={disabled || readonly}
-            onChange={() => onChange(option.value)}
+            onChange={() => {
+              onChange(option.value);
+            }}
           >
             {option.label}
           </RadioButton>

@@ -2,7 +2,7 @@
 
 import { apiURL } from '@utils/api-url';
 import { protectedRoutes } from '@utils/protected-routes';
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
 export interface ApiResponse<T = unknown> {
   data: T;
@@ -14,7 +14,10 @@ export const handleError = (error: AxiosError<ApiResponse>) => {
 
   //TODO: Refactor to be more compliant with NextJS routing standards
   if (error?.response?.status === 401 && !window?.location.pathname.includes('login')) {
-    window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH}/login?path=${window.location.pathname}&failMessage=${error.response.data.message}`;
+    const loginUrl = new URL(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/login`, window.location.origin);
+    loginUrl.searchParams.set('path', window.location.pathname);
+    loginUrl.searchParams.set('failMessage', error.response.data.message);
+    window.location.assign(loginUrl);
   }
 
   throw error;
@@ -27,27 +30,22 @@ const defaultOptions = {
   withCredentials: true,
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const get = <T>(url: string, options?: { [key: string]: any }) =>
+const get = <T>(url: string, options?: AxiosRequestConfig) =>
   axios.get<T>(apiURL(url), { ...defaultOptions, ...options }).catch(handleError);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const post = <T>(url: string, data: any, options?: { [key: string]: any }) => {
+const post = <T>(url: string, data: unknown, options?: AxiosRequestConfig) => {
   return axios.post<T>(apiURL(url), data, { ...defaultOptions, ...options }).catch(handleError);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const remove = <T>(url: string, options?: { [key: string]: any }) => {
+const remove = <T>(url: string, options?: AxiosRequestConfig) => {
   return axios.delete<T>(apiURL(url), { ...defaultOptions, ...options }).catch(handleError);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const patch = <T>(url: string, data: any, options?: { [key: string]: any }) => {
+const patch = <T>(url: string, data: unknown, options?: AxiosRequestConfig) => {
   return axios.patch<T>(apiURL(url), data, { ...defaultOptions, ...options }).catch(handleError);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const put = <T>(url: string, data: any, options?: { [key: string]: any }) => {
+const put = <T>(url: string, data: unknown, options?: AxiosRequestConfig) => {
   return axios.put<T>(apiURL(url), data, { ...defaultOptions, ...options }).catch(handleError);
 };
 

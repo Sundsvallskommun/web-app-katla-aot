@@ -1,5 +1,5 @@
-import { Bell } from 'lucide-react';
 import { Badge, Button } from '@sk-web-gui/react';
+import { Bell } from 'lucide-react';
 import { useNotificationStore } from 'src/stores/notification-store';
 
 export const NotificationsBell = (props: { toggleShow: () => void }) => {
@@ -16,9 +16,7 @@ export const NotificationsBell = (props: { toggleShow: () => void }) => {
       className="mx-md"
       variant="tertiary"
       iconButton
-      leftIcon={
-        <Bell />
-      }
+      leftIcon={<Bell />}
     >
       {activeNotifications.length > 0 && (
         <Badge

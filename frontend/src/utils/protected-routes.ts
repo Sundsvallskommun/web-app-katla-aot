@@ -1,1 +1,1 @@
-export const protectedRoutes = (process.env.NEXT_PUBLIC_PROTECTED_ROUTES || '').split(',');
+export const protectedRoutes = (process.env.NEXT_PUBLIC_PROTECTED_ROUTES ?? '').split(',');

@@ -1,3 +1,6 @@
+import { Controller, Get, Param, Req, UseBefore } from 'routing-controllers';
+import { OpenAPI } from 'routing-controllers-openapi';
+
 import { MUNICIPALITY_ID } from '@/config';
 import { getApiBase } from '@/config/api-config';
 import { CitizenExtended } from '@/data-contracts/citizen/data-contracts';
@@ -7,8 +10,6 @@ import authMiddleware from '@/middlewares/auth.middleware';
 import { StakeholderDTO } from '@/responses/supportmanagement.response';
 import ApiService from '@/services/api.service';
 import { addHyphenToPersonNumber } from '@/utils/stakeholder-mapping';
-import { Controller, Get, Param, Req, UseBefore } from 'routing-controllers';
-import { OpenAPI } from 'routing-controllers-openapi';
 
 @Controller()
 export class CitizenController {
@@ -18,7 +19,7 @@ export class CitizenController {
   @Get('/citizen/person/:personNumber')
   @OpenAPI({ summary: 'Get stakeholder using personNumber' })
   @UseBefore(authMiddleware)
-  async getErrand(@Req() req: RequestWithUser, @Param('personNumber') personNumber: string): Promise<StakeholderDTO> {
+  async getErrand(@Req() req: RequestWithUser, @Param('personNumber') personNumber: string): Promise<StakeholderDTO | null> {
     const personIdUrl = `${this.apiBase}/${MUNICIPALITY_ID}/${personNumber}/guid/`;
 
     try {
@@ -27,23 +28,23 @@ export class CitizenController {
       const res = await this.apiService.get<CitizenExtended>({ url: personInformationUrl }, req);
       if (!res.data) throw new HttpException(500, 'No data from API');
 
+      const address = res.data.addresses?.[0];
+      if (!address) throw new HttpException(500, 'No address data from API');
+
       const stakeholder: StakeholderDTO = {
         externalId: res.data.personId,
-        city: res.data.addresses[0].city,
-        firstName: res.data.givenname,
-        lastName: res.data.lastname,
-        address: res.data.addresses[0].address,
-        zipCode: res.data.addresses[0].postalCode,
+        city: address.city ?? undefined,
+        firstName: res.data.givenname ?? undefined,
+        lastName: res.data.lastname ?? undefined,
+        address: address.address ?? undefined,
+        zipCode: address.postalCode ?? undefined,
         personNumber: addHyphenToPersonNumber(personNumber),
-        careOf: res.data.addresses[0].co,
-        country: res.data.addresses[0].country,
+        careOf: address.co ?? undefined,
+        country: address.country ?? undefined,
       };
 
       return stakeholder;
-    } catch (error: any) {
-      if (error.status === 404) {
-        return null;
-      }
+    } catch {
       return null;
     }
   }

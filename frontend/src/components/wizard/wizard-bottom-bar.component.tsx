@@ -1,23 +1,21 @@
 import { CancelErrandDialog } from '@components/cancel-errand-dialog.component';
-import {
-  jsonParametersToErrandFormData,
-  validateErrandFormData,
-} from '@components/json/utils/schema-utils';
+import { jsonParametersToErrandFormData, validateErrandFormData } from '@components/json/utils/schema-utils';
 import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandFormDTO } from '@interfaces/errand-form';
+import { CenterDiv } from '@layouts/center-div.component';
 import { createErrand, updateErrand } from '@services/errand-service/errand-service';
 import { Button, Dialog, useSnackbar } from '@sk-web-gui/react';
-import { CenterDiv } from '@layouts/center-div.component';
-import { appConfig } from 'src/config/appconfig';
-import { usePrepareErrand } from 'src/hooks/use-prepare-errand';
-import { useWizardStore } from 'src/stores/wizard-store';
-import { validateStep } from './wizard-step-validator';
-import { useActiveWizardSteps } from 'src/hooks/use-active-wizard-steps';
 import { ChevronLeft, ChevronRight, Inbox } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { appConfig } from 'src/config/appconfig';
+import { useActiveWizardSteps } from 'src/hooks/use-active-wizard-steps';
+import { usePrepareErrand } from 'src/hooks/use-prepare-errand';
+import { useWizardStore } from 'src/stores/wizard-store';
+
+import { validateStep } from './wizard-step-validator';
 
 export const WizardBottomBar: React.FC = () => {
   const { t } = useTranslation();
@@ -135,20 +133,51 @@ export const WizardBottomBar: React.FC = () => {
     <>
       <div className="flex items-center justify-center px-16 py-12 bg-background-content border-t-1 border-divider gap-12">
         {!isFirstStep && (
-          <Button size="sm" variant="tertiary" leftIcon={<ChevronLeft size={18} />} onClick={() => { setShowValidation(false); goBack(); }} className="flex-1">
+          <Button
+            size="sm"
+            variant="tertiary"
+            leftIcon={<ChevronLeft size={18} />}
+            onClick={() => {
+              setShowValidation(false);
+              goBack();
+            }}
+            className="flex-1"
+          >
             {t('errand-information:wizard.back')}
           </Button>
         )}
-        <Button size="sm" variant="secondary" onClick={() => setIsCancelOpen(true)} className="flex-1">
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => {
+            setIsCancelOpen(true);
+          }}
+          className="flex-1"
+        >
           {t('errand-information:wizard.cancel')}
         </Button>
         {draftEnabled && (
-          <Button size="sm" variant="primary" onClick={onSaveDraft} className="flex-1">
+          <Button
+            size="sm"
+            variant="primary"
+            onClick={() => {
+              void onSaveDraft();
+            }}
+            className="flex-1"
+          >
             {t('errand-information:wizard.save')}
           </Button>
         )}
         {isLastStep ?
-          <Button size="sm" variant="primary" color="vattjom" onClick={handleSubmit} className="flex-1">
+          <Button
+            size="sm"
+            variant="primary"
+            color="vattjom"
+            onClick={() => {
+              void handleSubmit();
+            }}
+            className="flex-1"
+          >
             {t('errand-information:wizard.submit')}
           </Button>
         : <Button
@@ -156,7 +185,9 @@ export const WizardBottomBar: React.FC = () => {
             variant="primary"
             color="vattjom"
             rightIcon={<ChevronRight size={18} />}
-            onClick={handleNext}
+            onClick={() => {
+              void handleNext();
+            }}
             className="flex-1"
           >
             {t('errand-information:wizard.next')}
@@ -166,8 +197,12 @@ export const WizardBottomBar: React.FC = () => {
 
       <CancelErrandDialog
         show={isCancelOpen}
-        onClose={() => setIsCancelOpen(false)}
-        onConfirm={() => router.push('/oversikt')}
+        onClose={() => {
+          setIsCancelOpen(false);
+        }}
+        onConfirm={() => {
+          router.push('/oversikt');
+        }}
       />
 
       <Dialog show={isOpen}>
@@ -179,13 +214,31 @@ export const WizardBottomBar: React.FC = () => {
           </CenterDiv>
         </Dialog.Content>
         <Dialog.Buttons className="justify-center flex-col sm:flex-row gap-8">
-          <Button variant="secondary" onClick={() => setIsOpen(false)}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setIsOpen(false);
+            }}
+          >
             Nej
           </Button>
-          <Button data-cy="submit-button" variant="primary" onClick={() => onRegister()}>
+          <Button
+            data-cy="submit-button"
+            variant="primary"
+            onClick={() => {
+              void onRegister();
+            }}
+          >
             Skicka in
           </Button>
-          <Button data-cy="submit-logout-button" variant="primary" color="vattjom" onClick={() => onRegister(true)}>
+          <Button
+            data-cy="submit-logout-button"
+            variant="primary"
+            color="vattjom"
+            onClick={() => {
+              void onRegister(true);
+            }}
+          >
             Skicka in och logga ut
           </Button>
         </Dialog.Buttons>

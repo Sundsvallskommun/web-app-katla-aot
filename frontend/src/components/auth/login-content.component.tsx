@@ -34,13 +34,17 @@ export const LoginContent: React.FC = () => {
 
   const onLogin = () => {
     const searchPath = searchParams.get('path');
-    const nonLoginPath = !pathName?.match(/\/login/) && pathName; // Contains path as long as it's not /login
-    const nonLoginSearch = !searchPath?.match(/\/login|\/logout/) && searchPath; // Contains redirect path as long as it's not /login or /logout
-    const path = nonLoginPath || nonLoginSearch || `${process.env.NEXT_PUBLIC_BASE_PATH}/oversikt`;
+    const nonLoginPath = !/\/login/.exec(pathName) && pathName; // Contains path as long as it's not /login
+    const nonLoginSearch = (!searchPath?.match(/\/login|\/logout/) && searchPath) ?? false; // Contains redirect path as long as it's not /login or /logout
+    // Falsklogik bevarad: falla vidare vid false/tom sträng, inte enbart vid null/undefined
+    const path =
+      nonLoginPath ? nonLoginPath
+      : nonLoginSearch ? nonLoginSearch
+      : `${process.env.NEXT_PUBLIC_BASE_PATH}/oversikt`;
 
     const url = new URL(apiURL('/saml/login'));
     const queries = new URLSearchParams({
-      successRedirect: `${appURL(path as string)}`,
+      successRedirect: appURL(path),
       failureRedirect: `${appURL()}/login`,
     });
     url.search = queries.toString();
@@ -65,7 +69,6 @@ export const LoginContent: React.FC = () => {
         setIsLoading(false);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isLoading) {
@@ -78,7 +81,14 @@ export const LoginContent: React.FC = () => {
       {isLoggedOut ?
         <div className="flex flex-col items-center gap-[4rem] w-full">
           <h1 className="text-center text-[4rem] font-bold leading-[5.6rem] m-0">{t('login:logged_out_title')}</h1>
-          <Button variant="primary" color="vattjom" size="lg" onClick={() => router.push('/login')}>
+          <Button
+            variant="primary"
+            color="vattjom"
+            size="lg"
+            onClick={() => {
+              router.push('/login');
+            }}
+          >
             {t('login:login_again_button')}
           </Button>
         </div>
@@ -87,7 +97,14 @@ export const LoginContent: React.FC = () => {
           <Divider className="w-full" />
           <div className="flex flex-row desktop:flex-col gap-56 w-full desktop:w-fit px-80 pb-[10.4rem] pt-80 items-center">
             <span>{t('login:login_problem')}</span>
-            <Button data-cy="login-button" variant="primary" size="lg" onClick={() => onLogin()}>
+            <Button
+              data-cy="login-button"
+              variant="primary"
+              size="lg"
+              onClick={() => {
+                onLogin();
+              }}
+            >
               {capitalize(t('common:login'))}
             </Button>
           </div>
