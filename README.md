@@ -16,7 +16,7 @@ Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumer
 
 ### Krav
 
-- Node >= 20 LTS
+- Node 22.12+ inom 22.x (använd versionen i `.nvmrc`)
 - Yarn
 
 ### Steg för steg
@@ -51,7 +51,6 @@ Redigera `.env` vid behov.
 ```
 cd backend
 cp .env.example.local .env.development.local
-cp .env.example.local .env.test.local
 ```
 
 redigera `.env.development.local` för behov. URLer, nycklar och cert behöver fyllas i korrekt.
@@ -90,7 +89,7 @@ Obs: e2e-testerna förutsätter att `NEXT_PUBLIC_OTHER_PARTIES_DISCLOSURE=true` 
 
 ### Backend (`cd backend`)
 
-Tester körs med Vitest och kräver att `.env.test.local` finns (se steg 4 ovan):
+Tester körs med Vitest. Testmiljön sätts deterministiskt i `src/tests/setup.ts`; ingen lokal test-envfil krävs:
 
 ```
 yarn test              # kör en gång

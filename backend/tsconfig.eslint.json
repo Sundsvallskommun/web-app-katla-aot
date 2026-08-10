@@ -4,5 +4,5 @@
     "noEmit": true
   },
   "include": ["src/**/*.ts", "src/**/*.json", "vitest.config.mts"],
-  "exclude": ["node_modules", "dist", "src/http", "src/logs", "src/swagger-typescript-api.ts"]
+  "exclude": ["node_modules", "dist", "src/http", "src/logs"]
 }

@@ -24,12 +24,12 @@ jobs:
         working-directory: frontend
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version-file: '.nvmrc'
           cache: yarn
           cache-dependency-path: frontend/yarn.lock
 
@@ -60,12 +60,12 @@ jobs:
         working-directory: backend
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version-file: '.nvmrc'
           cache: yarn
           cache-dependency-path: backend/yarn.lock
 
@@ -80,11 +80,6 @@ jobs:
 
       - name: Type-check
         run: yarn type-check
-
-      - name: Create test env file
-        run: |
-          cp .env.example.local .env.test.local
-          echo "SESSION_MEMORY=true" >> .env.test.local
 
       - name: Unit tests (Vitest)
         run: yarn test
@@ -110,12 +105,12 @@ jobs:
       NEXT_PUBLIC_OTHER_PARTIES_DISCLOSURE: true
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version-file: '.nvmrc'
           cache: yarn
           cache-dependency-path: frontend/yarn.lock
 
@@ -132,7 +127,7 @@ jobs:
         run: yarn e2e
 
       - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report

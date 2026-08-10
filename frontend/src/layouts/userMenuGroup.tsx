@@ -1,6 +1,7 @@
+import { LogoutButton } from '@components/buttons/logout-button.component';
 import { ColorSchemeItems } from '@components/misc/color-scheme-items.component';
-import { Button, PopupMenu } from '@sk-web-gui/react';
-import { ChevronRight, LogOut, Monitor } from 'lucide-react';
+import { PopupMenu } from '@sk-web-gui/react';
+import { ChevronRight, Monitor } from 'lucide-react';
 
 export const userMenuGroups = [
   {
@@ -32,16 +33,7 @@ export const userMenuGroups = [
         label: 'Logga ut',
         element: () => (
           <PopupMenu.Item>
-            <Button
-              type="button"
-              className="usermenu-item w-full text-left inline-flex items-center gap-2"
-              onClick={() => {
-                window.location.assign(`${process.env.NEXT_PUBLIC_BASE_PATH}/logout`);
-              }}
-            >
-              <LogOut />
-              <span>Logga ut</span>
-            </Button>
+            <LogoutButton testId="user-menu-logout-button" />
           </PopupMenu.Item>
         ),
       },

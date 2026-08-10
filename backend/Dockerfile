@@ -1,5 +1,6 @@
 # Install dependencies only when needed
-FROM node:22-slim AS deps
+ARG NODE_VERSION=22.23.2
+FROM node:${NODE_VERSION}-slim AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 #RUN apk add --no-cache libc6-compat
 RUN apt-get update
@@ -13,7 +14,7 @@ RUN yarn install --frozen-lockfile
 # RUN npm ci
 
 # Rebuild the source code only when needed
-FROM node:22-slim AS builder
+FROM node:${NODE_VERSION}-slim AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -21,7 +22,7 @@ COPY . .
 RUN yarn build
 
 # Production image, copy all the files and run next
-FROM node:22-slim AS runner
+FROM node:${NODE_VERSION}-slim AS runner
 RUN apt-get update
 RUN apt-get install -y openssl
 WORKDIR /app

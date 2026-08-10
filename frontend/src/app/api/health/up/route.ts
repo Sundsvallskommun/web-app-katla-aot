@@ -1,5 +1,4 @@
 import axios from 'axios';
-import https from 'https';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
@@ -17,18 +16,16 @@ export const GET = async () => {
   }
 
   try {
-    const agent = new https.Agent({
-      rejectUnauthorized: false,
-    });
+    // TLS certificate validation stays enabled. Internal CAs should be supplied through NODE_EXTRA_CA_CERTS.
     const health = await axios
-      .get<unknown>(`${process.env.NEXT_PUBLIC_API_URL}/health/up`, { httpsAgent: agent })
-      .then((res) => res.data);
+      .get<unknown>(`${process.env.NEXT_PUBLIC_API_URL}/health/up`)
+      .then((response) => response.data);
 
     return new NextResponse(JSON.stringify(health), { status: 200 });
-  } catch (error) {
+  } catch {
     return new NextResponse(
       JSON.stringify({
-        error: error instanceof Error ? error.toString() : String(error),
+        error: 'Upstream health check failed',
         status: 'ERROR!',
       }),
       { status: 500 }

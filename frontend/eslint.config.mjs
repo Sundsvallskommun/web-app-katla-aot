@@ -29,7 +29,6 @@ export default tseslint.config(
       '*.config.mts',
       '*.config.ts',
       'middleware-envs-generator.mjs',
-      'src/swagger-typescript-api.ts',
     ],
   },
   // Next.js (React + react-hooks + @next/next + core-web-vitals + @typescript-eslint-bas).

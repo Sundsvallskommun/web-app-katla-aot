@@ -46,7 +46,7 @@ const validator = customizeValidator<Record<string, unknown>>({
   ajvOptionsOverrides: {
     allErrors: true,
   },
-  AjvClass: HtmlAwareAjv as typeof Ajv,
+  AjvClass: HtmlAwareAjv,
 });
 
 const widgets: RegistryWidgetsType = {

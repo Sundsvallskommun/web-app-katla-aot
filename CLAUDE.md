@@ -75,13 +75,17 @@ Both frontend and backend have `src/data-contracts/` directories with TypeScript
 ## Testing
 
 - **Vitest (frontend)**: unit/component tests in `frontend/tests/unit/`, config in `vitest.config.mts`, setup in `tests/setup.ts`
-- **Vitest (backend)**: tests in `backend/src/tests/`, config in `vitest.config.mts` (SWC transform for decorator metadata); requires `.env.test.local` (copy from `.env.example.local`)
+- **Vitest (backend)**: tests in `backend/src/tests/`, config in `vitest.config.mts` (SWC transform for decorator metadata); deterministic test environment in `src/tests/setup.ts`
 - **Playwright (frontend)**: e2e tests in `frontend/e2e/tests/`, helpers in `e2e/utils/`, fixtures in `e2e/fixtures/`, config in `playwright.config.ts`; run against a production build (`yarn build && yarn e2e`) or a running dev server
 - **Coverage**: Vitest v8 coverage via `yarn test:coverage`
 - **CI**: `.github/workflows/ci.yml` runs lint, type-check, unit tests (frontend + backend) and Playwright e2e
 
+## Dependency Maintenance
+
+Security alerts are handled locally with AI support via the `/deps-review` slash command (defined in `.claude/commands/deps-review.md`) — root-cause dependency upgrades over `resolutions`. Dependabot version-update PRs are intentionally not used.
+
 ## Environment
 
-- Node >= 20 LTS, Yarn
+- Node 22.12+ inom 22.x (använd den pinnade versionen i `.nvmrc`), Yarn
 - Frontend env: copy `.env-example` → `.env`
 - Backend env: copy `.env.example.local` → `.env.development.local`

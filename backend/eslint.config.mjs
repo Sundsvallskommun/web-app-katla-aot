@@ -10,8 +10,8 @@ export default tseslint.config(
   },
   {
     // Genererade API-klienter redigeras aldrig för hand; byggutdata och coverage är inte källkod.
-    // `*.d.ts` är ambient-typtillägg; `swagger-typescript-api.ts` är ett kodgenereringsskript.
-    ignores: ['dist/**', 'coverage/**', 'data/**', 'src/data-contracts/**', '**/*.d.ts', 'src/swagger-typescript-api.ts'],
+    // `*.d.ts` är ambient-typtillägg; genererade klienter granskas inte som handskriven kod.
+    ignores: ['dist/**', 'coverage/**', 'data/**', 'src/data-contracts/**', '**/*.d.ts'],
   },
   eslint.configs.recommended,
   // Maximal, typmedveten strikthet — samma uppsättning som web-app-starter.

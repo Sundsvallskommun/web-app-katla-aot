@@ -5,8 +5,9 @@ import { defineConfig } from 'vitest/config';
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  oxc: {
-    jsx: 'react-jsx',
+  oxc: false,
+  esbuild: {
+    jsx: 'automatic',
   },
   resolve: {
     alias: {
@@ -44,7 +45,7 @@ export default defineConfig({
         'src/interfaces/**',
         'src/data-contracts/**',
         'src/proxy.ts',
-        'src/swagger-typescript-api.ts',
+        'src/generate-contracts.ts',
       ],
     },
   },

@@ -14,7 +14,10 @@ export const handleError = (error: AxiosError<ApiResponse>) => {
 
   //TODO: Refactor to be more compliant with NextJS routing standards
   if (error?.response?.status === 401 && !window?.location.pathname.includes('login')) {
-    window.location.href = `${process.env.NEXT_PUBLIC_BASE_PATH}/login?path=${window.location.pathname}&failMessage=${error.response.data.message}`;
+    const loginUrl = new URL(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/login`, window.location.origin);
+    loginUrl.searchParams.set('path', window.location.pathname);
+    loginUrl.searchParams.set('failMessage', error.response.data.message);
+    window.location.assign(loginUrl);
   }
 
   throw error;
