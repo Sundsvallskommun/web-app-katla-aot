@@ -77,8 +77,12 @@ Both frontend and backend have `src/data-contracts/` directories with TypeScript
 - **Cypress**: e2e tests in `cypress/e2e/`, component tests in `cypress/component/`
 - **Coverage**: merged from both Jest and Cypress via `istanbul-merge`
 
+## Dependency Maintenance
+
+Security alerts are handled locally with AI support via the `/deps-review` slash command (defined in `.claude/commands/deps-review.md`) — root-cause dependency upgrades over `resolutions`. Dependabot version-update PRs are intentionally not used.
+
 ## Environment
 
-- Node >= 20 LTS, Yarn
+- Node >= 22 LTS, Yarn
 - Frontend env: copy `.env-example` → `.env`
 - Backend env: copy `.env.example.local` → `.env.development.local`

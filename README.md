@@ -16,7 +16,7 @@ Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumer
 
 ### Krav
 
-- Node >= 20 LTS
+- Node >= 22 LTS
 - Yarn
 
 ### Steg för steg

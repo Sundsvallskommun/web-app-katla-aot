@@ -2,6 +2,9 @@
   "name": "@sk-web-gui/web-app-starter",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "predev": "yarn generate:middleware-envs",
     "dev": "cross-env TEST=true next dev",
