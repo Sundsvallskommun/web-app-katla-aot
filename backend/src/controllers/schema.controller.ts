@@ -1,19 +1,21 @@
+import { Response } from 'express';
+import { Controller, Get, Param, Req, Res, UseBefore } from 'routing-controllers';
+
 import { MUNICIPALITY_ID } from '@/config';
 import { getApiBase } from '@/config/api-config';
 import { JsonSchema, UiSchema } from '@/data-contracts/jsonschema/data-contracts';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
 import ApiService from '@/services/api.service';
+import { logger } from '@/utils/logger';
 import { apiURL } from '@/utils/util';
-import { Response } from 'express';
-import { Controller, Get, Param, Req, Res, UseBefore } from 'routing-controllers';
 
 @Controller()
 export class SchemaController {
   private apiService = new ApiService();
   private apiBase = getApiBase('jsonschema');
 
-  private async fetchUiSchema(schemaId: string, req: RequestWithUser): Promise<Record<string, unknown>> {
+  private async fetchUiSchema(schemaId: string | undefined, req: RequestWithUser): Promise<Record<string, unknown>> {
     try {
       const uiRes = await this.apiService.get<UiSchema>(
         {
@@ -24,7 +26,7 @@ export class SchemaController {
       );
       return (uiRes.data.value as Record<string, unknown>) ?? {};
     } catch {
-      console.log(`No UI schema found for ${schemaId}, using empty object`);
+      logger.info(`No UI schema found for ${schemaId}, using empty object`);
       return {};
     }
   }

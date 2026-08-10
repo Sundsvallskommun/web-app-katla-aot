@@ -20,21 +20,25 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const mobilePageRef = useRef(0);
+  // Spegelvärde av mobilePageRef för läsning under rendering (react-hooks/refs)
+  const [mobilePage, setMobilePage] = useState(0);
 
   // Desktop uses the store's page, mobile always starts from 0
   const effectivePage = mode === 'mobile' ? 0 : page;
 
   useEffect(() => {
-    getMetadata().then((res) => setMetadata(res));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    void getMetadata().then((res) => {
+      setMetadata(res);
+    });
   }, []);
 
   // Main fetch — triggered by store changes (sort, filter, pagination)
   // Mobile always fetches from page 0 and resets accumulated rows
   useEffect(() => {
     mobilePageRef.current = 0;
+    setMobilePage(0);
     setIsLoading(true);
-    getErrands({ sortColumn, sortOrder, page: effectivePage, size, statuses })
+    void getErrands({ sortColumn, sortOrder, page: effectivePage, size, statuses })
       .then((data) => {
         setRows(data.content ?? []);
         setTotalPages(data.totalPages ?? 1);
@@ -45,7 +49,7 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
       });
   }, [sortColumn, sortOrder, effectivePage, size, statuses]);
 
-  const hasMore = mode === 'mobile' ? mobilePageRef.current + 1 < totalPages : page + 1 < totalPages;
+  const hasMore = mode === 'mobile' ? mobilePage + 1 < totalPages : page + 1 < totalPages;
 
   const loadMore = useCallback(() => {
     if (isLoading) return;
@@ -53,8 +57,9 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
     if (nextPage >= totalPages) return;
 
     mobilePageRef.current = nextPage;
+    setMobilePage(nextPage);
     setIsLoading(true);
-    getErrands({ sortColumn, sortOrder, page: nextPage, size, statuses })
+    void getErrands({ sortColumn, sortOrder, page: nextPage, size, statuses })
       .then((data) => {
         setRows((prev) => [...prev, ...(data.content ?? [])]);
         setTotalPages(data.totalPages ?? 1);

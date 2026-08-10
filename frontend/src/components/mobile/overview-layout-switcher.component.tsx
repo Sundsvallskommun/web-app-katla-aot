@@ -1,7 +1,7 @@
 'use client';
 
 import { OverviewSidebar } from '@components/sidebars/overview-sidebar.component';
-import { OverviewMobileProvider } from '@contexts/overview-mobile-context';
+import { OverviewMobileProvider } from '@contexts/overview-mobile-provider';
 import { MOBILE_BREAKPOINT } from 'src/constants/responsive';
 import { useMediaQuery } from 'src/hooks/use-media-query';
 

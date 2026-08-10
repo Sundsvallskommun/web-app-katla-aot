@@ -16,7 +16,7 @@ export function useAutoInitReporter() {
     if (!user.username) return;
 
     fetching.current = true;
-    getEmployeeStakeholderFromApi(user.username)
+    void getEmployeeStakeholderFromApi(user.username)
       .then((res) => {
         const current = getValues('stakeholders') ?? [];
         if (getReporterStakeholder(current)) return;
@@ -31,6 +31,5 @@ export function useAutoInitReporter() {
       .finally(() => {
         fetching.current = false;
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.username]);
 }

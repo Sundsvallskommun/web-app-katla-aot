@@ -1,7 +1,7 @@
 'use client';
 import { SubmitButtonProps } from '@rjsf/utils';
-import { Plus } from 'lucide-react';
 import { Button } from '@sk-web-gui/react';
+import { Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface SubmitButtonOptions {
@@ -12,14 +12,14 @@ interface SubmitButtonOptions {
   leadingIcon?: boolean | string;
 }
 
-export function SubmitButtonFieldTemplate(props: SubmitButtonProps<Record<string, unknown>, Record<string, unknown>, Record<string, unknown>>) {
+export function SubmitButtonFieldTemplate(props: SubmitButtonProps<Record<string, unknown>>) {
   const { t } = useTranslation('forms');
-  const uiSchema = (props as Record<string, unknown>).uiSchema as Record<string, unknown> | undefined || {};
-  const buttonOptions: SubmitButtonOptions = (uiSchema['ui:options'] as SubmitButtonOptions) || {};
+  const uiSchema = props.uiSchema ?? {};
+  const buttonOptions = (uiSchema['ui:options'] ?? {}) as SubmitButtonOptions;
 
-  const label = buttonOptions.label || t('submit_button_default');
-  const variant = buttonOptions.variant || 'primary';
-  const className = buttonOptions.className || 'mt-[3.2rem]';
+  const label = (buttonOptions.label ?? '') || t('submit_button_default');
+  const variant = buttonOptions.variant ?? 'primary';
+  const className = (buttonOptions.className ?? '') || 'mt-[3.2rem]';
   const leadingIcon = buttonOptions.leadingIcon !== false;
 
   return (

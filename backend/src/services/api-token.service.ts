@@ -1,9 +1,10 @@
-import qs from 'qs';
-import axios from 'axios';
 import { CLIENT_KEY, CLIENT_SECRET } from '@config';
-import { HttpException } from '@/exceptions/HttpException';
-import { logger } from '@utils/logger';
 import { API_BASE_URL } from '@config';
+import { logger } from '@utils/logger';
+import axios from 'axios';
+import qs from 'qs';
+
+import { HttpException } from '@/exceptions/HttpException';
 
 export interface Token {
   access_token: string;
@@ -23,21 +24,21 @@ class ApiTokenService {
     return c_access_token;
   }
 
-  public async setToken(token: Token) {
+  public setToken(token: Token): void {
     c_access_token = token.access_token;
     // NOTE: Set timestamp for when we need to refresh minus 10 seconds for margin
     c_token_expires = Date.now() + (token.expires_in * 1000 - 10000);
 
     logger.info(`Token valid for: ${token.expires_in}`);
-    logger.info(`Current time: ${new Date()}`);
-    logger.info(`Token expires at: ${new Date(c_token_expires)}`);
+    logger.info(`Current time: ${String(new Date())}`);
+    logger.info(`Token expires at: ${String(new Date(c_token_expires))}`);
   }
 
   public async fetchToken(): Promise<string> {
     const authString = Buffer.from(`${CLIENT_KEY}:${CLIENT_SECRET}`, 'utf-8').toString('base64');
 
     try {
-      const { data } = await axios({
+      const { data: token } = await axios<Token>({
         timeout: 30000, // NOTE: milliseconds
         method: 'POST',
         headers: {
@@ -49,12 +50,11 @@ class ApiTokenService {
         }),
         url: `${API_BASE_URL}/token`,
       });
-      const token = data as Token;
 
       if (!token) throw new HttpException(502, 'Bad Gateway');
       this.setToken(token);
 
-      return this.getToken();
+      return await this.getToken();
     } catch (error) {
       logger.error(`Failed to fetch JWT access token: ${JSON.stringify(error)}`);
       throw new HttpException(502, 'Bad Gateway');

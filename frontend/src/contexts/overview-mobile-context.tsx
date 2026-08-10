@@ -1,12 +1,8 @@
 'use client';
 
-import { createContext, type PropsWithChildren, useContext } from 'react';
+import { createContext, useContext } from 'react';
 
-const OverviewMobileContext = createContext<boolean | undefined>(undefined);
-
-export function OverviewMobileProvider({ children, value }: PropsWithChildren<{ value: boolean }>) {
-  return <OverviewMobileContext.Provider value={value}>{children}</OverviewMobileContext.Provider>;
-}
+export const OverviewMobileContext = createContext<boolean | undefined>(undefined);
 
 export function useIsOverviewMobile(): boolean {
   const isMobile = useContext(OverviewMobileContext);

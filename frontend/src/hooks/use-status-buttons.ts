@@ -2,12 +2,12 @@
 
 import { getErrandsCount } from '@services/errand-service/errand-service';
 import { CircleCheckBig, ClipboardPen, SquarePen } from 'lucide-react';
-import { ReactElement, createElement, useEffect, useState } from 'react';
+import { createElement, ReactElement, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { appConfig } from 'src/config/appconfig';
 import { useErrandCountStore } from 'src/stores/errand-count-store';
 import { useFilterStore } from 'src/stores/filter-store';
 import { useSortStore } from 'src/stores/sort-store';
-import { appConfig } from 'src/config/appconfig';
 
 export interface StatusButton {
   label: string;
@@ -19,7 +19,7 @@ export interface StatusButton {
 export function useStatusButtons() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { t } = useTranslation();
-  const { activeStatus, setActiveStatus, setStatuses, statuses } = useFilterStore();
+  const { activeStatus, setActiveStatus, setStatuses } = useFilterStore();
   const {
     newErrandCount,
     draftErrandCount,
@@ -58,21 +58,29 @@ export function useStatusButtons() {
     },
   ];
 
-  const statusButtons = draftEnabled
-    ? allStatusButtons
-    : allStatusButtons.filter((button) => !button.statuses.includes('DRAFT'));
+  const statusButtons =
+    draftEnabled ? allStatusButtons : allStatusButtons.filter((button) => !button.statuses.includes('DRAFT'));
 
   useEffect(() => {
     setIsLoading(true);
     const promises = [
-      getErrandsCount({ statuses: ['NEW'] }).then((data) => setNewErrandCount(data.count || 0)),
-      getErrandsCount({ statuses: ['SOLVED'] }).then((data) => setClosedErrandCount(data.count || 0)),
+      getErrandsCount({ statuses: ['NEW'] }).then((data) => {
+        setNewErrandCount(data.count || 0);
+      }),
+      getErrandsCount({ statuses: ['SOLVED'] }).then((data) => {
+        setClosedErrandCount(data.count || 0);
+      }),
     ];
     if (draftEnabled) {
-      promises.push(getErrandsCount({ statuses: ['DRAFT'] }).then((data) => setDraftErrandCount(data.count || 0)));
+      promises.push(
+        getErrandsCount({ statuses: ['DRAFT'] }).then((data) => {
+          setDraftErrandCount(data.count || 0);
+        })
+      );
     }
-    Promise.all(promises).finally(() => setIsLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    void Promise.all(promises).finally(() => {
+      setIsLoading(false);
+    });
   }, []);
 
   const onSelectStatus = (button: StatusButton) => {

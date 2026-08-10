@@ -1,3 +1,6 @@
+import { Type as TypeTransformer } from 'class-transformer';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
+
 import {
   Category,
   ContactReason,
@@ -9,12 +12,10 @@ import {
   Status,
   Type,
 } from '@/data-contracts/supportmanagement/data-contracts';
-import { Type as TypeTransformer } from 'class-transformer';
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
 
 export class TypeDTO implements Type {
   @IsString()
-  name: string;
+  name!: string;
   @IsString()
   @IsOptional()
   displayName?: string;
@@ -50,7 +51,7 @@ export class CategoryDTO implements Category {
 
 export class ExternalIdTypeDTO implements ExternalIdType {
   @IsString()
-  name: string;
+  name!: string;
   @IsString()
   @IsOptional()
   created?: string;
@@ -64,7 +65,7 @@ export class LabelDTO implements Label {
   @IsOptional()
   id?: string;
   @IsString()
-  classification: string;
+  classification!: string;
   @IsString()
   @IsOptional()
   displayName?: string;
@@ -72,7 +73,7 @@ export class LabelDTO implements Label {
   @IsOptional()
   resourcePath?: string;
   @IsString()
-  resourceName: string;
+  resourceName!: string;
   @IsOptional()
   @ValidateNested({ each: true })
   @TypeTransformer(() => LabelDTO)
@@ -88,7 +89,7 @@ export class LabelsDTO implements Labels {
 
 export class StatusDTO implements Status {
   @IsString()
-  name: string;
+  name!: string;
   @IsString()
   @IsOptional()
   created?: string;
@@ -99,7 +100,7 @@ export class StatusDTO implements Status {
 
 export class RoleDTO implements Role {
   @IsString()
-  name: string;
+  name!: string;
   @IsString()
   @IsOptional()
   displayName?: string | null;
@@ -116,7 +117,7 @@ export class ContactReasonDTO implements ContactReason {
   @IsOptional()
   id?: number;
   @IsString()
-  reason: string;
+  reason!: string;
   @IsString()
   @IsOptional()
   created?: string;

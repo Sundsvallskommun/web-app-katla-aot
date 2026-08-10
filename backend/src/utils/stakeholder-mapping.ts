@@ -3,6 +3,7 @@ import { ContactChannel, Parameter, Stakeholder } from '@/data-contracts/support
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { StakeholderDTO } from '@/responses/supportmanagement.response';
 import ApiService from '@/services/api.service';
+
 import { apiURL } from './util';
 
 export async function mapStakeholderToStakeholderDTO(stakeholder: Stakeholder, req: RequestWithUser): Promise<StakeholderDTO> {
@@ -12,12 +13,12 @@ export async function mapStakeholderToStakeholderDTO(stakeholder: Stakeholder, r
   let personNumber = '';
 
   if (stakeholder.externalId) {
-    personNumber = (await apiService.get<string>({ url: citizenUrl, baseURL }, req)).data.toString();
-  } 
+    personNumber = (await apiService.get<string>({ url: citizenUrl, baseURL }, req)).data;
+  }
 
-  const { contactChannels = [], parameters, ...rest } = stakeholder;
+  const { contactChannels, parameters, ...rest } = stakeholder;
 
-  const { emails, phoneNumbers } = contactChannels.reduce<{
+  const { emails, phoneNumbers } = (contactChannels ?? []).reduce<{
     emails: string[];
     phoneNumbers: string[];
   }>(
@@ -39,7 +40,7 @@ export async function mapStakeholderToStakeholderDTO(stakeholder: Stakeholder, r
     department: parameters?.find(p => p.key === 'department')?.displayName ?? undefined,
     emails: emails.length ? emails : undefined,
     phoneNumbers: phoneNumbers.length ? phoneNumbers : undefined,
-  } as StakeholderDTO;
+  };
 }
 
 export function mapStakeholderDTOToStakeholder(stakeholder: StakeholderDTO): Stakeholder {
@@ -58,22 +59,25 @@ export function mapStakeholderDTOToStakeholder(stakeholder: StakeholderDTO): Sta
     })) ?? []),
   ];
 
-  const parameters: Parameter[] = [
-    title && {
+  const parameters: Parameter[] = [];
+  if (title) {
+    parameters.push({
       key: 'title',
       displayName: title,
-    },
-    department && {
+    });
+  }
+  if (department) {
+    parameters.push({
       key: 'department',
       displayName: department,
-    },
-  ].filter(Boolean);
+    });
+  }
 
   return {
     ...rest,
     contactChannels: contactChannels.length ? contactChannels : undefined,
-    ...(!!parameters ? { parameters } : {}),
-  } as Stakeholder;
+    parameters,
+  };
 }
 
 export function addHyphenToPersonNumber(personNumber: string): string {

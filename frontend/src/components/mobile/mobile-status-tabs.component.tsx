@@ -14,7 +14,9 @@ export const MobileStatusTabs: React.FC = () => {
         return (
           <Button
             key={button.label}
-            onClick={() => onSelectStatus(button)}
+            onClick={() => {
+              onSelectStatus(button);
+            }}
             variant={isActive ? 'primary' : 'ghost'}
             size="sm"
             className="flex-shrink-0 min-h-[44px] gap-8"

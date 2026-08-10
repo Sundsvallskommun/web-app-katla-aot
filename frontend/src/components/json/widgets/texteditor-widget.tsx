@@ -1,6 +1,7 @@
 'use client';
 import type { WidgetProps } from '@rjsf/utils';
 import dynamic from 'next/dynamic';
+
 import { getCommonProps, getWidgetOptions } from './types';
 
 const TextEditor = dynamic(() => import('@sk-web-gui/text-editor'), { ssr: false });

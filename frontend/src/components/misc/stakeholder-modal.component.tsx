@@ -15,7 +15,7 @@ export const StakeholderFormModal: React.FC<{
   initialValues?: StakeholderDTO;
   edit?: boolean;
   editableFields?: (keyof StakeholderDTO)[];
-}> = ({ index, onClose, show, roles, edit, initialValues, editableFields}) => {
+}> = ({ index, onClose, show, roles, edit, initialValues, editableFields }) => {
   const showField = (field: keyof StakeholderDTO) => !editableFields || editableFields.includes(field);
   const { metadata } = useMetadataStore();
   const context = useFormContext<ErrandDTO>();
@@ -46,13 +46,12 @@ export const StakeholderFormModal: React.FC<{
 
   useEffect(() => {
     reset(initialValues);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onClose]);
 
   const onSave = (data: StakeholderDTO) => {
     const merged = editableFields ? { ...initialValues, ...data } : data;
     const stakeholder: StakeholderDTO = { ...merged, phoneNumbers: [phoneNumberFormatter(merged?.phoneNumbers?.[0])] };
-    if(!editableFields?.includes('role') && !stakeholder.role) {
+    if (!editableFields?.includes('role') && !stakeholder.role) {
       stakeholder.role = roles.length === 1 ? roles[0] : undefined;
     }
     if (edit && index !== undefined) {
@@ -185,17 +184,14 @@ export const StakeholderFormModal: React.FC<{
         <Button
           data-cy="modal-add-person-button"
           variant="primary"
-          onClick={handleSubmit(onSave)}
+          onClick={(e) => {
+            void handleSubmit(onSave)(e);
+          }}
           className="max-sm:w-full"
         >
           {edit ? 'Ändra uppgifter' : 'Lägg till'}
         </Button>
-        <Button
-          data-cy="modal-cancel-person-button"
-          variant="secondary"
-          onClick={onClose}
-          className="max-sm:w-full"
-        >
+        <Button data-cy="modal-cancel-person-button" variant="secondary" onClick={onClose} className="max-sm:w-full">
           Avbryt
         </Button>
       </Modal.Footer>

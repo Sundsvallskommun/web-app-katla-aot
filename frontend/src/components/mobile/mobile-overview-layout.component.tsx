@@ -3,13 +3,14 @@
 import { NotificationsBell } from '@components/notifications/notification-bell';
 import { NotificationsWrapper } from '@components/notifications/notification-wrapper';
 import { Button } from '@sk-web-gui/react';
+import { capitalize } from 'lodash';
 import { Menu } from 'lucide-react';
 import NextLink from 'next/link';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFilterStore } from 'src/stores/filter-store';
 import { useOverviewErrands } from 'src/hooks/use-overview-errands';
-import { capitalize } from 'lodash';
+import { useFilterStore } from 'src/stores/filter-store';
+
 import { MainPageMobileHeader } from './main-page-mobile-header.component';
 import { MobileErrandsList } from './mobile-errands-list.component';
 import { MobileMenuBody } from './mobile-menu-body.component';
@@ -31,9 +32,20 @@ export const MobileOverviewLayout: React.FC = () => {
         actions={
           <div className="flex items-center gap-12">
             <div className="[&>button]:!mx-0">
-              <NotificationsBell toggleShow={() => setShowNotifications(!showNotifications)} />
+              <NotificationsBell
+                toggleShow={() => {
+                  setShowNotifications(!showNotifications);
+                }}
+              />
             </div>
-            <Button iconButton variant="tertiary" aria-label="Meny" onClick={() => setOverlay('menu')}>
+            <Button
+              iconButton
+              variant="tertiary"
+              aria-label="Meny"
+              onClick={() => {
+                setOverlay('menu');
+              }}
+            >
               <Menu />
             </Button>
           </div>
@@ -51,7 +63,7 @@ export const MobileOverviewLayout: React.FC = () => {
           <h2 className="text-h3-md">{statusLabel}</h2>
           {rows.length < totalElements && (
             <span className="text-small text-dark-secondary">
-              Visar {rows.length} av {totalElements} {activeStatus ? activeStatus : t('filtering:errands.open')}
+              Visar {rows.length} av {totalElements} {activeStatus ?? t('filtering:errands.open')}
             </span>
           )}
         </div>
@@ -59,7 +71,13 @@ export const MobileOverviewLayout: React.FC = () => {
         <MobileErrandsList rows={rows} isLoading={isLoading} hasMore={hasMore} loadMore={loadMore} />
       </MainPageMobileHeader>
 
-      {overlay === 'menu' && <MobileMenuBody onClose={() => setOverlay(null)} />}
+      {overlay === 'menu' && (
+        <MobileMenuBody
+          onClose={() => {
+            setOverlay(null);
+          }}
+        />
+      )}
 
       <NotificationsWrapper show={showNotifications} setShow={setShowNotifications} open={false} />
     </>

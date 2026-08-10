@@ -21,7 +21,7 @@ function SchemaFormField({ schemaName, index, compact }: SchemaFormFieldProps) {
   const isDraft = status === 'DRAFT';
 
   const rawData = watch(`errandFormData.${index}.data`) ?? '{}';
-  const formData = typeof rawData === 'string' ? JSON.parse(rawData) : rawData;
+  const formData = typeof rawData === 'string' ? (JSON.parse(rawData) as Record<string, unknown>) : rawData;
 
   const handleChange = useCallback(
     (data: Record<string, unknown>) => {

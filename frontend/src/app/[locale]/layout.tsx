@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
-import { headers } from 'next/headers';
 import LocalizationProvider from '@components/localization-provider/localization-provider';
+import { headers } from 'next/headers';
+import { ReactNode } from 'react';
+
 import initLocalization from '../i18n';
 
 interface LocaleLayoutProps {
@@ -8,7 +9,18 @@ interface LocaleLayoutProps {
   params: Promise<{ locale: string }>;
 }
 
-const namespaces = ['common', 'paths', 'layout', 'login', 'example', 'filtering', 'errand-information', 'session', 'validation', 'forms'];
+const namespaces = [
+  'common',
+  'paths',
+  'layout',
+  'login',
+  'example',
+  'filtering',
+  'errand-information',
+  'session',
+  'validation',
+  'forms',
+];
 
 const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
   const { locale } = await params;

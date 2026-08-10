@@ -1,6 +1,6 @@
 import { errandFormDataToJsonParameters } from '@components/json/utils/schema-utils';
 import { LabelDTO, StakeholderDTO } from '@data-contracts/backend/data-contracts';
-import { ErrandFormDTO, ErrandFormDataItem } from '@interfaces/errand-form';
+import { ErrandFormDataItem, ErrandFormDTO } from '@interfaces/errand-form';
 import { useMetadataStore } from 'src/stores/metadata-store';
 
 export function usePrepareErrand() {
@@ -50,7 +50,7 @@ export function usePrepareErrand() {
   const getFacilityOrgName = (errandFormData: ErrandFormDataItem[] | undefined): string | undefined => {
     const platsEntry = errandFormData?.find((e) => e.schemaName === 'avvikelse-plats-handelse');
     if (!platsEntry?.data) return undefined;
-    const parsed = JSON.parse(platsEntry.data);
+    const parsed = JSON.parse(platsEntry.data) as Record<string, unknown>;
     for (const value of Object.values(parsed)) {
       if (value && typeof value === 'object' && 'orgName' in (value as Record<string, unknown>)) {
         return (value as Record<string, string>).orgName;

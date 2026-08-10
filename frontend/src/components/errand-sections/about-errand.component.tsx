@@ -12,11 +12,11 @@ export const AboutErrandContent: React.FC = () => {
   const { setValue, watch } = useFormContext<ErrandDTO>();
   const { showValidation } = useFormValidation();
 
-  const parameters = watch('parameters') || [];
+  const parameters = watch('parameters') ?? [];
   const eventType = parameters.find((p) => p.key === 'eventType')?.values?.[0] ?? '';
   const eventConcerns = parameters.find((p) => p.key === 'eventConcerns')?.values?.[0] ?? '';
 
-  const stakeholders = watch('stakeholders') || [];
+  const stakeholders = watch('stakeholders') ?? [];
 
   const setParameter = (key: string, value: string) => {
     const otherParams = parameters.filter((p) => p.key !== key);
@@ -42,7 +42,9 @@ export const AboutErrandContent: React.FC = () => {
             data-cy="event-type-deviation"
             checked={eventType === 'AVVIKELSE'}
             value="AVVIKELSE"
-            onChange={() => setParameter('eventType', 'AVVIKELSE')}
+            onChange={() => {
+              setParameter('eventType', 'AVVIKELSE');
+            }}
           >
             {t('errand-information:about.event_type_deviation')}
           </RadioButton>
@@ -50,7 +52,9 @@ export const AboutErrandContent: React.FC = () => {
             data-cy="event-type-misconduct"
             checked={eventType === 'MISSFORHALLANDE'}
             value="MISSFORHALLANDE"
-            onChange={() => setParameter('eventType', 'MISSFORHALLANDE')}
+            onChange={() => {
+              setParameter('eventType', 'MISSFORHALLANDE');
+            }}
           >
             {t('errand-information:about.event_type_misconduct')}
           </RadioButton>
@@ -81,7 +85,9 @@ export const AboutErrandContent: React.FC = () => {
             data-cy="event-concerns-individual"
             checked={eventConcerns === 'ENSKILD_BRUKARE'}
             value="ENSKILD_BRUKARE"
-            onChange={() => setEventConcerns('ENSKILD_BRUKARE')}
+            onChange={() => {
+              setEventConcerns('ENSKILD_BRUKARE');
+            }}
           >
             {t('errand-information:about.event_concerns_individual')}
           </RadioButton>
@@ -89,7 +95,9 @@ export const AboutErrandContent: React.FC = () => {
             data-cy="event-concerns-group-activity"
             checked={eventConcerns === 'GRUPP_VERKSAMHET'}
             value="GRUPP_VERKSAMHET"
-            onChange={() => setEventConcerns('GRUPP_VERKSAMHET')}
+            onChange={() => {
+              setEventConcerns('GRUPP_VERKSAMHET');
+            }}
           >
             {t('errand-information:about.event_concerns_group')}
           </RadioButton>
@@ -97,7 +105,9 @@ export const AboutErrandContent: React.FC = () => {
             data-cy="event-concerns-other"
             checked={eventConcerns === 'ANNAT'}
             value="ANNAT"
-            onChange={() => setEventConcerns('ANNAT')}
+            onChange={() => {
+              setEventConcerns('ANNAT');
+            }}
           >
             {t('errand-information:about.event_concerns_other')}
           </RadioButton>

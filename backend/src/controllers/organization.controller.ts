@@ -1,11 +1,12 @@
+import { Controller, Get, Param, Req, UseBefore } from 'routing-controllers';
+import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
+
 import { getApiBase } from '@/config/api-config';
 import { OrganizationTree } from '@/data-contracts/company/data-contracts';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
 import { OrgLeafNodeDTO, OrgTreeNodeDTO } from '@/responses/organization.response';
 import ApiService from '@/services/api.service';
-import { Controller, Get, Param, Req, UseBefore } from 'routing-controllers';
-import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 @Controller()
 export class OrganizationController {
@@ -17,13 +18,13 @@ export class OrganizationController {
   @OpenAPI({ summary: 'Get organization tree from orgId' })
   @UseBefore(authMiddleware)
   @ResponseSchema(OrgTreeNodeDTO)
-  async getOrgTree(@Req() req: RequestWithUser, @Param('orgId') orgId: number): Promise<OrgTreeNodeDTO | null> {
+  async getOrgTree(@Req() req: RequestWithUser, @Param('orgId') orgId: number): Promise<OrganizationTree | null> {
     const url = `${this.apiBase}/${this.municipalityId}/${orgId}/orgtree`;
 
     try {
       const res = await this.apiService.get<OrganizationTree>({ url }, req);
       return res.data || null;
-    } catch (error: any) {
+    } catch {
       return null;
     }
   }

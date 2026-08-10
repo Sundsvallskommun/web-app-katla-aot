@@ -19,7 +19,13 @@ export const MobileOverlayPage: React.FC<MobileOverlayPageProps> = ({ title, ico
           {icon}
           <span>{title}</span>
         </div>
-        <Button iconButton variant="tertiary" aria-label="Stäng" onClick={onClose} className="min-w-[44px] min-h-[44px]">
+        <Button
+          iconButton
+          variant="tertiary"
+          aria-label="Stäng"
+          onClick={onClose}
+          className="min-w-[44px] min-h-[44px]"
+        >
           <X />
         </Button>
       </header>

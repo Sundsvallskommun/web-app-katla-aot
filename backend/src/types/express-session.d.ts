@@ -10,7 +10,7 @@ declare module 'express-session' {
     returnTo?: string;
     user?: User;
     representing?: Engagement;
-    passport?: any;
+    passport?: unknown;
     representingChoices?: Engagement[];
     messages: string[];
   }

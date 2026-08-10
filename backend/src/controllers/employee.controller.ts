@@ -1,3 +1,6 @@
+import { Controller, Get, Param, Req, UseBefore } from 'routing-controllers';
+import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
+
 import { MUNICIPALITY_ID } from '@/config';
 import { getApiBase } from '@/config/api-config';
 import { Account, Employeev2, Employment, PortalPersonData } from '@/data-contracts/employee/data-contracts';
@@ -8,8 +11,6 @@ import { UserEmploymentDTO } from '@/responses/employee.response';
 import { StakeholderDTO } from '@/responses/supportmanagement.response';
 import ApiService from '@/services/api.service';
 import { addHyphenToPersonNumber } from '@/utils/stakeholder-mapping';
-import { Controller, Get, Param, Req, UseBefore } from 'routing-controllers';
-import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 @Controller()
 export class EmployeeController {
@@ -20,7 +21,7 @@ export class EmployeeController {
   @Get('/employee/personal/:username')
   @OpenAPI({ summary: 'Read maching errands' })
   @UseBefore(authMiddleware)
-  async getErrand(@Req() req: RequestWithUser, @Param('username') username: string): Promise<StakeholderDTO> {
+  async getErrand(@Req() req: RequestWithUser, @Param('username') username: string): Promise<StakeholderDTO | null> {
     const personDataurl = `${this.apiBase}/${MUNICIPALITY_ID}/portalpersondata/personal/${username}`;
 
     try {
@@ -33,26 +34,27 @@ export class EmployeeController {
 
       if (!employmentsRes.data) throw new HttpException(500, 'No data from API');
 
-      const mainEmployment = employmentsRes.data[0].employments.find(e => e.isMainEmployment === true);
+      const mainEmployment = employmentsRes.data[0]?.employments?.find(e => e.isMainEmployment);
+      if (!mainEmployment) throw new HttpException(500, 'No main employment found');
+
+      const email = personDataRes.data.email;
+      const phoneNumber = personDataRes.data.workPhone ?? personDataRes.data.mobilePhone ?? personDataRes.data.extraMobilePhone;
 
       const stakeholder: StakeholderDTO = {
         externalId: personDataRes.data.personid,
-        city: personDataRes.data.city,
-        firstName: personDataRes.data.givenname,
-        lastName: personDataRes.data.lastname,
-        address: personDataRes.data.address,
-        zipCode: personDataRes.data.postalCode,
-        emails: [personDataRes.data.email?.toLocaleLowerCase()],
-        phoneNumbers: [personDataRes.data.workPhone ?? personDataRes.data.mobilePhone ?? personDataRes.data.extraMobilePhone],
-        title: mainEmployment.title,
-        department: mainEmployment.orgName,
+        city: personDataRes.data.city ?? undefined,
+        firstName: personDataRes.data.givenname ?? undefined,
+        lastName: personDataRes.data.lastname ?? undefined,
+        address: personDataRes.data.address ?? undefined,
+        zipCode: personDataRes.data.postalCode ?? undefined,
+        emails: email ? [email.toLocaleLowerCase()] : undefined,
+        phoneNumbers: phoneNumber ? [phoneNumber] : undefined,
+        title: mainEmployment.title ?? undefined,
+        department: mainEmployment.orgName ?? undefined,
       };
 
       return stakeholder;
-    } catch (error: any) {
-      if (error.status === 404) {
-        return null;
-      }
+    } catch {
       return null;
     }
   }
@@ -60,12 +62,8 @@ export class EmployeeController {
   @Get('/employee/personnumber/:personNumber')
   @OpenAPI({ summary: 'Get employee stakeholder using personNumber via citizen and employee APIs' })
   @UseBefore(authMiddleware)
-  async getEmployeeByPersonNumber(
-    @Req() req: RequestWithUser,
-    @Param('personNumber') personNumber: string
-  ): Promise<StakeholderDTO> {
+  async getEmployeeByPersonNumber(@Req() req: RequestWithUser, @Param('personNumber') personNumber: string): Promise<StakeholderDTO | null> {
     try {
-
       const personIdUrl = `${this.citizenBase}/${MUNICIPALITY_ID}/${personNumber}/guid/`;
       const personIdRes = await this.apiService.get<string>({ url: personIdUrl }, req);
       const personId = personIdRes.data;
@@ -82,30 +80,30 @@ export class EmployeeController {
 
       const employmentsUrl = `${this.apiBase}/${MUNICIPALITY_ID}/employments?PersonId=${personDataRes.data.personid}`;
       const employmentsRes = await this.apiService.get<Employeev2[]>({ url: employmentsUrl }, req);
-      const mainEmployment = employmentsRes.data?.[0]?.employments?.find((e) => e.isMainEmployment === true);
+      const mainEmployment = employmentsRes.data?.[0]?.employments?.find(e => e.isMainEmployment);
+
+      const email = personDataRes.data.email;
+      const phoneNumber = personDataRes.data.workPhone ?? personDataRes.data.mobilePhone ?? personDataRes.data.extraMobilePhone;
 
       const stakeholder: StakeholderDTO = {
         externalId: personDataRes.data.personid,
-        firstName: personDataRes.data.givenname,
-        lastName: personDataRes.data.lastname,
-        address: personDataRes.data.address,
-        city: personDataRes.data.city,
-        zipCode: personDataRes.data.postalCode,
+        firstName: personDataRes.data.givenname ?? undefined,
+        lastName: personDataRes.data.lastname ?? undefined,
+        address: personDataRes.data.address ?? undefined,
+        city: personDataRes.data.city ?? undefined,
+        zipCode: personDataRes.data.postalCode ?? undefined,
         personNumber: addHyphenToPersonNumber(personNumber),
-        emails: [personDataRes.data.email?.toLocaleLowerCase()],
-        phoneNumbers: [
-          personDataRes.data.workPhone ?? personDataRes.data.mobilePhone ?? personDataRes.data.extraMobilePhone,
-        ],
-        title: mainEmployment?.title,
-        department: mainEmployment?.orgName,
+        emails: email ? [email.toLocaleLowerCase()] : undefined,
+        phoneNumbers: phoneNumber ? [phoneNumber] : undefined,
+        title: mainEmployment?.title ?? undefined,
+        department: mainEmployment?.orgName ?? undefined,
       };
 
       return stakeholder;
-    } catch (error: any) {
-      console.error('getEmployeeByPersonNumber failed at:', error.message, 'status:', error.status);
-      if (error.status === 404) {
-        return null;
-      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : JSON.stringify(error);
+      const status = error instanceof HttpException ? error.status : undefined;
+      console.error('getEmployeeByPersonNumber failed at:', message, 'status:', status);
       return null;
     }
   }
@@ -133,24 +131,25 @@ export class EmployeeController {
 
       // The response is an array of Employeev2 objects
       const employees = res.data || [];
-      if (employees.length === 0 || !employees[0]?.employments) {
+      const firstEmployee = employees[0];
+      if (!firstEmployee?.employments) {
         return [];
       }
 
       // Map employments to DTOs, sorted with main employment first
-      const employments: UserEmploymentDTO[] = employees[0].employments
+      const employments: UserEmploymentDTO[] = firstEmployee.employments
         .filter((emp: Employment) => emp.orgId && emp.orgName)
         .map((emp: Employment) => ({
           orgId: emp.orgId,
-          orgName: emp.orgName,
+          orgName: emp.orgName ?? undefined,
           topOrgId: emp.topOrgId,
           isMainEmployment: emp.isMainEmployment,
           manager: emp.manager
             ? {
                 personId: emp.manager.personId,
-                givenname: emp.manager.givenname,
-                lastname: emp.manager.lastname,
-                emailAddress: emp.manager.emailAddress,
+                givenname: emp.manager.givenname ?? undefined,
+                lastname: emp.manager.lastname ?? undefined,
+                emailAddress: emp.manager.emailAddress ?? undefined,
               }
             : undefined,
         }))
@@ -162,7 +161,7 @@ export class EmployeeController {
         });
 
       return employments;
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to get employments:', error);
       return [];
     }
