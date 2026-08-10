@@ -1,4 +1,5 @@
-import { Checkbox, Disclosure, Divider, FormControl, Label } from '@sk-web-gui/react';
+import { ErrandContentLock } from '@components/errand-content-lock/errand-content-lock.component';
+import { Checkbox, Disclosure, Divider, Label } from '@sk-web-gui/react';
 import { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { appConfig } from 'src/config/appconfig';
 
@@ -10,7 +11,7 @@ export const ErrandDisclosure: React.FC<{
   disabled?: boolean;
   initialOpen?: boolean;
 }> = ({ header, icon, children, errandInformationSection, disabled = false, initialOpen = true }) => {
-  const [open, setOpen] = useState(!disabled);
+  const [open, setOpen] = useState(disabled ? false : initialOpen);
   const [doneMark, setDoneMark] = useState(false);
 
   useEffect(() => {
@@ -35,29 +36,35 @@ export const ErrandDisclosure: React.FC<{
   };
 
   return (
-    <FormControl className="w-full" disabled={disabled}>
-      <Disclosure variant="alt" className="w-full mobileVersion" open={open} onToggleOpen={handleToggleOpen} disabled={disabled}>
-        <Disclosure.Header>
-          <Disclosure.Icon icon={icon} />
-          <Disclosure.Title>{header}</Disclosure.Title>
-          {doneMark && (
-            <Label inverted rounded color="gronsta">
-              Komplett
-            </Label>
-          )}
-          <Disclosure.Button />
-        </Disclosure.Header>
-        <Disclosure.Content>
+    <Disclosure
+      variant="alt"
+      className="w-full mobileVersion"
+      open={open}
+      onToggleOpen={handleToggleOpen}
+      disabled={disabled}
+    >
+      <Disclosure.Header>
+        <Disclosure.Icon icon={icon} />
+        <Disclosure.Title>{header}</Disclosure.Title>
+        {doneMark && (
+          <Label inverted rounded color="gronsta">
+            Komplett
+          </Label>
+        )}
+        <Disclosure.Button />
+      </Disclosure.Header>
+      <Disclosure.Content>
+        <ErrandContentLock className="w-full" disabled={disabled}>
           {children}
           {errandInformationSection && <Divider className="pt-20" />}
 
           {appConfig.features.disclosureDoneMark && (
-            <Checkbox onClick={() => setDoneMark(!doneMark)} checked={doneMark}>
+            <Checkbox onClick={() => setDoneMark(!doneMark)} checked={doneMark} disabled={disabled}>
               Markera avsnittet som komplett
             </Checkbox>
           )}
-        </Disclosure.Content>
-      </Disclosure>
-    </FormControl>
+        </ErrandContentLock>
+      </Disclosure.Content>
+    </Disclosure>
   );
 };
