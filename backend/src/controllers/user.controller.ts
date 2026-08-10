@@ -21,12 +21,12 @@ export class UserController {
       throw new HttpException(400, 'Bad Request');
     }
 
-    const initials = givenName.at(0).toUpperCase()+surname.at(0).toUpperCase()
+    const initials = givenName.at(0).toUpperCase() + surname.at(0).toUpperCase();
 
     const userData: ClientUser = {
       name: name,
       username: username,
-      initials: initials
+      initials: initials,
     };
 
     return response.send({ data: userData, message: 'success' });

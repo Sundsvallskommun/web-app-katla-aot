@@ -29,7 +29,7 @@ const main = async () => {
       console.log(`- ${api.name} ${api.version}`),
     );
     await exec(
-      `npx swagger-typescript-api --modular -p ${PATH_TO_OUTPUT_DIR}/${api.name}/swagger.json -o ${PATH_TO_OUTPUT_DIR}/${api.name} --no-client --clean-output --extract-enums`,
+      `npx swagger-typescript-api generate --modular -p ${PATH_TO_OUTPUT_DIR}/${api.name}/swagger.json -o ${PATH_TO_OUTPUT_DIR}/${api.name} --no-client --clean-output --extract-enums`,
       stdout,
     );
   });

@@ -7,7 +7,6 @@ import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { Request } from 'express';
 import ApiTokenService from './api-token.service';
 import { v4 as uuidv4 } from 'uuid';
-import { API_BASE_URL } from '@/config';
 
 class ApiResponse<T> {
   data: T;
@@ -20,7 +19,7 @@ interface ApiRequest extends Omit<Partial<RequestWithUser>, 'session'> {
 
 class ApiService {
   private apiTokenService = new ApiTokenService();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   private async request<T>(config: AxiosRequestConfig, req: ApiRequest): Promise<ApiResponse<T>> {
     const token = await this.apiTokenService.getToken();
 
@@ -28,13 +27,13 @@ class ApiService {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
       'X-Request-Id': uuidv4(),
-      'X-Sent-By': `type=adAccount; ${req?.user?.username}`
+      'X-Sent-By': `type=adAccount; ${req?.user?.username}`,
     };
     const defaultParams = {};
 
     const preparedConfig: AxiosRequestConfig = {
       ...config,
-      headers: { ...defaultHeaders, ...config.headers, },
+      headers: { ...defaultHeaders, ...config.headers },
       params: { ...defaultParams, ...config.params },
       url: config.baseURL ? config.url : apiURL(config.url),
     };
@@ -46,11 +45,11 @@ class ApiService {
       }
       const res = await axios(preparedConfig);
 
-      if(!res.headers.location){
+      if (!res.headers.location) {
         return { data: res.data, message: 'success' };
       }
 
-      const getRes = await axios.get(res.headers.location, { baseURL: config.baseURL, headers: defaultHeaders })
+      const getRes = await axios.get(res.headers.location, { baseURL: config.baseURL, headers: defaultHeaders });
 
       return { data: getRes.data, message: 'success' };
     } catch (error: unknown | AxiosError) {

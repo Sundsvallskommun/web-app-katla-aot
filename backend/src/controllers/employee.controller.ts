@@ -60,12 +60,8 @@ export class EmployeeController {
   @Get('/employee/personnumber/:personNumber')
   @OpenAPI({ summary: 'Get employee stakeholder using personNumber via citizen and employee APIs' })
   @UseBefore(authMiddleware)
-  async getEmployeeByPersonNumber(
-    @Req() req: RequestWithUser,
-    @Param('personNumber') personNumber: string
-  ): Promise<StakeholderDTO> {
+  async getEmployeeByPersonNumber(@Req() req: RequestWithUser, @Param('personNumber') personNumber: string): Promise<StakeholderDTO> {
     try {
-
       const personIdUrl = `${this.citizenBase}/${MUNICIPALITY_ID}/${personNumber}/guid/`;
       const personIdRes = await this.apiService.get<string>({ url: personIdUrl }, req);
       const personId = personIdRes.data;
@@ -82,7 +78,7 @@ export class EmployeeController {
 
       const employmentsUrl = `${this.apiBase}/${MUNICIPALITY_ID}/employments?PersonId=${personDataRes.data.personid}`;
       const employmentsRes = await this.apiService.get<Employeev2[]>({ url: employmentsUrl }, req);
-      const mainEmployment = employmentsRes.data?.[0]?.employments?.find((e) => e.isMainEmployment === true);
+      const mainEmployment = employmentsRes.data?.[0]?.employments?.find(e => e.isMainEmployment === true);
 
       const stakeholder: StakeholderDTO = {
         externalId: personDataRes.data.personid,
@@ -93,9 +89,7 @@ export class EmployeeController {
         zipCode: personDataRes.data.postalCode,
         personNumber: addHyphenToPersonNumber(personNumber),
         emails: [personDataRes.data.email?.toLocaleLowerCase()],
-        phoneNumbers: [
-          personDataRes.data.workPhone ?? personDataRes.data.mobilePhone ?? personDataRes.data.extraMobilePhone,
-        ],
+        phoneNumbers: [personDataRes.data.workPhone ?? personDataRes.data.mobilePhone ?? personDataRes.data.extraMobilePhone],
         title: mainEmployment?.title,
         department: mainEmployment?.orgName,
       };

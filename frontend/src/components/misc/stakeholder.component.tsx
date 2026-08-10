@@ -203,7 +203,7 @@ export const StakeholderList: React.FC<{
                   {department ?
                     <span>{department}</span>
                   : <span className={cx((!address || !city) && 'italic text-text-secondary')}>
-                      {`${address}, ${city}` || 'Adress saknas'}
+                      {address && city ? `${address}, ${city}` : 'Adress saknas'}
                     </span>
                   }
                 </div>

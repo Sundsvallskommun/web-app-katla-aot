@@ -11,6 +11,15 @@ import { OrganizationController } from './controllers/organization.controller';
 
 validateEnv();
 
-const app = new App([IndexController, UserController, HealthController, SupportManagementController, EmployeeController, CitizenController, SchemaController, OrganizationController]);
+const app = new App([
+  IndexController,
+  UserController,
+  HealthController,
+  SupportManagementController,
+  EmployeeController,
+  CitizenController,
+  SchemaController,
+  OrganizationController,
+]);
 
 app.listen();
