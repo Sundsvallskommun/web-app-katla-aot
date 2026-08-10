@@ -40,6 +40,7 @@ module.exports = {
     '@public/(.*)$': ['<rootDir>/public/$1'],
     '@jestRoot/(.*)$': ['<rootDir>/jest/$1'],
     '@data-contracts/(.*)$': ['<rootDir>/src/data-contracts/$1'],
+    '^src/(.*)$': '<rootDir>/src/$1',
   },
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
   testEnvironment: 'jest-environment-jsdom',
