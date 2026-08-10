@@ -33,5 +33,12 @@ export default tseslint.config(
       'react-hooks/static-components': 'warn',
       'react-hooks/set-state-in-effect': 'warn',
     },
+  },
+  {
+    // Context-moduler exporterar per konvention både provider-komponent och hook
+    files: ['src/contexts/**'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
   }
 );
