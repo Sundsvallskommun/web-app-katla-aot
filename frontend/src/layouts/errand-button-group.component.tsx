@@ -1,11 +1,10 @@
+import { CancelErrandDialog } from '@components/cancel-errand-dialog.component';
 import {
-  errandFormDataToJsonParameters,
   jsonParametersToErrandFormData,
   validateErrandFormData,
 } from '@components/json/utils/schema-utils';
 import { useFormValidation } from '@contexts/form-validation-context';
 import { createErrand, updateErrand } from '@services/errand-service/errand-service';
-import { StakeholderDTO } from '@data-contracts/backend/data-contracts';
 import { Inbox } from 'lucide-react';
 import { Button, Dialog, useSnackbar } from '@sk-web-gui/react';
 import { useRouter } from 'next/navigation';
@@ -14,9 +13,8 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { CenterDiv } from './center-div.component';
 import { appConfig } from 'src/config/appconfig';
-import { LabelDTO } from '@data-contracts/backend/data-contracts';
-import { useMetadataStore } from 'src/stores/metadata-store';
-import { ErrandFormDTO, ErrandFormDataItem } from '@interfaces/errand-form';
+import { usePrepareErrand } from 'src/hooks/use-prepare-errand';
+import { ErrandFormDTO } from '@interfaces/errand-form';
 
 interface ErrandButtonGroupProps {
   isNewErrand: boolean;
@@ -31,7 +29,8 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
   const { getValues, reset, watch } = context;
   const { setShowValidation } = useFormValidation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { metadata } = useMetadataStore();
+  const [isCancelOpen, setIsCancelOpen] = useState<boolean>(false);
+  const { prepareErrandForApi, getFacilityOrgName } = usePrepareErrand();
 
   const errandStatus = watch('status');
   const errandId = watch('id');
@@ -39,86 +38,6 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
   const isDraft = errandStatus === 'DRAFT';
   const showButtons = isNewErrand || isDraft;
   const draftEnabled = appConfig.features.draftEnabled;
-
-  const findLabel = (resourceName: string): LabelDTO | undefined => {
-    const findInStructure = (labels: LabelDTO[]): LabelDTO | undefined => {
-      for (const label of labels) {
-        if (label.resourceName === resourceName) return label;
-        if (label.labels?.length) {
-          const found = findInStructure(label.labels);
-          if (found) return found;
-        }
-      }
-      return undefined;
-    };
-    return metadata?.labels?.labelStructure ? findInStructure(metadata.labels.labelStructure) : undefined;
-  };
-
-  const flattenLabel = (label: LabelDTO): LabelDTO[] => {
-    const { labels: children, ...labelWithoutChildren } = label;
-    const result: LabelDTO[] = [labelWithoutChildren];
-    if (children?.length) {
-      children.forEach((child) => result.push(...flattenLabel(child)));
-    }
-    return result;
-  };
-
-  const buildLabels = (eventType: string): LabelDTO[] => {
-    const labels: LabelDTO[] = [];
-
-    const uncategorizedLabel = findLabel('UNCATEGORIZED');
-    if (uncategorizedLabel) {
-      labels.push(...flattenLabel(uncategorizedLabel));
-    }
-
-    if (eventType === 'MISSFORHALLANDE') {
-      const adverseLabel = findLabel('ADVERSE_INCIDENT');
-      if (adverseLabel) {
-        labels.push(...flattenLabel(adverseLabel));
-      }
-    }
-
-    return labels;
-  };
-  
-  const getFacilityOrgName = (errandFormData: ErrandFormDataItem[] | undefined): string | undefined => {
-    const platsEntry = errandFormData?.find((e) => e.schemaName === 'avvikelse-plats-handelse');
-    if (!platsEntry?.data) return undefined;
-    const parsed = JSON.parse(platsEntry.data);
-    for (const value of Object.values(parsed)) {
-      if (value && typeof value === 'object' && 'orgName' in (value as Record<string, unknown>)) {
-        return (value as Record<string, string>).orgName;
-      }
-    }
-    return undefined;
-  };
-
-  const prepareErrandForApi = (values: ErrandFormDTO, status: string) => {
-    const { errandFormData, ...errandWithoutFormData } = values;
-    const eventType = values.parameters?.find((p) => p.key === 'eventType')?.values?.[0] ?? '';
-    const eventConcerns = values.parameters?.find((p) => p.key === 'eventConcerns')?.values?.[0];
-
-    let stakeholders = errandWithoutFormData.stakeholders ?? [];
-
-    if (eventConcerns === 'GRUPP_VERKSAMHET') {
-      const orgName = getFacilityOrgName(errandFormData);
-      if (orgName) {
-        const facilityStakeholder: StakeholderDTO = {
-          firstName: orgName,
-          role: 'PRIMARY',
-        };
-        stakeholders = [...stakeholders.filter((s) => s.role !== 'PRIMARY'), facilityStakeholder];
-      }
-    }
-
-    return {
-      ...errandWithoutFormData,
-      stakeholders,
-      status,
-      labels: buildLabels(eventType),
-      jsonParameters: errandFormDataToJsonParameters(errandFormData),
-    };
-  };
 
   const onSaveDraft = async () => {
     const errandData = prepareErrandForApi(getValues(), 'DRAFT');
@@ -163,9 +82,9 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
   }
 
   return (
-    <div className="flex flex-row gap-[1.8rem]">
+    <div className="flex flex-wrap gap-8 md:gap-[1.8rem]">
       {isNewErrand && (
-        <Button variant="secondary" onClick={() => router.push(`/oversikt`)}>
+        <Button variant="secondary" onClick={() => setIsCancelOpen(true)}>
           {t('errand-information:cancel')}
         </Button>
       )}
@@ -228,19 +147,21 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
       >
         {t('errand-information:register')}
       </Button>
+      <CancelErrandDialog
+        show={isCancelOpen}
+        onClose={() => setIsCancelOpen(false)}
+        onConfirm={() => router.push('/oversikt')}
+      />
       <Dialog show={isOpen}>
         <Dialog.Content className="-mt-20">
           <CenterDiv>
             <Inbox size={32} className="mb-[1.6rem] text-vattjom-surface-primary" />
             <h3 className="text-h3-md">{t('errand-information:register')}</h3>
-            <span className="text-dark-secondary text-md mb-30">
-              När du skickar in ett ärende. Lorem ipsum dolor sit amet consectuer
-            </span>
             <span className="text-dark-secondary text-md">Vill du skicka in ärendet?</span>
           </CenterDiv>
         </Dialog.Content>
 
-        <Dialog.Buttons className="justify-center">
+        <Dialog.Buttons className="justify-center flex-col sm:flex-row gap-8">
           <Button variant="secondary" onClick={() => setIsOpen(false)}>
             Nej
           </Button>

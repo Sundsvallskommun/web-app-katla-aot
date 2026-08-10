@@ -1,7 +1,6 @@
-import { ErrandDTO } from '@data-contracts/backend/data-contracts';
-import { Checkbox, Disclosure, Divider, FormControl, Label } from '@sk-web-gui/react';
+import { ErrandContentLock } from '@components/errand-content-lock/errand-content-lock.component';
+import { Checkbox, Disclosure, Divider, Label } from '@sk-web-gui/react';
 import { ReactElement, ReactNode, useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { appConfig } from 'src/config/appconfig';
 
 export const ErrandDisclosure: React.FC<{
@@ -12,17 +11,16 @@ export const ErrandDisclosure: React.FC<{
   disabled?: boolean;
   initialOpen?: boolean;
 }> = ({ header, icon, children, errandInformationSection, disabled = false, initialOpen = true }) => {
-  const [open, setOpen] = useState(initialOpen);
+  const [open, setOpen] = useState(disabled ? false : initialOpen);
   const [doneMark, setDoneMark] = useState(false);
 
-    const { watch } = useFormContext<ErrandDTO>();
-  
-    const errandStatus = watch('status');
-    const isDraft = errandStatus === 'DRAFT';
-
   useEffect(() => {
-    setOpen(initialOpen);
-  }, [initialOpen]);
+    if (disabled) {
+      setOpen(false);
+    } else {
+      setOpen(initialOpen);
+    }
+  }, [disabled, initialOpen]);
 
   useEffect(() => {
     if (doneMark) {
@@ -31,8 +29,20 @@ export const ErrandDisclosure: React.FC<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doneMark]);
 
+  const handleToggleOpen = (isOpen: boolean) => {
+    if (!disabled) {
+      setOpen(isOpen);
+    }
+  };
+
   return (
-    <Disclosure variant="alt" className="w-full mobileVersion" open={open} onToggleOpen={setOpen}>
+    <Disclosure
+      variant="alt"
+      className="w-full mobileVersion"
+      open={open}
+      onToggleOpen={handleToggleOpen}
+      disabled={disabled}
+    >
       <Disclosure.Header>
         <Disclosure.Icon icon={icon} />
         <Disclosure.Title>{header}</Disclosure.Title>
@@ -44,16 +54,16 @@ export const ErrandDisclosure: React.FC<{
         <Disclosure.Button />
       </Disclosure.Header>
       <Disclosure.Content>
-        <FormControl className={`w-full ${!isDraft && 'pointer-events-none opacity-80'}`} disabled={disabled}>
+        <ErrandContentLock className="w-full" disabled={disabled}>
           {children}
-        </FormControl>
-        {errandInformationSection && <Divider className="pt-20" />}
+          {errandInformationSection && <Divider className="pt-20" />}
 
-        {appConfig.features.disclosureDoneMark && (
-          <Checkbox onClick={() => setDoneMark(!doneMark)} checked={doneMark} disabled={disabled}>
-            Markera avsnittet som komplett
-          </Checkbox>
-        )}
+          {appConfig.features.disclosureDoneMark && (
+            <Checkbox onClick={() => setDoneMark(!doneMark)} checked={doneMark} disabled={disabled}>
+              Markera avsnittet som komplett
+            </Checkbox>
+          )}
+        </ErrandContentLock>
       </Disclosure.Content>
     </Disclosure>
   );

@@ -69,18 +69,13 @@ export const StakeholderFormModal: React.FC<{
       show={show}
       onClose={onClose}
       label={edit ? `Redigera person` : 'Lägg till person manuellt'}
+      className="max-sm:!m-8 max-sm:!max-h-[calc(100vh-4rem)] max-sm:!w-[calc(100%-2rem)] max-sm:!max-w-full max-sm:!overflow-y-auto !overflow-x-hidden"
     >
       <Modal.Content>
-        {showField('personNumber') && (
-          <FormControl>
-            <FormLabel>Personnummer</FormLabel>
-            <Input data-cy="modal-personNumber-input" {...register(`personNumber`)} readOnly />
-          </FormControl>
-        )}
         {(showField('firstName') || showField('lastName')) && (
           <div className="flex gap-8">
             {showField('firstName') && (
-              <FormControl required>
+              <FormControl required className="min-w-0 flex-1">
                 <FormLabel>Förnamn</FormLabel>
                 <Input data-cy="modal-firstName-input" {...register(`firstName`)} />
                 {formState.errors.firstName && (
@@ -91,7 +86,7 @@ export const StakeholderFormModal: React.FC<{
               </FormControl>
             )}
             {showField('lastName') && (
-              <FormControl required>
+              <FormControl required className="min-w-0 flex-1">
                 <FormLabel>Efternamn</FormLabel>
                 <Input data-cy="modal-lastName-input" {...register(`lastName`)} />
                 {formState.errors.lastName && (
@@ -109,7 +104,7 @@ export const StakeholderFormModal: React.FC<{
             {(showField('emails') || showField('phoneNumbers')) && (
               <div className="flex gap-8">
                 {showField('emails') && (
-                  <FormControl>
+                  <FormControl className="min-w-0 flex-1">
                     <FormLabel>E-postadress</FormLabel>
                     <Input data-cy="modal-email-input" {...register('emails.0')} />
                     {formState.errors.emails?.[0]?.message && (
@@ -120,11 +115,11 @@ export const StakeholderFormModal: React.FC<{
                   </FormControl>
                 )}
                 {showField('phoneNumbers') && (
-                  <FormControl>
+                  <FormControl className="min-w-0 flex-1">
                     <FormLabel>Telefonnummer</FormLabel>
                     <Input data-cy="modal-phone-input" {...register('phoneNumbers.0')} />
                     {formState.errors.phoneNumbers?.[0]?.message && (
-                      <FormErrorMessage data-cy="modal-phone-input-error" className="max-w-[22.9rem] truncate">
+                      <FormErrorMessage data-cy="modal-phone-input-error" className="truncate">
                         {formState.errors.phoneNumbers[0].message}
                       </FormErrorMessage>
                     )}
@@ -136,13 +131,13 @@ export const StakeholderFormModal: React.FC<{
             {(showField('address') || showField('careOf')) && (
               <div className="flex gap-8">
                 {showField('address') && (
-                  <FormControl>
+                  <FormControl className="min-w-0 flex-1">
                     <FormLabel>Adress</FormLabel>
                     <Input data-cy="modal-address-input" {...register(`address`)} />
                   </FormControl>
                 )}
                 {showField('careOf') && (
-                  <FormControl>
+                  <FormControl className="min-w-0 flex-1">
                     <FormLabel>C/o adress</FormLabel>
                     <Input data-cy="modal-careOf-input" {...register(`careOf`)} />
                   </FormControl>
@@ -153,13 +148,13 @@ export const StakeholderFormModal: React.FC<{
             {(showField('zipCode') || showField('city')) && (
               <div className="flex gap-8">
                 {showField('zipCode') && (
-                  <FormControl>
+                  <FormControl className="min-w-0 flex-1">
                     <FormLabel>Postnummer</FormLabel>
                     <Input data-cy="modal-zipCode-input" {...register(`zipCode`)} />
                   </FormControl>
                 )}
                 {showField('city') && (
-                  <FormControl>
+                  <FormControl className="min-w-0 flex-1">
                     <FormLabel>Ort</FormLabel>
                     <Input data-cy="modal-city-input" {...register(`city`)} />
                   </FormControl>
@@ -170,30 +165,38 @@ export const StakeholderFormModal: React.FC<{
         )}
 
         {showField('role') && (
-          <div className="flex flex-col">
-            <FormControl required>
-              <FormLabel>Roll</FormLabel>
-              <Select data-cy="modal-stakeholder-role-select" {...register(`role`)}>
-                {metadata?.roles?.map(
-                  (role) =>
-                    roles?.includes(role.name) && (
-                      <Select.Option key={role.name} value={role.name}>
-                        {role.displayName}
-                      </Select.Option>
-                    )
-                )}
-              </Select>
-            </FormControl>
-          </div>
+          <FormControl required className="w-full">
+            <FormLabel>Roll</FormLabel>
+            <Select data-cy="modal-stakeholder-role-select" className="w-full" {...register(`role`)}>
+              {metadata?.roles?.map(
+                (role) =>
+                  roles?.includes(role.name) && (
+                    <Select.Option key={role.name} value={role.name}>
+                      {role.displayName}
+                    </Select.Option>
+                  )
+              )}
+            </Select>
+          </FormControl>
         )}
       </Modal.Content>
 
-      <Modal.Footer>
-        <Button data-cy="modal-cancel-person-button" variant="secondary" onClick={onClose}>
-          Avbryt
-        </Button>
-        <Button data-cy="modal-add-person-button" variant="primary" onClick={handleSubmit(onSave)}>
+      <Modal.Footer className="max-sm:flex-col max-sm:gap-8">
+        <Button
+          data-cy="modal-add-person-button"
+          variant="primary"
+          onClick={handleSubmit(onSave)}
+          className="max-sm:w-full"
+        >
           {edit ? 'Ändra uppgifter' : 'Lägg till'}
+        </Button>
+        <Button
+          data-cy="modal-cancel-person-button"
+          variant="secondary"
+          onClick={onClose}
+          className="max-sm:w-full"
+        >
+          Avbryt
         </Button>
       </Modal.Footer>
     </Modal>

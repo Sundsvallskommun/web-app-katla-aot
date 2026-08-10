@@ -1,5 +1,11 @@
 {
   "cancel": "Avbryt",
+  "cancel_confirm": {
+    "title": "Avbryt rapport",
+    "description": "Om du avbryter kommer rapporten inte att sparas. Du behöver fylla i alla steg och skicka in för att rapporten ska registreras.",
+    "confirm": "Ja, avbryt",
+    "back": "Nej, fortsätt"
+  },
   "save_draft": "Spara utkast",
   "register": "Skicka",
   "no_errands": "Det finns inga ärenden att visa",
@@ -26,7 +32,7 @@
     "event_concerns_individual": "Enskild brukare",
     "event_concerns_group": "Grupp/hela verksamheten",
     "event_concerns_other": "Annat",
-    "event_concerns_describe_note": "(Beskriv med i avsnittet \"Vad har hänt?\")",
+    "event_concerns_describe_note": "(Beskriv mer i avsnittet \"Vad har hänt?\")",
     "event_type_required": "Välj en händelsetyp",
     "event_concerns_required": "Välj vad händelsen berör",
     "event_concerns_group_facility_required": "Välj en plats där avvikelsen inträffat när händelsen berör grupp/hela verksamheten"
@@ -37,7 +43,9 @@
   },
   "user": {
     "title": "Brukare",
-    "description": "En brukare är den individ som berörs av ärendet."
+    "description": "En brukare är den individ som berörs av ärendet.",
+    "not_required_title": "Brukare behövs inte för detta ärende",
+    "not_required_description": "Eftersom händelsen inte berör en enskild brukare behöver du inte ange en brukare. Du kan gå vidare till nästa steg."
   },
   "other_reporter": {
     "title": "Annan rapportör",
@@ -49,6 +57,18 @@
   },
   "deviation_information": {
     "title": "Uppgifter kring avvikelsen"
+  },
+  "wizard": {
+    "step_indicator": "Steg {{current}}/{{total}}",
+    "next": "Nästa",
+    "back": "Tillbaka",
+    "cancel": "Avbryt",
+    "save": "Spara",
+    "submit": "Skicka",
+    "summary": "Sammanfattning",
+    "edit": "Ändra",
+    "complete": "Komplett",
+    "incomplete": "Ej komplett"
   },
   "sequence_of_events": {
     "title": "Händelseförlopp"

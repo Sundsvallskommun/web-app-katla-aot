@@ -1,10 +1,9 @@
 'use client';
-import { ErrandDTO } from '@data-contracts/backend/data-contracts';
+import { ErrandContentLock } from '@components/errand-content-lock/errand-content-lock.component';
 import type { ObjectFieldTemplateProps, RJSFSchema, UiSchema } from '@rjsf/utils';
 import { Checkbox, Disclosure, Divider, Label } from '@sk-web-gui/react';
 import { icons } from 'lucide-react';
 import React, { useState } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { appConfig } from 'src/config/appconfig';
 
 interface ConditionalRule {
@@ -33,6 +32,7 @@ interface SectionDefinition {
 
 interface FormContext {
   originalSchema?: RJSFSchema;
+  compact?: boolean;
 }
 
 function isConditionMet(condition: ConditionalRule['if'], formData: Record<string, unknown>): boolean {
@@ -108,11 +108,6 @@ interface SectionDisclosureProps {
 }
 
 function SectionDisclosure({ section, children }: SectionDisclosureProps) {
-
-      const { watch } = useFormContext<ErrandDTO>();
-    
-      const errandStatus = watch('status');
-      const isDraft = errandStatus === 'DRAFT';
   const [open, setOpen] = useState(section.defaultOpen ?? false);
   const [doneMark, setDoneMark] = useState(false);
 
@@ -140,16 +135,15 @@ function SectionDisclosure({ section, children }: SectionDisclosureProps) {
         <Disclosure.Button />
       </Disclosure.Header>
       <Disclosure.Content>
-        
-        <div className={`${!isDraft && 'pointer-events-none opacity-80'}`}>
-        {children}
-        </div>
-        <Divider className="mt-16" />
-        {appConfig.features.disclosureDoneMark && (
-          <Checkbox className="mt-16" onClick={handleDoneMarkChange} checked={doneMark}>
-            Markera avsnittet som komplett
-          </Checkbox>
-        )}
+        <ErrandContentLock>
+          {children}
+          <Divider className="mt-16" />
+          {appConfig.features.disclosureDoneMark && (
+            <Checkbox className="mt-16" onClick={handleDoneMarkChange} checked={doneMark}>
+              Markera avsnittet som komplett
+            </Checkbox>
+          )}
+        </ErrandContentLock>
       </Disclosure.Content>
     </Disclosure>
   );
@@ -164,7 +158,8 @@ function renderFields(
   visibleFields: Set<string>,
   rows: RowDefinition[],
   rowFieldNames: Set<string>,
-  renderedRows: Set<string>
+  renderedRows: Set<string>,
+  compact = false
 ) {
   return fieldNames.map((fieldName) => {
     // Skip hidden fields
@@ -183,11 +178,11 @@ function renderFields(
       if (visibleRowFields.length === 0) return null;
 
       return (
-        <div key={rowKey} className={`flex ${row.gap || 'gap-32'}`}>
+        <div key={rowKey} className={`flex ${compact ? 'flex-col gap-32' : row.gap || 'gap-32'}`}>
           {visibleRowFields.map((f) => {
             const prop = properties.find((p) => p.name === f);
             return prop ?
-                <div key={f} className="flex-1">
+                <div key={f} className={compact ? '' : 'flex-1'}>
                   {prop.content}
                 </div>
               : null;
@@ -238,12 +233,14 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
     }
   }
 
+  const compact = (ctx as FormContext | undefined)?.compact ?? false;
+
   // If no sections defined, use original flat rendering
   if (sections.length === 0) {
     const renderedRows = new Set<string>();
     return (
       <div className="flex flex-col gap-32">
-        {renderFields(order, properties, visibleFields, rows, rowFieldNames, renderedRows)}
+        {renderFields(order, properties, visibleFields, rows, rowFieldNames, renderedRows, compact)}
       </div>
     );
   }
@@ -267,6 +264,22 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
         // Skip empty sections
         if (sectionFieldsInOrder.length === 0) return null;
 
+        if (compact) {
+          return (
+            <div key={section.id} className="flex flex-col gap-32">
+              {renderFields(
+                sectionFieldsInOrder,
+                properties,
+                visibleFields,
+                rows,
+                rowFieldNames,
+                renderedRows,
+                compact
+              )}
+            </div>
+          );
+        }
+
         return (
           <SectionDisclosure key={section.id} section={section}>
             <div className="flex flex-col gap-32 py-16">
@@ -279,7 +292,7 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
       {/* Render fields not in any section */}
       {unsectionedFields.length > 0 && (
         <div className="flex flex-col gap-32">
-          {renderFields(unsectionedFields, properties, visibleFields, rows, rowFieldNames, renderedRows)}
+          {renderFields(unsectionedFields, properties, visibleFields, rows, rowFieldNames, renderedRows, compact)}
         </div>
       )}
     </div>

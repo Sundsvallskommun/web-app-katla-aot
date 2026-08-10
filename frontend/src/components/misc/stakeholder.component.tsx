@@ -209,7 +209,7 @@ export const StakeholderList: React.FC<{
                 </div>
               </div>
               {shouldShowContactDetails(roles) && (
-                <div className="flex flex-row py-10 gap-10 w-full">
+                <div className="flex flex-col sm:flex-row py-10 gap-10 w-full">
                   <FormControl className="w-full">
                     <FormLabel>E-postadress</FormLabel>
                     <Input
@@ -240,7 +240,7 @@ export const StakeholderList: React.FC<{
               )}
 
               {!hideRoleSelect && (
-                <FormControl required className="w-[calc(50%-10px)]">
+                <FormControl required className="w-full sm:w-[calc(50%-10px)]">
                   <FormLabel>Personens roll</FormLabel>
                   <Select data-cy="stakeholder-role-select" className="w-full" {...register('role')}>
                     {metadata?.roles?.map(

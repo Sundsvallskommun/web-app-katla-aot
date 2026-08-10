@@ -1,19 +1,29 @@
 'use client';
 
+import { MobileWizard } from '@components/wizard/mobile-wizard.component';
 import { VisibleTabs } from '@components/tabs/tabs';
 import { FormValidationProvider } from '@contexts/form-validation-context';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { MOBILE_BREAKPOINT } from 'src/constants/responsive';
+import { useMediaQuery } from 'src/hooks/use-media-query';
 import { ErrandFormDTO } from '@interfaces/errand-form';
 import BaseErrandLayout from '@layouts/base-errand-layout/base-errand-layout.component';
 import { ErrandButtonGroup } from '@layouts/errand-button-group.component';
 import Main from '@layouts/main/main.component';
 import { Tabs } from '@sk-web-gui/react';
+import { useAutoInitReporter } from 'src/hooks/use-auto-init-reporter';
+import { useWizardStore } from 'src/stores/wizard-store';
 import { default as NextLink } from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { FormProvider, Resolver, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
+
+const ReporterInit: React.FC = () => {
+  useAutoInitReporter();
+  return null;
+};
 
 const FormSchema = yup.object({}).required();
 
@@ -22,6 +32,14 @@ export const ErrandLayoutContent: React.FC<{ children: React.ReactNode }> = ({ c
   const pathName = usePathname();
   const registerNewErrand = !!pathName.includes('/registrera');
   const initialFocus = useRef<HTMLBodyElement>(null);
+  const isMobile = useMediaQuery(MOBILE_BREAKPOINT);
+  const wizardReset = useWizardStore((s) => s.reset);
+
+  useEffect(() => {
+    if (registerNewErrand) {
+      wizardReset();
+    }
+  }, [registerNewErrand, wizardReset]);
 
   const setInitalFocus = () => {
     setTimeout(() => {
@@ -36,6 +54,7 @@ export const ErrandLayoutContent: React.FC<{ children: React.ReactNode }> = ({ c
     status: 'DRAFT',
     //TODO: Change channel to ESERVICE_KATLA?
     channel: 'ESERVICE',
+    resolution: 'INFORMED',
   };
 
   const methods = useForm<ErrandFormDTO>({
@@ -70,42 +89,44 @@ export const ErrandLayoutContent: React.FC<{ children: React.ReactNode }> = ({ c
         >
           Hoppa till innehåll
         </NextLink>
+        {registerNewErrand && <ReporterInit />}
         <BaseErrandLayout registerNewErrand={registerNewErrand}>
-          <div className="grow shrink overflow-y-auto">
-            <div className="bg-transparent">
-              <div className="mb-xl">
-                <div className="mx-auto max-w-[108rem] flex flex-row justify-between pt-32 pb-12">
-                  <h1 className="text-h2-lg">{getHeaderTitle()}</h1>
-                  <ErrandButtonGroup isNewErrand={registerNewErrand} />
+          {isMobile && registerNewErrand ?
+            <MobileWizard />
+          : <div className="grow shrink overflow-y-auto">
+              <div className="bg-transparent">
+                <div className="mb-xl">
+                  <div className="mx-auto max-w-[108rem] flex flex-col md:flex-row justify-between pt-16 md:pt-32 pb-12 px-16 md:px-0 gap-12">
+                    <h1 className="text-h2-sm md:text-h2-lg">{getHeaderTitle()}</h1>
+                    <ErrandButtonGroup isNewErrand={registerNewErrand} />
+                  </div>
+                  <Main>
+                    <Tabs
+                      className="border-1 rounded-12 bg-background-content pt-22 pl-5 mx-auto max-w-[108rem]"
+                      tabslistClassName="border-0 -m-b-12 flex-wrap ml-10 overflow-x-auto"
+                      panelsClassName="border-t-1"
+                      size="sm"
+                    >
+                      {VisibleTabs.filter((tab) => tab.visible).map((tab) => {
+                        return (
+                          <Tabs.Item key={tab.label}>
+                            <Tabs.Button className={'text-base whitespace-nowrap'}>
+                              <NextLink href={tab.path} className="block w-full h-full">
+                                {tab.label}
+                              </NextLink>
+                            </Tabs.Button>
+                            <Tabs.Content>
+                              <div className="pt-xl pb-64 px-16 md:px-40">{children}</div>
+                            </Tabs.Content>
+                          </Tabs.Item>
+                        );
+                      })}
+                    </Tabs>
+                  </Main>
                 </div>
-                <Main>
-                  <Tabs
-                    className="border-1 rounded-12 bg-background-content pt-22 pl-5 mx-auto max-w-[108rem]"
-                    tabslistClassName="border-0 -m-b-12 flex-wrap ml-10"
-                    panelsClassName="border-t-1"
-                    size="sm"
-                  >
-                    {VisibleTabs.filter((tab) => tab.visible).map((tab) => {
-                      return (
-                        <Tabs.Item key={tab.label}>
-                          <Tabs.Button className={'text-base'}>
-                            <NextLink href={tab.path} className="block w-full h-full">
-                              {tab.label}
-                            </NextLink>
-                          </Tabs.Button>
-                          <Tabs.Content>
-                            <div className={`pt-xl pb-64 px-40`}>
-                              {children}
-                            </div>
-                          </Tabs.Content>
-                        </Tabs.Item>
-                      );
-                    })}
-                  </Tabs>
-                </Main>
               </div>
             </div>
-          </div>
+          }
         </BaseErrandLayout>
       </FormValidationProvider>
     </FormProvider>

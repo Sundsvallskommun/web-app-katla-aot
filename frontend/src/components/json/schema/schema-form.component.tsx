@@ -79,6 +79,7 @@ interface SchemaFormProps {
   hideSubmitButton?: boolean;
   showValidation?: boolean;
   disabled?: boolean;
+  compact?: boolean;
 }
 
 export default function SchemaForm({
@@ -90,6 +91,7 @@ export default function SchemaForm({
   hideSubmitButton = false,
   showValidation,
   disabled = false,
+  compact = false,
 }: SchemaFormProps) {
   const { t } = useTranslation('validation');
   const [localData, setLocalData] = useState<Record<string, unknown>>({});
@@ -121,7 +123,7 @@ export default function SchemaForm({
   const errorTransformer = useMemo(() => createJsonErrorTransformer(schema, t), [schema, t]);
 
   // Sends the original schema via formContext so ObjectFieldTemplate can read the conditions
-  const formContext = useMemo(() => ({ originalSchema: schema }), [schema]);
+  const formContext = useMemo(() => ({ originalSchema: schema, compact }), [schema, compact]);
 
   return (
     <Form

@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-export const Reporter: React.FC = () => {
+export const ReporterContent: React.FC = () => {
   const { t } = useTranslation();
   const { watch, control } = useFormContext<ErrandDTO>();
   const { stakeholders } = watch();
@@ -46,36 +46,44 @@ export const Reporter: React.FC = () => {
   };
 
   return (
+    <div className="flex flex-col gap-[2.4rem] pb-[2.4rem]">
+      <span className="text-dark-secondary">{t('errand-information:reporter.description')}</span>
+      {getReporterStakeholder(stakeholders) ?
+        <>
+          <StakeholderCard
+            stakeholder={getReporterStakeholder(stakeholders) ?? {}}
+            isEditable
+            hideRemove
+            editableFields={['emails', 'phoneNumbers']}
+            index={reporterIndex}
+            roles={['REPORTER']}
+          />
+          <Checkbox className="-mt-[2.4rem]" checked={otherReporter} onChange={handleOtherReporterChange}>
+            Jag rapporterar åt en annan kollega
+          </Checkbox>
+          {otherReporter && (
+            <div className="flex flex-col gap-[2.4rem]">
+              <h3 className="sk-disclosure-header-title sk-disclosure-header-title-md">
+                {t('errand-information:other_reporter.title')}
+              </h3>
+              <span className="text-dark-secondary">
+                {t('errand-information:other_reporter.description')}
+              </span>
+              <StakeholderList roles={['CONTACT', 'SUBSTITUTEASSIGNMENT']} autoDetectSearch maxCount={1} />
+            </div>
+          )}
+        </>
+      : <Spinner />}
+    </div>
+  );
+};
+
+export const Reporter: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
     <ErrandDisclosure header={t('errand-information:reporter.title')} icon={<UserIcon />} initialOpen={false}>
-      <div className="flex flex-col gap-[2.4rem] pb-[2.4rem]">
-        <span className="text-dark-secondary">{t('errand-information:reporter.description')}</span>
-        {getReporterStakeholder(stakeholders) ?
-          <>
-            <StakeholderCard
-              stakeholder={getReporterStakeholder(stakeholders) ?? {}}
-              isEditable
-              hideRemove
-              editableFields={['emails', 'phoneNumbers']}
-              index={reporterIndex}
-              roles={['REPORTER']}
-            />
-            <Checkbox className="-mt-[2.4rem]" checked={otherReporter} onChange={handleOtherReporterChange}>
-              Jag rapporterar åt en annan kollega
-            </Checkbox>
-            {otherReporter && (
-              <div className="flex flex-col gap-[2.4rem]">
-                <h3 className="sk-disclosure-header-title sk-disclosure-header-title-md">
-                  {t('errand-information:other_reporter.title')}
-                </h3>
-                <span className="text-dark-secondary">
-                  {t('errand-information:other_reporter.description')}
-                </span>
-                <StakeholderList roles={['CONTACT', 'SUBSTITUTEASSIGNMENT']} autoDetectSearch maxCount={1} />
-              </div>
-            )}
-          </>
-        : <Spinner />}
-      </div>
+      <ReporterContent />
     </ErrandDisclosure>
   );
 };

@@ -115,7 +115,7 @@ export function FacilitySearchWidget(props: FieldProps) {
 
   return (
     <div className={className}>
-      <h2 className="text-xl font-bold mb-6">{t('facility_search.section_title', 'Mer information om platsen')}</h2>
+      <h2 className="hidden md:block text-xl font-bold mb-6">{t('facility_search.section_title', 'Mer information om platsen')}</h2>
 
       <FormControl disabled={disabled || readonly || hasSelection || isLoadingLeafNodes} className="w-full">
         <FormLabel className="font-bold">
@@ -152,12 +152,12 @@ export function FacilitySearchWidget(props: FieldProps) {
             <strong className="px-[1rem]">{t('facility_search.card_header', 'Plats där avvikelsen inträffat')}</strong>
           </div>
           <div className="p-[1rem]">
-            <div className="flex justify-between items-start">
-              <div className="flex-1">
-                <p className="text-[1.6rem] font-semibold">{facilityInfo.orgName}</p>
+            <div className="flex flex-col gap-12">
+              <div className="min-w-0">
+                <p className="text-[1.6rem] font-semibold break-words">{facilityInfo.orgName}</p>
               </div>
 
-              <div className="flex gap-8 items-center">
+              <div className="flex gap-8 justify-center">
                 {disabled || readonly || isConfirmed ?
                   <>
                     <span className="flex items-center gap-4 text-gronsta-surface-primary">
@@ -165,7 +165,7 @@ export function FacilitySearchWidget(props: FieldProps) {
                       {t('facility_search.confirmed', 'Bekräftat')}
                     </span>
                     {!disabled && !readonly && (
-                      <Button type="button" variant="tertiary" size="sm" onClick={() => setIsConfirmed(false)}>
+                      <Button type="button" variant="tertiary" size="sm" onClick={() => setIsConfirmed(false)} className="flex-1">
                         {t('facility_search.edit', 'Ändra')}
                       </Button>
                     )}
@@ -177,6 +177,7 @@ export function FacilitySearchWidget(props: FieldProps) {
                       size="sm"
                       leftIcon={<Check size={16} />}
                       onClick={() => setIsConfirmed(true)}
+                      className="flex-1"
                     >
                       {t('facility_search.confirm', 'Bekräfta')}
                     </Button>
@@ -186,6 +187,7 @@ export function FacilitySearchWidget(props: FieldProps) {
                       size="sm"
                       leftIcon={<X size={16} />}
                       onClick={handleRemove}
+                      className="flex-1"
                     >
                       {t('facility_search.remove', 'Ta bort')}
                     </Button>

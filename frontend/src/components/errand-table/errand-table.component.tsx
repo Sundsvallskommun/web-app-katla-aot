@@ -1,52 +1,24 @@
 'use client';
 
 import { StatusLabel } from '@components/misc/status-label.component';
-import { ErrandDTO } from '@data-contracts/backend/data-contracts';
 import { CenterDiv } from '@layouts/center-div.component';
-import { getErrands, getMetadata } from '@services/errand-service/errand-service';
+import { getTypeDisplayName } from '@utils/errand-helpers';
 import { Spinner, Table } from '@sk-web-gui/react';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFilterStore } from 'src/stores/filter-store';
 import { useSortStore } from 'src/stores/sort-store';
 import { ErrandTableFooter } from './errand-table-footer.component';
 import { ErrandTableHeader } from './errand-table-header.component';
-import { useMetadataStore } from 'src/stores/metadata-store';
 import { useRouter } from 'next/navigation';
+import { useOverviewErrands } from 'src/hooks/use-overview-errands';
 
 export const ErrandTable: React.FC = () => {
   const { t } = useTranslation();
   const router = useRouter();
-  const { sortColumn, sortOrder, page, size, rowHeight } = useSortStore();
-  const { statuses } = useFilterStore();
+  const { rowHeight } = useSortStore();
+  const { rows, isLoading, totalPages } = useOverviewErrands();
 
-  const getTypeDisplayName = (errand: ErrandDTO) => {
-    const hasAdverseIncident = errand.labels?.some((l) => l.resourceName === 'ADVERSE_INCIDENT');
-    return hasAdverseIncident ? 'Missförhållande' : 'Avvikelse';
-  };
-
-  const [rows, setRows] = useState<ErrandDTO[]>([]);
-  const [totalPages, setTotalPages] = useState<number>(1);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const { setMetadata } = useMetadataStore();
-
-  useEffect(() => {
-    getMetadata().then((res) => setMetadata(res));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    setIsLoading(true);
-    getErrands({ sortColumn, sortOrder, page, size, statuses }).then((data) => {
-      setRows(data.content ?? []);
-      setTotalPages(data.totalPages ?? 1);
-    });
-    setIsLoading(false);
-  }, [sortColumn, sortOrder, page, size, statuses]);
-
-  if (isLoading)
+  if (isLoading && rows.length === 0)
     return (
       <CenterDiv className="mt-[20rem]">
         <Spinner />

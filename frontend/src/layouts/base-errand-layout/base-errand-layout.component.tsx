@@ -23,13 +23,16 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
   const status = watch('status');
 
   const SingleErrandTitle = () => (
-    <div className="flex items-center gap-24 py-10">
-      <a
-        href={`${process.env.NEXT_PUBLIC_BASE_PATH}/oversikt`}
-        title={`Katla - ${process.env.NEXT_PUBLIC_APP_NAME}. Gå till startsidan.`}
-      >
-        <Logo variant="symbol" className="h-40" />
-      </a>
+    <div className="flex items-center gap-12 md:gap-24 py-8 md:py-10">
+      {registerNewErrand ?
+        <Logo variant="symbol" className="h-32 md:h-40" />
+      : <a
+          href={`${process.env.NEXT_PUBLIC_BASE_PATH}/oversikt`}
+          title={`Katla - ${process.env.NEXT_PUBLIC_APP_NAME}. Gå till startsidan.`}
+        >
+          <Logo variant="symbol" className="h-32 md:h-40" />
+        </a>
+      }
       <span className="text-large">
         {registerNewErrand ?
           <strong className="text-large ml-8 font-bold">{t('filtering:new_errand')}</strong>
@@ -76,35 +79,37 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
               </div>
             }
             mobileMenu={
-              <PopupMenu align="end">
-                <PopupMenu.Button iconButton>
-                  <Menu />
-                </PopupMenu.Button>
-                <PopupMenu.Panel>
-                  <PopupMenu.Group>
-                    <div className="font-bold">{`${user.name} (${user.username})`}</div>
-                  </PopupMenu.Group>
-                  <PopupMenu.Items>
+              registerNewErrand ? undefined : (
+                <PopupMenu align="end">
+                  <PopupMenu.Button iconButton>
+                    <Menu />
+                  </PopupMenu.Button>
+                  <PopupMenu.Panel>
                     <PopupMenu.Group>
-                      <PopupMenu.Item>
-                        <Link href={`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/registrera`}>
-                          {t('filtering:new_errand')}
-                        </Link>
-                      </PopupMenu.Item>
+                      <div className="font-bold">{`${user.name} (${user.username})`}</div>
                     </PopupMenu.Group>
-
-                    {userMenuGroups.map((group, groupindex) => (
-                      <PopupMenu.Group key={`mobilegroup-${groupindex}`}>
-                        {group.elements.map((item, itemindex) => (
-                          <Fragment key={`mobilegroup-${groupindex}-${itemindex}`}>{item.element()}</Fragment>
-                        ))}
+                    <PopupMenu.Items>
+                      <PopupMenu.Group>
+                        <PopupMenu.Item>
+                          <Link href={`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/registrera`}>
+                            {t('filtering:new_errand')}
+                          </Link>
+                        </PopupMenu.Item>
                       </PopupMenu.Group>
-                    ))}
-                  </PopupMenu.Items>
-                </PopupMenu.Panel>
-              </PopupMenu>
+
+                      {userMenuGroups.map((group, groupindex) => (
+                        <PopupMenu.Group key={`mobilegroup-${groupindex}`}>
+                          {group.elements.map((item, itemindex) => (
+                            <Fragment key={`mobilegroup-${groupindex}-${itemindex}`}>{item.element()}</Fragment>
+                          ))}
+                        </PopupMenu.Group>
+                      ))}
+                    </PopupMenu.Items>
+                  </PopupMenu.Panel>
+                </PopupMenu>
+              )
             }
-          ></PageHeader>
+          />
         </div>
 
         {children}

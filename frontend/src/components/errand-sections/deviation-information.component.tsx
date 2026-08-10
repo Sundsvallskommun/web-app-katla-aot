@@ -10,9 +10,10 @@ import { useFormContext } from 'react-hook-form';
 interface SchemaFormFieldProps {
   schemaName: string;
   index: number;
+  compact?: boolean;
 }
 
-function SchemaFormField({ schemaName, index }: SchemaFormFieldProps) {
+function SchemaFormField({ schemaName, index, compact }: SchemaFormFieldProps) {
   const { watch, setValue } = useFormContext<ErrandFormDTO>();
   const { showValidation } = useFormValidation();
   const { schema, uiSchema, loading, error } = useFormSchema(schemaName);
@@ -46,17 +47,22 @@ function SchemaFormField({ schemaName, index }: SchemaFormFieldProps) {
       hideSubmitButton
       showValidation={showValidation}
       disabled={!isDraft}
+      compact={compact}
     />
   );
 }
 
 const SCHEMAS = ['avvikelse-plats-handelse'];
 
-export const DeviationInformation: React.FC = () => {
+interface DeviationInformationProps {
+  compact?: boolean;
+}
+
+export const DeviationInformation: React.FC<DeviationInformationProps> = ({ compact }) => {
   return (
     <div className="flex flex-col gap-24">
       {SCHEMAS.map((schemaName, index) => (
-        <SchemaFormField key={schemaName} schemaName={schemaName} index={index} />
+        <SchemaFormField key={schemaName} schemaName={schemaName} index={index} compact={compact} />
       ))}
     </div>
   );
