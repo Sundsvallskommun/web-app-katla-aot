@@ -1,6 +1,6 @@
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
 import { getErrands, getMetadata } from '@services/errand-service/errand-service';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFilterStore } from 'src/stores/filter-store';
 import { useMetadataStore } from 'src/stores/metadata-store';
 import { useSortStore } from 'src/stores/sort-store';
@@ -18,8 +18,7 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
   const [totalPages, setTotalPages] = useState<number>(1);
   const [totalElements, setTotalElements] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const mobilePageRef = useRef(0);
+  const [mobilePage, setMobilePage] = useState(0);
 
   // Desktop uses the store's page, mobile always starts from 0
   const effectivePage = mode === 'mobile' ? 0 : page;
@@ -32,7 +31,7 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
   // Main fetch — triggered by store changes (sort, filter, pagination)
   // Mobile always fetches from page 0 and resets accumulated rows
   useEffect(() => {
-    mobilePageRef.current = 0;
+    setMobilePage(0);
     setIsLoading(true);
     getErrands({ sortColumn, sortOrder, page: effectivePage, size, statuses })
       .then((data) => {
@@ -45,14 +44,14 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
       });
   }, [sortColumn, sortOrder, effectivePage, size, statuses]);
 
-  const hasMore = mode === 'mobile' ? mobilePageRef.current + 1 < totalPages : page + 1 < totalPages;
+  const hasMore = mode === 'mobile' ? mobilePage + 1 < totalPages : page + 1 < totalPages;
 
   const loadMore = useCallback(() => {
     if (isLoading) return;
-    const nextPage = mobilePageRef.current + 1;
+    const nextPage = mobilePage + 1;
     if (nextPage >= totalPages) return;
 
-    mobilePageRef.current = nextPage;
+    setMobilePage(nextPage);
     setIsLoading(true);
     getErrands({ sortColumn, sortOrder, page: nextPage, size, statuses })
       .then((data) => {
@@ -63,7 +62,7 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
       .finally(() => {
         setIsLoading(false);
       });
-  }, [isLoading, totalPages, sortColumn, sortOrder, size, statuses]);
+  }, [isLoading, mobilePage, totalPages, sortColumn, sortOrder, size, statuses]);
 
   return { rows, isLoading, totalPages, totalElements, hasMore, loadMore, page };
 }

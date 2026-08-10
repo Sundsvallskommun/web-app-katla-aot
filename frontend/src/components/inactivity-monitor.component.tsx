@@ -22,6 +22,7 @@ const WARNING_COUNTDOWN_TIME = TEST_MODE ? 3600000 : parseInt(INACTIVITY_COUNTDO
 export const InactivityMonitor: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const { t } = useTranslation('session');
 
   const [showWarning, setShowWarning] = useState(false);
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -35,13 +36,6 @@ export const InactivityMonitor: React.FC = () => {
     setShowWarning(false);
     router.push('/logout');
   }, [router]);
-
-  const handleStayLoggedIn = useCallback(() => {
-    if (countdownTimerRef.current) clearTimeout(countdownTimerRef.current);
-    setShowWarning(false);
-    startInactivityTimer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const startCountdown = useCallback(() => {
     setShowWarning(true);
@@ -60,6 +54,12 @@ export const InactivityMonitor: React.FC = () => {
       startCountdown();
     }, INACTIVITY_WARNING_TIME);
   }, [isActive, startCountdown]);
+
+  const handleStayLoggedIn = useCallback(() => {
+    if (countdownTimerRef.current) clearTimeout(countdownTimerRef.current);
+    setShowWarning(false);
+    startInactivityTimer();
+  }, [startInactivityTimer]);
 
   useEffect(() => {
     if (!isActive) return;
@@ -89,9 +89,6 @@ export const InactivityMonitor: React.FC = () => {
   if (!INACTIVITY_ENABLED) {
     return null;
   }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { t } = useTranslation('session');
 
   return (
     <Dialog show={showWarning} onClose={handleStayLoggedIn}>
