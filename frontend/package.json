@@ -11,7 +11,7 @@
     "build:test": "cross-env TEST=true next build",
     "start": "next start",
     "generate:middleware-envs": "node middleware-envs-generator.mjs",
-    "generate:contracts": "cross-env NODE_ENV=development npx tsx ./src/swagger-typescript-api.ts",
+    "generate:contracts": "cross-env NODE_ENV=development npx tsx ./src/generate-contracts.ts",
     "lint": "eslint . --ext .ts,.tsx",
     "analyze": "cross-env ANALYZE=true next build",
     "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",

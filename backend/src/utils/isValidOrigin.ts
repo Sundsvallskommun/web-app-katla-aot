@@ -27,3 +27,14 @@ export const getSafeRedirect = (candidate: unknown, fallback: string): string =>
   }
   return `${allowedOrigin}${url.pathname}${url.search}${url.hash}`;
 };
+
+export const getSamlRedirects = (
+  relayState: unknown,
+  successFallback: string,
+): { successRedirect: URL; failureRedirect: URL } => {
+  const urls = typeof relayState === 'string' ? relayState.split(',') : [];
+  const successRedirect = new URL(getSafeRedirect(urls[0], successFallback));
+  const failureRedirect = new URL(getSafeRedirect(urls[1], successRedirect.toString()));
+
+  return { successRedirect, failureRedirect };
+};

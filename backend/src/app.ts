@@ -47,7 +47,7 @@ import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
 import { User } from './interfaces/users.interface';
 import { additionalConverters } from './utils/custom-validation-classes';
-import { getSafeRedirect } from './utils/isValidOrigin';
+import { getSafeRedirect, getSamlRedirects } from './utils/isValidOrigin';
 
 const corsWhitelist = ORIGIN.split(',');
 
@@ -55,6 +55,13 @@ const SessionStoreCreate = SESSION_MEMORY ? createMemoryStore(session) : createF
 const sessionTTL = 4 * 24 * 60 * 60;
 // NOTE: memory uses ms while file uses seconds
 const sessionStore = new SessionStoreCreate(SESSION_MEMORY ? { checkPeriod: sessionTTL * 1000 } : { sessionTTL, path: './data/sessions' });
+
+export const getSessionCookieOptions = (environment: string | undefined): session.CookieOptions => ({
+  httpOnly: true,
+  secure: environment === 'production',
+  sameSite: 'lax',
+  maxAge: sessionTTL * 1000,
+});
 
 // const prisma = new PrismaClient();
 // const apiService = new ApiService();
@@ -204,12 +211,7 @@ class App {
         resave: false,
         saveUninitialized: false,
         store: sessionStore,
-        cookie: {
-          httpOnly: true,
-          secure: NODE_ENV === 'production',
-          sameSite: 'lax',
-          maxAge: sessionTTL * 1000,
-        },
+        cookie: getSessionCookieOptions(NODE_ENV),
       }),
     );
 
@@ -290,30 +292,20 @@ class App {
           return next(err);
         }
 
-        const urls = typeof req?.body?.RelayState === 'string' ? req.body.RelayState.split(',') : [];
-        const successRedirect = new URL(getSafeRedirect(urls[0], SAML_SUCCESS_REDIRECT));
-        const failureRedirect = new URL(getSafeRedirect(urls[1], successRedirect.toString()));
+        const { successRedirect, failureRedirect } = getSamlRedirects(req.body?.RelayState, SAML_SUCCESS_REDIRECT);
+        const failMessage = req.session.messages?.[0];
 
-        const queries = new URLSearchParams(failureRedirect.searchParams);
-
-        if (req.session.messages?.length > 0) {
-          queries.append('failMessage', req.session.messages[0]);
-        } else {
-          queries.append('failMessage', 'SAML_UNKNOWN_ERROR');
+        if (failMessage) {
+          failureRedirect.searchParams.append('failMessage', failMessage);
+          return res.redirect(failureRedirect.toString());
         }
 
-        if (failureRedirect) {
-          res.redirect(failureRedirect.toString());
-        } else {
-          res.redirect(successRedirect.toString());
-        }
+        return res.redirect(successRedirect.toString());
       });
     });
 
     this.app.post(`${BASE_URL_PREFIX}/saml/login/callback`, bodyParser.urlencoded({ extended: false }), (req, res, next) => {
-      const urls = typeof req?.body?.RelayState === 'string' ? req.body.RelayState.split(',') : [];
-      const successRedirect = new URL(getSafeRedirect(urls[0], SAML_SUCCESS_REDIRECT));
-      const failureRedirect = new URL(getSafeRedirect(urls[1], successRedirect.toString()));
+      const { successRedirect, failureRedirect } = getSamlRedirects(req.body?.RelayState, SAML_SUCCESS_REDIRECT);
 
       passport.authenticate('saml', (err, user) => {
         if (err) {
@@ -336,7 +328,7 @@ class App {
               const failMessage = new URLSearchParams(failureRedirect.searchParams);
               failMessage.append('failMessage', 'SAML_UNKNOWN_ERROR');
               failureRedirect.search = failMessage.toString();
-              res.redirect(failureRedirect.toString());
+              return res.redirect(failureRedirect.toString());
             }
             return res.redirect(successRedirect.toString());
           });

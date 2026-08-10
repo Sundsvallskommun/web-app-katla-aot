@@ -7,7 +7,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "dev": "cross-env NODE_ENV=development nodemon",
-    "generate:contracts": "cross-env NODE_ENV=development ts-node ./src/swagger-typescript-api.ts",
+    "generate:contracts": "cross-env NODE_ENV=development ts-node ./src/generate-contracts.ts",
     "build": "tsc && tsc-alias",
     "build:swc": "swc src -d dist --source-maps --copy-files",
     "test": "jest --forceExit --detectOpenHandles",
