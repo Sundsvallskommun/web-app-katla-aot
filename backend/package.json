@@ -61,7 +61,7 @@
     "@types/compression": "^1.7.5",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
+    "@types/express": "^4.17.23",
     "@types/express-session": "^1.18.1",
     "@types/hpp": "^0.2.6",
     "@types/jsonwebtoken": "^9.0.7",
@@ -91,8 +91,7 @@
     "vitest": "4.1.10"
   },
   "resolutions": {
-    "@types/express": "^5.0.0",
-    "@types/express-serve-static-core": "^5.0.6",
+    "@types/express": "^4.17.23",
     "qs": "^6.15.2",
     "form-data": "^4.0.4",
     "multer": "^2.1.1",
