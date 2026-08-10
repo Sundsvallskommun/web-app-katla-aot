@@ -12,13 +12,13 @@ Katla Support Management - a case/errand management web application for Sundsval
 ```bash
 yarn dev                    # Dev server (Next.js)
 yarn build                  # Production build
-yarn lint                   # ESLint (no cache)
+yarn lint                   # ESLint
 yarn type-check             # TypeScript check without emit
-yarn jest --watch           # Unit tests in watch mode
-yarn jest:coverage          # Unit tests with coverage
-yarn cypress                # Cypress interactive (e2e + component)
-yarn cypress:headless       # Cypress headless CI mode
-yarn test:coverage          # Full test suite with merged coverage
+yarn test                   # Unit tests (Vitest)
+yarn test:watch             # Unit tests in watch mode
+yarn test:coverage          # Unit tests with coverage
+yarn e2e                    # Playwright e2e tests (requires built app or running dev server)
+yarn e2e:ui                 # Playwright interactive UI mode
 yarn generate:contracts     # Regenerate API data contracts from swagger
 ```
 
@@ -26,7 +26,8 @@ yarn generate:contracts     # Regenerate API data contracts from swagger
 ```bash
 yarn dev                    # Dev server (nodemon)
 yarn build                  # Compile TypeScript (tsc + tsc-alias)
-yarn test                   # Jest tests
+yarn test                   # Unit tests (Vitest)
+yarn test:watch             # Unit tests in watch mode
 yarn lint                   # ESLint
 yarn generate:contracts     # Regenerate API data contracts from swagger
 yarn type-check             # TypeScript check without emit
@@ -67,15 +68,17 @@ Both frontend and backend have `src/data-contracts/` directories with TypeScript
 - **Prettier**: single quotes, 2-space indent, 120 print width, trailing commas (es5), `experimentalTernaries: true`
 - **ESLint**: `@typescript-eslint/no-explicit-any` is an error; `react-refresh/only-export-components` enforced
 - **Component naming**: `*.component.tsx` pattern
-- **Cypress selectors**: use `data-cy` attributes
+- **Test selectors**: use `data-cy` attributes (Playwright is configured with `testIdAttribute: 'data-cy'`)
 - **Feature flags**: configured in `src/config/appconfig.tsx` via `NEXT_PUBLIC_*` env vars
 - **Language**: UI text and comments are in Swedish; code identifiers in English
 
 ## Testing
 
-- **Jest**: unit/integration tests, config in `jest.config.js`, setup in `jest/setup.js`
-- **Cypress**: e2e tests in `cypress/e2e/`, component tests in `cypress/component/`
-- **Coverage**: merged from both Jest and Cypress via `istanbul-merge`
+- **Vitest (frontend)**: unit/component tests in `frontend/tests/unit/`, config in `vitest.config.mts`, setup in `tests/setup.ts`
+- **Vitest (backend)**: tests in `backend/src/tests/`, config in `vitest.config.mts` (SWC transform for decorator metadata); requires `.env.test.local` (copy from `.env.example.local`)
+- **Playwright (frontend)**: e2e tests in `frontend/e2e/tests/`, helpers in `e2e/utils/`, fixtures in `e2e/fixtures/`, config in `playwright.config.ts`; run against a production build (`yarn build && yarn e2e`) or a running dev server
+- **Coverage**: Vitest v8 coverage via `yarn test:coverage`
+- **CI**: `.github/workflows/ci.yml` runs lint, type-check, unit tests (frontend + backend) and Playwright e2e
 
 ## Environment
 

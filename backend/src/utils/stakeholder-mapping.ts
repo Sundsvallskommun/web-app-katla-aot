@@ -13,7 +13,7 @@ export async function mapStakeholderToStakeholderDTO(stakeholder: Stakeholder, r
 
   if (stakeholder.externalId) {
     personNumber = (await apiService.get<string>({ url: citizenUrl, baseURL }, req)).data.toString();
-  } 
+  }
 
   const { contactChannels = [], parameters, ...rest } = stakeholder;
 

@@ -7,8 +7,9 @@
 
 # testing
 /coverage
-/.nyc_output
-/cypress/downloads
+/test-results
+/playwright-report
+/blob-report
 
 # next.js
 /.next
@@ -44,3 +45,6 @@ yarn-error.log*
 .vercel
 .npmrc
 .yarnrc
+
+# typescript incremental build info
+*.tsbuildinfo
