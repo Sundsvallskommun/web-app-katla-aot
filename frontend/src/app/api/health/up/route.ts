@@ -1,5 +1,4 @@
 import axios from 'axios';
-import https from 'https';
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 
@@ -17,12 +16,8 @@ export const GET = async () => {
   }
 
   try {
-    const agent = new https.Agent({
-      rejectUnauthorized: false,
-    });
-    const health = await axios
-      .get(`${process.env.NEXT_PUBLIC_API_URL}/health/up`, { httpsAgent: agent })
-      .then((res) => res.data);
+    // Certifikatvalidering ska vara aktiv; använd NODE_EXTRA_CA_CERTS för interna CA-certifikat
+    const health = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/health/up`).then((res) => res.data);
 
     return new NextResponse(JSON.stringify(health), { status: 200 });
   } catch (error) {

@@ -29,6 +29,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
+import { rateLimit } from 'express-rate-limit';
 import session from 'express-session';
 import { existsSync, mkdirSync } from 'fs';
 import helmet from 'helmet';
@@ -46,8 +47,7 @@ import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
 import { User } from './interfaces/users.interface';
 import { additionalConverters } from './utils/custom-validation-classes';
-import { isValidOrigin } from './utils/isValidOrigin';
-import { isValidUrl } from './utils/util';
+import { getSafeRedirect } from './utils/isValidOrigin';
 
 const corsWhitelist = ORIGIN.split(',');
 
@@ -178,6 +178,9 @@ class App {
   }
 
   private initializeMiddlewares() {
+    // Krävs för korrekt klient-IP (rate limiting) och secure-cookies bakom reverse proxy
+    this.app.set('trust proxy', 1);
+
     this.app.use(morgan(LOG_FORMAT, { stream }));
     this.app.use(hpp());
     this.app.use(helmet());
@@ -187,11 +190,26 @@ class App {
     this.app.use(cookieParser());
 
     this.app.use(
+      rateLimit({
+        windowMs: 15 * 60 * 1000,
+        limit: 6000,
+        standardHeaders: true,
+        legacyHeaders: false,
+      }),
+    );
+
+    this.app.use(
       session({
         secret: SECRET_KEY,
         resave: false,
         saveUninitialized: false,
         store: sessionStore,
+        cookie: {
+          httpOnly: true,
+          secure: NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: sessionTTL * 1000,
+        },
       }),
     );
 
@@ -253,10 +271,7 @@ class App {
         next();
       },
       (req, res, next) => {
-        let successRedirect = SAML_SUCCESS_REDIRECT;
-        if (typeof req.query.successRedirect === 'string' && isValidUrl(req.query.successRedirect) && isValidOrigin(req.query.successRedirect)) {
-          successRedirect = req.query.successRedirect;
-        }
+        const successRedirect = getSafeRedirect(req.query.successRedirect, SAML_SUCCESS_REDIRECT);
 
         samlStrategy.logout(req as any, () => {
           req.logout(err => {
@@ -275,19 +290,9 @@ class App {
           return next(err);
         }
 
-        let successRedirect: URL, failureRedirect: URL;
-        const urls = req?.body?.RelayState.split(',');
-
-        if (isValidUrl(urls[0]) && isValidOrigin(urls[0])) {
-          successRedirect = new URL(urls[0]);
-        } else {
-          successRedirect = new URL(SAML_SUCCESS_REDIRECT);
-        }
-        if (isValidUrl(urls[1]) && isValidOrigin(urls[1])) {
-          failureRedirect = new URL(urls[1]);
-        } else {
-          failureRedirect = successRedirect;
-        }
+        const urls = typeof req?.body?.RelayState === 'string' ? req.body.RelayState.split(',') : [];
+        const successRedirect = new URL(getSafeRedirect(urls[0], SAML_SUCCESS_REDIRECT));
+        const failureRedirect = new URL(getSafeRedirect(urls[1], successRedirect.toString()));
 
         const queries = new URLSearchParams(failureRedirect.searchParams);
 
@@ -306,20 +311,9 @@ class App {
     });
 
     this.app.post(`${BASE_URL_PREFIX}/saml/login/callback`, bodyParser.urlencoded({ extended: false }), (req, res, next) => {
-      let successRedirect: URL, failureRedirect: URL;
-
-      const urls = req?.body?.RelayState.split(',');
-
-      if (isValidUrl(urls[0]) && isValidOrigin(urls[0])) {
-        successRedirect = new URL(urls[0]);
-      } else {
-        successRedirect = new URL(SAML_SUCCESS_REDIRECT);
-      }
-      if (isValidUrl(urls[1]) && isValidOrigin(urls[1])) {
-        failureRedirect = new URL(urls[1]);
-      } else {
-        failureRedirect = successRedirect;
-      }
+      const urls = typeof req?.body?.RelayState === 'string' ? req.body.RelayState.split(',') : [];
+      const successRedirect = new URL(getSafeRedirect(urls[0], SAML_SUCCESS_REDIRECT));
+      const failureRedirect = new URL(getSafeRedirect(urls[1], successRedirect.toString()));
 
       passport.authenticate('saml', (err, user) => {
         if (err) {
