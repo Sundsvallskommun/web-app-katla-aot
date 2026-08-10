@@ -31,6 +31,7 @@ import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import session from 'express-session';
 import { existsSync, mkdirSync } from 'fs';
 import helmet from 'helmet';
@@ -200,7 +201,11 @@ class App {
   }
 
   private initializeMiddlewares() {
+    this.app.set('trust proxy', 1);
     this.app.use(morgan(LOG_FORMAT ?? 'default', { stream }));
+    // Grundläggande rate limiting för alla rutter (inloggningsflöden, swagger, proxade API:er).
+    // Justera per driftmiljö; miljöer bakom en gateway kan även rate-limita i kanten.
+    this.app.use(rateLimit({ windowMs: 15 * 60 * 1000, limit: 1000, standardHeaders: true, legacyHeaders: false }));
     this.app.use(hpp());
     this.app.use(helmet());
     this.app.use(compression());
