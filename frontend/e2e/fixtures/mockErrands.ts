@@ -18,16 +18,8 @@ export const mockErrands: PageErrandDTO = {
           lastName: 'Testsson',
           address: '',
           zipCode: '',
-          contactChannels: [
-            {
-              type: 'PHONE',
-              value: MOCK_PHONE_NUMBER,
-            },
-            {
-              type: 'EMAIL',
-              value: MOCK_EMAIL,
-            },
-          ],
+          emails: [MOCK_EMAIL],
+          phoneNumbers: [MOCK_PHONE_NUMBER],
         },
       ],
       externalTags: [],

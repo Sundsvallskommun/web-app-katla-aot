@@ -5,6 +5,9 @@ import { defineConfig } from 'vitest/config';
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  oxc: {
+    jsx: 'react-jsx',
+  },
   resolve: {
     alias: {
       '@app': path.resolve(dirname, 'src/app'),
@@ -19,6 +22,7 @@ export default defineConfig({
       '@middlewares': path.resolve(dirname, 'src/utils/middlewares'),
       '@public': path.resolve(dirname, 'public'),
       '@data-contracts': path.resolve(dirname, 'src/data-contracts'),
+      src: path.resolve(dirname, 'src'),
     },
   },
   test: {
@@ -34,7 +38,7 @@ export default defineConfig({
       provider: 'v8',
       reportsDirectory: 'coverage',
       reporter: ['text-summary', 'lcov', 'json'],
-      include: ['src/**'],
+      include: ['src/**/*.{ts,tsx}'],
       exclude: [
         'src/app/**',
         'src/interfaces/**',

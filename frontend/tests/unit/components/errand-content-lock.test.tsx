@@ -1,16 +1,13 @@
-import { ErrandContentLock } from '@components/errand-content-lock/errand-content-lock.component';
 import { ErrandDisclosure } from '@components/disclosure/errand-information-disclosure.component';
+import { ErrandContentLock } from '@components/errand-content-lock/errand-content-lock.component';
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
-import { act } from 'react';
-import { createRoot, Root } from 'react-dom/client';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { describe, expect, it, vi } from 'vitest';
 
-jest.mock('src/config/appconfig', () => ({ appConfig: { features: { disclosureDoneMark: false } } }), {
-  virtual: true,
-});
-
-const globalWithActEnvironment = globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean };
-globalWithActEnvironment.IS_REACT_ACT_ENVIRONMENT = true;
+vi.mock('src/config/appconfig', () => ({
+  appConfig: { features: { disclosureDoneMark: false } },
+}));
 
 const ErrandForm: React.FC<{ children: React.ReactNode; status: string }> = ({ children, status }) => {
   const methods = useForm<ErrandDTO>({ defaultValues: { status } });
@@ -19,26 +16,8 @@ const ErrandForm: React.FC<{ children: React.ReactNode; status: string }> = ({ c
 };
 
 describe('ErrandContentLock', () => {
-  let container: HTMLDivElement;
-  let root: Root;
-
-  beforeEach(() => {
-    container = document.createElement('div');
-    document.body.appendChild(container);
-    root = createRoot(container);
-  });
-
-  afterEach(() => {
-    act(() => root.unmount());
-    container.remove();
-  });
-
-  const render = (component: React.ReactNode) => {
-    act(() => root.render(component));
-  };
-
   it('keeps draft controls enabled', () => {
-    render(
+    const { container } = render(
       <ErrandForm status="DRAFT">
         <ErrandContentLock>
           <input aria-label="Ärenderubrik" />
@@ -47,11 +26,11 @@ describe('ErrandContentLock', () => {
     );
 
     expect(container.querySelector('fieldset')).not.toBeDisabled();
-    expect(container.querySelector('input')).not.toBeDisabled();
+    expect(screen.getByRole('textbox', { name: 'Ärenderubrik' })).not.toBeDisabled();
   });
 
   it('disables controls when the errand has been sent', () => {
-    render(
+    const { container } = render(
       <ErrandForm status="NEW">
         <ErrandContentLock>
           <input aria-label="Ärenderubrik" />
@@ -60,11 +39,11 @@ describe('ErrandContentLock', () => {
     );
 
     expect(container.querySelector('fieldset')).toBeDisabled();
-    expect(container.querySelector('input')).toBeDisabled();
+    expect(screen.getByRole('textbox', { name: 'Ärenderubrik' })).toBeDisabled();
   });
 
   it('keeps the disclosure toggle interactive for a sent errand', () => {
-    render(
+    const { container } = render(
       <ErrandForm status="NEW">
         <ErrandDisclosure header="Om ärendet" icon={<span aria-hidden="true" />} initialOpen={false}>
           <input aria-label="Ärenderubrik" />
@@ -72,11 +51,11 @@ describe('ErrandContentLock', () => {
       </ErrandForm>
     );
 
-    const toggle = container.querySelector('button');
+    const toggle = screen.getByRole('button');
     expect(toggle).toBeEnabled();
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
 
-    act(() => toggle?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+    fireEvent.click(toggle);
 
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
     expect(container.querySelector('input')).toBeDisabled();

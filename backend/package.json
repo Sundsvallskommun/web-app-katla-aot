@@ -16,7 +16,7 @@
     "lint:fix": "eslint src/ --fix",
     "deploy:prod": "npm run build && pm2 start ecosystem.config.js --only prod",
     "deploy:dev": "pm2 start ecosystem.config.js --only dev",
-    "type-check": "tsc --pretty --noEmit",
+    "type-check": "tsc --pretty --noEmit && tsc --pretty --noEmit --project tsconfig.test.json",
     "lint:strict": "eslint src/ --max-warnings=0 --cache --cache-location node_modules/.cache/eslint/",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\""

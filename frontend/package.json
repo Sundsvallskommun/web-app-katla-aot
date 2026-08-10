@@ -21,7 +21,7 @@
     "test:coverage": "vitest run --coverage",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
-    "type-check": "tsc --pretty --noEmit",
+    "type-check": "tsc --pretty --noEmit && tsc --project tests/tsconfig.json --pretty --noEmit && tsc --project e2e/tsconfig.json --pretty --noEmit",
     "lint:fix": "eslint src/ e2e/ tests/ --fix",
     "lint:strict": "eslint src/ e2e/ tests/ --max-warnings=0 --cache --cache-location node_modules/.cache/eslint/",
     "format": "prettier --write \"{src,e2e,tests}/**/*.{ts,tsx}\"",
