@@ -2,6 +2,7 @@
 import type { WidgetProps } from '@rjsf/utils';
 import { Combobox } from '@sk-web-gui/react';
 import { useTranslation } from 'react-i18next';
+
 import { getCommonProps, getWidgetOptions } from './types';
 
 const DEFAULT_CLASS = 'w-full';
@@ -13,10 +14,14 @@ export function ComboboxWidget(props: WidgetProps) {
 
   const schemaRecord = props.schema as Record<string, unknown>;
   const multiple = optMultiple ?? schemaRecord.type === 'array';
-  const placeholder = customPlaceholder || t('combobox_placeholder');
-  const currentValue: string | string[] = multiple
-    ? (Array.isArray(value) ? value.map(String) : value ? [String(value)] : [])
-    : (typeof value === 'string' ? value : '');
+  const placeholder = (customPlaceholder ?? '') || t('combobox_placeholder');
+  const currentValue: string | string[] =
+    multiple ?
+      Array.isArray(value) ? value.map(String)
+      : typeof value === 'string' || typeof value === 'number' ? [String(value)]
+      : []
+    : typeof value === 'string' ? value
+    : '';
 
   const handleChange = (e: { target: { value: unknown } }) => {
     const raw = e?.target?.value;
@@ -32,7 +37,7 @@ export function ComboboxWidget(props: WidgetProps) {
     <Combobox
       id={id}
       className={className}
-      multiple={!!multiple}
+      multiple={multiple}
       value={currentValue}
       disabled={disabled || readonly}
       onChange={handleChange}

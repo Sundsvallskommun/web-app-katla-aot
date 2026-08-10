@@ -1,16 +1,17 @@
 'use client';
 
 import { Button, cx } from '@sk-web-gui/react';
+import { capitalize } from 'lodash';
 import { LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { capitalize } from 'lodash';
 
 interface LogoutButtonProps {
   smallSideBar?: boolean;
+  testId?: string;
 }
 
-export const LogoutButton: React.FC<LogoutButtonProps> = ({ smallSideBar = false }) => {
+export const LogoutButton: React.FC<LogoutButtonProps> = ({ smallSideBar = false, testId = 'logout-button' }) => {
   const { t } = useTranslation();
   const router = useRouter();
 
@@ -23,7 +24,7 @@ export const LogoutButton: React.FC<LogoutButtonProps> = ({ smallSideBar = false
   return (
     <div className="flex justify-center w-full">
       <Button
-        data-cy="logout-button"
+        data-cy={testId}
         onClick={handleLogout}
         variant="ghost"
         size="md"

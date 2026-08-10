@@ -20,12 +20,12 @@ export const isEmpty = (value: string | number | object): boolean => {
 };
 
 export const localApi = (...parts: string[]): string => {
-  const urlParts = [BASE_URL_PREFIX, ...parts];
+  const urlParts = [BASE_URL_PREFIX ?? '', ...parts];
   return urlParts.map(pathPart => pathPart.replace(/(\/$)/g, '')).join('/');
 };
 
 export const apiURL = (...parts: string[]): string => {
-  const urlParts = [API_BASE_URL, ...parts];
+  const urlParts = [API_BASE_URL ?? '', ...parts];
   return urlParts.map(pathPart => pathPart.replace(/(^\/|\/$)/g, '')).join('/');
 };
 
@@ -34,7 +34,7 @@ export const luhnCheck = (str = ''): boolean => {
   //str += '';
 
   for (let i = 0, l = str.length; i < l; i++) {
-    let v = parseInt(str[i]);
+    let v = parseInt(str.charAt(i));
     v *= 2 - (i % 2);
     if (v > 9) {
       v -= 9;

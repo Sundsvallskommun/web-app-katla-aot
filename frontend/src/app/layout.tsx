@@ -1,6 +1,8 @@
 import '@styles/tailwind.scss';
-import { ReactNode, Suspense } from 'react';
+
 import AppLayout from '@layouts/app/app-layout.component';
+import { ReactNode, Suspense } from 'react';
+
 import i18nConfig from './i18nConfig';
 
 const RootLayout = ({ children }: { children: ReactNode }) => {

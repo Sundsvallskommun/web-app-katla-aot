@@ -1,26 +1,35 @@
+import axios, { AxiosRequestConfig, AxiosResponse, RawAxiosRequestHeaders } from 'axios';
+import { Request } from 'express';
+import { v4 as uuidv4 } from 'uuid';
+
 import { HttpException } from '@/exceptions/HttpException';
+import ApiResponse from '@/interfaces/api-service.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { User } from '@/interfaces/users.interface';
 import { logger } from '@/utils/logger';
 import { apiURL } from '@/utils/util';
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import { Request } from 'express';
-import ApiTokenService from './api-token.service';
-import { v4 as uuidv4 } from 'uuid';
 
-class ApiResponse<T> {
-  data: T;
-  message: string;
-}
+import ApiTokenService from './api-token.service';
 
 interface ApiRequest extends Omit<Partial<RequestWithUser>, 'session'> {
   session: Omit<Partial<Request['session']>, 'user'> & { user?: Pick<User, 'username'> };
 }
 
+const logAxiosErrorResponse = (response: AxiosResponse<unknown>): void => {
+  // Request-datat är vid det här laget serialiserat av axios till en sträng.
+  const requestData = response.config.data as string | undefined;
+  logger.error(`ERROR: API request failed with status: ${response.status}`);
+  logger.error(`Error details: ${JSON.stringify(response.data)}`);
+  logger.error(`Error url: ${response.config.baseURL ?? ''}/${response.config.url}`);
+  logger.error(`Error data: ${requestData?.slice(0, 1500)}`);
+  logger.error(`Error method: ${response.config.method}`);
+  logger.error(`Error headers: ${JSON.stringify(response.config.headers)}`);
+};
+
 class ApiService {
   private apiTokenService = new ApiTokenService();
 
-  private async request<T>(config: AxiosRequestConfig, req: ApiRequest): Promise<ApiResponse<T>> {
+  private async request<T>(config: AxiosRequestConfig, req?: ApiRequest): Promise<ApiResponse<T>> {
     const token = await this.apiTokenService.getToken();
 
     const defaultHeaders = {
@@ -31,11 +40,14 @@ class ApiService {
     };
     const defaultParams = {};
 
+    // Anropare skickar alltid vanliga header-objekt; typen breddas för att kunna spridas säkert.
+    const configHeaders: RawAxiosRequestHeaders | undefined = config.headers;
+
     const preparedConfig: AxiosRequestConfig = {
       ...config,
-      headers: { ...defaultHeaders, ...config.headers },
-      params: { ...defaultParams, ...config.params },
-      url: config.baseURL ? config.url : apiURL(config.url),
+      headers: { ...defaultHeaders, ...configHeaders },
+      params: { ...defaultParams, ...(config.params as Record<string, unknown> | undefined) },
+      url: config.baseURL ? config.url : apiURL(config.url ?? ''),
     };
 
     try {
@@ -43,31 +55,24 @@ class ApiService {
         logger.info(`API request [${preparedConfig.method}]: ${preparedConfig.url}`);
         logger.info(`x-request-id: ${defaultHeaders['X-Request-Id']}`);
       }
-      const res = await axios(preparedConfig);
+      const res = await axios<T>(preparedConfig);
 
-      if (!res.headers.location) {
+      const location = res.headers.location as string | undefined;
+      if (!location) {
         return { data: res.data, message: 'success' };
       }
 
-      const getRes = await axios.get(res.headers.location, { baseURL: config.baseURL, headers: defaultHeaders });
+      const getRes = await axios.get<T>(location, { baseURL: config.baseURL, headers: defaultHeaders });
 
       return { data: getRes.data, message: 'success' };
-    } catch (error: unknown | AxiosError) {
-      if (axios.isAxiosError(error) && (error as AxiosError).response?.status === 404) {
-        logger.error(`ERROR: API request failed with status: ${error.response?.status}`);
-        logger.error(`Error details: ${JSON.stringify(error.response.data)}`);
-        logger.error(`Error url: ${error.response.config.baseURL || ''}/${error.response.config.url}`);
-        logger.error(`Error data: ${error.response.config.data?.slice(0, 1500)}`);
-        logger.error(`Error method: ${error.response.config.method}`);
-        logger.error(`Error headers: ${error.response.config.headers}`);
+    } catch (error) {
+      const response = axios.isAxiosError(error) ? error.response : undefined;
+      if (response?.status === 404) {
+        logAxiosErrorResponse(response);
         throw new HttpException(404, 'Not found');
-      } else if (axios.isAxiosError(error) && (error as AxiosError).response?.data) {
-        logger.error(`ERROR: API request failed with status: ${error.response?.status}`);
-        logger.error(`Error details: ${JSON.stringify(error.response.data)}`);
-        logger.error(`Error url: ${error.response.config.baseURL || ''}/${error.response.config.url}`);
-        logger.error(`Error data: ${error.response.config.data?.slice(0, 1500)}`);
-        logger.error(`Error method: ${error.response.config.method}`);
-        logger.error(`Error headers: ${error.response.config.headers}`);
+      }
+      if (response?.data) {
+        logAxiosErrorResponse(response);
       } else {
         console.error(`Unknown error: ${JSON.stringify(error).slice(0, 150)}`);
         logger.error(`Unknown error: ${JSON.stringify(error).slice(0, 150)}`);

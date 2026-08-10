@@ -6,8 +6,8 @@ interface MainProps {
 
 export default function Main({ children }: MainProps) {
   return (
-      <main id="content" tabIndex={-1}>
-        {children}
-      </main>
+    <main id="content" tabIndex={-1}>
+      {children}
+    </main>
   );
 }

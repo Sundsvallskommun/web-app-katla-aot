@@ -16,14 +16,16 @@ export const GET = async () => {
   }
 
   try {
-    // Certifikatvalidering ska vara aktiv; använd NODE_EXTRA_CA_CERTS för interna CA-certifikat
-    const health = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/health/up`).then((res) => res.data);
+    // TLS certificate validation stays enabled. Internal CAs should be supplied through NODE_EXTRA_CA_CERTS.
+    const health = await axios
+      .get<unknown>(`${process.env.NEXT_PUBLIC_API_URL}/health/up`)
+      .then((response) => response.data);
 
     return new NextResponse(JSON.stringify(health), { status: 200 });
-  } catch (error) {
+  } catch {
     return new NextResponse(
       JSON.stringify({
-        error: (error as object).toString(),
+        error: 'Upstream health check failed',
         status: 'ERROR!',
       }),
       { status: 500 }

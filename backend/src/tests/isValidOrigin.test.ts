@@ -1,3 +1,5 @@
+import { describe, expect, it } from 'vitest';
+
 import { getSafeRedirect, getSamlRedirects, isValidOrigin } from '@/utils/isValidOrigin';
 
 describe('redirect origin validation', () => {
@@ -19,6 +21,10 @@ describe('redirect origin validation', () => {
     expect(getSafeRedirect(candidate, fallback)).toBe(fallback);
   });
 
+  it('returns false instead of throwing for an invalid URL', () => {
+    expect(isValidOrigin('not-a-url')).toBe(false);
+  });
+
   it('uses the configured fallback for missing RelayState', () => {
     const { successRedirect, failureRedirect } = getSamlRedirects(undefined, fallback);
 
@@ -27,10 +33,7 @@ describe('redirect origin validation', () => {
   });
 
   it('rejects untrusted RelayState redirects independently', () => {
-    const { successRedirect, failureRedirect } = getSamlRedirects(
-      'https://evil.example/success,http://localhost:3000/failure',
-      fallback,
-    );
+    const { successRedirect, failureRedirect } = getSamlRedirects('https://evil.example/success,http://localhost:3000/failure', fallback);
 
     expect(successRedirect.toString()).toBe(fallback);
     expect(failureRedirect.toString()).toBe('http://localhost:3000/failure');

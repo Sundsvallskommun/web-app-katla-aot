@@ -7,7 +7,8 @@ export function FieldTemplate(props: FieldTemplateProps) {
   const hideLabel = uiSchema?.['ui:options']?.hideLabel;
   const hideDescription = uiSchema?.['ui:options']?.hideDescription;
   const descriptionBelow = uiSchema?.['ui:options']?.descriptionBelow;
-  const className = uiSchema?.['ui:options']?.className;
+  const classNameOption = uiSchema?.['ui:options']?.className;
+  const className = typeof classNameOption === 'string' ? classNameOption : undefined;
   const isHiddenWidget = uiSchema?.['ui:widget'] === 'hidden';
 
   if (isHiddenWidget) {
@@ -18,8 +19,7 @@ export function FieldTemplate(props: FieldTemplateProps) {
   const formControlClassName = className ? `form-row ${className}` : 'form-row w-full';
 
   // Get description from ui:description or schema.description
-  const descriptionText =
-    (uiSchema?.['ui:description'] as string) || (schema?.description as string) || '';
+  const descriptionText = (uiSchema?.['ui:description'] ?? '') || (schema.description ?? '');
 
   const renderDescription = (position: 'above' | 'below') => {
     if (!descriptionText || hideDescription) return null;
@@ -48,9 +48,7 @@ export function FieldTemplate(props: FieldTemplateProps) {
 
       {descriptionBelow && renderDescription('below')}
 
-      {hasError && (
-        <FormErrorMessage className="text-error">{rawErrors[0]}</FormErrorMessage>
-      )}
+      {hasError && <FormErrorMessage className="text-error">{rawErrors[0]}</FormErrorMessage>}
 
       {help}
     </FormControl>

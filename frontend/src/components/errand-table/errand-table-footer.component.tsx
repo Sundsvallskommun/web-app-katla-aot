@@ -36,7 +36,9 @@ export const ErrandTableFooter: React.FC<{ totalPages: number }> = ({ totalPages
           fitContainer
           pages={totalPages}
           activePage={page + 1}
-          changePage={(p: number) => setPage(p - 1)}
+          changePage={(p: number) => {
+            setPage(p - 1);
+          }}
         />
       </div>
       <div className="sk-table-bottom-section">
@@ -47,7 +49,9 @@ export const ErrandTableFooter: React.FC<{ totalPages: number }> = ({ totalPages
           size="sm"
           id="rowHeight"
           variant="tertiary"
-          onChange={(e) => setRowHeight(e.target.value)}
+          onChange={(e) => {
+            setRowHeight(e.target.value);
+          }}
           value={rowHeight}
         >
           <Select.Option value="normal">Normal</Select.Option>

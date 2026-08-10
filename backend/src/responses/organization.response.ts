@@ -31,10 +31,10 @@ export class OrgTreeNodeDTO {
 
 export class OrgLeafNodeDTO {
   @IsNumber()
-  orgId: number;
+  orgId!: number;
 
   @IsString()
-  orgName: string;
+  orgName!: string;
 
   @IsNumber()
   @IsOptional()

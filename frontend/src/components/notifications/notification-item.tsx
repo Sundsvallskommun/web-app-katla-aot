@@ -1,11 +1,12 @@
-import { cx, useSnackbar } from '@sk-web-gui/react';
-import NextLink from 'next/link';
-import { NotificationRenderIcon } from './notification-render-icon';
+import { NotificationDTO } from '@data-contracts/backend/data-contracts';
 import { acknowledgeNotification, getNotifications } from '@services/errand-service/errand-service';
 import { prettyTime } from '@services/helper-service';
-import { NotificationDTO } from '@data-contracts/backend/data-contracts';
-import { useNotificationStore } from 'src/stores/notification-store';
+import { cx, useSnackbar } from '@sk-web-gui/react';
 import { sortBy } from 'lodash';
+import NextLink from 'next/link';
+import { useNotificationStore } from 'src/stores/notification-store';
+
+import { NotificationRenderIcon } from './notification-render-icon';
 
 const labelBySubType: Record<string, string> = {
   ATTACHMENT: 'Ny bilaga',
@@ -30,7 +31,7 @@ export const NotificationItem: React.FC<{ notification: NotificationDTO }> = ({ 
     try {
       await acknowledgeNotification(notification);
 
-      getNotifications().then((res) => {
+      void getNotifications().then((res) => {
         setActiveNotifications(
           sortBy(
             res.filter((n) => !n.acknowledged),
@@ -64,17 +65,19 @@ export const NotificationItem: React.FC<{ notification: NotificationDTO }> = ({ 
       </div>
       <div className="flex-grow">
         <div>
-          <strong>{notification.description + ' › '}</strong>
+          <strong>{(notification.description ?? '') + ' › '}</strong>
           <NextLink
             href={`/arende/${notification.errandNumber}/grundinformation`}
             target="_blank"
-            onClick={handleAcknowledge}
+            onClick={() => {
+              void handleAcknowledge();
+            }}
             className="underline whitespace-nowrap"
           >
-            {notification.errandNumber || 'Till ärendet'}
+            {(notification.errandNumber ?? '') || 'Till ärendet'}
           </NextLink>
         </div>
-        <div>Från: {senderFallback(notification.createdByFullName || notification.createdBy)}</div>
+        <div>Från: {senderFallback((notification.createdByFullName ?? '') || notification.createdBy)}</div>
         {subTypeLabel ?
           <div>Händelse: {subTypeLabel}</div>
         : null}

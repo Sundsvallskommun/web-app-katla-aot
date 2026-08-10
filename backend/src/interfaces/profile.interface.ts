@@ -5,5 +5,5 @@ export interface Profile extends SamlProfile {
   givenName: string;
   surname: string;
   username: string;
-  attributes: { [key: string]: any };
+  attributes: Record<string, unknown>;
 }

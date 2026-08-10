@@ -1,5 +1,6 @@
-import { Notification } from '@/data-contracts/supportmanagement/data-contracts';
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
+
+import { Notification } from '@/data-contracts/supportmanagement/data-contracts';
 
 export class NotificationDTO implements Notification {
   @IsOptional()

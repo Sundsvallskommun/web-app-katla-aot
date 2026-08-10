@@ -3,20 +3,20 @@ import { FacilityInfoDTO, OrgLeafNodeDTO, UserEmploymentDTO } from '@data-contra
 import type { FieldProps } from '@rjsf/utils';
 import { getUserEmployments } from '@services/employee-service/employee-service';
 import { getOrgLeafNodes } from '@services/organization/organization-service';
-import { Check, X } from 'lucide-react';
 import { Button, Combobox, FormControl, FormLabel } from '@sk-web-gui/react';
+import { Check, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export function FacilitySearchWidget(props: FieldProps) {
+export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
   const { t } = useTranslation('forms');
   const { idSchema, formData, disabled, readonly, onChange, uiSchema } = props;
   const id = idSchema.$id;
 
-  const uiOptions = (uiSchema?.['ui:options'] || {}) as Record<string, unknown>;
+  const uiOptions = (uiSchema?.['ui:options'] ?? {}) as Record<string, unknown>;
   const className = (uiOptions.className as string) || 'w-full';
 
-  const facilityInfo = formData as FacilityInfoDTO | undefined;
+  const facilityInfo = formData;
 
   const employmentsLoadedRef = useRef(false);
   const autoSelectedRef = useRef(false);
@@ -67,7 +67,7 @@ export function FacilitySearchWidget(props: FieldProps) {
       }
     };
 
-    loadEmployments();
+    void loadEmployments();
   }, [disabled, readonly, formData?.orgId, selectFacility]);
 
   const handleRemove = useCallback(async () => {
@@ -115,9 +115,11 @@ export function FacilitySearchWidget(props: FieldProps) {
 
   return (
     <div className={className}>
-      <h2 className="hidden md:block text-xl font-bold mb-6">{t('facility_search.section_title', 'Mer information om platsen')}</h2>
+      <h2 className="hidden md:block text-xl font-bold mb-6">
+        {t('facility_search.section_title', 'Mer information om platsen')}
+      </h2>
 
-      <FormControl disabled={disabled || readonly || hasSelection || isLoadingLeafNodes} className="w-full">
+      <FormControl disabled={!!disabled || !!readonly || hasSelection || isLoadingLeafNodes} className="w-full">
         <FormLabel className="font-bold">
           {t('facility_search.add_label', 'Lägg till plats där avvikelsen inträffat')}
         </FormLabel>
@@ -134,7 +136,7 @@ export function FacilitySearchWidget(props: FieldProps) {
               : t('facility_search.search_placeholder', 'Sök organisation...')
             }
             className="w-full"
-            value={hasSelection ? facilityInfo.orgName || '' : undefined}
+            value={hasSelection ? (facilityInfo.orgName ?? '') : undefined}
           />
           <Combobox.List>
             {filteredLeafNodes.map((node) => (
@@ -165,7 +167,15 @@ export function FacilitySearchWidget(props: FieldProps) {
                       {t('facility_search.confirmed', 'Bekräftat')}
                     </span>
                     {!disabled && !readonly && (
-                      <Button type="button" variant="tertiary" size="sm" onClick={() => setIsConfirmed(false)} className="flex-1">
+                      <Button
+                        type="button"
+                        variant="tertiary"
+                        size="sm"
+                        onClick={() => {
+                          setIsConfirmed(false);
+                        }}
+                        className="flex-1"
+                      >
                         {t('facility_search.edit', 'Ändra')}
                       </Button>
                     )}
@@ -176,7 +186,9 @@ export function FacilitySearchWidget(props: FieldProps) {
                       variant="primary"
                       size="sm"
                       leftIcon={<Check size={16} />}
-                      onClick={() => setIsConfirmed(true)}
+                      onClick={() => {
+                        setIsConfirmed(true);
+                      }}
                       className="flex-1"
                     >
                       {t('facility_search.confirm', 'Bekräfta')}
@@ -186,7 +198,9 @@ export function FacilitySearchWidget(props: FieldProps) {
                       variant="secondary"
                       size="sm"
                       leftIcon={<X size={16} />}
-                      onClick={handleRemove}
+                      onClick={() => {
+                        void handleRemove();
+                      }}
                       className="flex-1"
                     >
                       {t('facility_search.remove', 'Ta bort')}

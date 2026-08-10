@@ -3,6 +3,7 @@
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
 import { Button, Spinner } from '@sk-web-gui/react';
 import { useTranslation } from 'react-i18next';
+
 import { MobileErrandCard } from './mobile-errand-card.component';
 
 interface MobileErrandsListProps {
