@@ -3,7 +3,6 @@ import { ErrandDTO, StakeholderDTO } from '@data-contracts/backend/data-contract
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getStakeholderUsingPersonNumber } from '@services/citizen/citizen-service';
 import { getEmployeeByPersonNumber, getEmployeeStakeholderFromApi } from '@services/employee-service/employee-service';
-import { Pen, Plus } from 'lucide-react';
 import {
   Button,
   cx,
@@ -21,10 +20,12 @@ import {
   shouldShowContactDetails,
   stakeholderSchema,
 } from '@utils/stakeholder';
+import { Pen, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { FormProvider, Resolver, useFieldArray, useForm, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useMetadataStore } from 'src/stores/metadata-store';
+
 import { StakeholderFormModal } from './stakeholder-modal.component';
 
 export const StakeholderList: React.FC<{
@@ -62,7 +63,6 @@ export const StakeholderList: React.FC<{
   //Used for resetting form when adding multiple stakeholders
   useEffect(() => {
     reset();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState.isSubmitSuccessful]);
 
   const hasPrimaryStakeholder = stakeholders?.some((s) => s.role?.includes('PRIMARY'));
@@ -126,7 +126,7 @@ export const StakeholderList: React.FC<{
 
   const addStakeholderToErrand = (stakeholder: StakeholderDTO) => {
     if (hideRoleSelect && metadata) {
-     stakeholder.role = roles[0];
+      stakeholder.role = roles[0];
     }
     append({ ...stakeholder, phoneNumbers: [phoneNumberFormatter(stakeholder?.phoneNumbers?.[0])] });
     clearStakeholderForm();
@@ -169,8 +169,12 @@ export const StakeholderList: React.FC<{
               size="md"
               className="max-w-[52.5rem]"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onSearch={onSearchHandler}
+              onChange={(e) => {
+                setQuery(e.target.value);
+              }}
+              onSearch={(value: string) => {
+                void onSearchHandler(value);
+              }}
               onReset={() => {
                 clearStakeholderForm();
               }}
@@ -197,13 +201,14 @@ export const StakeholderList: React.FC<{
                   {title ?
                     <span>{title}</span>
                   : <span className={cx(!personNumber && 'italic text-text-secondary')}>
-                      {personNumber || 'Personnummer saknas'}
+                      {(personNumber ?? '') || 'Personnummer saknas'}
                     </span>
                   }
                   {department ?
                     <span>{department}</span>
                   : <span className={cx((!address || !city) && 'italic text-text-secondary')}>
-                      {`${address}, ${city}` || 'Adress saknas'}
+                      {/* Bugfix: template literal var alltid truthy — visa fallback när adress eller ort saknas */}
+                      {address && city ? `${address}, ${city}` : 'Adress saknas'}
                     </span>
                   }
                 </div>
@@ -259,7 +264,9 @@ export const StakeholderList: React.FC<{
                   data-cy="add-stakeholder-button"
                   leftIcon={<Plus size={16} />}
                   variant="primary"
-                  onClick={handleSubmit(addStakeholderToErrand)}
+                  onClick={(e) => {
+                    void handleSubmit(addStakeholderToErrand)(e);
+                  }}
                   className="w-full lg:w-auto"
                 >
                   Lägg till person
@@ -279,7 +286,9 @@ export const StakeholderList: React.FC<{
             stakeholder={stakeholder}
             isEditable
             roles={roles}
-            onRemove={() => remove(index)}
+            onRemove={() => {
+              remove(index);
+            }}
           />
         );
       })}
@@ -301,7 +310,18 @@ export const StakeholderList: React.FC<{
         </Button>
       )}
 
-      <StakeholderFormModal roles={roles} show={manualEntryOpen} onClose={() => setManualEntryOpen(false)} editableFields={roles.includes('EMPLOYEE') || roles.includes('SUBSTITUTEASSIGNMENT') ? ['personNumber', 'firstName', 'lastName', 'emails', 'phoneNumbers', 'role'] : ['personNumber', 'firstName', 'lastName', 'emails', 'phoneNumbers']} />
+      <StakeholderFormModal
+        roles={roles}
+        show={manualEntryOpen}
+        onClose={() => {
+          setManualEntryOpen(false);
+        }}
+        editableFields={
+          roles.includes('EMPLOYEE') || roles.includes('SUBSTITUTEASSIGNMENT') ?
+            ['personNumber', 'firstName', 'lastName', 'emails', 'phoneNumbers', 'role']
+          : ['personNumber', 'firstName', 'lastName', 'emails', 'phoneNumbers']
+        }
+      />
     </div>
   );
 };

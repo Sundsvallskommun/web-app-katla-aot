@@ -1,4 +1,5 @@
 import type { StakeholderDTO } from '@data-contracts/backend/data-contracts';
+
 import { MOCK_COUNTRY_CODE_PHONE_NUMBER, MOCK_EMAIL, MOCK_HYPHEN_PERSON_NUMBER } from '../utils/constants';
 
 export const mockReporterStakeholder: StakeholderDTO = {

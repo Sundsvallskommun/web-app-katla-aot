@@ -1,16 +1,17 @@
 'use client';
 
-import { useUserStore } from '@services/user-service/user-service';
-import { Button, cx, Divider, Logo, UserMenu } from '@sk-web-gui/react';
-import { useState } from 'react';
-import { useShallow } from 'zustand/react/shallow';
-import NextLink from 'next/link';
-import { ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { FilterOverviewSidebarStatusSelector } from './filter-overview-sidebar-status-selector.component';
 import { LogoutButton } from '@components/buttons/logout-button.component';
-import { userMenuGroups } from '@layouts/userMenuGroup';
 import { NotificationsBell } from '@components/notifications/notification-bell';
 import { NotificationsWrapper } from '@components/notifications/notification-wrapper';
+import { userMenuGroups } from '@layouts/userMenuGroup';
+import { useUserStore } from '@services/user-service/user-service';
+import { Button, cx, Divider, Logo, UserMenu } from '@sk-web-gui/react';
+import { ChevronsLeft, ChevronsRight } from 'lucide-react';
+import NextLink from 'next/link';
+import { useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
+
+import { FilterOverviewSidebarStatusSelector } from './filter-overview-sidebar-status-selector.component';
 
 export const OverviewSidebar: React.FC = () => {
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
@@ -18,7 +19,8 @@ export const OverviewSidebar: React.FC = () => {
 
   const user = useUserStore(useShallow((s) => s.user));
 
-  const SidebarLogo = () => (
+  // Bugfix (static-components): JSX-variabel i stället för komponent skapad under rendering
+  const sidebarLogo = (
     <NextLink
       href="/"
       className="no-underline"
@@ -43,7 +45,7 @@ export const OverviewSidebar: React.FC = () => {
       >
         <div className={cx('h-full w-full', open ? 'p-24' : '')}>
           <div className={cx('mb-24', open ? '' : 'flex flex-col items-center justify-center pt-[1rem]')}>
-            <SidebarLogo />
+            {sidebarLogo}
           </div>
           <div
             className={cx(
@@ -55,7 +57,7 @@ export const OverviewSidebar: React.FC = () => {
               <div className="flex gap-12 justify-between items-center">
                 <UserMenu
                   data-cy="avatar-aside"
-                  initials={`${user.initials}`}
+                  initials={user.initials}
                   menuTitle={`${user.name} (${user.username})`}
                   menuGroups={userMenuGroups}
                   buttonSize="md"
@@ -67,7 +69,11 @@ export const OverviewSidebar: React.FC = () => {
                 </span>
               </div>
             )}
-            <NotificationsBell toggleShow={() => setShowNotifications(!showNotifications)} />
+            <NotificationsBell
+              toggleShow={() => {
+                setShowNotifications(!showNotifications);
+              }}
+            />
           </div>
           <Divider className={cx(open ? '' : 'w-[4rem] mx-auto')} />
           <div className={cx('flex flex-col gap-8', open ? 'py-24' : 'items-center justify-center py-15')}>
@@ -87,7 +93,9 @@ export const OverviewSidebar: React.FC = () => {
               aria-label={open ? 'Stäng sidomeny' : 'Öppna sidomeny'}
               iconButton
               leftIcon={open ? <ChevronsLeft /> : <ChevronsRight />}
-              onClick={() => setOpen(!open)}
+              onClick={() => {
+                setOpen(!open);
+              }}
             />
           </div>
         </div>

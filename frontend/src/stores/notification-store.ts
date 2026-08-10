@@ -1,8 +1,8 @@
 import { NotificationDTO } from '@data-contracts/backend/data-contracts';
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
-interface  NotificationState {
+interface NotificationState {
   activeNotifications: NotificationDTO[];
   acknowledgedNotifications: NotificationDTO[];
   setActiveNotifications: (notification: NotificationDTO[]) => void;

@@ -1,4 +1,5 @@
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
+
 import { mockReporterStakeholder } from './mockStakeholder';
 
 export const mockErrand: ErrandDTO = {

@@ -1,4 +1,5 @@
-import { Logo, cx } from '@sk-web-gui/react';
+import { cx, Logo } from '@sk-web-gui/react';
+
 import EmptyLayout from './empty-layout/empty-layout.component';
 
 export const EntryLayout: React.FC<{

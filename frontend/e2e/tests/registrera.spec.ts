@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+
 import { mockErrand } from '../fixtures/mockErrand';
 import { mockMetadata } from '../fixtures/mockMetadata';
 import { mockManualEditStakeholder, mockReporterStakeholder, mockStakeholder } from '../fixtures/mockStakeholder';
@@ -14,6 +15,11 @@ import {
 import { expect, test } from '../utils/test';
 
 /** Registrerar ärendet och verifierar POST-anropet, motsvarar cy.wait('@createDraftErrand') med assertions */
+interface CreateErrandRequestBody {
+  parameters?: { key: string; values: string[] }[];
+  stakeholders?: unknown[];
+}
+
 const registerErrandAndExpectDraft = async (page: Page, expectedStakeholderCount: number) => {
   const registerButton = page.getByTestId('register-errand');
   await expect(registerButton).toBeEnabled();
@@ -28,7 +34,7 @@ const registerErrandAndExpectDraft = async (page: Page, expectedStakeholderCount
   const request = await createRequest;
   const response = await request.response();
   expect(response?.status()).toBe(200);
-  const body = request.postDataJSON();
+  const body = request.postDataJSON() as CreateErrandRequestBody;
   expect(body.parameters).toContainEqual({ key: 'eventType', values: ['AVVIKELSE'] });
   expect(body.parameters).toContainEqual({ key: 'eventConcerns', values: ['ENSKILD_BRUKARE'] });
   expect(body.stakeholders?.length).toBe(expectedStakeholderCount);
@@ -152,11 +158,11 @@ test.describe('Register new errand page', () => {
 
     await expect(stakeholderCard.getByTestId('stakeholder-role')).toContainText('Ärendeägare');
     await expect(stakeholderCard.getByTestId('stakeholder-name')).toContainText(
-      mockStakeholder.firstName + ' ' + mockStakeholder.lastName
+      `${mockStakeholder.firstName ?? ''} ${mockStakeholder.lastName ?? ''}`
     );
     await expect(stakeholderCard.getByTestId('stakeholder-personNumber')).toContainText(MOCK_HYPHEN_PERSON_NUMBER);
     await expect(stakeholderCard.getByTestId('stakeholder-address')).toContainText(
-      mockStakeholder.address + ' ' + mockStakeholder.city
+      `${mockStakeholder.address ?? ''} ${mockStakeholder.city ?? ''}`
     );
     await expect(stakeholderCard.getByTestId('stakeholder-email')).toContainText(MOCK_EMAIL);
     await expect(stakeholderCard.getByTestId('stakeholder-phonenumber')).toContainText(MOCK_COUNTRY_CODE_PHONE_NUMBER);
@@ -172,11 +178,11 @@ test.describe('Register new errand page', () => {
 
     await expect(stakeholderCard.getByTestId('stakeholder-role')).toContainText('Ärendeägare');
     await expect(stakeholderCard.getByTestId('stakeholder-name')).toContainText(
-      mockManualEditStakeholder.firstName + ' ' + mockManualEditStakeholder.lastName
+      `${mockManualEditStakeholder.firstName ?? ''} ${mockManualEditStakeholder.lastName ?? ''}`
     );
     await expect(stakeholderCard.getByTestId('stakeholder-personNumber')).toContainText(MOCK_HYPHEN_PERSON_NUMBER);
     await expect(stakeholderCard.getByTestId('stakeholder-address')).toContainText(
-      mockManualEditStakeholder.address + ' ' + mockManualEditStakeholder.city
+      `${mockManualEditStakeholder.address ?? ''} ${mockManualEditStakeholder.city ?? ''}`
     );
     await expect(stakeholderCard.getByTestId('stakeholder-email')).toContainText('');
     await expect(stakeholderCard.getByTestId('stakeholder-phonenumber')).toContainText(MOCK_COUNTRY_CODE_PHONE_NUMBER);
@@ -216,7 +222,7 @@ test.describe('Register new errand page', () => {
 
     await expect(stakeholderCard.getByTestId('stakeholder-role')).toContainText('Kontaktperson');
     await expect(stakeholderCard.getByTestId('stakeholder-name')).toContainText(
-      mockReporterStakeholder.firstName + ' ' + mockReporterStakeholder.lastName
+      `${mockReporterStakeholder.firstName ?? ''} ${mockReporterStakeholder.lastName ?? ''}`
     );
     await expect(stakeholderCard.getByTestId('stakeholder-title')).toContainText(mockReporterStakeholder.title ?? '');
     await expect(stakeholderCard.getByTestId('stakeholder-department')).toContainText(
@@ -236,7 +242,7 @@ test.describe('Register new errand page', () => {
 
     await expect(stakeholderCard.getByTestId('stakeholder-role')).toContainText('Kontaktperson');
     await expect(stakeholderCard.getByTestId('stakeholder-name')).toContainText(
-      mockManualEditStakeholder.firstName + ' ' + mockManualEditStakeholder.lastName
+      `${mockManualEditStakeholder.firstName ?? ''} ${mockManualEditStakeholder.lastName ?? ''}`
     );
     await expect(stakeholderCard.getByTestId('stakeholder-title')).toContainText(mockReporterStakeholder.title ?? '');
     await expect(stakeholderCard.getByTestId('stakeholder-department')).toContainText(
@@ -259,7 +265,7 @@ test.describe('Register new errand page', () => {
     await expect(stakeholderCard.getByTestId('stakeholder-personNumber')).toHaveCount(0);
     await expect(stakeholderCard.getByTestId('stakeholder-address')).toHaveCount(0);
     await expect(stakeholderCard.getByTestId('stakeholder-name')).toContainText(
-      mockReporterStakeholder.firstName + ' ' + mockReporterStakeholder.lastName
+      `${mockReporterStakeholder.firstName ?? ''} ${mockReporterStakeholder.lastName ?? ''}`
     );
     await expect(stakeholderCard.getByTestId('stakeholder-email')).toContainText(MOCK_EMAIL);
     await expect(stakeholderCard.getByTestId('stakeholder-phonenumber')).toContainText(MOCK_COUNTRY_CODE_PHONE_NUMBER);

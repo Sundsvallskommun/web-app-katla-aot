@@ -1,6 +1,6 @@
+import { WizardBottomBar } from './wizard-bottom-bar.component';
 import { WizardHeader } from './wizard-header.component';
 import { WizardStepContent } from './wizard-step-content.component';
-import { WizardBottomBar } from './wizard-bottom-bar.component';
 
 export const MobileWizard: React.FC = () => {
   return (

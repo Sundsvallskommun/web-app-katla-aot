@@ -1,7 +1,7 @@
 import { ProgressBar, ProgressStepper } from '@sk-web-gui/react';
+import { useTranslation } from 'react-i18next';
 import { useActiveWizardSteps } from 'src/hooks/use-active-wizard-steps';
 import { useWizardStore } from 'src/stores/wizard-store';
-import { useTranslation } from 'react-i18next';
 
 interface WizardHeaderProps {
   variant?: 'bar' | 'stepper';

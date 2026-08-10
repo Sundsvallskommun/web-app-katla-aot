@@ -1,13 +1,14 @@
 'use client';
 
-import { FilterOverviewSidebarStatusSelector } from '@components/sidebars/filter-overview-sidebar-status-selector.component';
 import { LogoutButton } from '@components/buttons/logout-button.component';
-import { MainPageMobileHeader } from './main-page-mobile-header.component';
+import { FilterOverviewSidebarStatusSelector } from '@components/sidebars/filter-overview-sidebar-status-selector.component';
 import { useUserStore } from '@services/user-service/user-service';
-import { useLocalStorage } from '@utils/use-localstorage.hook';
 import { Avatar, Button, ColorSchemeMode, Divider, RadioButton } from '@sk-web-gui/react';
+import { useLocalStorage } from '@utils/use-localstorage.hook';
 import { Monitor, Moon, Sun, X } from 'lucide-react';
 import { useShallow } from 'zustand/react/shallow';
+
+import { MainPageMobileHeader } from './main-page-mobile-header.component';
 
 interface MobileMenuBodyProps {
   onClose: () => void;
@@ -46,14 +47,32 @@ export const MobileMenuBody: React.FC<MobileMenuBodyProps> = ({ onClose }) => {
           <div className="flex flex-col gap-8">
             <span className="text-small font-bold">Färgläge</span>
             <div className="flex gap-8">
-              <RadioButton value="light" checked={colorScheme === 'light'} onClick={() => setColorScheme(ColorSchemeMode.Light)}>
-                <Sun className={colorScheme === 'light' ? '' : 'opacity-50'} size={16} /> Ljust
+              <RadioButton
+                value="light"
+                checked={colorScheme === ColorSchemeMode.Light}
+                onClick={() => {
+                  setColorScheme(ColorSchemeMode.Light);
+                }}
+              >
+                <Sun className={colorScheme === ColorSchemeMode.Light ? '' : 'opacity-50'} size={16} /> Ljust
               </RadioButton>
-              <RadioButton value="dark" checked={colorScheme === 'dark'} onClick={() => setColorScheme(ColorSchemeMode.Dark)}>
-                <Moon className={colorScheme === 'dark' ? '' : 'opacity-50'} size={16} /> Mörkt
+              <RadioButton
+                value="dark"
+                checked={colorScheme === ColorSchemeMode.Dark}
+                onClick={() => {
+                  setColorScheme(ColorSchemeMode.Dark);
+                }}
+              >
+                <Moon className={colorScheme === ColorSchemeMode.Dark ? '' : 'opacity-50'} size={16} /> Mörkt
               </RadioButton>
-              <RadioButton value="system" checked={colorScheme === 'system'} onClick={() => setColorScheme(ColorSchemeMode.System)}>
-                <Monitor className={colorScheme === 'system' ? '' : 'opacity-50'} size={16} /> System
+              <RadioButton
+                value="system"
+                checked={colorScheme === ColorSchemeMode.System}
+                onClick={() => {
+                  setColorScheme(ColorSchemeMode.System);
+                }}
+              >
+                <Monitor className={colorScheme === ColorSchemeMode.System ? '' : 'opacity-50'} size={16} /> System
               </RadioButton>
             </div>
           </div>

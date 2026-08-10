@@ -1,7 +1,8 @@
-import ApiResponse from '@/interfaces/api-service.interface';
-import { ClientUser } from '@/interfaces/users.interface';
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
+
+import ApiResponse from '@/interfaces/api-service.interface';
+import { ClientUser } from '@/interfaces/users.interface';
 
 // export class Permissions implements IPermissions {
 //   @IsBoolean()
@@ -10,11 +11,11 @@ import { IsString, ValidateNested } from 'class-validator';
 
 export class User implements ClientUser {
   @IsString()
-  name: string;
+  name!: string;
   @IsString()
-  username: string;
+  username!: string;
   @IsString()
-  initials: string;
+  initials!: string;
   // @IsEnum(InternalRoleEnum)
   // role: InternalRole;
   // @ValidateNested()
@@ -25,7 +26,7 @@ export class User implements ClientUser {
 export class UserApiResponse implements ApiResponse<User> {
   @ValidateNested()
   @Type(() => User)
-  data: User;
+  data!: User;
   @IsString()
-  message: string;
+  message!: string;
 }

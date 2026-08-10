@@ -3,7 +3,7 @@ import type { Route } from '@playwright/test';
 // API-anropen går mot backend på annan port (cross-origin), så mockade svar
 // behöver CORS-headers eftersom axios anropar med withCredentials.
 const corsHeaders = (route: Route): Record<string, string> => {
-  const origin = route.request().headers()['origin'];
+  const origin = route.request().headers().origin;
   return origin ? { 'access-control-allow-origin': origin, 'access-control-allow-credentials': 'true' } : {};
 };
 

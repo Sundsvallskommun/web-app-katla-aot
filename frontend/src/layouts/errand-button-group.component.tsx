@@ -1,20 +1,18 @@
 import { CancelErrandDialog } from '@components/cancel-errand-dialog.component';
-import {
-  jsonParametersToErrandFormData,
-  validateErrandFormData,
-} from '@components/json/utils/schema-utils';
+import { jsonParametersToErrandFormData, validateErrandFormData } from '@components/json/utils/schema-utils';
 import { useFormValidation } from '@contexts/form-validation-context';
+import { ErrandFormDTO } from '@interfaces/errand-form';
 import { createErrand, updateErrand } from '@services/errand-service/errand-service';
-import { Inbox } from 'lucide-react';
 import { Button, Dialog, useSnackbar } from '@sk-web-gui/react';
+import { Inbox } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { CenterDiv } from './center-div.component';
 import { appConfig } from 'src/config/appconfig';
 import { usePrepareErrand } from 'src/hooks/use-prepare-errand';
-import { ErrandFormDTO } from '@interfaces/errand-form';
+
+import { CenterDiv } from './center-div.component';
 
 interface ErrandButtonGroupProps {
   isNewErrand: boolean;
@@ -77,6 +75,54 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
     }
   };
 
+  const onValidateBeforeRegister = async () => {
+    // Aktivera validering för JSON-formulär
+    setShowValidation(true);
+
+    // Validera att eventType och eventConcerns är valda
+    const values = getValues();
+    const eventType = values.parameters?.find((p) => p.key === 'eventType')?.values?.[0];
+    const eventConcerns = values.parameters?.find((p) => p.key === 'eventConcerns')?.values?.[0];
+    if (!eventType) {
+      toastMessage({
+        position: 'bottom',
+        status: 'error',
+        message: t('errand-information:about.event_type_required'),
+      });
+      return;
+    }
+    if (!eventConcerns) {
+      toastMessage({
+        position: 'bottom',
+        status: 'error',
+        message: t('errand-information:about.event_concerns_required'),
+      });
+      return;
+    }
+    if (eventConcerns === 'GRUPP_VERKSAMHET' && !getFacilityOrgName(values.errandFormData)) {
+      toastMessage({
+        position: 'bottom',
+        status: 'error',
+        message: t('errand-information:about.event_concerns_group_facility_required'),
+      });
+      return;
+    }
+
+    // Validera errandFormData
+    const formDataErrors = await validateErrandFormData(values.errandFormData, tForms);
+
+    if (formDataErrors.length > 0) {
+      toastMessage({
+        position: 'bottom',
+        status: 'error',
+        message: formDataErrors[0],
+      });
+      return;
+    }
+
+    setIsOpen(true);
+  };
+
   if (!showButtons) {
     return null;
   }
@@ -84,12 +130,23 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
   return (
     <div className="flex flex-wrap gap-8 md:gap-[1.8rem]">
       {isNewErrand && (
-        <Button variant="secondary" onClick={() => setIsCancelOpen(true)}>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            setIsCancelOpen(true);
+          }}
+        >
           {t('errand-information:cancel')}
         </Button>
       )}
       {draftEnabled && (
-        <Button data-cy="save-draft-errand" variant="primary" onClick={() => onSaveDraft()}>
+        <Button
+          data-cy="save-draft-errand"
+          variant="primary"
+          onClick={() => {
+            void onSaveDraft();
+          }}
+        >
           {t('errand-information:save_draft')}
         </Button>
       )}
@@ -97,60 +154,20 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
         data-cy="register-errand"
         variant="primary"
         color="vattjom"
-        onClick={async () => {
-          // Aktivera validering för JSON-formulär
-          setShowValidation(true);
-
-          // Validera att eventType och eventConcerns är valda
-          const values = getValues();
-          const eventType = values.parameters?.find((p) => p.key === 'eventType')?.values?.[0];
-          const eventConcerns = values.parameters?.find((p) => p.key === 'eventConcerns')?.values?.[0];
-          if (!eventType) {
-            toastMessage({
-              position: 'bottom',
-              status: 'error',
-              message: t('errand-information:about.event_type_required'),
-            });
-            return;
-          }
-          if (!eventConcerns) {
-            toastMessage({
-              position: 'bottom',
-              status: 'error',
-              message: t('errand-information:about.event_concerns_required'),
-            });
-            return;
-          }
-          if (eventConcerns === 'GRUPP_VERKSAMHET' && !getFacilityOrgName(values.errandFormData)) {
-            toastMessage({
-              position: 'bottom',
-              status: 'error',
-              message: t('errand-information:about.event_concerns_group_facility_required'),
-            });
-            return;
-          }
-
-          // Validera errandFormData
-          const formDataErrors = await validateErrandFormData(values.errandFormData, tForms);
-
-          if (formDataErrors.length > 0) {
-            toastMessage({
-              position: 'bottom',
-              status: 'error',
-              message: formDataErrors[0],
-            });
-            return;
-          }
-
-          setIsOpen(true);
+        onClick={() => {
+          void onValidateBeforeRegister();
         }}
       >
         {t('errand-information:register')}
       </Button>
       <CancelErrandDialog
         show={isCancelOpen}
-        onClose={() => setIsCancelOpen(false)}
-        onConfirm={() => router.push('/oversikt')}
+        onClose={() => {
+          setIsCancelOpen(false);
+        }}
+        onConfirm={() => {
+          router.push('/oversikt');
+        }}
       />
       <Dialog show={isOpen}>
         <Dialog.Content className="-mt-20">
@@ -162,13 +179,31 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
         </Dialog.Content>
 
         <Dialog.Buttons className="justify-center flex-col sm:flex-row gap-8">
-          <Button variant="secondary" onClick={() => setIsOpen(false)}>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setIsOpen(false);
+            }}
+          >
             Nej
           </Button>
-          <Button data-cy="submit-button" variant="primary" onClick={() => onRegister()}>
+          <Button
+            data-cy="submit-button"
+            variant="primary"
+            onClick={() => {
+              void onRegister();
+            }}
+          >
             Skicka in
           </Button>
-          <Button data-cy="submit-logout-button" variant="primary" color="vattjom" onClick={() => onRegister(true)}>
+          <Button
+            data-cy="submit-logout-button"
+            variant="primary"
+            color="vattjom"
+            onClick={() => {
+              void onRegister(true);
+            }}
+          >
             Skicka in och logga ut
           </Button>
         </Dialog.Buttons>

@@ -1,6 +1,7 @@
-import { expect } from '@playwright/test';
-import type { Locator, Page } from '@playwright/test';
 import type { StakeholderDTO } from '@data-contracts/backend/data-contracts';
+import type { Locator, Page } from '@playwright/test';
+import { expect } from '@playwright/test';
+
 import { mockManualEditStakeholder, mockReporterStakeholder, mockStakeholder } from '../fixtures/mockStakeholder';
 import {
   MOCK_COUNTRY_CODE_PHONE_NUMBER,
@@ -169,14 +170,14 @@ export const manuallyEditStakeholder = async (page: Page, stakeholder: Stakehold
   await firstNameInput.fill('');
   await modal.getByTestId('modal-add-person-button').click();
   await expect(modal.getByTestId('firstName-input-error')).toBeVisible();
-  await firstNameInput.fill(mockManualEditStakeholder.firstName || '');
+  await firstNameInput.fill(mockManualEditStakeholder.firstName ?? '');
   await expect(modal.getByTestId('firstName-input-error')).toHaveCount(0);
   const lastNameInput = modal.getByTestId('modal-lastName-input');
   await expect(lastNameInput).toHaveValue(stakeholder.lastName ?? '');
   await lastNameInput.fill('');
   await modal.getByTestId('modal-add-person-button').click();
   await expect(modal.getByTestId('lastName-input-error')).toBeVisible();
-  await lastNameInput.fill(mockManualEditStakeholder.lastName || '');
+  await lastNameInput.fill(mockManualEditStakeholder.lastName ?? '');
   await expect(modal.getByTestId('lastName-input-error')).toHaveCount(0);
 
   // E-post
@@ -201,14 +202,14 @@ export const manuallyEditStakeholder = async (page: Page, stakeholder: Stakehold
   // Adress
   const addressInput = modal.getByTestId('modal-address-input');
   await expect(addressInput).toHaveValue(stakeholder.address ?? '');
-  await addressInput.fill(mockManualEditStakeholder.address || '');
+  await addressInput.fill(mockManualEditStakeholder.address ?? '');
   const careOfInput = modal.getByTestId('modal-careOf-input');
   await expect(careOfInput).toHaveValue(stakeholder.careOf ?? '');
-  await careOfInput.fill(mockManualEditStakeholder.careOf || '');
+  await careOfInput.fill(mockManualEditStakeholder.careOf ?? '');
   const zipCodeInput = modal.getByTestId('modal-zipCode-input');
   await expect(zipCodeInput).toHaveValue(stakeholder.zipCode ?? '');
-  await zipCodeInput.fill(mockManualEditStakeholder.zipCode || '');
+  await zipCodeInput.fill(mockManualEditStakeholder.zipCode ?? '');
   const cityInput = modal.getByTestId('modal-city-input');
   await expect(cityInput).toHaveValue(stakeholder.city ?? '');
-  await cityInput.fill(mockManualEditStakeholder.city || '');
+  await cityInput.fill(mockManualEditStakeholder.city ?? '');
 };

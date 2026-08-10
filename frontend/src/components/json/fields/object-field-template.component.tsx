@@ -51,7 +51,7 @@ function isConditionMet(condition: ConditionalRule['if'], formData: Record<strin
  * Extracts field names from a then-block (required fields and property keys)
  */
 function extractDependentFields(then: ConditionalRule['then']): string[] {
-  return [...(then.required || []), ...(then.properties ? Object.keys(then.properties) : [])];
+  return [...(then.required ?? []), ...(then.properties ? Object.keys(then.properties) : [])];
 }
 
 /**
@@ -175,7 +175,7 @@ function renderFields(
       if (visibleRowFields.length === 0) return null;
 
       return (
-        <div key={rowKey} className={`flex ${compact ? 'flex-col gap-32' : row.gap || 'gap-32'}`}>
+        <div key={rowKey} className={`flex ${compact ? 'flex-col gap-32' : (row.gap ?? '') || 'gap-32'}`}>
           {visibleRowFields.map((f) => {
             const prop = properties.find((p) => p.name === f);
             return prop ?
@@ -202,12 +202,14 @@ function renderFields(
  * and supports ui:rows for horizontal field grouping and ui:sections for Disclosure grouping
  */
 export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
-  const { properties, formData, formContext, uiSchema } = props;
+  const { properties, uiSchema } = props;
+  const formData = props.formData as Record<string, unknown> | undefined;
 
   // Get original schema from formContext (RJSF processes and removes allOf from schema prop)
-  const ctx = formContext as FormContext | undefined;
+  const ctx = props.formContext as FormContext | undefined;
   const originalSchema = ctx?.originalSchema;
-  const conditionalFields = originalSchema ? getConditionalFields(originalSchema) : new Map();
+  const conditionalFields =
+    originalSchema ? getConditionalFields(originalSchema) : new Map<string, ConditionalRule['if']>();
 
   // Get row and section definitions from uiSchema
   const rows = getRowDefinitions(uiSchema);
@@ -215,14 +217,14 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
   const sections = getSectionDefinitions(uiSchema);
 
   // Get field order from uiSchema or use properties order
-  const order = (uiSchema?.['ui:order'] ?? properties.map((p) => p.name)) as string[];
+  const order = uiSchema?.['ui:order'] ?? properties.map((p) => p.name);
 
   // Filter out hidden conditional fields
   const visibleFields = new Set<string>();
   for (const prop of properties) {
     const condition = conditionalFields.get(prop.name);
     if (condition) {
-      if (isConditionMet(condition, formData || {})) {
+      if (isConditionMet(condition, formData ?? {})) {
         visibleFields.add(prop.name);
       }
     } else {
@@ -230,7 +232,7 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
     }
   }
 
-  const compact = (ctx as FormContext | undefined)?.compact ?? false;
+  const compact = ctx?.compact ?? false;
 
   // If no sections defined, use original flat rendering
   if (sections.length === 0) {
@@ -264,7 +266,15 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
         if (compact) {
           return (
             <div key={section.id} className="flex flex-col gap-32">
-              {renderFields(sectionFieldsInOrder, properties, visibleFields, rows, rowFieldNames, renderedRows, compact)}
+              {renderFields(
+                sectionFieldsInOrder,
+                properties,
+                visibleFields,
+                rows,
+                rowFieldNames,
+                renderedRows,
+                compact
+              )}
             </div>
           );
         }

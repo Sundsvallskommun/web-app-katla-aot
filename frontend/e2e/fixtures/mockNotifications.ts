@@ -1,1 +1,1 @@
-export const mockNotifications = []
+export const mockNotifications = [];

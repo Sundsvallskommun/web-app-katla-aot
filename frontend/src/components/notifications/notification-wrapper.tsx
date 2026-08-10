@@ -2,13 +2,14 @@
 
 import { MainPageMobileHeader } from '@components/mobile/main-page-mobile-header.component';
 import { getNotifications } from '@services/errand-service/errand-service';
-import { Mail, X } from 'lucide-react';
 import { Button, cx, Divider, Header } from '@sk-web-gui/react';
 import { sortBy } from 'lodash';
+import { Mail, X } from 'lucide-react';
 import { useEffect } from 'react';
 import { MOBILE_BREAKPOINT } from 'src/constants/responsive';
 import { useMediaQuery } from 'src/hooks/use-media-query';
 import { useNotificationStore } from 'src/stores/notification-store';
+
 import { NotificationItem } from './notification-item';
 
 export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boolean) => void; open?: boolean }> = ({
@@ -21,7 +22,7 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
   const isMobile = useMediaQuery(MOBILE_BREAKPOINT);
 
   useEffect(() => {
-    getNotifications().then((res) => {
+    void getNotifications().then((res) => {
       setActiveNotifications(
         sortBy(
           res.filter((n) => !n.acknowledged),
@@ -36,7 +37,6 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
         ).reverse()
       );
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
 
   if (!show) return null;
@@ -50,7 +50,9 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
               aria-label="Stäng notiser"
               iconButton
               variant="tertiary"
-              onClick={() => setShow(false)}
+              onClick={() => {
+                setShow(false);
+              }}
               data-cy="close-message-wrapper"
             >
               <X data-cy="close-message-wrapper-icon" />
@@ -120,7 +122,9 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
             aria-label="Stäng notiser"
             iconButton
             variant="tertiary"
-            onClick={() => setShow(false)}
+            onClick={() => {
+              setShow(false);
+            }}
             data-cy="close-message-wrapper"
           >
             <X data-cy="close-message-wrapper-icon" />

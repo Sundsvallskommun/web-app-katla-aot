@@ -2,10 +2,10 @@
 
 import { StatusLabel } from '@components/misc/status-label.component';
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
-import { getTypeDisplayName } from '@utils/errand-helpers';
-import { ArrowRight } from 'lucide-react';
 import { Button } from '@sk-web-gui/react';
+import { getTypeDisplayName } from '@utils/errand-helpers';
 import dayjs from 'dayjs';
+import { ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface MobileErrandCardProps {
@@ -43,7 +43,9 @@ export const MobileErrandCard: React.FC<MobileErrandCardProps> = ({ errand }) =>
           leftIcon={<ArrowRight />}
           color="primary"
           variant="tertiary"
-          onClick={() => router.push(url)}
+          onClick={() => {
+            router.push(url);
+          }}
         />
       </div>
     </div>

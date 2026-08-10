@@ -1,6 +1,6 @@
-import { Avatar, cx } from '@sk-web-gui/react';
-import { Bell, BellRing, File, MessageCircle, type LucideIcon } from 'lucide-react';
 import { NotificationDTO } from '@data-contracts/backend/data-contracts';
+import { Avatar, cx } from '@sk-web-gui/react';
+import { Bell, BellRing, File, type LucideIcon, MessageCircle } from 'lucide-react';
 
 interface NotificationRenderIconProps {
   notification: NotificationDTO;
@@ -31,14 +31,14 @@ const textColor: Record<string, string> = {
 };
 
 export const NotificationRenderIcon: React.FC<NotificationRenderIconProps> = ({ notification }) => {
-  const config = iconConfig[notification.description as string] ?? iconConfig.default;
+  const config = iconConfig[notification.description ?? ''] ?? iconConfig.default;
   const color = notification.acknowledged ? 'primary' : config.defaultColor;
   const bgColor = surfaceColor[color] ?? 'bg-tertiary-surface';
 
   if (config.avatar) {
     const initials =
-      `${notification.createdByFullName?.split(' ')[1]?.charAt(0).toUpperCase() ?? ''}` +
-      `${notification.createdByFullName?.split(' ')[0]?.charAt(0).toUpperCase() ?? ''}`;
+      (notification.createdByFullName?.split(' ')[1]?.charAt(0).toUpperCase() ?? '') +
+      (notification.createdByFullName?.split(' ')[0]?.charAt(0).toUpperCase() ?? '');
 
     return (
       <div className={cx(`w-[4rem] h-[4rem] rounded-12 flex items-center justify-center bg-${color}-surface-accent`)}>

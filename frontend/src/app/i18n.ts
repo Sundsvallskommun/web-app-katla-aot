@@ -1,10 +1,10 @@
-import { createInstance, i18n, Resource } from 'i18next';
-import { initReactI18next } from 'react-i18next/initReactI18next';
-import resourcesToBackend from 'i18next-resources-to-backend';
 import i18nConfig from '@app/i18nConfig';
+import { createInstance, i18n, Resource } from 'i18next';
+import resourcesToBackend from 'i18next-resources-to-backend';
+import { initReactI18next } from 'react-i18next/initReactI18next';
 
 const initLocalization = async (locale: string, namespaces: string[], i18nInstance?: i18n, resources?: Resource) => {
-  i18nInstance = i18nInstance || createInstance();
+  i18nInstance ??= createInstance();
 
   i18nInstance.use(initReactI18next);
 

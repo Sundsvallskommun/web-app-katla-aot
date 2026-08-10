@@ -1,4 +1,5 @@
 import type { PageErrandDTO } from '@data-contracts/backend/data-contracts';
+
 import { MOCK_EMAIL, MOCK_PHONE_NUMBER } from '../utils/constants';
 
 export const mockErrands: PageErrandDTO = {

@@ -97,6 +97,18 @@ yarn test              # kör en gång
 yarn test:watch        # watch-läge
 ```
 
+## Lint och formatering
+
+Båda paketen använder en strikt, typmedveten ESLint-uppsättning enligt [web-app-starter](https://github.com/Sundsvallskommun/web-app-starter) (typescript-eslint `strictTypeChecked` + `stylisticTypeChecked`, `simple-import-sort`, `unused-imports`, `no-console`). Inline `eslint-disable`-kommentarer är avstängda — åtgärda koden i stället.
+
+```
+yarn lint              # lint
+yarn lint:fix          # lint med autofix
+yarn lint:strict       # som CI: 0 varningar tillåtna
+yarn format            # prettier --write
+yarn format:check      # som CI: verifiera formatering
+```
+
 ## CI
 
-GitHub Actions-flödet i `.github/workflows/ci.yml` kör lint, type-check och enhetstester för både frontend och backend samt Playwright e2e-tester vid pull requests och push till `main`/`develop`.
+GitHub Actions-flödet i `.github/workflows/ci.yml` kör strikt lint, formatkontroll, type-check och enhetstester för både frontend och backend samt Playwright e2e-tester vid pull requests och push till `main`/`develop`.

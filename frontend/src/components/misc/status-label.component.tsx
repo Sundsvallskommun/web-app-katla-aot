@@ -1,5 +1,5 @@
-import { Check, CirclePause, Clock10, Pen, SquarePen } from 'lucide-react';
 import { Label, LabelProps } from '@sk-web-gui/react';
+import { Check, CirclePause, Clock10, Pen, SquarePen } from 'lucide-react';
 
 //TODO: Ajust enum values
 enum StatusLabelEnum {
@@ -15,7 +15,7 @@ enum StatusLabelEnum {
 
 export const StatusLabel: React.FC<{ status?: string }> = ({ status }) => {
   let color: LabelProps['color'],
-    inverted: boolean = false,
+    inverted = false,
     icon: React.ReactNode = null;
   switch (status) {
     case 'SOLVED':
@@ -88,8 +88,7 @@ export const StatusLabel: React.FC<{ status?: string }> = ({ status }) => {
 
   return (
     <Label rounded inverted={inverted} color={color} className={`max-h-full h-auto text-center whitespace-nowrap`}>
-      {icon}{' '}
-      {StatusLabelEnum[status as keyof typeof StatusLabelEnum]}
+      {icon} {StatusLabelEnum[status as keyof typeof StatusLabelEnum]}
     </Label>
   );
 };

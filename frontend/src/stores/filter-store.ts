@@ -6,7 +6,7 @@ interface FilterState {
   statuses: string[];
   setActiveStatus: (status: string) => void;
   setStatuses: (statuses: string[]) => void;
-} 
+}
 
 export const useFilterStore = create<FilterState>()(
   persist(

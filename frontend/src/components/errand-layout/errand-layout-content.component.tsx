@@ -1,23 +1,23 @@
 'use client';
 
-import { MobileWizard } from '@components/wizard/mobile-wizard.component';
 import { VisibleTabs } from '@components/tabs/tabs';
-import { FormValidationProvider } from '@contexts/form-validation-context';
+import { MobileWizard } from '@components/wizard/mobile-wizard.component';
+import { FormValidationProvider } from '@contexts/form-validation-provider';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { MOBILE_BREAKPOINT } from 'src/constants/responsive';
-import { useMediaQuery } from 'src/hooks/use-media-query';
 import { ErrandFormDTO } from '@interfaces/errand-form';
 import BaseErrandLayout from '@layouts/base-errand-layout/base-errand-layout.component';
 import { ErrandButtonGroup } from '@layouts/errand-button-group.component';
 import Main from '@layouts/main/main.component';
 import { Tabs } from '@sk-web-gui/react';
-import { useAutoInitReporter } from 'src/hooks/use-auto-init-reporter';
-import { useWizardStore } from 'src/stores/wizard-store';
 import { default as NextLink } from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { FormProvider, Resolver, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { MOBILE_BREAKPOINT } from 'src/constants/responsive';
+import { useAutoInitReporter } from 'src/hooks/use-auto-init-reporter';
+import { useMediaQuery } from 'src/hooks/use-media-query';
+import { useWizardStore } from 'src/stores/wizard-store';
 import * as yup from 'yup';
 
 const ReporterInit: React.FC = () => {
@@ -30,7 +30,7 @@ const FormSchema = yup.object({}).required();
 export const ErrandLayoutContent: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { t } = useTranslation();
   const pathName = usePathname();
-  const registerNewErrand = !!pathName.includes('/registrera');
+  const registerNewErrand = pathName.includes('/registrera');
   const initialFocus = useRef<HTMLBodyElement>(null);
   const isMobile = useMediaQuery(MOBILE_BREAKPOINT);
   const wizardReset = useWizardStore((s) => s.reset);
@@ -43,8 +43,7 @@ export const ErrandLayoutContent: React.FC<{ children: React.ReactNode }> = ({ c
 
   const setInitalFocus = () => {
     setTimeout(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      initialFocus.current && initialFocus.current.focus();
+      initialFocus.current?.focus();
     });
   };
 
@@ -84,7 +83,9 @@ export const ErrandLayoutContent: React.FC<{ children: React.ReactNode }> = ({ c
           href="#content"
           passHref
           tabIndex={1}
-          onClick={() => setInitalFocus()}
+          onClick={() => {
+            setInitalFocus();
+          }}
           className="sr-only focus:not-sr-only bg-primary-light border-2 border-black p-4 text-black inline-block focus:absolute focus:top-0 focus:left-0 focus:right-0 focus:m-auto focus:w-80 text-center"
         >
           Hoppa till innehåll

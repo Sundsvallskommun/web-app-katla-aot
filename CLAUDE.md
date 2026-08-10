@@ -66,7 +66,7 @@ Both frontend and backend have `src/data-contracts/` directories with TypeScript
 ## Code Conventions
 
 - **Prettier**: single quotes, 2-space indent, 120 print width, trailing commas (es5), `experimentalTernaries: true`
-- **ESLint**: `@typescript-eslint/no-explicit-any` is an error; `react-refresh/only-export-components` enforced
+- **ESLint**: strict, type-aware flat config modeled on Sundsvalls Kommun's web-app-starter — `typescript-eslint` `strictTypeChecked` + `stylisticTypeChecked`, `simple-import-sort`, `unused-imports`, `no-console` (warn/error allowed), no `any`, and `noInlineConfig` (inline `eslint-disable` comments are forbidden — fix the code instead). Run `yarn lint:strict` (0 warnings) and `yarn format:check` before pushing; both run in CI.
 - **Component naming**: `*.component.tsx` pattern
 - **Test selectors**: use `data-cy` attributes (Playwright is configured with `testIdAttribute: 'data-cy'`)
 - **Feature flags**: configured in `src/config/appconfig.tsx` via `NEXT_PUBLIC_*` env vars

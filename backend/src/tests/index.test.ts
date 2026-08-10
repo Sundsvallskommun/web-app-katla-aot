@@ -1,11 +1,16 @@
-import request from 'supertest';
-import { afterAll, describe, it } from 'vitest';
-import App from '@/app';
 import { IndexController } from '@controllers/index.controller';
 import { localApi } from '@utils/util';
+import request from 'supertest';
+import { afterAll, describe, it } from 'vitest';
+
+import App from '@/app';
 
 afterAll(async () => {
-  await new Promise<void>(resolve => setTimeout(() => resolve(), 500));
+  await new Promise<void>(resolve =>
+    setTimeout(() => {
+      resolve();
+    }, 500),
+  );
 });
 describe('Testing Index', () => {
   describe('[GET] /', () => {

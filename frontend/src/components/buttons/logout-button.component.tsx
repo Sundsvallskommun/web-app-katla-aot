@@ -1,10 +1,10 @@
 'use client';
 
 import { Button, cx } from '@sk-web-gui/react';
+import { capitalize } from 'lodash';
 import { LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { capitalize } from 'lodash';
 
 interface LogoutButtonProps {
   smallSideBar?: boolean;

@@ -9,7 +9,9 @@ export const TestComponent = (props: { timeToDone: number }) => {
       setState('Done');
     }, props.timeToDone);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [props.timeToDone]);
   return <div data-cy="state">{state}</div>;
 };
@@ -19,6 +21,8 @@ describe('Example component', () => {
     const { container } = render(<TestComponent timeToDone={200} />);
     const state = container.querySelector('[data-cy="state"]');
     expect(state).toHaveTextContent('Not done');
-    await waitFor(() => expect(state).toHaveTextContent('Done'));
+    await waitFor(() => {
+      expect(state).toHaveTextContent('Done');
+    });
   });
 });

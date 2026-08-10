@@ -37,7 +37,8 @@ export interface CommonWidgetProps {
 }
 
 export function getCommonProps(props: WidgetProps, defaultClassName: string): CommonWidgetProps {
-  const { id, value, disabled, readonly, onChange } = props;
+  const { id, disabled, readonly, onChange } = props;
+  const value: unknown = props.value;
   const options = getWidgetOptions(props.options);
 
   return {
@@ -45,7 +46,7 @@ export function getCommonProps(props: WidgetProps, defaultClassName: string): Co
     value,
     disabled: !!disabled,
     readonly: !!readonly,
-    className: options.className || defaultClassName,
+    className: (options.className ?? '') || defaultClassName,
     onChange,
   };
 }
@@ -62,10 +63,10 @@ export function stripHtml(html: string): string {
   // Fallback for SSR: iterative parser instead of regex to avoid ReDoS
   let result = '';
   let inTag = false;
-  for (let i = 0; i < html.length; i++) {
-    if (html[i] === '<') inTag = true;
-    else if (html[i] === '>') inTag = false;
-    else if (!inTag) result += html[i];
+  for (const char of html) {
+    if (char === '<') inTag = true;
+    else if (char === '>') inTag = false;
+    else if (!inTag) result += char;
   }
   return result.trim();
 }

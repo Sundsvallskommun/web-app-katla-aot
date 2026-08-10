@@ -25,7 +25,6 @@ export const ErrandDisclosure: React.FC<{
     if (doneMark) {
       setOpen(!open);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doneMark]);
 
   const handleToggleOpen = (isOpen: boolean) => {
@@ -36,7 +35,13 @@ export const ErrandDisclosure: React.FC<{
 
   return (
     <FormControl className="w-full" disabled={disabled}>
-      <Disclosure variant="alt" className="w-full mobileVersion" open={open} onToggleOpen={handleToggleOpen} disabled={disabled}>
+      <Disclosure
+        variant="alt"
+        className="w-full mobileVersion"
+        open={open}
+        onToggleOpen={handleToggleOpen}
+        disabled={disabled}
+      >
         <Disclosure.Header>
           <Disclosure.Icon icon={icon} />
           <Disclosure.Title>{header}</Disclosure.Title>
@@ -52,7 +57,12 @@ export const ErrandDisclosure: React.FC<{
           {errandInformationSection && <Divider className="pt-20" />}
 
           {appConfig.features.disclosureDoneMark && (
-            <Checkbox onClick={() => setDoneMark(!doneMark)} checked={doneMark}>
+            <Checkbox
+              onClick={() => {
+                setDoneMark(!doneMark);
+              }}
+              checked={doneMark}
+            >
               Markera avsnittet som komplett
             </Checkbox>
           )}

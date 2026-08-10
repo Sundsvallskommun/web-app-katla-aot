@@ -12,7 +12,7 @@
     "start": "next start",
     "generate:middleware-envs": "node middleware-envs-generator.mjs",
     "generate:contracts": "cross-env NODE_ENV=development npx tsx ./src/swagger-typescript-api.ts",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx src",
+    "lint": "eslint src/ e2e/ tests/",
     "analyze": "cross-env ANALYZE=true next build",
     "analyze:server": "cross-env BUNDLE_ANALYZE=server next build",
     "analyze:browser": "cross-env BUNDLE_ANALYZE=browser next build",
@@ -21,7 +21,11 @@
     "test:coverage": "vitest run --coverage",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
-    "type-check": "tsc --pretty --noEmit"
+    "type-check": "tsc --pretty --noEmit",
+    "lint:fix": "eslint src/ e2e/ tests/ --fix",
+    "lint:strict": "eslint src/ e2e/ tests/ --max-warnings=0 --cache --cache-location node_modules/.cache/eslint/",
+    "format": "prettier --write \"{src,e2e,tests}/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"{src,e2e,tests}/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -83,6 +87,8 @@
     "eslint-config-next": "16.1.6",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react-refresh": "^0.5.2",
+    "eslint-plugin-simple-import-sort": "^14.0.0",
+    "eslint-plugin-unused-imports": "^4.4.1",
     "jsdom": "^27.4.0",
     "postcss": "^8.5.6",
     "postcss-import": "^16.1.1",

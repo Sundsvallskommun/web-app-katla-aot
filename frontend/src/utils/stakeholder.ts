@@ -3,7 +3,7 @@ import { appConfig } from 'src/config/appconfig';
 import * as yup from 'yup';
 
 export const shouldShowContactDetails = (roles?: string[]) =>
-  !(roles?.includes('PRIMARY')  && appConfig.features.reducedStakeholderInfo);
+  !(roles?.includes('PRIMARY') && appConfig.features.reducedStakeholderInfo);
 
 export const emptyStakeholder: StakeholderDTO = {
   externalIdType: 'PERSON',
@@ -21,7 +21,8 @@ export const emptyStakeholder: StakeholderDTO = {
 
 const personNumberRegex = /^\d{8}-?\d{4}$/;
 const phoneRegExp = /^$|^(?:\+|0)[0-9\s-]{6,19}$/;
-const emailRegExp = /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/;
+const emailRegExp =
+  /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?)*\.[A-Za-z]{2,}$/;
 
 export function phoneNumberFormatter(phoneNumber: string | undefined | null): string {
   if (!phoneNumber) return '';
@@ -66,12 +67,10 @@ export const stakeholderSchema = yup.object({
   emails: yup
     .array()
     .of(
-      yup
-        .string()
-        .matches(emailRegExp, {
-          message: 'Ogiltig e-postadress',
-          excludeEmptyString: true,
-        })
+      yup.string().matches(emailRegExp, {
+        message: 'Ogiltig e-postadress',
+        excludeEmptyString: true,
+      })
     )
     .notRequired(),
   phoneNumbers: yup

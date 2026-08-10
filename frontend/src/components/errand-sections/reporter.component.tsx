@@ -28,7 +28,6 @@ export const ReporterContent: React.FC = () => {
     if (hasContact && !otherReporter) {
       setOtherReporter(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stakeholders]);
 
   const handleOtherReporterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +40,9 @@ export const ReporterContent: React.FC = () => {
         .map((s, i) => (s.role === 'CONTACT' ? i : -1))
         .filter((i) => i !== -1)
         .reverse();
-      indicesToRemove.forEach((i) => remove(i));
+      indicesToRemove.forEach((i) => {
+        remove(i);
+      });
     }
   };
 
@@ -66,9 +67,7 @@ export const ReporterContent: React.FC = () => {
               <h3 className="sk-disclosure-header-title sk-disclosure-header-title-md">
                 {t('errand-information:other_reporter.title')}
               </h3>
-              <span className="text-dark-secondary">
-                {t('errand-information:other_reporter.description')}
-              </span>
+              <span className="text-dark-secondary">{t('errand-information:other_reporter.description')}</span>
               <StakeholderList roles={['CONTACT', 'SUBSTITUTEASSIGNMENT']} autoDetectSearch maxCount={1} />
             </div>
           )}
