@@ -16,7 +16,7 @@ Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumer
 
 ### Krav
 
-- Node 22.12+ inom 22.x (använd versionen i `.nvmrc`)
+- Node 22.22.2+ inom 22.x (använd versionen i `.nvmrc`)
 - Yarn
 
 ### Steg för steg

@@ -42,10 +42,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    // Kräver att appen är byggd (yarn build). Lokalt återanvänds en redan startad
-    // dev-server (yarn dev) i stället.
-    command: 'yarn start',
-    url: `http://localhost:${PORT}`,
+    // Produktionsbygget använder Nexts standalone-output, som inte kan startas med `next start`.
+    // CI verifierar bygget separat; Playwright använder den befintliga dev-servern som testharness.
+    command: 'yarn dev',
+    url: `http://localhost:${PORT}${BASE_PATH}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

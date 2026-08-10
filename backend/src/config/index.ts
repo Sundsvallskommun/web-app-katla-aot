@@ -6,7 +6,7 @@ export { APIS };
 
 // Tom sträng ska precis som tidigare falla tillbaka på development, därav den explicita kontrollen.
 const nodeEnv = process.env.NODE_ENV;
-config({ path: `.env.${nodeEnv !== undefined && nodeEnv !== '' ? nodeEnv : 'development'}.local` });
+config({ path: `.env.${nodeEnv !== undefined && nodeEnv !== '' ? nodeEnv : 'development'}.local`, quiet: true });
 
 export const CREDENTIALS = process.env.CREDENTIALS === 'true';
 export const SWAGGER_ENABLED = process.env.SWAGGER_ENABLED === 'true';
