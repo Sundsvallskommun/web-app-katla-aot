@@ -41,8 +41,9 @@ Kör `yarn install --frozen-lockfile` i både `backend/` och `frontend/`. Kör d
 - `yarn format:check`
 - `yarn type-check`
 - `yarn test:coverage`
-- `yarn build`
-- `yarn e2e`
+- `yarn playwright install chromium`
+- `NEXT_PUBLIC_OTHER_PARTIES_DISCLOSURE=true NEXT_PUBLIC_REDUCED_STAKEHOLDER_INFO=false yarn build`
+- `NEXT_PUBLIC_OTHER_PARTIES_DISCLOSURE=true NEXT_PUBLIC_REDUCED_STAKEHOLDER_INFO=false yarn e2e`
 - `yarn audit --json`
 
 Kontrollera de patchade versionerna i låsfilerna och dokumentera eventuella upstream-varningar utan tillgänglig fix. Om `@xmldom/xmldom`, `xml-crypto`, `xml-encryption` eller `@node-saml/*` ändrats måste SAML-inloggning och logout dessutom verifieras manuellt i testmiljön före merge.
