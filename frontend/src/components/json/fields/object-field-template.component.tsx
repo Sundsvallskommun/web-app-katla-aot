@@ -1,4 +1,5 @@
 'use client';
+import { ErrandContentLock } from '@components/errand-content-lock/errand-content-lock.component';
 import type { ObjectFieldTemplateProps, RJSFSchema, UiSchema } from '@rjsf/utils';
 import { Checkbox, Disclosure, Divider, Label } from '@sk-web-gui/react';
 import { icons } from 'lucide-react';
@@ -134,13 +135,15 @@ function SectionDisclosure({ section, children }: SectionDisclosureProps) {
         <Disclosure.Button />
       </Disclosure.Header>
       <Disclosure.Content>
-        {children}
-        <Divider className="mt-16" />
-        {appConfig.features.disclosureDoneMark && (
-          <Checkbox className="mt-16" onClick={handleDoneMarkChange} checked={doneMark}>
-            Markera avsnittet som komplett
-          </Checkbox>
-        )}
+        <ErrandContentLock>
+          {children}
+          <Divider className="mt-16" />
+          {appConfig.features.disclosureDoneMark && (
+            <Checkbox className="mt-16" onClick={handleDoneMarkChange} checked={doneMark}>
+              Markera avsnittet som komplett
+            </Checkbox>
+          )}
+        </ErrandContentLock>
       </Disclosure.Content>
     </Disclosure>
   );
