@@ -15,7 +15,9 @@ export const FilterOverviewSidebarStatusSelector: React.FC<{
         const isActive = activeStatus === button.label;
         return (
           <Button
-            onClick={() => onSelectStatus(button)}
+            onClick={() => {
+              onSelectStatus(button);
+            }}
             aria-label={`status-button-${button.label}`}
             variant={isActive ? 'primary' : 'ghost'}
             className={`${!smallSideBar && 'justify-start'} ${!isActive && 'hover:bg-dark-ghost'}`}

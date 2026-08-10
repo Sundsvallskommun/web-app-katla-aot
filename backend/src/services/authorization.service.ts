@@ -1,5 +1,5 @@
 // import { AUTHORIZED_GROUPS } from '@/config';
-import { Permissions, InternalRole, ADRole } from '@interfaces/auth.interface';
+import { ADRole, InternalRole, Permissions } from '@interfaces/auth.interface';
 
 // export function authorizeGroups(groups) {
 //   const authorizedGroupsList = AUTHORIZED_GROUPS.split(',');
@@ -12,8 +12,8 @@ export const defaultPermissions: () => Permissions = () => ({
 });
 
 enum RoleOrderEnum {
-  'app_read',
-  'app_admin',
+  app_read,
+  app_admin,
 }
 
 const roles = new Map<InternalRole, Partial<Permissions>>([
@@ -26,13 +26,13 @@ const roles = new Map<InternalRole, Partial<Permissions>>([
   ['app_read', {}],
 ]);
 
-type RoleADMapping = {
-  [key in ADRole]: InternalRole;
-};
+type RoleADMapping = Record<ADRole, InternalRole>;
 const roleADMapping: RoleADMapping = {
   sg_appl_app_read: 'app_read',
   sg_appl_app_admin: 'app_admin',
 };
+// Uppslag med okänd nyckel (t.ex. en grupp utanför mappningen) ska ge undefined, därav den vidare typen.
+const roleADMappingLookup: Partial<Record<string, InternalRole>> = roleADMapping;
 
 /**
  *
@@ -44,15 +44,15 @@ export const getPermissions = (groups: InternalRole[] | ADRole[], internalGroups
   const permissions: Permissions = defaultPermissions();
   groups.forEach(group => {
     const groupLower = group.toLowerCase();
-    const role = internalGroups ? (groupLower as InternalRole) : (roleADMapping[groupLower] as InternalRole);
-    if (roles.has(role)) {
-      const groupPermissions = roles.get(role);
-      Object.keys(groupPermissions).forEach(permission => {
-        if (groupPermissions[permission] === true) {
-          permissions[permission] = true;
-        }
-      });
-    }
+    const role = internalGroups ? (groupLower as InternalRole) : roleADMappingLookup[groupLower];
+    if (role === undefined) return;
+    const groupPermissions = roles.get(role);
+    if (!groupPermissions) return;
+    (Object.keys(groupPermissions) as (keyof Permissions)[]).forEach(permission => {
+      if (groupPermissions[permission] === true) {
+        permissions[permission] = true;
+      }
+    });
   });
   return permissions;
 };
@@ -62,13 +62,14 @@ export const getPermissions = (groups: InternalRole[] | ADRole[], internalGroups
  * @param groups List of AD roles
  * @returns role with most permissions
  */
-export const getRole = (groups: ADRole[]) => {
-  if (groups.length == 1) return roleADMapping[groups[0]]; // app_read
+export const getRole = (groups: ADRole[]): InternalRole | undefined => {
+  const [firstGroup] = groups;
+  if (groups.length == 1 && firstGroup !== undefined) return roleADMapping[firstGroup]; // app_read
 
   const roles: InternalRole[] = [];
   groups.forEach(group => {
     const groupLower = group.toLowerCase();
-    const role = roleADMapping[groupLower];
+    const role = roleADMappingLookup[groupLower];
     if (role) {
       roles.push(role);
     }

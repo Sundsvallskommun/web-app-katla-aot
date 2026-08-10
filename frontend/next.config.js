@@ -20,6 +20,7 @@ envalid.cleanEnv(process.env, {
 
 module.exports = {
   output: 'standalone',
+  allowedDevOrigins: ['dev.test'],
   images: {
     remotePatterns: process.env.DOMAIN_NAME ? [{ protocol: 'https', hostname: process.env.DOMAIN_NAME }] : [],
     formats: ['image/avif', 'image/webp'],

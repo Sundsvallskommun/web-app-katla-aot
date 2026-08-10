@@ -7,12 +7,14 @@
 
 # testing
 /coverage
-/.nyc_output
-/cypress/downloads
+/test-results
+/playwright-report
+/blob-report
 
 # next.js
 /.next
 /out
+next-env.d.ts
 
 # production
 /build
@@ -44,4 +46,6 @@ yarn-error.log*
 .vercel
 .npmrc
 .yarnrc
+
+# typescript incremental build info
 *.tsbuildinfo

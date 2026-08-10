@@ -1,23 +1,13 @@
 'use client';
-/* eslint-disable react-refresh/only-export-components */
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext } from 'react';
 
-interface FormValidationContextType {
+export interface FormValidationContextType {
   showValidation: boolean;
   setShowValidation: (show: boolean) => void;
 }
 
-const FormValidationContext = createContext<FormValidationContextType | undefined>(undefined);
-
-export function FormValidationProvider({ children }: { children: ReactNode }) {
-  const [showValidation, setShowValidation] = useState(false);
-  return (
-    <FormValidationContext.Provider value={{ showValidation, setShowValidation }}>
-      {children}
-    </FormValidationContext.Provider>
-  );
-}
+export const FormValidationContext = createContext<FormValidationContextType | undefined>(undefined);
 
 export function useFormValidation() {
   const context = useContext(FormValidationContext);

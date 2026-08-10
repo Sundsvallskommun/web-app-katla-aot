@@ -12,7 +12,9 @@ export const ErrandFilterQuery: React.FC = () => {
       showSearchButton={true}
       className="flex-grow max-w-full"
       placeholder={t('filtering:search')}
-      onChange={() => {}}
+      onChange={() => {
+        // Medvetet tom – fältet är ännu inte kopplat till någon filtrering
+      }}
     />
   );
 };

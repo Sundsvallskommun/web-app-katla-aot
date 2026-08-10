@@ -69,7 +69,7 @@ export const getNotifications = async (): Promise<NotificationDTO[]> => {
 
 export const acknowledgeNotification: (notification: NotificationDTO) => Promise<boolean> = (notification) => {
   if (!notification.id) {
-    return Promise.reject('Missing id on notification');
+    return Promise.reject(new Error('Missing id on notification'));
   }
   const data = [{ ...notification, acknowledged: true }];
   return apiService
@@ -77,7 +77,7 @@ export const acknowledgeNotification: (notification: NotificationDTO) => Promise
     .then(() => {
       return true;
     })
-    .catch((e) => {
+    .catch((e: unknown) => {
       console.error('Something went wrong when acknowledging notification');
       throw e;
     });

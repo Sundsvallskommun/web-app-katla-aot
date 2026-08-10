@@ -1,0 +1,65 @@
+import { mockCountDraftErrands, mockCountNewErrands, mockCountSolvedErrands } from '../fixtures/mockCount';
+import { mockErrands } from '../fixtures/mockErrands';
+import { mockMetadata } from '../fixtures/mockMetadata';
+import { mockNotifications } from '../fixtures/mockNotifications';
+import { jsonRoute } from '../utils/routes';
+import { expect, test } from '../utils/test';
+
+test.describe('Overview page', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.route(
+      (url) => url.pathname.endsWith('/supportmanagement/errands') && url.searchParams.get('page') === '0',
+      jsonRoute(mockErrands)
+    );
+    await page.route(
+      (url) => url.pathname.endsWith('/supportmanagement/count') && url.searchParams.get('status') === 'NEW',
+      jsonRoute(mockCountNewErrands)
+    );
+    await page.route(
+      (url) => url.pathname.endsWith('/supportmanagement/count') && url.searchParams.get('status') === 'DRAFT',
+      jsonRoute(mockCountDraftErrands)
+    );
+    await page.route(
+      (url) => url.pathname.endsWith('/supportmanagement/count') && url.searchParams.get('status') === 'SOLVED',
+      jsonRoute(mockCountSolvedErrands)
+    );
+    await page.route('**/supportmanagement/notifications', jsonRoute(mockNotifications));
+    await page.route('**/supportmanagement/metadata', jsonRoute(mockMetadata));
+    await page.goto('/oversikt');
+  });
+
+  test('Show sidebar filter buttons with errand count', async ({ page }) => {
+    await expect(page.locator('main').first()).toBeVisible();
+    const openErrandsButton = page.locator('[aria-label="status-button-öppna ärenden"]');
+    await expect(openErrandsButton).toBeEnabled();
+    await expect(openErrandsButton).toContainText(`Öppna ärenden${mockCountNewErrands.count}`);
+    //Note: Not in use right now
+    // const draftsButton = page.locator('[aria-label="status-button-utkast"]');
+    // await expect(draftsButton).toBeEnabled();
+    // await expect(draftsButton).toContainText(`Utkast${mockCountDraftErrands.count}`);
+    const solvedErrandsButton = page.locator('[aria-label="status-button-avslutade ärenden"]');
+    await expect(solvedErrandsButton).toBeEnabled();
+    await expect(solvedErrandsButton).toContainText(`Avslutade ärenden${mockCountSolvedErrands.count}`);
+    const logoutButton = page.getByTestId('logout-button');
+    await expect(logoutButton).toBeEnabled();
+    await expect(logoutButton).toContainText('Logga ut');
+    await logoutButton.click();
+  });
+
+  test('Show correct errand table header and correct ammount of errands', async ({ page }) => {
+    const table = page.getByTestId('errand-table');
+    await expect(table).toBeVisible();
+
+    const headerCells = table.locator('.sk-table-thead-tr').first().locator('th');
+    await expect(headerCells.nth(0).locator('span').first()).toHaveText('Status');
+    await expect(headerCells.nth(1).locator('span').first()).toHaveText('Ärendenummer');
+    await expect(headerCells.nth(2).locator('span').first()).toHaveText('Typ av rapport');
+    await expect(headerCells.nth(3).locator('span').first()).toHaveText('Rapporterat');
+
+    await expect(table.locator('.sk-table-tbody-tr')).toHaveCount(mockErrands?.content?.length ?? 0);
+  });
+
+  // TODO: Add test for search field when frontend functionality is ready
+  // TODO: Add test for all filters
+  // TODO: Add test for notification bell when frontend functionality is ready
+});

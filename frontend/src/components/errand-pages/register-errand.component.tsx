@@ -20,4 +20,3 @@ export const RegisterErrand: React.FC = () => {
     </div>
   );
 };
-

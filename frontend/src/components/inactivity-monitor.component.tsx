@@ -1,8 +1,8 @@
 'use client';
 
 import CountdownTimer from '@components/countdown/countdown-timer.component';
-import { AlarmClock } from 'lucide-react';
 import { Button, Dialog } from '@sk-web-gui/react';
+import { AlarmClock } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,12 +16,15 @@ const INACTIVITY_COUNTDOWN_TIMEOUT = process.env.NEXT_PUBLIC_INACTIVITY_COUNTDOW
 // Feature is only enabled if both environment variables are set
 const INACTIVITY_ENABLED = !!(INACTIVITY_WARNING_TIMEOUT && INACTIVITY_COUNTDOWN_TIMEOUT) || TEST_MODE;
 
-const INACTIVITY_WARNING_TIME = TEST_MODE ? 0 : parseInt(INACTIVITY_WARNING_TIMEOUT || '0', 10);
-const WARNING_COUNTDOWN_TIME = TEST_MODE ? 3600000 : parseInt(INACTIVITY_COUNTDOWN_TIMEOUT || '0', 10);
+// (x ?? '') || '0' bevarar ||-semantiken: även tom sträng ska falla tillbaka till '0'
+const INACTIVITY_WARNING_TIME = TEST_MODE ? 0 : parseInt((INACTIVITY_WARNING_TIMEOUT ?? '') || '0', 10);
+const WARNING_COUNTDOWN_TIME = TEST_MODE ? 3600000 : parseInt((INACTIVITY_COUNTDOWN_TIMEOUT ?? '') || '0', 10);
 
 export const InactivityMonitor: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
+  // Bugfix: hooken anropades tidigare villkorligt efter early return – måste alltid köras
+  const { t } = useTranslation('session');
 
   const [showWarning, setShowWarning] = useState(false);
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -35,13 +38,6 @@ export const InactivityMonitor: React.FC = () => {
     setShowWarning(false);
     router.push('/logout');
   }, [router]);
-
-  const handleStayLoggedIn = useCallback(() => {
-    if (countdownTimerRef.current) clearTimeout(countdownTimerRef.current);
-    setShowWarning(false);
-    startInactivityTimer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const startCountdown = useCallback(() => {
     setShowWarning(true);
@@ -60,6 +56,12 @@ export const InactivityMonitor: React.FC = () => {
       startCountdown();
     }, INACTIVITY_WARNING_TIME);
   }, [isActive, startCountdown]);
+
+  const handleStayLoggedIn = useCallback(() => {
+    if (countdownTimerRef.current) clearTimeout(countdownTimerRef.current);
+    setShowWarning(false);
+    startInactivityTimer();
+  }, [startInactivityTimer]);
 
   useEffect(() => {
     if (!isActive) return;
@@ -89,9 +91,6 @@ export const InactivityMonitor: React.FC = () => {
   if (!INACTIVITY_ENABLED) {
     return null;
   }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { t } = useTranslation('session');
 
   return (
     <Dialog show={showWarning} onClose={handleStayLoggedIn}>

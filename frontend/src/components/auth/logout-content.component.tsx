@@ -19,8 +19,6 @@ export const LogoutContent: React.FC = () => {
       successRedirect: `${appURL()}/login?loggedout`,
     });
     router.push(`${process.env.NEXT_PUBLIC_API_URL}/saml/logout?${query.toString()}`);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <></>;

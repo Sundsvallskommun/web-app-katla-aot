@@ -1,6 +1,7 @@
+import i18nConfig from '@app/i18nConfig';
 import { NextRequest, NextResponse } from 'next/server';
 import { i18nRouter } from 'next-i18n-router';
-import i18nConfig from '@app/i18nConfig';
+
 import { envs } from '../middleware-envs';
 
 export async function proxy(req: NextRequest) {
@@ -12,7 +13,7 @@ export async function proxy(req: NextRequest) {
 
   if (envs.protectedRoutes.includes(pathname)) {
     const cookieName = 'connect.sid';
-    const token = req.cookies.get(cookieName)?.value || '';
+    const token = req.cookies.get(cookieName)?.value ?? '';
 
     const response = await fetch(`${envs.apiUrl}/me`, {
       cache: 'no-cache',

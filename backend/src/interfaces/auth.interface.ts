@@ -1,5 +1,5 @@
-import { Request } from 'express';
 import { User } from '@interfaces/users.interface';
+import { Request } from 'express';
 
 export interface DataStoredInToken {
   id: number;
@@ -31,6 +31,6 @@ export type ADRole = 'sg_appl_app_admin' | 'sg_appl_app_read';
 /** Internal roles */
 export type InternalRole = 'app_admin' | 'app_read';
 export enum InternalRoleEnum {
-  'app_read',
-  'app_admin',
+  app_read,
+  app_admin,
 }

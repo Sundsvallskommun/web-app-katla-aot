@@ -15,15 +15,13 @@ interface MainPageMobileHeaderProps {
 
 export const MainPageMobileHeader: React.FC<MainPageMobileHeaderProps> = ({ icon, actions, children }) => {
   const headerIcon = icon ?? (
-    <NextLink
-      href="/oversikt"
-      title={`Katla - ${process.env.NEXT_PUBLIC_APP_NAME}. Gå till startsidan.`}
-    >
+    <NextLink href="/oversikt" title={`Katla - ${process.env.NEXT_PUBLIC_APP_NAME}. Gå till startsidan.`}>
       <Logo variant="symbol" className="h-32" />
     </NextLink>
   );
 
-  const Title = () => (
+  // Bugfix (static-components): JSX-variabel i stället för komponent skapad under rendering
+  const title = (
     <div className="flex items-center gap-12 py-8">
       {headerIcon}
       <strong className="text-large font-bold">{process.env.NEXT_PUBLIC_APP_NAME}</strong>
@@ -33,7 +31,7 @@ export const MainPageMobileHeader: React.FC<MainPageMobileHeaderProps> = ({ icon
   return (
     <div className="flex flex-col h-[100dvh] pt-[env(safe-area-inset-top)]">
       <div className="flex-shrink-0 relative z-[15] bg-background-content">
-        <PageHeader logo={<Title />} mobileMenu={actions} />
+        <PageHeader logo={title} mobileMenu={actions} />
       </div>
       <div className="flex-grow overflow-y-auto bg-background-100">{children}</div>
     </div>

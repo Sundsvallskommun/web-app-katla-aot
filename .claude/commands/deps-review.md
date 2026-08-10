@@ -1,39 +1,56 @@
 ---
-description: Säkerhetsgenomgång av beroenden — hämta GitHub-varningar och åtgärda rotorsaken lokalt
+description: Säkerhetsgranska beroenden och åtgärda rotorsaken lokalt
 ---
 
-Genomför en säkerhetsgenomgång av projektets beroenden och åtgärda öppna varningar. Arbeta enligt principen **rotorsak före resolutions** — en resolution är en tickande bomb som döljer att grundproblemet finns kvar.
+Genomför en säkerhetsgenomgång av projektets beroenden. Prioritera uppgraderingar av den komponent som äger problemet; använd endast en snävt avgränsad `resolution` när en transitiv förälder ännu inte kan uppgraderas.
 
 ## 1. Kartlägg
 
-- Hämta öppna Dependabot-varningar: `gh api repos/{owner}/{repo}/dependabot/alerts --paginate` (filtrera `state=="open"`). Gruppera per paket, manifest (`frontend/` resp. `backend/`), severity och scope (runtime/development).
-- Hämta öppna code scanning-varningar: `gh api "repos/{owner}/{repo}/code-scanning/alerts?state=open"`.
-- Identifiera för varje sårbart paket: är det ett direkt beroende eller transitivt? Vid transitivt — vilken förälder drar in det (`grep` i yarn.lock) och tillåter förälderns versionsintervall den patchade versionen?
+- Hämta öppna Dependabot-varningar med `gh api --paginate repos/{owner}/{repo}/dependabot/alerts` och filtrera `state == "open"`.
+- Hämta öppna CodeQL-varningar med `gh api --paginate "repos/{owner}/{repo}/code-scanning/alerts?state=open"`.
+- Gruppera fynden per paket, manifest (`frontend/` respektive `backend/`), severity och runtime/dev-scope.
+- Spåra transitiva beroenden med `rg` i respektive `yarn.lock` och `yarn why <paket>`.
+- Kontrollera aktuell direkt- och transitiv version med `npm view` innan ett versionsval görs.
 
-## 2. Åtgärda — i denna prioritetsordning
+## 2. Åtgärda i ägarordning
 
-1. **Direkt beroende:** bumpa versionen i `package.json` (frontend och/eller backend).
-2. **Transitivt, patchad version inom förälderns intervall:** ta bort paketets poster ur `yarn.lock` och kör `yarn install` så att det omresolveras. Inga resolutions behövs.
-3. **Transitivt, exakt-pinnat av förälder:** bumpa föräldern om nyare version finns (gäller ofta `@sk-web-gui/*` — kolla `npm view <pkg> dependencies`).
-4. **Sista utväg:** en snävt avgränsad resolution (`"paket": ">=x.y.z"`) — dokumentera i PR:en varför den behövs och vad som krävs för att ta bort den (t.ex. Express 5-migreringen för `qs`).
+1. Uppgradera ett direkt sårbart beroende i rätt `package.json`.
+2. Om beroendet är transitivt, uppgradera först den direkta föräldern som äger versionsintervallet.
+3. Regenerera låsfilen med Yarn och granska att endast avsedda paket ändrades. Kopiera inte en låsfil mellan frontend och backend och handredigera inte integritetsvärden.
+4. Om ingen kompatibel föräldraversion finns, använd en majorbegränsad `resolution` (exempelvis `^6.15.2`) och dokumentera ägare, orsak och villkor för borttagning.
+5. Ta bort resolutions som blivit överflödiga efter föräldrauppgraderingen.
 
-Passa också på att ta bort resolutions som blivit obsoleta (förälderns eget intervall når numera den patchade versionen).
+Ändra inte SAML-, inloggnings- eller API-beteende som en bieffekt av beroendeunderhåll. Om ett majorbyte kräver beteendeförändringar ska det göras och testas som en separat, reviewbar ändring.
 
-## 3. Verifiera
+## 3. Verifiera från ren installation
 
-Kör i **både** `frontend/` och `backend/`:
+Kör `yarn install --frozen-lockfile` i både `backend/` och `frontend/`. Kör därefter:
 
+### Backend
+
+- `yarn lint:strict`
+- `yarn format:check`
 - `yarn type-check`
+- `yarn test`
 - `yarn build`
-- `yarn lint`
-- `yarn jest:coverage` (frontend) / `yarn test` (backend)
+- `yarn audit --json`
 
-Kontrollera patchade versioner i lockfilerna. **Om `@xmldom/xmldom`, `xml-crypto`, `xml-encryption` eller `@node-saml/*` ändrats: flagga att SAML-inloggning måste testas manuellt i testmiljö före merge** — de ligger i signaturverifieringskedjan.
+### Frontend
+
+- `yarn lint:strict`
+- `yarn format:check`
+- `yarn type-check`
+- `yarn test:coverage`
+- `yarn build`
+- `yarn e2e`
+- `yarn audit --json`
+
+Kontrollera de patchade versionerna i låsfilerna och dokumentera eventuella upstream-varningar utan tillgänglig fix. Om `@xmldom/xmldom`, `xml-crypto`, `xml-encryption` eller `@node-saml/*` ändrats måste SAML-inloggning och logout dessutom verifieras manuellt i testmiljön före merge.
 
 ## 4. Leverera
 
-- Skapa en branch och en PR mot `main` med en tabell: paket, från-version, till-version, vilka varningar som släcks.
-- Lista varningar som INTE kunnat åtgärdas och varför, med förslag på väg framåt.
-- Inga Co-Authored-By- eller genererat-av-rader i commits/PR.
+- Redovisa paket, tidigare version, ny version, scope och vilka varningar som stängs.
+- Lista kvarvarande fynd med skäl, riskbedömning och konkret nästa åtgärd.
+- Håll commits avgränsade och använd inga `Co-Authored-By`- eller genererat-av-rader.
 
 $ARGUMENTS

@@ -1,9 +1,9 @@
-import { Moon, Monitor, Sun } from 'lucide-react';
 import { ColorSchemeMode, PopupMenu, RadioButton } from '@sk-web-gui/react';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
+import { Monitor, Moon, Sun } from 'lucide-react';
 
 export const ColorSchemeItems = () => {
-const {colorScheme, setColorScheme} = useLocalStorage()
+  const { colorScheme, setColorScheme } = useLocalStorage();
 
   return (
     <PopupMenu.Items>
@@ -13,9 +13,9 @@ const {colorScheme, setColorScheme} = useLocalStorage()
           onClick={() => {
             setColorScheme(ColorSchemeMode.Light);
           }}
-          checked={colorScheme === 'light'}
+          checked={colorScheme === ColorSchemeMode.Light}
         >
-          Ljust <Sun className={colorScheme === 'light' ? '' : 'opacity-50'} />
+          Ljust <Sun className={colorScheme === ColorSchemeMode.Light ? '' : 'opacity-50'} />
         </RadioButton>
       </PopupMenu.Item>
       <PopupMenu.Item>
@@ -24,9 +24,9 @@ const {colorScheme, setColorScheme} = useLocalStorage()
           onClick={() => {
             setColorScheme(ColorSchemeMode.Dark);
           }}
-          checked={colorScheme === 'dark'}
+          checked={colorScheme === ColorSchemeMode.Dark}
         >
-          Mörkt <Moon className={colorScheme === 'dark' ? '' : 'opacity-50'} />
+          Mörkt <Moon className={colorScheme === ColorSchemeMode.Dark ? '' : 'opacity-50'} />
         </RadioButton>
       </PopupMenu.Item>
       <PopupMenu.Item>
@@ -35,9 +35,9 @@ const {colorScheme, setColorScheme} = useLocalStorage()
           onClick={() => {
             setColorScheme(ColorSchemeMode.System);
           }}
-          checked={colorScheme === 'system'}
+          checked={colorScheme === ColorSchemeMode.System}
         >
-          System <Monitor className={colorScheme === 'system' ? '' : 'opacity-50'} />
+          System <Monitor className={colorScheme === ColorSchemeMode.System ? '' : 'opacity-50'} />
         </RadioButton>
       </PopupMenu.Item>
     </PopupMenu.Items>

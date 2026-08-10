@@ -2,15 +2,16 @@
 
 import { StatusLabel } from '@components/misc/status-label.component';
 import { CenterDiv } from '@layouts/center-div.component';
-import { getTypeDisplayName } from '@utils/errand-helpers';
 import { Spinner, Table } from '@sk-web-gui/react';
+import { getTypeDisplayName } from '@utils/errand-helpers';
 import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
+import { useOverviewErrands } from 'src/hooks/use-overview-errands';
 import { useSortStore } from 'src/stores/sort-store';
+
 import { ErrandTableFooter } from './errand-table-footer.component';
 import { ErrandTableHeader } from './errand-table-header.component';
-import { useRouter } from 'next/navigation';
-import { useOverviewErrands } from 'src/hooks/use-overview-errands';
 
 export const ErrandTable: React.FC = () => {
   const { t } = useTranslation();
@@ -36,7 +37,9 @@ export const ErrandTable: React.FC = () => {
           className="cursor-pointer"
           key={`errand-row-${index}`}
           tabIndex={0}
-          onClick={() => router.push(`/arende/${errand.errandNumber}/grundinformation`)}
+          onClick={() => {
+            router.push(`/arende/${errand.errandNumber}/grundinformation`);
+          }}
           onKeyDown={(e: React.KeyboardEvent) => {
             if (e.key === 'Enter') {
               router.push(`/arende/${errand.errandNumber}/grundinformation`);
