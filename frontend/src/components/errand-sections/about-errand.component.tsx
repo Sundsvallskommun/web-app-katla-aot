@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 export const AboutErrandContent: React.FC = () => {
   const { t } = useTranslation();
-  const { setValue, watch } = useFormContext<ErrandDTO>();
+  const { getValues, setValue, watch } = useFormContext<ErrandDTO>();
   const { showValidation } = useFormValidation();
 
   const parameters = watch('parameters') ?? [];
@@ -19,7 +19,8 @@ export const AboutErrandContent: React.FC = () => {
   const stakeholders = watch('stakeholders') ?? [];
 
   const setParameter = (key: string, value: string) => {
-    const otherParams = parameters.filter((p) => p.key !== key);
+    const currentParameters = getValues('parameters') ?? [];
+    const otherParams = currentParameters.filter((p) => p.key !== key);
     setValue('parameters', [...otherParams, { key, values: [value] }]);
   };
 

@@ -368,15 +368,10 @@ class App {
       controllers: controllers,
     };
 
-    // routing-controllers-openapi och class-validator-jsonschema använder olika majorversioner av
-    // openapi3-ts; schemastrukturen är kompatibel men typerna måste kastas om.
-    type SpecAdditionalProperties = NonNullable<Parameters<typeof routingControllersToSpec>[2]>;
-    type SpecSchemas = NonNullable<SpecAdditionalProperties['components']>['schemas'];
-
     const storage = getMetadataArgsStorage();
     const spec = routingControllersToSpec(storage, routingControllersOptions, {
       components: {
-        schemas: schemas as unknown as SpecSchemas,
+        schemas,
         securitySchemes: {
           basicAuth: {
             scheme: 'basic',

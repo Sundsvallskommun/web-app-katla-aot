@@ -40,6 +40,17 @@ const registerErrandAndExpectDraft = async (page: Page, expectedStakeholderCount
   expect(body.stakeholders?.length).toBe(expectedStakeholderCount);
 };
 
+const selectRequiredErrandParameters = async (page: Page) => {
+  const eventType = page.getByTestId('event-type-deviation');
+  const eventConcerns = page.getByTestId('event-concerns-individual');
+
+  await eventType.check();
+  await expect(eventType).toBeChecked();
+  await eventConcerns.check();
+  await expect(eventConcerns).toBeChecked();
+  await expect(eventType).toBeChecked();
+};
+
 test.describe('Register new errand page', () => {
   test.beforeEach(async ({ page }) => {
     await page.route('**/employee/personal/*', jsonRoute(mockReporterStakeholder));
@@ -56,8 +67,7 @@ test.describe('Register new errand page', () => {
     await expect(page.locator('main').first()).toBeVisible();
 
     //Om ärendet
-    await page.getByTestId('event-type-deviation').click();
-    await page.getByTestId('event-concerns-individual').click();
+    await selectRequiredErrandParameters(page);
 
     //Brukare
     const brukare = disclosureByTitle(page, 'Brukare');
@@ -82,8 +92,7 @@ test.describe('Register new errand page', () => {
     await expect(page.locator('main').first()).toBeVisible();
 
     //Om ärendet
-    await page.getByTestId('event-type-deviation').click();
-    await page.getByTestId('event-concerns-individual').click();
+    await selectRequiredErrandParameters(page);
 
     //Brukare
     const brukare = disclosureByTitle(page, 'Brukare');
@@ -130,8 +139,7 @@ test.describe('Register new errand page', () => {
     await expect(page.locator('main').first()).toBeVisible();
 
     //Om ärendet
-    await page.getByTestId('event-type-deviation').click();
-    await page.getByTestId('event-concerns-individual').click();
+    await selectRequiredErrandParameters(page);
 
     //Brukare
     const brukare = disclosureByTitle(page, 'Brukare');
@@ -194,8 +202,7 @@ test.describe('Register new errand page', () => {
     await expect(page.locator('main').first()).toBeVisible();
 
     //Om ärendet
-    await page.getByTestId('event-type-deviation').click();
-    await page.getByTestId('event-concerns-individual').click();
+    await selectRequiredErrandParameters(page);
 
     //Övriga parter
     const ovrigaParter = disclosureByTitle(page, 'Övriga parter');

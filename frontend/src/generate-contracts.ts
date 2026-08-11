@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url';
 import { config } from 'dotenv';
 import { generateApi } from 'swagger-typescript-api';
 
-config();
+config({ quiet: true });
 
 const PATH_TO_OUTPUT_DIR = path.resolve(process.cwd(), './src/data-contracts/backend');
 

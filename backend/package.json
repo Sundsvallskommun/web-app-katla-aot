@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "TypeScript + Express + Routing Controllers API Server",
   "engines": {
-    "node": ">=22.12.0 <23"
+    "node": ">=22.22.2 <23"
   },
   "author": "",
   "license": "ISC",
@@ -34,7 +34,7 @@
     "compression": "^1.7.5",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
-    "dotenv": "^16.4.7",
+    "dotenv": "^17.4.2",
     "envalid": "^8.1.1",
     "express": "^4.22.2",
     "express-rate-limit": "^8.6.2",
@@ -47,10 +47,10 @@
     "passport": "^0.7.0",
     "reflect-metadata": "^0.2.2",
     "routing-controllers": "^0.11.3",
-    "routing-controllers-openapi": "^4.0.0",
+    "routing-controllers-openapi": "^5.0.1",
     "session-file-store": "^1.5.0",
     "swagger-ui-express": "^5.0.1",
-    "uuid": "^13.0.1",
+    "uuid": "^14.0.1",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
   },
@@ -68,15 +68,13 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.10.5",
     "@types/passport": "^1.0.17",
-    "@types/supertest": "^6.0.2",
+    "@types/supertest": "^7.2.1",
     "@types/swagger-ui-express": "^4.1.7",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-simple-import-sort": "^14.0.0",
     "eslint-plugin-unused-imports": "^4.4.1",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
     "nodemon": "^3.1.9",
     "prettier": "^3.4.2",
     "supertest": "^7.0.0",
@@ -85,9 +83,9 @@
     "tsc-alias": "^1.8.10",
     "tsconfig-paths": "^4.2.0",
     "typescript": "5.9.3",
-    "typescript-eslint": "^8.66.0",
+    "typescript-eslint": "^8.67.0",
     "unplugin-swc": "^1.5.10",
-    "vite": "7.3.6",
+    "vite": "8.2.1",
     "vitest": "4.1.10"
   },
   "resolutions": {
@@ -95,6 +93,6 @@
     "qs": "^6.15.2",
     "form-data": "^4.0.4",
     "multer": "^2.1.1",
-    "vitest/vite": "7.3.6"
+    "vitest/vite": "8.2.1"
   }
 }
