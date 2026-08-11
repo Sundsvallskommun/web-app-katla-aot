@@ -1,9 +1,10 @@
 // import { AUTHORIZED_GROUPS } from '@/config';
-import { AUTHORIZED_GROUPS } from '@/config';
 import { ADRole, InternalRole, Permissions } from '@interfaces/auth.interface';
 
+import { AUTHORIZED_GROUPS } from '@/config';
+
 export function authorizeGroups(groups: string) {
-  const authorizedGroupsList = AUTHORIZED_GROUPS!.split(',');
+  const authorizedGroupsList = (AUTHORIZED_GROUPS ?? '').split(',');
   const groupsList = groups.split(',').map((g: string) => g.toLowerCase());
   return authorizedGroupsList.some(authorizedGroup => groupsList.includes(authorizedGroup.toLowerCase()));
 }

@@ -10,6 +10,6 @@ export interface Profile extends SamlProfile {
   'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'?: string;
   groups?: string;
   'http://schemas.xmlsoap.org/claims/Group'?: string[];
-  attributes?: { [key: string]: any };
+  attributes?: Record<string, unknown>;
   'urn:oid:0.9.2342.19200300.100.1.1'?: string;
 }

@@ -22,7 +22,7 @@ import {
   SWAGGER_ENABLED,
 } from '@config';
 import errorMiddleware from '@middlewares/error.middleware';
-import { Profile as SamlProfile, Strategy, VerifiedCallback } from '@node-saml/passport-saml';
+import { Strategy, VerifiedCallback } from '@node-saml/passport-saml';
 import { logger, stream } from '@utils/logger';
 import bodyParser from 'body-parser';
 import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
@@ -47,9 +47,9 @@ import swaggerUi from 'swagger-ui-express';
 
 import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
+import { authorizeGroups, getRole } from './services/authorization.service';
 import { additionalConverters } from './utils/custom-validation-classes';
 import { getSafeRedirect, getSamlRedirects } from './utils/isValidOrigin';
-import { authorizeGroups, getPermissions, getRole } from './services/authorization.service';
 
 type ControllerClass = new () => object;
 
@@ -98,61 +98,64 @@ const samlStrategy = new Strategy(
     //authnContext: ['urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified'],
     // identifierFormat: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
     identifierFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified',
-    callbackUrl: SAML_CALLBACK_URL!,
-    entryPoint: SAML_ENTRY_SSO!,
+    callbackUrl: SAML_CALLBACK_URL ?? '',
+    entryPoint: SAML_ENTRY_SSO ?? '',
     //decryptionPvk: SAML_PRIVATE_KEY,
-    privateKey: SAML_PRIVATE_KEY!,
+    privateKey: SAML_PRIVATE_KEY ?? '',
     // Identity Provider's public key
-    idpCert: SAML_IDP_PUBLIC_CERT!,
-    issuer: SAML_ISSUER!,
+    idpCert: SAML_IDP_PUBLIC_CERT ?? '',
+    issuer: SAML_ISSUER ?? '',
     wantAssertionsSigned: false,
     signatureAlgorithm: 'sha256',
     digestAlgorithm: 'sha256',
     // maxAssertionAgeMs: 2592000000,
     // authnRequestBinding: 'HTTP-POST',
     //logoutUrl: 'http://194.71.24.30/sso',
-    logoutCallbackUrl: SAML_LOGOUT_CALLBACK_URL!,
+    logoutCallbackUrl: SAML_LOGOUT_CALLBACK_URL ?? '',
     acceptedClockSkewMs: -1,
     wantAuthnResponseSigned: false,
     audience: false,
   },
-  async function (profile: Profile | null, done: VerifiedCallback) {
+  function (profile: Profile | null, done: VerifiedCallback) {
     if (!profile) {
-      return done({
+      done({
         name: 'SAML_MISSING_PROFILE',
         message: 'Missing SAML profile',
       });
+      return;
     }
     // Depending on using Onegate or ADFS for federation the profile data looks a bit different
     // Here we use the null coalescing operator (??) to handle both cases.
     // (A switch from Onegate to ADFS was done on august 6 2023 due to problems in MobilityGuard.)
     //
     // const { givenName, sn, email, groups } = profile;
-    const givenName = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] ?? profile['givenName'];
-    const sn = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] ?? profile['sn'];
-    const email = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] ?? profile['email'];
-    const groups = profile['http://schemas.xmlsoap.org/claims/Group']?.join(',') ?? profile['groups'];
+    const givenName = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] ?? profile.givenName;
+    const sn = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] ?? profile.sn;
+    const email = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] ?? profile.email;
+    const groups = profile['http://schemas.xmlsoap.org/claims/Group']?.join(',') ?? profile.groups;
     const username = profile['urn:oid:0.9.2342.19200300.100.1.1'];
 
     if (!givenName || !sn || !email || !groups || !username) {
       logger.error(
         'Could not extract necessary profile data fields from the IDP profile. Does the Profile interface match the IDP profile response? The profile response may differ, for example Onegate vs ADFS.',
       );
-      return done(null, undefined, {
+      done(null, undefined, {
         name: 'SAML_MISSING_ATTRIBUTES',
         message: 'Missing profile attributes',
       });
+      return;
     }
 
     if (!authorizeGroups(groups)) {
       logger.error('Group authorization failed. Is the user a member of the authorized groups?');
-      return done(null, undefined, {
+      done(null, undefined, {
         name: 'SAML_MISSING_GROUP',
         message: 'SAML_MISSING_GROUP',
       });
+      return;
     }
 
-    const groupList: string[] = groups !== undefined ? (groups.split(',').map(x => x.toLowerCase()) as string[]) : [];
+    const groupList: string[] = groups !== undefined ? groups.split(',').map(x => x.toLowerCase()) : [];
 
     const appGroups: string[] = groupList.length > 0 ? groupList : [];
 
@@ -180,8 +183,8 @@ const samlStrategy = new Strategy(
       done(err instanceof Error ? err : null);
     }
   },
-  async function (profile: Profile | null, done: VerifiedCallback) {
-    return done(null, {});
+  function (profile: Profile | null, done: VerifiedCallback) {
+    done(null, {});
   },
 );
 

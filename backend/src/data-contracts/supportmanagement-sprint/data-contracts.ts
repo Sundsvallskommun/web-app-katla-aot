@@ -12,43 +12,43 @@
 
 /** Type of event */
 export enum EventType {
-  CREATE = "CREATE",
-  UPDATE = "UPDATE",
-  DELETE = "DELETE",
-  UNKNOWN = "UNKNOWN",
+  CREATE = 'CREATE',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
+  UNKNOWN = 'UNKNOWN',
 }
 
 /** ConversationType model */
 export enum ConversationType {
-  INTERNAL = "INTERNAL",
-  EXTERNAL = "EXTERNAL",
+  INTERNAL = 'INTERNAL',
+  EXTERNAL = 'EXTERNAL',
 }
 
 /** Action to take on the source errand after handover */
 export enum HandoverSourceAction {
-  CLOSE = "CLOSE",
-  RETAIN = "RETAIN",
-  SUSPEND = "SUSPEND",
+  CLOSE = 'CLOSE',
+  RETAIN = 'RETAIN',
+  SUSPEND = 'SUSPEND',
 }
 
 /** Type of warning raised while building a handover preview: PARAMETER_SCHEMA_MISMATCH (a parameter references a json schema not registered in the target namespace, see 'key'/'detail'), ROLE_NOT_IN_TARGET (a stakeholder role on the source errand does not exist in the target namespace, see 'value') */
 export enum WarningType {
-  PARAMETER_SCHEMA_MISMATCH = "PARAMETER_SCHEMA_MISMATCH",
-  ROLE_NOT_IN_TARGET = "ROLE_NOT_IN_TARGET",
+  PARAMETER_SCHEMA_MISMATCH = 'PARAMETER_SCHEMA_MISMATCH',
+  ROLE_NOT_IN_TARGET = 'ROLE_NOT_IN_TARGET',
 }
 
 /** Reason a target was auto-suggested for a namespace-bound field: NAME_EXACT (exact match on technical name), DISPLAY_NAME_EXACT (case-insensitive exact match on display name), RESOURCE_PATH_MATCH (match on hierarchical resource path, labels only) */
 export enum MatchReason {
-  NAME_EXACT = "NAME_EXACT",
-  DISPLAY_NAME_EXACT = "DISPLAY_NAME_EXACT",
-  RESOURCE_PATH_MATCH = "RESOURCE_PATH_MATCH",
+  NAME_EXACT = 'NAME_EXACT',
+  DISPLAY_NAME_EXACT = 'DISPLAY_NAME_EXACT',
+  RESOURCE_PATH_MATCH = 'RESOURCE_PATH_MATCH',
 }
 
 /** Priority model */
 export enum Priority {
-  LOW = "LOW",
-  MEDIUM = "MEDIUM",
-  HIGH = "HIGH",
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
 }
 
 export interface Problem {
@@ -2058,15 +2058,15 @@ export interface CountResponse {
 }
 
 export enum JsonNodeNodeTypeEnum {
-  ARRAY = "ARRAY",
-  BINARY = "BINARY",
-  BOOLEAN = "BOOLEAN",
-  MISSING = "MISSING",
-  NULL = "NULL",
-  NUMBER = "NUMBER",
-  OBJECT = "OBJECT",
-  POJO = "POJO",
-  STRING = "STRING",
+  ARRAY = 'ARRAY',
+  BINARY = 'BINARY',
+  BOOLEAN = 'BOOLEAN',
+  MISSING = 'MISSING',
+  NULL = 'NULL',
+  NUMBER = 'NUMBER',
+  OBJECT = 'OBJECT',
+  POJO = 'POJO',
+  STRING = 'STRING',
 }
 
 /**
@@ -2075,14 +2075,14 @@ export enum JsonNodeNodeTypeEnum {
  * @pattern ^(CREATE|READ|UPDATE|DELETE|ACCESS|EXECUTE|CANCEL|DROP)$
  */
 export enum EventFilterTypeEnum {
-  CREATE = "CREATE",
-  READ = "READ",
-  UPDATE = "UPDATE",
-  DELETE = "DELETE",
-  ACCESS = "ACCESS",
-  EXECUTE = "EXECUTE",
-  CANCEL = "CANCEL",
-  DROP = "DROP",
+  CREATE = 'CREATE',
+  READ = 'READ',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
+  ACCESS = 'ACCESS',
+  EXECUTE = 'EXECUTE',
+  CANCEL = 'CANCEL',
+  DROP = 'DROP',
 }
 
 /**
@@ -2091,46 +2091,46 @@ export enum EventFilterTypeEnum {
  * @pattern ^(adAccount|partyId)$
  */
 export enum IdentifierTypeEnum {
-  AdAccount = "adAccount",
-  PartyId = "partyId",
+  AdAccount = 'adAccount',
+  PartyId = 'partyId',
 }
 
 /** Channel type */
 export enum NotificationChannelTypeEnum {
-  INTERNAL = "INTERNAL",
-  EMAIL = "EMAIL",
-  SMS = "SMS",
+  INTERNAL = 'INTERNAL',
+  EMAIL = 'EMAIL',
+  SMS = 'SMS',
 }
 
 /** Target type */
 export enum SubscriptionTargetTypeEnum {
-  ERRAND = "ERRAND",
-  NAMESPACE = "NAMESPACE",
+  ERRAND = 'ERRAND',
+  NAMESPACE = 'NAMESPACE',
 }
 
 /** If the communication is inbound or outbound from the perspective of case-data/e-service. */
 export enum CommunicationDirectionEnum {
-  INBOUND = "INBOUND",
-  OUTBOUND = "OUTBOUND",
+  INBOUND = 'INBOUND',
+  OUTBOUND = 'OUTBOUND',
 }
 
 /** The communication was delivered by */
 export enum CommunicationCommunicationTypeEnum {
-  SMS = "SMS",
-  EMAIL = "EMAIL",
-  WEB_MESSAGE = "WEB_MESSAGE",
+  SMS = 'SMS',
+  EMAIL = 'EMAIL',
+  WEB_MESSAGE = 'WEB_MESSAGE',
 }
 
 /** Type of message (user or system created) */
 export enum MessageTypeEnum {
-  USER_CREATED = "USER_CREATED",
-  SYSTEM_CREATED = "SYSTEM_CREATED",
+  USER_CREATED = 'USER_CREATED',
+  SYSTEM_CREATED = 'SYSTEM_CREATED',
 }
 
 /** The channel the attachment was received via */
 export enum ErrandAttachmentChannelEnum {
-  EMAIL = "EMAIL",
-  ESERVICE = "ESERVICE",
-  WEB_UI = "WEB_UI",
-  MY_PAGES = "MY_PAGES",
+  EMAIL = 'EMAIL',
+  ESERVICE = 'ESERVICE',
+  WEB_UI = 'WEB_UI',
+  MY_PAGES = 'MY_PAGES',
 }
