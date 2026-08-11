@@ -52,6 +52,8 @@ export const getMetadata = async (): Promise<MetadataResponseDTO> => {
 };
 
 export const createErrand = async (errand: ErrandDTO): Promise<ErrandDTO> => {
+  console.log('Creating errand', errand);
+  return undefined as any;
   return apiService.post<ErrandDTO>('supportmanagement/errand/create', errand).then((res) => res.data);
 };
 

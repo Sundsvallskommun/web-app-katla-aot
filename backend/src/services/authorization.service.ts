@@ -1,11 +1,12 @@
 // import { AUTHORIZED_GROUPS } from '@/config';
+import { AUTHORIZED_GROUPS } from '@/config';
 import { ADRole, InternalRole, Permissions } from '@interfaces/auth.interface';
 
-// export function authorizeGroups(groups) {
-//   const authorizedGroupsList = AUTHORIZED_GROUPS.split(',');
-//   const groupsList = groups.split(',').map((g: string) => g.toLowerCase());
-//   return authorizedGroupsList.some(authorizedGroup => groupsList.includes(authorizedGroup));
-// }
+export function authorizeGroups(groups: string) {
+  const authorizedGroupsList = AUTHORIZED_GROUPS!.split(',');
+  const groupsList = groups.split(',').map((g: string) => g.toLowerCase());
+  return authorizedGroupsList.some(authorizedGroup => groupsList.includes(authorizedGroup.toLowerCase()));
+}
 
 export const defaultPermissions: () => Permissions = () => ({
   canEditSystemMessages: false,
@@ -40,7 +41,7 @@ const roleADMappingLookup: Partial<Record<string, InternalRole>> = roleADMapping
  * @param internalGroups Whether to use internal groups or external group-mappings
  * @returns collected permissions for all matching role groups
  */
-export const getPermissions = (groups: InternalRole[] | ADRole[], internalGroups = false): Permissions => {
+export const getPermissions = (groups: string[], internalGroups = false): Permissions => {
   const permissions: Permissions = defaultPermissions();
   groups.forEach(group => {
     const groupLower = group.toLowerCase();
@@ -62,9 +63,9 @@ export const getPermissions = (groups: InternalRole[] | ADRole[], internalGroups
  * @param groups List of AD roles
  * @returns role with most permissions
  */
-export const getRole = (groups: ADRole[]): InternalRole | undefined => {
+export const getRole = (groups: string[]): InternalRole | undefined => {
   const [firstGroup] = groups;
-  if (groups.length == 1 && firstGroup !== undefined) return roleADMapping[firstGroup]; // app_read
+  if (groups.length == 1 && firstGroup !== undefined) return roleADMapping[firstGroup as ADRole]; // app_read
 
   const roles: InternalRole[] = [];
   groups.forEach(group => {
