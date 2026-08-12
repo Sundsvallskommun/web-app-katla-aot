@@ -66,6 +66,7 @@ export const getSessionCookieOptions = (environment: string | undefined): sessio
   secure: environment === 'production',
   sameSite: 'lax',
   maxAge: sessionTTL * 1000,
+  path: BASE_URL_PREFIX,
 });
 
 // Plockar ut ett name-fält ur ett okänt felobjekt (SAML-verifieringen skickar { name, message }).
