@@ -287,12 +287,15 @@ class App {
         origin: function (origin, callback) {
           if (origin === undefined || corsWhitelist.includes(origin) || corsWhitelist.includes('*')) {
             callback(null, true);
+          } else if (NODE_ENV == 'development') {
+            callback(null, true);
           } else {
-            if (NODE_ENV == 'development') {
-              callback(null, true);
-            } else {
-              callback(new Error('Not allowed by CORS'));
-            }
+            // Neka genom att utelämna Access-Control-Allow-Origin, inte genom att kasta.
+            // CORS upprätthålls av webbläsaren; ett kastat fel blir i stället 500 här och
+            // sänker legitima cross-site-POST:ar som aldrig omfattas av CORS — framför allt
+            // SAML-callbacken, som IdP:n postar med sin egen Origin. Se draken, vars cors
+            // använder en sträng-origin och därför aldrig kastar (därav att MEX fungerar).
+            callback(null, false);
           }
         },
       }),
