@@ -61,6 +61,11 @@ test.describe('Register new errand page', () => {
       window.localStorage.setItem('metadata-storage', JSON.stringify({ state: { metadata }, version: 0 }));
     }, mockMetadata);
     await page.goto('/arende/registrera');
+
+    // Visibility alone does not prove that the server-rendered radio controls
+    // have hydrated. The reporter is added by a client-side effect, so this is
+    // the registration flow's observable readiness boundary.
+    await expect(disclosureByTitle(page, 'Rapportör').getByTestId('stakeholder-card')).toHaveCount(1);
   });
 
   test('Add stakeholders using personnumber and register draft errand', async ({ page }) => {
