@@ -10,6 +10,7 @@
     "dev": "cross-env TEST=true next dev",
     "prebuild": "yarn generate:middleware-envs",
     "build": "next build",
+    "build:webpack": "next build --webpack",
     "prebuild:test": "yarn generate:middleware-envs",
     "build:test": "cross-env TEST=true next build",
     "start": "next start",
