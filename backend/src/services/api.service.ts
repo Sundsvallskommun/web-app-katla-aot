@@ -12,7 +12,7 @@ import { apiURL } from '@/utils/util';
 import ApiTokenService from './api-token.service';
 
 export interface ApiRequestConfig extends AxiosRequestConfig {
-  /** Preserve an upstream 4xx status without exposing its untrusted response body. */
+  /** Bevara en uppströms 4xx-status utan att exponera dess obetrodda svarsbody. */
   propagateClientError?: boolean;
 }
 
@@ -42,9 +42,9 @@ const isWithinUrlBoundary = (candidate: URL, boundary: URL): boolean =>
 const assertDecodedPathWithinBoundary = (candidateUrl: URL, boundaryUrl: URL): void => {
   let decodedPath = candidateUrl.pathname;
 
-  // Express and upstream gateways may decode a path segment at different layers.
-  // Validate every effective representation so encoded separators cannot hide an
-  // otherwise obvious dot-segment escape from the configured service base.
+  // Express och uppströmsgateways kan avkoda ett vägsegment i olika lager.
+  // Validera varje effektiv representation så att kodade separatorer inte kan
+  // dölja en annars uppenbar punktsegmentsflykt från konfigurerad servicebas.
   for (let decodingPass = 0; decodingPass < 3; decodingPass += 1) {
     let nextDecodedPath: string;
     try {
@@ -61,8 +61,8 @@ const assertDecodedPathWithinBoundary = (candidateUrl: URL, boundaryUrl: URL): v
     decodedPath = nextDecodedPath;
   }
 
-  // Deeply nested encodings are ambiguous between infrastructure layers and have
-  // no valid use in the gateway-owned API paths.
+  // Djupt nästlade kodningar är tvetydiga mellan infrastrukturlager och har
+  // ingen giltig användning i de gatewayägda API-sökvägarna.
   let furtherDecodedPath: string;
   try {
     furtherDecodedPath = decodeURIComponent(decodedPath);
@@ -85,8 +85,9 @@ const resolveRequestUrl = (config: Pick<AxiosRequestConfig, 'baseURL' | 'url'>):
   const requestUrl = new URL(requestPath.replace(/^\/+/, ''), asDirectoryUrl(boundaryUrl));
   assertDecodedPathWithinBoundary(requestUrl, boundaryUrl);
 
-  // WHATWG URL resolution normalizes dot segments. Check the effective URL after
-  // that normalization so a relative `../` path cannot escape a service base.
+  // WHATWG-URL-resolution normaliserar punktsegment. Kontrollera den effektiva
+  // URL:en efter normaliseringen så att en relativ `../`-sökväg inte kan lämna
+  // servicebasen.
   if (!isWithinUrlBoundary(requestUrl, boundaryUrl)) {
     throw new HttpException(500, 'Invalid upstream request URL');
   }
@@ -101,7 +102,14 @@ const logAxiosErrorResponse = (response: AxiosResponse<unknown>): void => {
 };
 
 const getBoundedLocation = (location: string, requestUrl: URL, boundaryUrl: URL): string => {
-  const responseUrl = new URL(location, requestUrl);
+  // Uppströmstjänsterna svarar med en Location relativ till sin egen servicerot,
+  // exempelvis `/{municipalityId}/{namespace}/errands/{id}`. Tidigare uppföljning
+  // lämnade baseURL till axios, som fogar in en inledande snedstreckssökväg under
+  // basens path. Behåll den semantiken: en origin-relativ resolution skulle peka
+  // utanför servicegränsen och avvisa varje giltig Location från gatewayen.
+  const responseUrl = ABSOLUTE_URL_PATTERN.test(location)
+    ? new URL(location, requestUrl)
+    : new URL(location.replace(/^\/+/, ''), asDirectoryUrl(boundaryUrl));
 
   try {
     assertDecodedPathWithinBoundary(responseUrl, boundaryUrl);

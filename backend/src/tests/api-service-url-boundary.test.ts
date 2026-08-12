@@ -112,7 +112,7 @@ describe('ApiService effective URL boundary', () => {
     },
   );
 
-  it.each(['/outside-service/resource', '/gateway/..%2Foutside-service', '/gateway/%252e%252e%252foutside-service', '/gateway/%252525'])(
+  it.each(['/../outside-service', '/..%2Foutside-service', '/%252e%252e%252foutside-service', '/%252525'])(
     'does not forward credentials when a Location escapes the configured service path: %s',
     async location => {
       const redirectServer = createServer((_request, response) => {
@@ -133,4 +133,50 @@ describe('ApiService effective URL boundary', () => {
       }
     },
   );
+
+  it('does not forward credentials when an absolute Location leaves the configured origin', async () => {
+    const redirectServer = createServer((_request, response) => {
+      response.statusCode = 201;
+      response.setHeader('Location', attackerUrl);
+      response.end();
+    });
+    const redirectPort = await listen(redirectServer);
+    const serviceBaseUrl = `http://127.0.0.1:${redirectPort}/gateway`;
+
+    try {
+      await expect(new ApiService().post({ baseURL: serviceBaseUrl, url: '/resource' }, { session: {} })).rejects.toMatchObject({
+        status: 502,
+        message: 'Invalid upstream redirect',
+      });
+      expect(attackerRequestCount).toBe(0);
+    } finally {
+      await close(redirectServer);
+    }
+  });
+
+  it('follows a service-root-relative Location beneath the configured base path', async () => {
+    let followedPath: string | undefined;
+    const redirectServer = createServer((request, response) => {
+      if (request.method === 'POST') {
+        response.statusCode = 201;
+        response.setHeader('Location', '/2281/CONTACTCENTER/errands/errand-id');
+        response.end();
+        return;
+      }
+      followedPath = request.url;
+      response.setHeader('Content-Type', 'application/json');
+      response.end(JSON.stringify({ id: 'errand-id' }));
+    });
+    const redirectPort = await listen(redirectServer);
+    const serviceBaseUrl = `http://127.0.0.1:${redirectPort}/gateway`;
+
+    try {
+      await expect(new ApiService().post({ baseURL: serviceBaseUrl, url: '/resource' }, { session: {} })).resolves.toMatchObject({
+        data: { id: 'errand-id' },
+      });
+      expect(followedPath).toBe('/gateway/2281/CONTACTCENTER/errands/errand-id');
+    } finally {
+      await close(redirectServer);
+    }
+  });
 });
