@@ -35,7 +35,8 @@
     "event_concerns_describe_note": "(Beskriv mer i avsnittet \"Vad har hänt?\")",
     "event_type_required": "Välj en händelsetyp",
     "event_concerns_required": "Välj vad händelsen berör",
-    "event_concerns_group_facility_required": "Välj en plats där avvikelsen inträffat när händelsen berör grupp/hela verksamheten"
+    "event_concerns_group_facility_required": "Välj en plats där avvikelsen inträffat när händelsen berör grupp/hela verksamheten",
+    "facility_incomplete": "Slutför platsvalet genom att välja enhet – platsen styr vilka som får se ärendet"
   },
   "reporter": {
     "title": "Rapportör",
