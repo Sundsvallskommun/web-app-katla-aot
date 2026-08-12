@@ -16,7 +16,7 @@ Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumer
 
 ### Krav
 
-- Node 26.1.0+ inom 26.x (använd versionen i `.nvmrc`)
+- Node 22.18.0 (använd den pinnade versionen i `.nvmrc`; `package.json` anger det stödda intervallet)
 - Yarn
 
 ### Steg för steg
