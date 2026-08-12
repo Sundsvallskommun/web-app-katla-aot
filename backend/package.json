@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "TypeScript + Express + Routing Controllers API Server",
   "engines": {
-    "node": ">=22.22.2 <23"
+    "node": ">=22.22.2 <=24"
   },
   "author": "",
   "license": "ISC",
