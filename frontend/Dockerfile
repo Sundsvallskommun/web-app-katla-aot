@@ -20,10 +20,6 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN yarn build
-# Remove all the development dependencies since we don't
-# need them to run the actual server.
-RUN rm -rf node_modules
-RUN yarn install --production --frozen-lockfile --ignore-scripts --prefer-offline
 
 # Production image, copy all the files and run next
 FROM node:${NODE_VERSION}-alpine AS runner
