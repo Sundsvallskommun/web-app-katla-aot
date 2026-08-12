@@ -232,11 +232,7 @@ export interface JsonNode {
   number?: boolean;
   string?: boolean;
   boolean?: boolean;
-  missingNode?: boolean;
-  valueNode?: boolean;
-  container?: boolean;
   integralNumber?: boolean;
-  nodeType?: JsonNodeNodeTypeEnum;
   pojo?: boolean;
   floatingPointNumber?: boolean;
   short?: boolean;
@@ -248,6 +244,10 @@ export interface JsonNode {
   /** @deprecated */
   textual?: boolean;
   binary?: boolean;
+  valueNode?: boolean;
+  container?: boolean;
+  missingNode?: boolean;
+  nodeType?: JsonNodeNodeTypeEnum;
   embeddedValue?: boolean;
 }
 
@@ -1579,19 +1579,19 @@ export interface PageSubscriberNotification {
 export interface PageableObject {
   /** @format int64 */
   offset?: number;
-  unpaged?: boolean;
   paged?: boolean;
   /** @format int32 */
   pageNumber?: number;
   /** @format int32 */
   pageSize?: number;
   sort?: SortObject;
+  unpaged?: boolean;
 }
 
 export interface SortObject {
   empty?: boolean;
-  unsorted?: boolean;
   sorted?: boolean;
+  unsorted?: boolean;
 }
 
 export interface SubscriberNotification {

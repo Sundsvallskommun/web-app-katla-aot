@@ -39,4 +39,5 @@ export const {
   SAML_PUBLIC_KEY,
   MUNICIPALITY_ID,
   NAMESPACE,
+  AUTHORIZED_GROUPS,
 } = process.env;

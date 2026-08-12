@@ -22,7 +22,7 @@ import {
   SWAGGER_ENABLED,
 } from '@config';
 import errorMiddleware from '@middlewares/error.middleware';
-import { Profile as SamlProfile, Strategy, VerifiedCallback } from '@node-saml/passport-saml';
+import { Strategy, VerifiedCallback } from '@node-saml/passport-saml';
 import { logger, stream } from '@utils/logger';
 import bodyParser from 'body-parser';
 import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
@@ -47,6 +47,7 @@ import swaggerUi from 'swagger-ui-express';
 
 import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
+import { authorizeGroups, getRole } from './services/authorization.service';
 import { additionalConverters } from './utils/custom-validation-classes';
 import { getSafeRedirect, getSamlRedirects } from './utils/isValidOrigin';
 
@@ -92,77 +93,97 @@ passport.deserializeUser(function (user: Express.User, done) {
 const samlStrategy = new Strategy(
   {
     disableRequestedAuthnContext: true,
-    identifierFormat: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+    //attributeConsumingServiceIndex: '2',
+    //xmlSignatureTransforms: ['test'],
+    //authnContext: ['urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified'],
+    // identifierFormat: 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+    identifierFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified',
     callbackUrl: SAML_CALLBACK_URL ?? '',
-    entryPoint: SAML_ENTRY_SSO,
-    // decryptionPvk: SAML_PRIVATE_KEY,
-    privateKey: SAML_PRIVATE_KEY,
+    entryPoint: SAML_ENTRY_SSO ?? '',
+    //decryptionPvk: SAML_PRIVATE_KEY,
+    privateKey: SAML_PRIVATE_KEY ?? '',
     // Identity Provider's public key
     idpCert: SAML_IDP_PUBLIC_CERT ?? '',
     issuer: SAML_ISSUER ?? '',
     wantAssertionsSigned: false,
-    wantAuthnResponseSigned: false,
+    signatureAlgorithm: 'sha256',
+    digestAlgorithm: 'sha256',
+    // maxAssertionAgeMs: 2592000000,
+    // authnRequestBinding: 'HTTP-POST',
+    //logoutUrl: 'http://194.71.24.30/sso',
+    logoutCallbackUrl: SAML_LOGOUT_CALLBACK_URL ?? '',
     acceptedClockSkewMs: -1,
+    wantAuthnResponseSigned: false,
     audience: false,
-    logoutCallbackUrl: SAML_LOGOUT_CALLBACK_URL,
   },
-  function (samlProfile: SamlProfile | null, done: VerifiedCallback) {
-    if (!samlProfile) {
+  function (profile: Profile | null, done: VerifiedCallback) {
+    if (!profile) {
       done({
         name: 'SAML_MISSING_PROFILE',
         message: 'Missing SAML profile',
       });
       return;
     }
-    const { givenName, surname, citizenIdentifier, username } = samlProfile as Profile;
+    // Depending on using Onegate or ADFS for federation the profile data looks a bit different
+    // Here we use the null coalescing operator (??) to handle both cases.
+    // (A switch from Onegate to ADFS was done on august 6 2023 due to problems in MobilityGuard.)
+    //
+    // const { givenName, sn, email, groups } = profile;
+    const givenName = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] ?? profile.givenName;
+    const sn = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] ?? profile.sn;
+    const email = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] ?? profile.email;
+    const groups = profile['http://schemas.xmlsoap.org/claims/Group']?.join(',') ?? profile.groups;
+    const username = profile['urn:oid:0.9.2342.19200300.100.1.1'];
 
-    if (!givenName || !surname || !citizenIdentifier) {
-      done({
+    if (!givenName || !sn || !email || !groups || !username) {
+      logger.error(
+        'Could not extract necessary profile data fields from the IDP profile. Does the Profile interface match the IDP profile response? The profile response may differ, for example Onegate vs ADFS.',
+      );
+      done(null, undefined, {
         name: 'SAML_MISSING_ATTRIBUTES',
         message: 'Missing profile attributes',
       });
       return;
     }
 
-    //   const groupList: ADRole[] =
-    //   groups !== undefined
-    //     ? (groups
-    //         .split(',')
-    //         .map(x => x.toLowerCase())
-    //         .filter(x => x.includes('sg_appl_app_')) as ADRole[])
-    //     : [];
+    if (!authorizeGroups(groups)) {
+      logger.error('Group authorization failed. Is the user a member of the authorized groups?');
+      done(null, undefined, {
+        name: 'SAML_MISSING_GROUP',
+        message: 'SAML_MISSING_GROUP',
+      });
+      return;
+    }
 
-    // const appGroups: ADRole[] = groupList.length > 0 ? groupList : groupList.concat('sg_appl_app_read');
+    const groupList: string[] = groups !== undefined ? groups.split(',').map(x => x.toLowerCase()) : [];
+
+    const appGroups: string[] = groupList.length > 0 ? groupList : [];
 
     try {
-      // const personNumber = profile.citizenIdentifier;
-      // const citizenResult = await apiService.get<any>({ url: `citizen/2.0/${personNumber}/guid` });
-      // const { data: personId } = citizenResult;
-
-      // if (!personId) {
-      //   return done({
-      //     name: 'SAML_CITIZEN_FAILED',
-      //     message: 'Failed to fetch user from Citizen API',
-      //   });
-      // }
-
       const findUser = {
-        // personId: personId,
+        name: `${givenName} ${sn}`,
+        firstName: givenName,
+        lastName: sn,
         username: username,
-        name: `${givenName} ${surname}`,
-        givenName: givenName,
-        surname: surname,
+        email: email,
+        groups: appGroups,
+        role: getRole(appGroups),
+        // permissions: getPermissions(appGroups),
       };
+
+      logger.info(`Found user: ${JSON.stringify(findUser)}`);
 
       done(null, findUser);
     } catch (err) {
-      if (err instanceof HttpException && err.status === 404) {
-        // Handle missing person form Citizen
+      if (err instanceof HttpException && err?.status === 404) {
+        // TODO: Handle missing person form Citizen?
+        logger.error('Error when calling Citizen:');
+        logger.error(err);
       }
-      done(err as Error);
+      done(err instanceof Error ? err : null);
     }
   },
-  function (_samlProfile: SamlProfile | null, done: VerifiedCallback) {
+  function (profile: Profile | null, done: VerifiedCallback) {
     done(null, {});
   },
 );

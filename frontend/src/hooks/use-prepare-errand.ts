@@ -38,7 +38,7 @@ export function usePrepareErrand() {
     }
 
     if (eventType === 'MISSFORHALLANDE') {
-      const adverseLabel = findLabel('ADVERSE_INCIDENT');
+      const adverseLabel = findLabel('ABUSE');
       if (adverseLabel) {
         labels.push(...flattenLabel(adverseLabel));
       }

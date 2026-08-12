@@ -17,13 +17,13 @@ export class UserController {
   @ResponseSchema(UserApiResponse)
   @UseBefore(authMiddleware)
   getUser(@Req() req: RequestWithUser, @Res() response: Response): Response {
-    const { name, username, givenName, surname } = req.user;
+    const { name, username, firstName, lastName } = req.user;
 
     if (!name) {
       throw new HttpException(400, 'Bad Request');
     }
 
-    const initials = givenName.charAt(0).toUpperCase() + surname.charAt(0).toUpperCase();
+    const initials = firstName.charAt(0).toUpperCase() + lastName.charAt(0).toUpperCase();
 
     const userData: ClientUser = {
       name: name,

@@ -12,9 +12,9 @@ export const CookieConsentSection: React.FC = () => {
       body={
         <p>
           {t('layout:cookies.description')}{' '}
-          <NextLink href="/kakor" passHref>
-            <Link>{t('layout:cookies.read_more')}</Link>
-          </NextLink>
+          <Link as={NextLink} href="/kakor">
+            {t('layout:cookies.read_more')}
+          </Link>
         </p>
       }
       cookies={[

@@ -1,10 +1,13 @@
 export interface User {
-  // personId: string;
-  partyId?: string;
-  username: string;
+  id: number;
+  personId: string;
   name: string;
-  givenName: string;
-  surname: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  username: string;
+  groups: string[];
 }
 
 export interface ClientUser {

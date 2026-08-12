@@ -1,13 +1,16 @@
 import { Type as TypeTransformer } from 'class-transformer';
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 import {
   Category,
   ContactReason,
   ExternalIdType,
   Label,
+  LabelAttribute,
   Labels,
   MetadataResponse,
+  Phase,
+  PhaseTransition,
   Role,
   Status,
   Type,
@@ -22,6 +25,9 @@ export class TypeDTO implements Type {
   @IsString()
   @IsOptional()
   escalationEmail?: string;
+  @IsBoolean()
+  @IsOptional()
+  deprecated?: boolean;
   @IsString()
   @IsOptional()
   created?: string;
@@ -33,10 +39,19 @@ export class TypeDTO implements Type {
 export class CategoryDTO implements Category {
   @IsString()
   @IsOptional()
+  id?: string;
+  @IsString()
+  @IsOptional()
   name?: string;
   @IsString()
   @IsOptional()
   displayName?: string;
+  @IsNumber()
+  @IsOptional()
+  sortOrder?: number | null;
+  @IsBoolean()
+  @IsOptional()
+  deprecated?: boolean;
   @IsOptional()
   @ValidateNested({ each: true })
   @TypeTransformer(() => TypeDTO)
@@ -51,13 +66,32 @@ export class CategoryDTO implements Category {
 
 export class ExternalIdTypeDTO implements ExternalIdType {
   @IsString()
+  @IsOptional()
+  id?: string;
+  @IsString()
   name!: string;
+  @IsString()
+  @IsOptional()
+  displayName?: string | null;
+  @IsNumber()
+  @IsOptional()
+  sortOrder?: number | null;
+  @IsBoolean()
+  @IsOptional()
+  deprecated?: boolean;
   @IsString()
   @IsOptional()
   created?: string;
   @IsString()
   @IsOptional()
   modified?: string;
+}
+
+export class LabelAttributeDTO implements LabelAttribute {
+  @IsString()
+  key!: string;
+  @IsString()
+  value!: string;
 }
 
 export class LabelDTO implements Label {
@@ -74,10 +108,18 @@ export class LabelDTO implements Label {
   resourcePath?: string;
   @IsString()
   resourceName!: string;
+  @IsBoolean()
+  @IsOptional()
+  deprecated?: boolean;
   @IsOptional()
   @ValidateNested({ each: true })
   @TypeTransformer(() => LabelDTO)
   labels?: LabelDTO[];
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @TypeTransformer(() => LabelAttributeDTO)
+  attributes?: LabelAttributeDTO[];
 }
 
 export class LabelsDTO implements Labels {
@@ -89,7 +131,22 @@ export class LabelsDTO implements Labels {
 
 export class StatusDTO implements Status {
   @IsString()
+  @IsOptional()
+  id?: string;
+  @IsString()
   name!: string;
+  @IsString()
+  @IsOptional()
+  displayName?: string | null;
+  @IsString()
+  @IsOptional()
+  externalDisplayName?: string | null;
+  @IsNumber()
+  @IsOptional()
+  sortOrder?: number | null;
+  @IsBoolean()
+  @IsOptional()
+  deprecated?: boolean;
   @IsString()
   @IsOptional()
   created?: string;
@@ -100,10 +157,19 @@ export class StatusDTO implements Status {
 
 export class RoleDTO implements Role {
   @IsString()
+  @IsOptional()
+  id?: string;
+  @IsString()
   name!: string;
   @IsString()
   @IsOptional()
   displayName?: string | null;
+  @IsNumber()
+  @IsOptional()
+  sortOrder?: number | null;
+  @IsBoolean()
+  @IsOptional()
+  deprecated?: boolean;
   @IsString()
   @IsOptional()
   created?: string;
@@ -115,9 +181,73 @@ export class RoleDTO implements Role {
 export class ContactReasonDTO implements ContactReason {
   @IsString()
   @IsOptional()
-  id?: number;
+  id?: string;
   @IsString()
   reason!: string;
+  @IsString()
+  @IsOptional()
+  displayName?: string | null;
+  @IsNumber()
+  @IsOptional()
+  sortOrder?: number | null;
+  @IsBoolean()
+  @IsOptional()
+  deprecated?: boolean;
+  @IsString()
+  @IsOptional()
+  created?: string;
+  @IsString()
+  @IsOptional()
+  modified?: string;
+}
+
+export class PhaseTransitionDTO implements PhaseTransition {
+  @IsString()
+  @IsOptional()
+  id?: string;
+  @IsString()
+  targetPhaseId!: string;
+  @IsString()
+  @IsOptional()
+  targetPhaseName?: string;
+  @IsString()
+  @IsOptional()
+  targetPhaseDisplayName?: string;
+  @IsString()
+  @IsOptional()
+  description?: string;
+  @IsBoolean()
+  @IsOptional()
+  deprecated?: boolean;
+}
+
+export class PhaseDTO implements Phase {
+  @IsString()
+  @IsOptional()
+  id?: string;
+  @IsString()
+  name!: string;
+  @IsString()
+  @IsOptional()
+  displayName?: string;
+  @IsString()
+  @IsOptional()
+  description?: string;
+  @IsNumber()
+  @IsOptional()
+  phaseOrder?: number;
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  allowedStatuses?: string[];
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @TypeTransformer(() => PhaseTransitionDTO)
+  transitions?: PhaseTransitionDTO[];
+  @IsBoolean()
+  @IsOptional()
+  deprecated?: boolean;
   @IsString()
   @IsOptional()
   created?: string;
@@ -151,4 +281,8 @@ export class MetadataResponseDTO implements MetadataResponse {
   @ValidateNested({ each: true })
   @TypeTransformer(() => ContactReasonDTO)
   contactReasons?: ContactReasonDTO[];
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @TypeTransformer(() => PhaseDTO)
+  phases?: PhaseDTO[];
 }

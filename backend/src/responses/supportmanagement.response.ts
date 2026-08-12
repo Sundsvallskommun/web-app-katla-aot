@@ -4,8 +4,12 @@ import { IsArray, IsBoolean, IsEnum, IsInt, IsNumber, IsOptional, IsString, Vali
 import {
   Classification,
   Errand,
+  ErrandAction,
   ErrandLabel,
+  ErrandPhase,
   ExternalTag,
+  JsonNode,
+  JsonParameter,
   PageableObject,
   PageErrand,
   Parameter,
@@ -108,6 +112,9 @@ export class ParameterDTO implements Parameter {
   @IsArray()
   @IsString({ each: true })
   values?: string[];
+  @IsNumber()
+  @IsOptional()
+  version?: number;
 }
 
 export class ExternalTagDTO implements ExternalTag {
@@ -117,10 +124,10 @@ export class ExternalTagDTO implements ExternalTag {
   value!: string;
 }
 
-export class JsonParameterDTO {
+export class JsonParameterDTO implements JsonParameter {
   @IsString()
   key!: string;
-  value!: unknown;
+  value!: JsonNode;
   @IsString()
   schemaId!: string;
 }
@@ -141,6 +148,42 @@ export class ErrandLabelDTO implements ErrandLabel {
   @IsString()
   @IsOptional()
   resourceName?: string;
+}
+
+export class ErrandActionDTO implements ErrandAction {
+  @IsString()
+  @IsOptional()
+  id?: string;
+  @IsString()
+  @IsOptional()
+  actionName?: string;
+  @IsString()
+  @IsOptional()
+  executeAfter?: string;
+  @IsString()
+  @IsOptional()
+  actionConfigId?: string;
+  @IsString()
+  @IsOptional()
+  displayValue?: string;
+}
+
+export class ErrandPhaseDTO implements ErrandPhase {
+  @IsString()
+  @IsOptional()
+  phaseId?: string;
+  @IsString()
+  @IsOptional()
+  name?: string;
+  @IsString()
+  @IsOptional()
+  displayName?: string;
+  @IsString()
+  @IsOptional()
+  started?: string;
+  @IsString()
+  @IsOptional()
+  ended?: string;
 }
 
 export class ErrandDTO implements Errand {
@@ -230,6 +273,22 @@ export class ErrandDTO implements Errand {
   @ValidateNested({ each: true })
   @Type(() => ErrandLabelDTO)
   labels?: ErrandLabelDTO[];
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ErrandPhaseDTO)
+  phases?: ErrandPhaseDTO[];
+  @IsString()
+  @IsOptional()
+  activePhaseId?: string;
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ErrandActionDTO)
+  actions?: ErrandActionDTO[];
+  @IsNumber()
+  @IsOptional()
+  version?: number;
 }
 
 class SortObjectDTO implements SortObject {

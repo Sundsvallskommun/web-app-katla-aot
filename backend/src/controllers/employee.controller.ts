@@ -19,9 +19,9 @@ export class EmployeeController {
   private citizenBase = getApiBase('citizen');
 
   @Get('/employee/personal/:username')
-  @OpenAPI({ summary: 'Read maching errands' })
+  @OpenAPI({ summary: 'Get employee stakeholder using username via citizen and employee APIs' })
   @UseBefore(authMiddleware)
-  async getErrand(@Req() req: RequestWithUser, @Param('username') username: string): Promise<StakeholderDTO | null> {
+  async getEmployeeByUserName(@Req() req: RequestWithUser, @Param('username') username: string): Promise<StakeholderDTO | null> {
     const personDataurl = `${this.apiBase}/${MUNICIPALITY_ID}/portalpersondata/personal/${username}`;
 
     try {
@@ -52,7 +52,6 @@ export class EmployeeController {
         title: mainEmployment.title ?? undefined,
         department: mainEmployment.orgName ?? undefined,
       };
-
       return stakeholder;
     } catch {
       return null;
