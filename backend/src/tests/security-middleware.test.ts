@@ -15,6 +15,16 @@ describe('security middleware', () => {
     expect(getSessionCookieOptions('test').secure).toBe(false);
   });
 
+  it('lets ENVIRONMENT=LOCAL turn off the secure flag for local http builds', () => {
+    expect(getSessionCookieOptions('production', 'LOCAL').secure).toBe(false);
+    // Allt annat än LOCAL ska behålla Secure — särskilt tomt/osatt, som är produktionsfallet.
+    expect(getSessionCookieOptions('production', 'TEST').secure).toBe(true);
+    expect(getSessionCookieOptions('production', '').secure).toBe(true);
+    expect(getSessionCookieOptions('production', undefined).secure).toBe(true);
+    // LOCAL får inte slå på Secure i en icke-produktionsmiljö.
+    expect(getSessionCookieOptions('development', 'LOCAL').secure).toBe(false);
+  });
+
   it('sets hardened attributes on a persisted session cookie', async () => {
     const app = new App([IndexController]).getServer();
     app.get('/session-test', (req, res) => {
@@ -35,6 +45,28 @@ describe('security middleware', () => {
     expect(cookies).toHaveLength(1);
     expect(cookie).toContain('HttpOnly');
     expect(cookie).toContain('SameSite=Lax');
+  });
+
+  // En cross-site POST från IdP:n (SAML-callbacken) bär en Origin-header som aldrig ligger i
+  // ORIGIN-vitlistan. CORS ska då bara utelämna Access-Control-Allow-Origin — inte avvisa
+  // requesten. Kastar vi i stället ett fel blir det 500 "Not allowed by CORS" och inloggningen
+  // går aldrig igenom (draken/MEX fungerar just för att dess cors aldrig kastar).
+  it('does not reject requests from a non-whitelisted origin', async () => {
+    const app = new App([IndexController]).getServer();
+
+    const response = await request(app).get(localApi('/')).set('Origin', 'https://idp.example.com');
+
+    expect(response.status).not.toBe(500);
+    expect(response.status).toBe(200);
+    expect(response.headers['access-control-allow-origin']).toBeUndefined();
+  });
+
+  it('reflects the allow-origin header for a whitelisted origin', async () => {
+    const app = new App([IndexController]).getServer();
+
+    const response = await request(app).get(localApi('/')).set('Origin', 'http://localhost:3000').expect(200);
+
+    expect(response.headers['access-control-allow-origin']).toBe('http://localhost:3000');
   });
 
   it('publishes standard rate-limit headers without legacy headers', async () => {

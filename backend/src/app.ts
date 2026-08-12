@@ -4,6 +4,7 @@ import {
   APP_NAME,
   BASE_URL_PREFIX,
   CREDENTIALS,
+  ENVIRONMENT,
   LOG_FORMAT,
   NODE_ENV,
   ORIGIN,
@@ -18,6 +19,8 @@ import {
   SAML_PUBLIC_KEY,
   SAML_SUCCESS_REDIRECT,
   SECRET_KEY,
+  SESSION_COOKIE_NAME,
+  SESSION_COOKIE_PATH,
   SESSION_MEMORY,
   SWAGGER_ENABLED,
 } from '@config';
@@ -61,12 +64,34 @@ const sessionStore: session.Store = SESSION_MEMORY
   ? new (createMemoryStore(session))({ checkPeriod: sessionTTL * 1000 })
   : new (createFileStore(session))({ sessionTTL, path: './data/sessions' });
 
-export const getSessionCookieOptions = (environment: string | undefined): session.CookieOptions => ({
+// Tom sträng ska, precis som ett saknat värde, falla tillbaka på nästa alternativ.
+const firstNonEmpty = (...values: (string | undefined)[]): string | undefined => values.find(value => value !== undefined && value !== '');
+
+export const DEFAULT_SESSION_COOKIE_NAME = 'connect.sid';
+
+export const getSessionCookieName = (): string => firstNonEmpty(SESSION_COOKIE_NAME) ?? DEFAULT_SESSION_COOKIE_NAME;
+
+// Sessionskakans path måste täcka HELA appen, inte bara API-prefixet: Next-middlewaren
+// (frontend/src/proxy.ts) läser kakan på UI-vägar som /oversikt, och en kaka med
+// path=/api skickas aldrig dit av webbläsaren (RFC 6265 §5.1.4) — resultatet blir en
+// oändlig loop tillbaka till /login trots giltig session. Sätt SESSION_COOKIE_PATH till
+// appens monteringsrot (t.ex. /registrering/avvikelse_iaf, eller / lokalt där frontend
+// saknar basePath). Faller tillbaka på BASE_URL_PREFIX för bakåtkompatibilitet.
+export const getSessionCookiePath = (): string => firstNonEmpty(SESSION_COOKIE_PATH, BASE_URL_PREFIX) ?? '/';
+
+export const getSessionCookieOptions = (
+  environment: string | undefined,
+  deployEnvironment: string | undefined = ENVIRONMENT,
+): session.CookieOptions => ({
   httpOnly: true,
-  secure: environment === 'production',
+  // ENVIRONMENT=LOCAL stänger av Secure-flaggan så att lokala prod-byggen fungerar över http
+  // (Dockerfile och `yarn start` tvingar NODE_ENV=production, och webbläsaren vägrar spara en
+  // Secure-kaka över http://localhost — resultatet blir en inloggningsloop). Använd TEST i
+  // testmiljön och lämna den tom/osatt i produktion, då är Secure alltid på.
+  secure: environment === 'production' && deployEnvironment !== 'LOCAL',
   sameSite: 'lax',
   maxAge: sessionTTL * 1000,
-  path: BASE_URL_PREFIX,
+  path: getSessionCookiePath(),
 });
 
 // Plockar ut ett name-fält ur ett okänt felobjekt (SAML-verifieringen skickar { name, message }).
@@ -240,6 +265,9 @@ class App {
 
     this.app.use(
       session({
+        // Egennamn per app gör att flera appar på samma värdnamn (draken-test.sundsvall.se)
+        // aldrig kan skriva över eller förväxlas med varandras sessionskakor.
+        name: getSessionCookieName(),
         secret: SECRET_KEY ?? '',
         resave: false,
         saveUninitialized: false,
@@ -258,12 +286,15 @@ class App {
         origin: function (origin, callback) {
           if (origin === undefined || corsWhitelist.includes(origin) || corsWhitelist.includes('*')) {
             callback(null, true);
+          } else if (NODE_ENV == 'development') {
+            callback(null, true);
           } else {
-            if (NODE_ENV == 'development') {
-              callback(null, true);
-            } else {
-              callback(new Error('Not allowed by CORS'));
-            }
+            // Neka genom att utelämna Access-Control-Allow-Origin, inte genom att kasta.
+            // CORS upprätthålls av webbläsaren; ett kastat fel blir i stället 500 här och
+            // sänker legitima cross-site-POST:ar som aldrig omfattas av CORS — framför allt
+            // SAML-callbacken, som IdP:n postar med sin egen Origin. Se draken, vars cors
+            // använder en sträng-origin och därför aldrig kastar (därav att MEX fungerar).
+            callback(null, false);
           }
         },
       }),
