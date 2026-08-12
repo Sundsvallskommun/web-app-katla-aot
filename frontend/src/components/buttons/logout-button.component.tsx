@@ -36,7 +36,7 @@ export const LogoutButton = forwardRef<HTMLButtonElement, LogoutButtonProps>((pr
       variant="ghost"
       size="md"
       color="primary"
-      className={cx('flex justify-center w-full hover:bg-dark-ghost', !smallSideBar ? 'justify-start' : '', className)}
+      className={cx('flex w-full hover:bg-dark-ghost', smallSideBar ? 'justify-center' : 'justify-start', className)}
       leftIcon={<LogOut aria-hidden="true" />}
       aria-label={logOutString}
       iconButton={smallSideBar}

@@ -58,9 +58,9 @@ interface ErrandRouteContentProps {
   route: ErrandRoute;
 }
 
-// Tabs identifies its direct Button child by component reference. Supplying the
-// polymorphic link props through an object keeps that identity while working
-// around the installed declaration, which does not expose the target's props.
+// Tabs identifierar sitt direkta Button-barn via komponentreferens. Att skicka
+// de polymorfa länkpropsen genom ett objekt bevarar den identiteten och går
+// samtidigt runt den installerade deklarationen, som inte exponerar målets props.
 const createLinkTabProps = (href: string) => ({ as: NextLink, href });
 
 const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route }) => {

@@ -21,7 +21,7 @@ export const NotificationsBell = ({ expanded, toggleShow }: NotificationsBellPro
     <Button
       size="md"
       aria-label={accessibleName}
-      aria-controls="notifications-panel"
+      aria-controls={expanded ? 'notifications-panel' : undefined}
       aria-expanded={expanded}
       onClick={toggleShow}
       className="mx-md"

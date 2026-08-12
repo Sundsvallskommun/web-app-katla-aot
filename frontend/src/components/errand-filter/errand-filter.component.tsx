@@ -19,7 +19,7 @@ export const ErrandFilter: React.FC = () => {
         <ErrandFilterQuery />
         {appConfig.features.errandFilter && (
           <Button
-            aria-controls="errand-filter-panel"
+            aria-controls={show ? 'errand-filter-panel' : undefined}
             aria-expanded={show}
             onClick={() => {
               setShow(!show);

@@ -1,11 +1,12 @@
 'use client';
 
 import { LogoutButton } from '@components/buttons/logout-button.component';
+import { colorSchemeOptions } from '@components/misc/color-scheme-options';
 import { FilterOverviewSidebarStatusSelector } from '@components/sidebars/filter-overview-sidebar-status-selector.component';
 import { useUserStore } from '@services/user-service/user-service';
-import { Avatar, Button, ColorSchemeMode, Divider, RadioButton } from '@sk-web-gui/react';
+import { Avatar, Button, Divider, RadioButton } from '@sk-web-gui/react';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
-import { Monitor, Moon, Sun, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -60,48 +61,19 @@ export const MobileMenuBody: React.FC<MobileMenuBodyProps> = ({ onClose }) => {
               name="mobile-color-scheme"
               value={colorScheme}
             >
-              <RadioButton
-                value="light"
-                checked={colorScheme === ColorSchemeMode.Light}
-                onChange={() => {
-                  setColorScheme(ColorSchemeMode.Light);
-                }}
-              >
-                <Sun
-                  aria-hidden="true"
-                  className={colorScheme === ColorSchemeMode.Light ? '' : 'opacity-50'}
-                  size={16}
-                />{' '}
-                {t('layout:color_scheme.light')}
-              </RadioButton>
-              <RadioButton
-                value="dark"
-                checked={colorScheme === ColorSchemeMode.Dark}
-                onChange={() => {
-                  setColorScheme(ColorSchemeMode.Dark);
-                }}
-              >
-                <Moon
-                  aria-hidden="true"
-                  className={colorScheme === ColorSchemeMode.Dark ? '' : 'opacity-50'}
-                  size={16}
-                />{' '}
-                {t('layout:color_scheme.dark')}
-              </RadioButton>
-              <RadioButton
-                value="system"
-                checked={colorScheme === ColorSchemeMode.System}
-                onChange={() => {
-                  setColorScheme(ColorSchemeMode.System);
-                }}
-              >
-                <Monitor
-                  aria-hidden="true"
-                  className={colorScheme === ColorSchemeMode.System ? '' : 'opacity-50'}
-                  size={16}
-                />{' '}
-                {t('layout:color_scheme.system')}
-              </RadioButton>
+              {colorSchemeOptions.map(({ value, labelKey, icon: Icon }) => (
+                <RadioButton
+                  key={value}
+                  value={value}
+                  checked={colorScheme === value}
+                  onChange={() => {
+                    setColorScheme(value);
+                  }}
+                >
+                  <Icon aria-hidden="true" className={colorScheme === value ? '' : 'opacity-50'} size={16} />{' '}
+                  {t(labelKey)}
+                </RadioButton>
+              ))}
             </RadioButton.Group>
           </div>
 

@@ -46,7 +46,7 @@ export const MobileOverviewLayout: React.FC = () => {
               iconButton
               variant="tertiary"
               aria-label={t('layout:controls.open_menu')}
-              aria-controls="mobile-overview-menu"
+              aria-controls={overlay === 'menu' ? 'mobile-overview-menu' : undefined}
               aria-expanded={overlay === 'menu'}
               onClick={() => {
                 setOverlay('menu');
