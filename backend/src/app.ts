@@ -65,8 +65,7 @@ const sessionStore: session.Store = SESSION_MEMORY
   : new (createFileStore(session))({ sessionTTL, path: './data/sessions' });
 
 // Tom sträng ska, precis som ett saknat värde, falla tillbaka på nästa alternativ.
-const firstNonEmpty = (...values: (string | undefined)[]): string | undefined =>
-  values.find(value => value !== undefined && value !== '');
+const firstNonEmpty = (...values: (string | undefined)[]): string | undefined => values.find(value => value !== undefined && value !== '');
 
 export const DEFAULT_SESSION_COOKIE_NAME = 'connect.sid';
 
