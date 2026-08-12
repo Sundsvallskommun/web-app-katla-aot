@@ -15,6 +15,16 @@ describe('security middleware', () => {
     expect(getSessionCookieOptions('test').secure).toBe(false);
   });
 
+  it('lets ENVIRONMENT=LOCAL turn off the secure flag for local http builds', () => {
+    expect(getSessionCookieOptions('production', 'LOCAL').secure).toBe(false);
+    // Allt annat än LOCAL ska behålla Secure — särskilt tomt/osatt, som är produktionsfallet.
+    expect(getSessionCookieOptions('production', 'TEST').secure).toBe(true);
+    expect(getSessionCookieOptions('production', '').secure).toBe(true);
+    expect(getSessionCookieOptions('production', undefined).secure).toBe(true);
+    // LOCAL får inte slå på Secure i en icke-produktionsmiljö.
+    expect(getSessionCookieOptions('development', 'LOCAL').secure).toBe(false);
+  });
+
   it('sets hardened attributes on a persisted session cookie', async () => {
     const app = new App([IndexController]).getServer();
     app.get('/session-test', (req, res) => {

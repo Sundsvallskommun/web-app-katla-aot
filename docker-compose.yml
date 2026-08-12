@@ -7,6 +7,9 @@ services:
     environment:
       APP_NAME: ${APP_NAME-Katla SM}
       NODE_ENV: ${NODE_ENV-production}
+      # LOCAL stänger av Secure-flaggan på sessionskakan för lokala prod-byggen över http.
+      # Lämnas tom i TEST/produktion, då är Secure alltid på.
+      ENVIRONMENT: ${ENVIRONMENT-}
       PORT: 3000
       BASE_URL_PREFIX: ${BASE_URL_PREFIX:?err}
       API_BASE_URL: ${API_BASE_URL:?err}

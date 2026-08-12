@@ -4,6 +4,7 @@ import {
   APP_NAME,
   BASE_URL_PREFIX,
   CREDENTIALS,
+  ENVIRONMENT,
   LOG_FORMAT,
   NODE_ENV,
   ORIGIN,
@@ -79,9 +80,16 @@ export const getSessionCookieName = (): string => firstNonEmpty(SESSION_COOKIE_N
 // saknar basePath). Faller tillbaka på BASE_URL_PREFIX för bakåtkompatibilitet.
 export const getSessionCookiePath = (): string => firstNonEmpty(SESSION_COOKIE_PATH, BASE_URL_PREFIX) ?? '/';
 
-export const getSessionCookieOptions = (environment: string | undefined): session.CookieOptions => ({
+export const getSessionCookieOptions = (
+  environment: string | undefined,
+  deployEnvironment: string | undefined = ENVIRONMENT,
+): session.CookieOptions => ({
   httpOnly: true,
-  secure: environment === 'production',
+  // ENVIRONMENT=LOCAL stänger av Secure-flaggan så att lokala prod-byggen fungerar över http
+  // (Dockerfile och `yarn start` tvingar NODE_ENV=production, och webbläsaren vägrar spara en
+  // Secure-kaka över http://localhost — resultatet blir en inloggningsloop). Använd TEST i
+  // testmiljön och lämna den tom/osatt i produktion, då är Secure alltid på.
+  secure: environment === 'production' && deployEnvironment !== 'LOCAL',
   sameSite: 'lax',
   maxAge: sessionTTL * 1000,
   path: getSessionCookiePath(),
