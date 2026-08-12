@@ -1,5 +1,5 @@
 'use client';
-import type { WidgetProps } from '@rjsf/utils';
+import { titleId, type WidgetProps } from '@rjsf/utils';
 import { Combobox } from '@sk-web-gui/react';
 import { useTranslation } from 'react-i18next';
 
@@ -9,7 +9,21 @@ const DEFAULT_CLASS = 'w-full';
 
 export function ComboboxWidget(props: WidgetProps) {
   const { t } = useTranslation('forms');
-  const { id, value, disabled, readonly, className, onChange } = getCommonProps(props, DEFAULT_CLASS);
+  const {
+    id,
+    value,
+    disabled,
+    readonly,
+    required,
+    invalid,
+    describedBy,
+    label,
+    hideLabel,
+    className,
+    onChange,
+    onBlur,
+    onFocus,
+  } = getCommonProps(props, DEFAULT_CLASS);
   const { enumOptions = [], placeholder: customPlaceholder, multiple: optMultiple } = getWidgetOptions(props.options);
 
   const schemaRecord = props.schema as Record<string, unknown>;
@@ -35,14 +49,30 @@ export function ComboboxWidget(props: WidgetProps) {
 
   return (
     <Combobox
-      id={id}
+      id={`${id}__combobox`}
       className={className}
       multiple={multiple}
       value={currentValue}
       disabled={disabled || readonly}
+      aria-label={hideLabel ? label : undefined}
+      aria-labelledby={hideLabel ? undefined : titleId(id)}
+      aria-describedby={describedBy}
       onChange={handleChange}
     >
-      <Combobox.Input placeholder={placeholder} className="w-full" />
+      <Combobox.Input
+        id={id}
+        placeholder={placeholder}
+        className="w-full"
+        disabled={disabled || readonly}
+        readOnly={readonly}
+        required={required}
+        aria-label={hideLabel ? label : undefined}
+        aria-labelledby={hideLabel ? undefined : titleId(id)}
+        aria-describedby={describedBy}
+        aria-invalid={invalid}
+        onBlur={onBlur}
+        onFocus={onFocus}
+      />
       <Combobox.List>
         {enumOptions.map((option) => (
           <Combobox.Option key={String(option.value)} value={String(option.value)}>

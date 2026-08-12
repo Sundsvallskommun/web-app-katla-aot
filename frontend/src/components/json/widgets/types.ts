@@ -1,4 +1,4 @@
-import type { WidgetProps } from '@rjsf/utils';
+import { ariaDescribedByIds, type WidgetProps } from '@rjsf/utils';
 
 export interface EnumOption {
   value: string | number | boolean;
@@ -32,12 +32,19 @@ export interface CommonWidgetProps {
   value: unknown;
   disabled: boolean;
   readonly: boolean;
+  required: boolean;
+  invalid: boolean;
+  describedBy: string;
+  label: string;
+  hideLabel: boolean;
   className: string;
   onChange: (value: unknown) => void;
+  onBlur: () => void;
+  onFocus: () => void;
 }
 
 export function getCommonProps(props: WidgetProps, defaultClassName: string): CommonWidgetProps {
-  const { id, disabled, readonly, onChange } = props;
+  const { id, disabled, readonly, required, rawErrors, label, hideLabel, onChange } = props;
   const value: unknown = props.value;
   const options = getWidgetOptions(props.options);
 
@@ -46,8 +53,19 @@ export function getCommonProps(props: WidgetProps, defaultClassName: string): Co
     value,
     disabled: !!disabled,
     readonly: !!readonly,
+    required: !!required,
+    invalid: Boolean(rawErrors?.length),
+    describedBy: ariaDescribedByIds(id),
+    label,
+    hideLabel: !!hideLabel,
     className: (options.className ?? '') || defaultClassName,
     onChange,
+    onBlur: () => {
+      props.onBlur(id, value);
+    },
+    onFocus: () => {
+      props.onFocus(id, value);
+    },
   };
 }
 

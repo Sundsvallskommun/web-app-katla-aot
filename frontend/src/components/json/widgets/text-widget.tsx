@@ -7,7 +7,8 @@ import { getCommonProps, getWidgetOptions } from './types';
 const DEFAULT_CLASS = 'w-full';
 
 export function TextWidget(props: WidgetProps) {
-  const { id, value, disabled, readonly, className, onChange } = getCommonProps(props, DEFAULT_CLASS);
+  const { id, value, disabled, readonly, required, invalid, describedBy, className, onChange, onBlur, onFocus } =
+    getCommonProps(props, DEFAULT_CLASS);
   const placeholder = (props.uiSchema?.['ui:placeholder'] ?? '') || getWidgetOptions(props.options).placeholder;
 
   return (
@@ -16,7 +17,13 @@ export function TextWidget(props: WidgetProps) {
       className={className}
       placeholder={placeholder}
       value={(value as string) ?? ''}
-      disabled={disabled || readonly}
+      disabled={disabled}
+      readOnly={readonly}
+      required={required}
+      aria-describedby={describedBy}
+      aria-invalid={invalid}
+      onBlur={onBlur}
+      onFocus={onFocus}
       onChange={(e) => {
         const val = e.currentTarget.value;
         onChange(val === '' ? undefined : val);
