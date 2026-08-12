@@ -22,7 +22,10 @@ export const MobileOverviewLayout: React.FC = () => {
   const [overlay, setOverlay] = useState<OverlayType>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const { activeStatus } = useFilterStore();
-  const { rows, isLoading, hasMore, loadMore, totalElements } = useOverviewErrands({ mode: 'mobile' });
+  const { rows, isLoading, hasMore, loadMore, totalElements, errandsError, metadataError } = useOverviewErrands({
+    mode: 'mobile',
+  });
+  const errors = [metadataError, errandsError].filter((message): message is string => message !== null);
 
   const statusLabel = activeStatus ? capitalize(activeStatus) : capitalize(t('filtering:errands.open'));
 
@@ -68,7 +71,7 @@ export const MobileOverviewLayout: React.FC = () => {
           )}
         </div>
 
-        <MobileErrandsList rows={rows} isLoading={isLoading} hasMore={hasMore} loadMore={loadMore} />
+        <MobileErrandsList rows={rows} isLoading={isLoading} hasMore={hasMore} loadMore={loadMore} errors={errors} />
       </MainPageMobileHeader>
 
       {overlay === 'menu' && (

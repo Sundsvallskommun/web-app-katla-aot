@@ -18,6 +18,7 @@ export interface StatusButton {
 
 export function useStatusButtons() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const { t } = useTranslation();
   const { activeStatus, setActiveStatus, setStatuses } = useFilterStore();
   const {
@@ -62,26 +63,32 @@ export function useStatusButtons() {
     draftEnabled ? allStatusButtons : allStatusButtons.filter((button) => !button.statuses.includes('DRAFT'));
 
   useEffect(() => {
+    let active = true;
     setIsLoading(true);
-    const promises = [
-      getErrandsCount({ statuses: ['NEW'] }).then((data) => {
-        setNewErrandCount(data.count || 0);
-      }),
-      getErrandsCount({ statuses: ['SOLVED'] }).then((data) => {
-        setClosedErrandCount(data.count || 0);
-      }),
+    const requests: { status: string; apply: (count: number) => void }[] = [
+      { status: 'NEW', apply: setNewErrandCount },
+      { status: 'SOLVED', apply: setClosedErrandCount },
     ];
     if (draftEnabled) {
-      promises.push(
-        getErrandsCount({ statuses: ['DRAFT'] }).then((data) => {
-          setDraftErrandCount(data.count || 0);
-        })
-      );
+      requests.push({ status: 'DRAFT', apply: setDraftErrandCount });
     }
-    void Promise.all(promises).finally(() => {
-      setIsLoading(false);
-    });
-  }, []);
+
+    void Promise.allSettled(requests.map(({ status }) => getErrandsCount({ statuses: [status] })))
+      .then((results) => {
+        if (!active) return;
+        results.forEach((result, index) => {
+          if (result.status === 'fulfilled') requests[index]?.apply(result.value.count);
+        });
+        setError(results.some((result) => result.status === 'rejected') ? t('api_errors.counts') : null);
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [draftEnabled, setClosedErrandCount, setDraftErrandCount, setNewErrandCount, t]);
 
   const onSelectStatus = (button: StatusButton) => {
     setActiveStatus(button.label);
@@ -89,5 +96,5 @@ export function useStatusButtons() {
     reset();
   };
 
-  return { statusButtons, activeStatus, onSelectStatus, isLoading };
+  return { statusButtons, activeStatus, onSelectStatus, isLoading, error };
 }

@@ -1,21 +1,26 @@
 import { NotificationDTO } from '@data-contracts/backend/data-contracts';
+import { sortBy } from 'lodash';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface NotificationState {
   activeNotifications: NotificationDTO[];
   acknowledgedNotifications: NotificationDTO[];
-  setActiveNotifications: (notification: NotificationDTO[]) => void;
-  setAcknowledgedNotifications: (notification: NotificationDTO[]) => void;
+  setNotifications: (notifications: NotificationDTO[]) => void;
 }
+
+const newestFirst = (notifications: NotificationDTO[]): NotificationDTO[] => sortBy(notifications, 'created').reverse();
 
 export const useNotificationStore = create<NotificationState>()(
   persist(
     (set) => ({
       activeNotifications: [],
       acknowledgedNotifications: [],
-      setActiveNotifications: (count) => set({ activeNotifications: count }),
-      setAcknowledgedNotifications: (count) => set({ acknowledgedNotifications: count }),
+      setNotifications: (notifications) =>
+        set({
+          activeNotifications: newestFirst(notifications.filter((notification) => !notification.acknowledged)),
+          acknowledgedNotifications: newestFirst(notifications.filter((notification) => notification.acknowledged)),
+        }),
     }),
     {
       name: 'notification-storage',

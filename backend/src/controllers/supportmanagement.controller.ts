@@ -5,14 +5,13 @@ import { MUNICIPALITY_ID, NAMESPACE } from '@/config';
 import { getApiBase } from '@/config/api-config';
 import { Errand, MetadataResponse, Notification, PageErrand } from '@/data-contracts/supportmanagement/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
-import ApiResponse from '@/interfaces/api-service.interface';
+import type ApiResponse from '@/interfaces/api-service.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
-import { NotificationDTO } from '@/responses/notification.response';
-import { ErrandDTO, ErrandsQueryDTO, PageErrandDTO } from '@/responses/supportmanagement.response';
+import { NotificationAcknowledgementResponse, NotificationDTO } from '@/responses/notification.response';
+import { ErrandCountDTO, ErrandDTO, ErrandsQueryDTO, PageErrandDTO } from '@/responses/supportmanagement.response';
 import { MetadataResponseDTO } from '@/responses/supportmanagement-metadata.response';
 import ApiService from '@/services/api.service';
-import { logger } from '@/utils/logger';
 import { mapStakeholderDTOToStakeholder, mapStakeholderToStakeholderDTO } from '@/utils/stakeholder-mapping';
 import { apiURL } from '@/utils/util';
 
@@ -31,49 +30,38 @@ export class SupportManagementController {
   @Post('/supportmanagement/errand/create')
   @OpenAPI({ summary: 'Create new errand' })
   @UseBefore(authMiddleware)
-  @ResponseSchema(PageErrandDTO)
+  @ResponseSchema(ErrandDTO)
   async createErrand(@Req() req: RequestWithUser, @Body() errand: ErrandDTO): Promise<ErrandDTO> {
     const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands`;
     const baseURL = apiURL(this.apiBase);
 
-    try {
-      const errandInformation = {
-        ...(errand as Errand),
-        reporterUserId: req.user.username,
-        stakeholders: errand.stakeholders?.map(mapStakeholderDTOToStakeholder),
-      };
+    const errandInformation = {
+      ...(errand as Errand),
+      reporterUserId: req.user.username,
+      stakeholders: errand.stakeholders?.map(mapStakeholderDTOToStakeholder),
+    };
 
-      const res = await this.apiService.post<Partial<Errand>>({ baseURL, url, data: errandInformation }, req).catch((e: unknown) => {
-        logger.error('Error when initiating support errand');
-        logger.error(e);
-        throw e;
-      });
+    const res = await this.apiService.post<Partial<Errand>>({ baseURL, url, data: errandInformation, propagateClientError: true }, req);
+    if (!res.data) throw new HttpException(502, 'Invalid response when creating errand');
 
-      const resStakeholders = res.data.stakeholders;
-      if (!resStakeholders) throw new HttpException(500, 'No stakeholders in response from API');
+    const resStakeholders = res.data.stakeholders;
+    if (!resStakeholders) throw new HttpException(502, 'No stakeholders in response when creating errand');
 
-      const stakeholders = await Promise.all(resStakeholders.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)));
+    const stakeholders = await Promise.all(resStakeholders.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)));
 
-      const errandRes = {
-        ...res.data,
-        stakeholders: stakeholders,
-      };
-
-      return errandRes;
-    } catch (error) {
-      logger.error('Something went wrong when creating errand:', error);
-      return {};
-    }
+    return {
+      ...res.data,
+      stakeholders,
+    };
   }
 
   @Patch('/supportmanagement/errand/save')
   @OpenAPI({ summary: 'Save an errand' })
   @UseBefore(authMiddleware)
-  @ResponseSchema(PageErrandDTO)
-  async saveErrand(@Req() req: RequestWithUser, @Body() errand: Errand): Promise<Partial<Errand> | undefined> {
+  @ResponseSchema(ErrandDTO)
+  async saveErrand(@Req() req: RequestWithUser, @Body() errand: Errand): Promise<Partial<Errand>> {
     if (!errand.id) {
-      logger.error('No errand id');
-      return undefined;
+      throw new HttpException(400, 'Errand id is required when saving an errand');
     }
 
     const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands/${errand.id}`;
@@ -93,30 +81,21 @@ export class SupportManagementController {
 
     const baseURL = apiURL(this.apiBase);
 
-    try {
-      const res = await this.apiService.patch<Partial<Errand>>({ baseURL, url, data: errandInformation }, req).catch((e: unknown) => {
-        logger.error('Error when initiating support errand');
-        logger.error(e);
-        throw e;
-      });
+    const res = await this.apiService.patch<Partial<Errand>>({ baseURL, url, data: errandInformation, propagateClientError: true }, req);
+    if (!res.data) throw new HttpException(502, 'Invalid response when saving errand');
 
-      const stakeholders = await Promise.all(res.data.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? []);
+    const stakeholders = await Promise.all(res.data.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? []);
 
-      const errandRes = {
-        ...res.data,
-        stakeholders: stakeholders,
-      };
-
-      return errandRes;
-    } catch {
-      throw new HttpException(500, 'Failed to create errand');
-    }
+    return {
+      ...res.data,
+      stakeholders,
+    };
   }
 
   @Patch('/supportmanagement/errand/:id')
   @OpenAPI({ summary: 'Update errand' })
   @UseBefore(authMiddleware)
-  @ResponseSchema(PageErrandDTO)
+  @ResponseSchema(ErrandDTO)
   async updateErrand(@Req() req: RequestWithUser, @Param('id') id: string, @Body() errand: Partial<Errand>): Promise<Partial<Errand>> {
     const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands/${id}`;
     const baseURL = apiURL(this.apiBase);
@@ -132,17 +111,12 @@ export class SupportManagementController {
       ...errandData
     } = errand;
 
-    try {
-      const res = await this.apiService.patch<Partial<Errand>>({ baseURL, url, data: errandData }, req).catch((e: unknown) => {
-        logger.error('Error when updating support errand');
-        logger.error(e);
-        throw e;
-      });
+    if (!id.trim()) throw new HttpException(400, 'Errand id is required when updating an errand');
 
-      return res.data;
-    } catch {
-      throw new HttpException(500, 'Failed to update errand');
-    }
+    const res = await this.apiService.patch<Partial<Errand>>({ baseURL, url, data: errandData, propagateClientError: true }, req);
+    if (!res.data) throw new HttpException(502, 'Invalid response when updating errand');
+
+    return res.data;
   }
 
   @Get('/supportmanagement/errand/:errandNumber')
@@ -152,30 +126,25 @@ export class SupportManagementController {
   async getErrand(@Req() req: RequestWithUser, @Param('errandNumber') errandNumber: string): Promise<ErrandDTO> {
     const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands?filter=errandNumber:'${errandNumber}'`;
 
-    try {
-      const res = await this.apiService.get<PageErrand>({ url }, req);
+    const res = await this.apiService.get<PageErrand>({ url }, req);
+    if (!res.data) throw new HttpException(502, 'Invalid response when reading errand');
 
-      const matchedErrand = res.data.content?.[0];
-      if (!matchedErrand) throw new HttpException(500, 'No data from API');
+    const matchedErrand = res.data.content?.[0];
+    if (!matchedErrand) throw new HttpException(404, 'Errand not found');
 
-      const stakeholders = await Promise.all(matchedErrand.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? []);
+    const stakeholders = await Promise.all(matchedErrand.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? []);
 
-      const errandRes = {
-        ...matchedErrand,
-        stakeholders: stakeholders,
-      };
-
-      return errandRes;
-    } catch {
-      return {};
-    }
+    return {
+      ...matchedErrand,
+      stakeholders,
+    };
   }
 
   @Get('/supportmanagement/errands')
   @OpenAPI({ summary: 'Read maching errands' })
   @UseBefore(authMiddleware)
   @ResponseSchema(PageErrandDTO)
-  async getErrands(@Req() req: RequestWithUser, @QueryParams() query: ErrandsQueryDTO): Promise<ApiResponse<PageErrand>> {
+  async getErrands(@Req() req: RequestWithUser, @QueryParams() query: ErrandsQueryDTO): Promise<PageErrand> {
     const baseUrl = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands`;
     const params = new URLSearchParams();
 
@@ -201,25 +170,17 @@ export class SupportManagementController {
 
     const finalUrl = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
 
-    try {
-      const res = await this.apiService.get<ApiResponse<PageErrand>>({ url: finalUrl }, req);
+    const res = await this.apiService.get<PageErrand>({ url: finalUrl }, req);
+    if (!res.data) throw new HttpException(502, 'Invalid response when reading errands');
 
-      if (!res.data) throw new HttpException(500, 'No data from API');
-
-      return res.data;
-    } catch (error) {
-      if (error instanceof HttpException && error.status === 404) {
-        return { data: {}, message: '404 from api' };
-      }
-      return { data: {}, message: 'error' };
-    }
+    return res.data;
   }
 
   @Get('/supportmanagement/count')
   @OpenAPI({ summary: 'Count errands' })
   @UseBefore(authMiddleware)
-  @ResponseSchema(PageErrandDTO)
-  async getNumberOfErrands(@Req() req: RequestWithUser, @QueryParams() query: ErrandsQueryDTO): Promise<ApiResponse<{ count: number } | null>> {
+  @ResponseSchema(ErrandCountDTO)
+  async getNumberOfErrands(@Req() req: RequestWithUser, @QueryParams() query: ErrandsQueryDTO): Promise<{ count: number }> {
     const baseUrl = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands/count`;
     const params = new URLSearchParams();
 
@@ -240,80 +201,71 @@ export class SupportManagementController {
 
     const finalUrl = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
 
-    try {
-      const res = await this.apiService.get<ApiResponse<{ count: number }>>({ url: finalUrl }, req);
+    const res = await this.apiService.get<{ count: number }>({ url: finalUrl }, req);
+    if (!res.data || typeof res.data.count !== 'number') throw new HttpException(502, 'Invalid response when counting errands');
 
-      if (!res.data) throw new HttpException(500, 'No data from API');
-
-      return res.data;
-    } catch (error) {
-      if (error instanceof HttpException && error.status === 404) {
-        return { data: null, message: '404 from api' };
-      }
-      return { data: null, message: 'error' };
-    }
+    return res.data;
   }
 
   @Get('/supportmanagement/metadata')
   @OpenAPI({ summary: 'Get all metadata for provided namespace and municipality' })
   @UseBefore(authMiddleware)
   @ResponseSchema(MetadataResponseDTO)
-  async getMetadata(@Req() req: RequestWithUser): Promise<ApiResponse<MetadataResponse | null>> {
+  async getMetadata(@Req() req: RequestWithUser): Promise<MetadataResponse> {
     const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/metadata`;
 
-    try {
-      const res = await this.apiService.get<ApiResponse<MetadataResponse>>({ url }, req);
+    const res = await this.apiService.get<MetadataResponse>({ url }, req);
+    if (!res.data) throw new HttpException(502, 'Invalid response when reading metadata');
 
-      if (!res.data) throw new HttpException(500, 'No data from API');
-
-      return res.data;
-    } catch (error) {
-      if (error instanceof HttpException && error.status === 404) {
-        return { data: null, message: '404 from api' };
-      }
-      return { data: null, message: 'error' };
-    }
+    return res.data;
   }
 
   @Get('/supportmanagement/notifications')
   @OpenAPI({ summary: 'Get notifications for the namespace and municipality with the specified ownerId' })
   @UseBefore(authMiddleware)
-  @ResponseSchema(NotificationDTO)
-  async getNotifications(@Req() req: RequestWithUser): Promise<ApiResponse<Notification[] | null>> {
+  @ResponseSchema(NotificationDTO, { isArray: true })
+  async getNotifications(@Req() req: RequestWithUser): Promise<Notification[]> {
     const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/notifications?ownerId=${req.user.username}`;
 
-    try {
-      const res = await this.apiService.get<ApiResponse<Notification[]>>({ url }, req);
+    const res = await this.apiService.get<Notification[]>({ url }, req);
+    if (!res.data) throw new HttpException(502, 'Invalid response when reading notifications');
 
-      if (!res.data) throw new HttpException(500, 'No data from API');
-
-      return res.data;
-    } catch (error) {
-      if (error instanceof HttpException && error.status === 404) {
-        return { data: null, message: '404 from api' };
-      }
-      return { data: null, message: 'error' };
-    }
+    return res.data;
   }
 
   @Patch('/supportmanagement/notifications')
-  @OpenAPI({ summary: 'Acknowledge notification' })
+  @OpenAPI({
+    summary: 'Acknowledge notifications',
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            minItems: 1,
+            items: { $ref: '#/components/schemas/NotificationDTO' },
+          },
+        },
+      },
+    },
+  })
   @UseBefore(authMiddleware)
-  @ResponseSchema(NotificationDTO)
-  async acknowlegeNotifications(@Req() req: RequestWithUser, @Body() notification: NotificationDTO): Promise<ApiResponse<boolean>> {
+  @ResponseSchema(NotificationAcknowledgementResponse)
+  async acknowlegeNotifications(
+    @Req() req: RequestWithUser,
+    @Body({ required: false }) notifications: NotificationDTO[] | undefined,
+  ): Promise<ApiResponse<boolean>> {
+    if (!Array.isArray(notifications) || notifications.length === 0) {
+      throw new HttpException(400, 'At least one notification is required');
+    }
+
     const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/notifications`;
 
-    try {
-      const res = await this.apiService.patch<ApiResponse<Notification>>({ url, data: notification }, req);
+    // SupportManagement acknowledges with 204 No Content. A resolved request is
+    // therefore the success signal; the gateway keeps its existing boolean body
+    // for Katla clients.
+    await this.apiService.patch<undefined>({ url, data: notifications, propagateClientError: true }, req);
 
-      if (!res.data) throw new HttpException(500, 'No data from API');
-
-      return { data: true, message: 'Success' };
-    } catch (error) {
-      if (error instanceof HttpException && error.status === 404) {
-        return { data: false, message: '404 from api' };
-      }
-      return { data: false, message: 'error' };
-    }
+    return { data: true, message: 'Success' };
   }
 }

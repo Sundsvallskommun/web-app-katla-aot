@@ -2,10 +2,10 @@
 
 import { MainPageMobileHeader } from '@components/mobile/main-page-mobile-header.component';
 import { getNotifications } from '@services/errand-service/errand-service';
-import { Button, cx, Divider, Header } from '@sk-web-gui/react';
-import { sortBy } from 'lodash';
+import { Alert, Button, cx, Divider, Header, Spinner } from '@sk-web-gui/react';
 import { Mail, X } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MOBILE_BREAKPOINT } from 'src/constants/responsive';
 import { useMediaQuery } from 'src/hooks/use-media-query';
 import { useNotificationStore } from 'src/stores/notification-store';
@@ -17,27 +17,92 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
   setShow,
   open = false,
 }) => {
-  const { activeNotifications, setActiveNotifications, acknowledgedNotifications, setAcknowledgedNotifications } =
-    useNotificationStore();
+  const { activeNotifications, acknowledgedNotifications, setNotifications } = useNotificationStore();
   const isMobile = useMediaQuery(MOBILE_BREAKPOINT);
+  const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    void getNotifications().then((res) => {
-      setActiveNotifications(
-        sortBy(
-          res.filter((n) => !n.acknowledged),
-          'created'
-        ).reverse()
-      );
+    let active = true;
+    setIsLoading(true);
+    void getNotifications()
+      .then((notifications) => {
+        if (!active) return;
+        setNotifications(notifications);
+        setError(null);
+      })
+      .catch(() => {
+        if (active) setError(t('api_errors.notifications'));
+      })
+      .finally(() => {
+        if (active) setIsLoading(false);
+      });
 
-      setAcknowledgedNotifications(
-        sortBy(
-          res.filter((n) => n.acknowledged),
-          'created'
-        ).reverse()
-      );
-    });
-  }, [show]);
+    return () => {
+      active = false;
+    };
+  }, [setNotifications, show, t]);
+
+  const hasNotifications = activeNotifications.length > 0 || acknowledgedNotifications.length > 0;
+
+  const notificationContent = (
+    <div className="flex-grow mt-sm mb-0 p-24 pt-0 flex flex-col gap-24 overflow-auto">
+      {error && (
+        <div role="alert">
+          <Alert type="error">
+            <Alert.Icon />
+            <Alert.Content>
+              <Alert.Content.Description>{error}</Alert.Content.Description>
+            </Alert.Content>
+          </Alert>
+        </div>
+      )}
+      {isLoading && !hasNotifications && !error ?
+        <div className="flex justify-center p-24">
+          <Spinner aria-label="Laddar notiser" />
+        </div>
+      : <>
+          <div className="flex flex-col gap-4">
+            <Divider.Section>
+              <div className="flex gap-sm items-center">
+                <h2 className="text-h4-sm">Nya</h2>
+              </div>
+            </Divider.Section>
+            {activeNotifications.length > 0 ?
+              <ul>
+                {activeNotifications.map((notification) => (
+                  <li key={notification.id}>
+                    <NotificationItem notification={notification} />
+                  </li>
+                ))}
+              </ul>
+            : !error && !isLoading ?
+              <div className="m-md">Inga nya notifieringar</div>
+            : null}
+          </div>
+          <div>
+            <Divider.Section>
+              <div className="flex gap-sm items-center">
+                <h2 className="text-h4-sm">Tidigare</h2>
+              </div>
+            </Divider.Section>
+            {acknowledgedNotifications.length > 0 ?
+              <ul>
+                {acknowledgedNotifications.map((notification) => (
+                  <li key={notification.id}>
+                    <NotificationItem notification={notification} />
+                  </li>
+                ))}
+              </ul>
+            : !error && !isLoading ?
+              <div className="m-md">Inga notifieringar</div>
+            : null}
+          </div>
+        </>
+      }
+    </div>
+  );
 
   if (!show) return null;
 
@@ -59,40 +124,7 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
             </Button>
           }
         >
-          <div className="flex-grow p-24 flex flex-col gap-24 overflow-auto">
-            <div className="flex flex-col gap-4">
-              <Divider.Section>
-                <div className="flex gap-sm items-center">
-                  <h2 className="text-h4-sm">Nya</h2>
-                </div>
-              </Divider.Section>
-              {activeNotifications.length > 0 ?
-                <ul>
-                  {activeNotifications.map((notification) => (
-                    <li key={notification.id}>
-                      <NotificationItem notification={notification} />
-                    </li>
-                  ))}
-                </ul>
-              : <div className="m-md">Inga nya notifieringar</div>}
-            </div>
-            <div>
-              <Divider.Section>
-                <div className="flex gap-sm items-center">
-                  <h2 className="text-h4-sm">Tidigare</h2>
-                </div>
-              </Divider.Section>
-              {acknowledgedNotifications.length > 0 ?
-                <ul>
-                  {acknowledgedNotifications.map((notification) => (
-                    <li key={notification.id}>
-                      <NotificationItem notification={notification} />
-                    </li>
-                  ))}
-                </ul>
-              : <div className="m-md">Inga notifieringar</div>}
-            </div>
-          </div>
+          {notificationContent}
         </MainPageMobileHeader>
       </div>
     );
@@ -130,40 +162,7 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
             <X data-cy="close-message-wrapper-icon" />
           </Button>
         </Header>
-        <div className="flex-grow mt-sm mb-0 p-24 pt-0 flex flex-col gap-24 overflow-auto">
-          <div className="flex flex-col gap-4">
-            <Divider.Section>
-              <div className="flex gap-sm items-center">
-                <h2 className="text-h4-sm">Nya</h2>
-              </div>
-            </Divider.Section>
-            {activeNotifications.length > 0 ?
-              <ul>
-                {activeNotifications.map((notification) => (
-                  <li key={notification.id}>
-                    <NotificationItem notification={notification} />
-                  </li>
-                ))}
-              </ul>
-            : <div className="m-md">Inga nya notifieringar</div>}
-          </div>
-          <div>
-            <Divider.Section>
-              <div className="flex gap-sm items-center">
-                <h2 className="text-h4-sm">Tidigare</h2>
-              </div>
-            </Divider.Section>
-            {acknowledgedNotifications.length > 0 ?
-              <ul>
-                {acknowledgedNotifications.map((notification) => (
-                  <li key={notification.id}>
-                    <NotificationItem notification={notification} />
-                  </li>
-                ))}
-              </ul>
-            : <div className="m-md">Inga notifieringar</div>}
-          </div>
-        </div>
+        {notificationContent}
       </section>
     </>
   );

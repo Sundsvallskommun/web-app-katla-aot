@@ -151,7 +151,7 @@ class ApiService {
         'X-Sent-By': `type=adAccount; ${req?.user?.username}`,
       },
       maxRedirects: 0,
-      params: { ...defaultParams, ...(config.params as Record<string, unknown> | undefined) },
+      params: { ...defaultParams, ...(axiosConfig.params as Record<string, unknown> | undefined) },
       timeout: API_REQUEST_TIMEOUT_MS,
       baseURL: undefined,
       url: requestUrl.toString(),

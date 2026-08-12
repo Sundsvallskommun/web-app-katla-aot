@@ -93,6 +93,27 @@ test.describe('Register new errand page', () => {
     await registerErrandAndExpectDraft(page, 4);
   });
 
+  test('Preserves entered data and stays on the form when registration fails', async ({ page }) => {
+    await page.route('**/supportmanagement/errand/create', jsonRoute({ message: 'Upstream unavailable' }, 502));
+    await expect(disclosureByTitle(page, 'Rapportör').getByTestId('stakeholder-card')).toHaveCount(1);
+    await selectRequiredErrandParameters(page);
+
+    await page.getByTestId('register-errand').click();
+    const failedResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes('/supportmanagement/errand/create') && response.request().method() === 'POST'
+    );
+    await page.getByTestId('submit-button').click();
+    const response = await failedResponse;
+    expect(response.status()).toBe(502);
+
+    await expect(page).toHaveURL(/\/arende\/registrera$/);
+    await expect(page.getByTestId('event-type-deviation')).toBeChecked();
+    await expect(page.getByTestId('event-concerns-individual')).toBeChecked();
+    await expect(page.getByText('Något gick fel när ärendet sparades')).toBeVisible();
+    await expect(page.getByText('Ärendet skickades in')).toHaveCount(0);
+  });
+
   test('Manually add stakeholders and register errand', async ({ page }) => {
     await expect(page.locator('main').first()).toBeVisible();
 
