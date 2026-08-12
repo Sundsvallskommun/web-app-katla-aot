@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "TypeScript + Express + Routing Controllers API Server",
   "engines": {
-    "node": ">=22.22.2 <23"
+    "node": ">=26.1.0 <27"
   },
   "author": "",
   "license": "ISC",
@@ -66,7 +66,7 @@
     "@types/hpp": "^0.2.6",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/morgan": "^1.9.9",
-    "@types/node": "^22.10.5",
+    "@types/node": "^26.2.0",
     "@types/passport": "^1.0.17",
     "@types/supertest": "^7.2.1",
     "@types/swagger-ui-express": "^4.1.7",

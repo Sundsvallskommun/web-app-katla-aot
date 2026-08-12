@@ -1,6 +1,11 @@
 # Install dependencies only when needed
-ARG NODE_VERSION=22.23.2
-FROM node:${NODE_VERSION}-slim AS deps
+ARG NODE_VERSION=26.1.0
+ARG YARN_VERSION=1.22.22
+FROM node:${NODE_VERSION}-slim AS build-base
+ARG YARN_VERSION
+RUN npm install --global yarn@${YARN_VERSION}
+
+FROM build-base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 #RUN apk add --no-cache libc6-compat
 RUN apt-get update
@@ -14,7 +19,7 @@ RUN yarn install --frozen-lockfile
 # RUN npm ci
 
 # Rebuild the source code only when needed
-FROM node:${NODE_VERSION}-slim AS builder
+FROM build-base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
