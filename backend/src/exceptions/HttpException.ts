@@ -8,6 +8,8 @@ export class HttpException extends HttpError {
 
   constructor(status: number, message: string) {
     super(status, message);
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.name = new.target.name;
     this.status = status;
     this.message = message;
   }
