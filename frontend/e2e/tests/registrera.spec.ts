@@ -14,8 +14,30 @@ import {
 } from '../utils/stakeholder';
 import { expect, test } from '../utils/test';
 
+const MOCK_FORM_SCHEMA_NAME = 'avvikelse-plats-handelse';
+const MOCK_FORM_SCHEMA_ID = 'e2e-avvikelse-plats-handelse-v1';
+const MOCK_INCIDENT_DESCRIPTION = 'Händelsen inträffade i testmiljön';
+const mockFormSchemaResponse = {
+  schemaId: MOCK_FORM_SCHEMA_ID,
+  schema: {
+    $schema: 'https://json-schema.org/draft/2020-12/schema',
+    type: 'object',
+    additionalProperties: false,
+    properties: {
+      incidentDescription: {
+        type: 'string',
+        title: 'Beskriv händelsen',
+        minLength: 1,
+      },
+    },
+    required: ['incidentDescription'],
+  },
+  uiSchema: {},
+};
+
 /** Registrerar ärendet och verifierar POST-anropet, motsvarar cy.wait('@createDraftErrand') med assertions */
 interface CreateErrandRequestBody {
+  jsonParameters?: { key: string; value: unknown; schemaId: string }[];
   parameters?: { key: string; values: string[] }[];
   stakeholders?: unknown[];
 }
@@ -46,6 +68,13 @@ const registerErrandAndExpectDraft = async (page: Page, expectedStakeholderCount
   const body = request.postDataJSON() as CreateErrandRequestBody;
   expect(body.parameters).toContainEqual({ key: 'eventType', values: ['AVVIKELSE'] });
   expect(body.parameters).toContainEqual({ key: 'eventConcerns', values: ['ENSKILD_BRUKARE'] });
+  expect(body.jsonParameters).toEqual([
+    {
+      key: MOCK_FORM_SCHEMA_NAME,
+      value: { incidentDescription: MOCK_INCIDENT_DESCRIPTION },
+      schemaId: MOCK_FORM_SCHEMA_ID,
+    },
+  ]);
   expect(body.stakeholders?.length).toBe(expectedStakeholderCount);
 };
 
@@ -67,12 +96,19 @@ const selectRequiredErrandParameters = async (page: Page) => {
  */
 const completeRequiredErrandForm = async (page: Page) => {
   await selectRequiredErrandParameters(page);
+
+  const incidentDescription = page.getByRole('textbox', { name: /Beskriv händelsen/ });
+  await expect(incidentDescription).toBeEditable();
+  await incidentDescription.fill(MOCK_INCIDENT_DESCRIPTION);
+  await expect(incidentDescription).toHaveValue(MOCK_INCIDENT_DESCRIPTION);
 };
 
 test.describe('Register new errand page', () => {
   test.beforeEach(async ({ page }) => {
     await page.route('**/employee/personal/*', jsonRoute(mockReporterStakeholder));
     await page.route('**/supportmanagement/errand/create', jsonRoute(mockErrand));
+    await page.route(`**/schemas/latest/${MOCK_FORM_SCHEMA_NAME}`, jsonRoute(mockFormSchemaResponse));
+    await page.route(`**/schemas/${MOCK_FORM_SCHEMA_ID}`, jsonRoute(mockFormSchemaResponse));
     // Cypress satte metadata via useMetadataStore.setState; här seedas motsvarande
     // persistade zustand-state i localStorage innan sidan laddas
     await page.addInitScript((metadata) => {

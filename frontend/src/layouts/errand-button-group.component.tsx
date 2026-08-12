@@ -1,5 +1,9 @@
 import { CancelErrandDialog } from '@components/cancel-errand-dialog.component';
-import { jsonParametersToErrandFormData, validateErrandFormData } from '@components/json/utils/schema-utils';
+import {
+  errandFormDataContractErrorMessage,
+  jsonParametersToErrandFormData,
+  validateErrandFormData,
+} from '@components/json/utils/schema-utils';
 import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandFormDTO } from '@interfaces/errand-form';
 import { createErrand, updateErrand } from '@services/errand-service/errand-service';
@@ -38,9 +42,8 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
   const draftEnabled = appConfig.features.draftEnabled;
 
   const onSaveDraft = async () => {
-    const errandData = prepareErrandForApi(getValues(), 'DRAFT');
-
     try {
+      const errandData = prepareErrandForApi(getValues(), 'DRAFT');
       const errand = await (errandId ? updateErrand(errandId, errandData) : createErrand(errandData));
       const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
       toastMessage({ position: 'bottom', status: 'success', message: t('errand-information:save_message.draft') });
@@ -49,17 +52,20 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
       if (isNewErrand) {
         router.push(`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/${errand.errandNumber}/grundinformation`);
       }
-    } catch {
-      toastMessage({ position: 'bottom', status: 'error', message: t('errand-information:save_message.error') });
+    } catch (error: unknown) {
+      toastMessage({
+        position: 'bottom',
+        status: 'error',
+        message: errandFormDataContractErrorMessage(error, tForms) ?? t('errand-information:save_message.error'),
+      });
     }
   };
 
   const onRegister = async (logout?: boolean) => {
     setIsOpen(false);
 
-    const errandData = prepareErrandForApi(getValues(), 'NEW');
-
     try {
+      const errandData = prepareErrandForApi(getValues(), 'NEW');
       const errand = await (errandId ? updateErrand(errandId, errandData) : createErrand(errandData));
       const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
       toastMessage({ position: 'bottom', status: 'success', message: t('errand-information:save_message.register') });
@@ -70,8 +76,12 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
       } else {
         router.push(`/arende/${errand.errandNumber}/grundinformation`);
       }
-    } catch {
-      toastMessage({ position: 'bottom', status: 'error', message: t('errand-information:save_message.error') });
+    } catch (error: unknown) {
+      toastMessage({
+        position: 'bottom',
+        status: 'error',
+        message: errandFormDataContractErrorMessage(error, tForms) ?? t('errand-information:save_message.error'),
+      });
     }
   };
 
@@ -99,16 +109,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
       });
       return;
     }
-    if (eventConcerns === 'GRUPP_VERKSAMHET' && !getFacilityOrgName(values.errandFormData)) {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: t('errand-information:about.event_concerns_group_facility_required'),
-      });
-      return;
-    }
-
-    // Validera errandFormData
+    // Validera errandFormData innan affärsregler läser värden ur JSON-strukturen.
     const formDataErrors = await validateErrandFormData(values.errandFormData, tForms);
 
     if (formDataErrors.length > 0) {
@@ -116,6 +117,15 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
         position: 'bottom',
         status: 'error',
         message: formDataErrors[0],
+      });
+      return;
+    }
+
+    if (eventConcerns === 'GRUPP_VERKSAMHET' && !getFacilityOrgName(values.errandFormData)) {
+      toastMessage({
+        position: 'bottom',
+        status: 'error',
+        message: t('errand-information:about.event_concerns_group_facility_required'),
       });
       return;
     }

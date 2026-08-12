@@ -1,5 +1,9 @@
 import { CancelErrandDialog } from '@components/cancel-errand-dialog.component';
-import { jsonParametersToErrandFormData, validateErrandFormData } from '@components/json/utils/schema-utils';
+import {
+  errandFormDataContractErrorMessage,
+  jsonParametersToErrandFormData,
+  validateErrandFormData,
+} from '@components/json/utils/schema-utils';
 import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandFormDTO } from '@interfaces/errand-form';
 import { CenterDiv } from '@layouts/center-div.component';
@@ -36,22 +40,26 @@ export const WizardBottomBar: React.FC = () => {
   const draftEnabled = appConfig.features.draftEnabled;
 
   const onSaveDraft = async () => {
-    const errandData = prepareErrandForApi(getValues(), 'DRAFT');
     try {
+      const errandData = prepareErrandForApi(getValues(), 'DRAFT');
       const errand = await (errandId ? updateErrand(errandId, errandData) : createErrand(errandData));
       const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
       toastMessage({ position: 'bottom', status: 'success', message: t('errand-information:save_message.draft') });
       reset({ ...errand, errandFormData });
       router.push(`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/${errand.errandNumber}/grundinformation`);
-    } catch {
-      toastMessage({ position: 'bottom', status: 'error', message: t('errand-information:save_message.error') });
+    } catch (error: unknown) {
+      toastMessage({
+        position: 'bottom',
+        status: 'error',
+        message: errandFormDataContractErrorMessage(error, tForms) ?? t('errand-information:save_message.error'),
+      });
     }
   };
 
   const onRegister = async (logout?: boolean) => {
     setIsOpen(false);
-    const errandData = prepareErrandForApi(getValues(), 'NEW');
     try {
+      const errandData = prepareErrandForApi(getValues(), 'NEW');
       const errand = await (errandId ? updateErrand(errandId, errandData) : createErrand(errandData));
       const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
       toastMessage({
@@ -65,14 +73,18 @@ export const WizardBottomBar: React.FC = () => {
       } else {
         router.push(`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/${errand.errandNumber}/grundinformation`);
       }
-    } catch {
-      toastMessage({ position: 'bottom', status: 'error', message: t('errand-information:save_message.error') });
+    } catch (error: unknown) {
+      toastMessage({
+        position: 'bottom',
+        status: 'error',
+        message: errandFormDataContractErrorMessage(error, tForms) ?? t('errand-information:save_message.error'),
+      });
     }
   };
 
   const handleNext = async () => {
     const step = steps[currentStep];
-    const errors = await validateStep(step, getValues(), t);
+    const errors = await validateStep(step, getValues(), step.id === 'deviation' ? tForms : t);
     setStepErrors(currentStep, errors);
 
     if (errors.length > 0) {
@@ -107,21 +119,21 @@ export const WizardBottomBar: React.FC = () => {
       });
       return;
     }
-    if (eventConcerns === 'GRUPP_VERKSAMHET' && !getFacilityOrgName(values.errandFormData)) {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: t('errand-information:about.event_concerns_group_facility_required'),
-      });
-      return;
-    }
-
     const formDataErrors = await validateErrandFormData(values.errandFormData, tForms);
     if (formDataErrors.length > 0) {
       toastMessage({
         position: 'bottom',
         status: 'error',
         message: formDataErrors[0],
+      });
+      return;
+    }
+
+    if (eventConcerns === 'GRUPP_VERKSAMHET' && !getFacilityOrgName(values.errandFormData)) {
+      toastMessage({
+        position: 'bottom',
+        status: 'error',
+        message: t('errand-information:about.event_concerns_group_facility_required'),
       });
       return;
     }
