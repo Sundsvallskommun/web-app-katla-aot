@@ -12,7 +12,7 @@ export async function proxy(req: NextRequest) {
   }
 
   if (envs.protectedRoutes.includes(pathname)) {
-    const cookieName = 'connect.sid';
+    const cookieName = envs.sessionCookieName;
     const token = req.cookies.get(cookieName)?.value ?? '';
 
     const response = await fetch(`${envs.apiUrl}/me`, {

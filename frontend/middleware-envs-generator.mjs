@@ -8,6 +8,7 @@ const outputContent = `export const envs = {
   adminUrl: '${process.env.ADMIN_URL || ''}',
   basePath: '${process.env.NEXT_PUBLIC_BASE_PATH || ''}',
   apiUrl: '${process.env.NEXT_PUBLIC_API_URL || ''}',
+  sessionCookieName: '${process.env.NEXT_PUBLIC_SESSION_COOKIE_NAME || 'connect.sid'}',
 };\n`;
 
 try {
