@@ -32,28 +32,30 @@ export const ErrandTable: React.FC = () => {
     <Table data-cy="errand-table" dense={rowHeight === 'dense'} className="px-40">
       <ErrandTableHeader />
 
-      {rows.map((errand, index) => (
-        <Table.Row
-          className="cursor-pointer"
-          key={`errand-row-${index}`}
-          tabIndex={0}
-          onClick={() => {
-            router.push(`/arende/${errand.errandNumber}/grundinformation`);
-          }}
-          onKeyDown={(e: React.KeyboardEvent) => {
-            if (e.key === 'Enter') {
+      <Table.Body>
+        {rows.map((errand, index) => (
+          <Table.Row
+            className="cursor-pointer"
+            key={`errand-row-${index}`}
+            tabIndex={0}
+            onClick={() => {
               router.push(`/arende/${errand.errandNumber}/grundinformation`);
-            }
-          }}
-        >
-          <Table.Column>
-            <StatusLabel status={errand?.status} />
-          </Table.Column>
-          <Table.Column>{errand.errandNumber}</Table.Column>
-          <Table.Column>{getTypeDisplayName(errand)}</Table.Column>
-          <Table.Column>{dayjs(errand.touched).format('YYYY-MM-DD HH:mm')}</Table.Column>
-        </Table.Row>
-      ))}
+            }}
+            onKeyDown={(e: React.KeyboardEvent) => {
+              if (e.key === 'Enter') {
+                router.push(`/arende/${errand.errandNumber}/grundinformation`);
+              }
+            }}
+          >
+            <Table.Column>
+              <StatusLabel status={errand?.status} />
+            </Table.Column>
+            <Table.Column>{errand.errandNumber}</Table.Column>
+            <Table.Column>{getTypeDisplayName(errand)}</Table.Column>
+            <Table.Column>{dayjs(errand.touched).format('YYYY-MM-DD HH:mm')}</Table.Column>
+          </Table.Row>
+        ))}
+      </Table.Body>
 
       <Table.Footer>
         <ErrandTableFooter totalPages={totalPages} />
