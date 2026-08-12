@@ -31,8 +31,8 @@ const createMemoryStorage = (): Storage => {
   };
 };
 
-// Node 26 exposes optional storage globals that are undefined unless a backing file is configured.
-// Supply browser-compatible in-memory storage so persisted Zustand stores work in jsdom.
+// Node 26 exponerar valfria storage-globaler som är undefined utan konfigurerad backing-fil.
+// Tillhandahåll webbläsarkompatibel in-memory-storage så att persisterade Zustand-stores fungerar i jsdom.
 Object.defineProperty(globalThis, 'localStorage', {
   configurable: true,
   value: createMemoryStorage(),

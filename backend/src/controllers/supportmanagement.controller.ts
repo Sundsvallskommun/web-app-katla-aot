@@ -22,6 +22,20 @@ const toFilterValue = (value: unknown): string | undefined => {
   return undefined;
 };
 
+// Uppströms filtergrammatik omger varje värde med enkelfnuttar. Värdena kommer
+// från klienten, så tecken som kan avsluta literalen eller lägga till ett eget
+// villkor avvisas i stället för att escapas: escapedialekten ägs av upstream och
+// får inte gissas här.
+const SAFE_FILTER_VALUE_PATTERN = /^[\p{L}\p{N}][\p{L}\p{N} ._-]*$/u;
+
+const toFilterTerm = (key: string, value: string): string => {
+  if (!SAFE_FILTER_VALUE_PATTERN.test(value)) {
+    throw new HttpException(400, 'Invalid filter value');
+  }
+
+  return `${key}:'${value}'`;
+};
+
 @Controller()
 export class SupportManagementController {
   private apiService = new ApiService();
@@ -124,7 +138,7 @@ export class SupportManagementController {
   @UseBefore(authMiddleware)
   @ResponseSchema(ErrandDTO)
   async getErrand(@Req() req: RequestWithUser, @Param('errandNumber') errandNumber: string): Promise<ErrandDTO> {
-    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands?filter=errandNumber:'${errandNumber}'`;
+    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands?filter=${toFilterTerm('errandNumber', errandNumber)}`;
 
     const res = await this.apiService.get<PageErrand>({ url }, req);
     if (!res.data) throw new HttpException(502, 'Invalid response when reading errand');
@@ -160,7 +174,7 @@ export class SupportManagementController {
       const value = toFilterValue(queryEntries[key]);
 
       if (value !== undefined) {
-        filterParts.push(`${key}:'${value}'`);
+        filterParts.push(toFilterTerm(key, value));
       }
     }
 
@@ -191,7 +205,7 @@ export class SupportManagementController {
       const value = toFilterValue(queryEntries[key]);
 
       if (value !== undefined) {
-        filterParts.push(`${key}:'${value}'`);
+        filterParts.push(toFilterTerm(key, value));
       }
     }
 

@@ -1,8 +1,4 @@
-import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
-import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 import type { NextFunction, Request, Response } from 'express';
-import { getMetadataArgsStorage } from 'routing-controllers';
-import { routingControllersToSpec } from 'routing-controllers-openapi';
 import request from 'supertest';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -10,6 +6,7 @@ import App from '@/app';
 import { SupportManagementController } from '@/controllers/supportmanagement.controller';
 import { HttpException } from '@/exceptions/HttpException';
 import ApiService from '@/services/api.service';
+import { buildOpenApiSpec } from '@/utils/openapi-spec';
 
 vi.mock('@/middlewares/auth.middleware', () => ({
   default: (req: Request, _res: Response, next: NextFunction) => {
@@ -35,15 +32,7 @@ afterEach(() => {
 
 describe('SupportManagement HTTP error contracts', () => {
   it('documents notification acknowledgement as a required array body', () => {
-    const schemas = validationMetadatasToSchemas({
-      classTransformerMetadataStorage: defaultMetadataStorage,
-      refPointerPrefix: '#/components/schemas/',
-    });
-    const spec: unknown = routingControllersToSpec(
-      getMetadataArgsStorage(),
-      { routePrefix: '/api', controllers: [SupportManagementController] },
-      { components: { schemas } },
-    );
+    const spec: unknown = buildOpenApiSpec([SupportManagementController], '/api');
 
     if (!spec || typeof spec !== 'object' || !('paths' in spec)) {
       throw new Error('Expected paths in OpenAPI document');
@@ -144,6 +133,28 @@ describe('SupportManagement HTTP error contracts', () => {
     const response = await request(app).get('/api/supportmanagement/errand/ERRAND-404').expect(404);
 
     expect(response.body).toEqual({ message: 'Errand not found' });
+  });
+
+  it('rejects an errand number that would break out of the upstream filter literal', async () => {
+    const getSpy = vi.spyOn(ApiService.prototype, 'get');
+
+    const response = await request(app)
+      .get(`/api/supportmanagement/errand/${encodeURIComponent("ABC' or status:'NEW")}`)
+      .expect(400);
+
+    expect(response.body).toEqual({ message: 'Invalid filter value' });
+    expect(getSpy).not.toHaveBeenCalled();
+  });
+
+  it('quotes a legitimate errand number without altering it', async () => {
+    const getSpy = vi
+      .spyOn(ApiService.prototype, 'get')
+      .mockResolvedValue({ data: { content: [{ errandNumber: 'AIA-25120019', stakeholders: [] }] }, message: 'success' });
+
+    await request(app).get('/api/supportmanagement/errand/AIA-25120019').expect(200);
+
+    const requestUrls = getSpy.mock.calls.map(([requestConfig]) => (requestConfig as { url?: string }).url ?? '');
+    expect(requestUrls.some(url => url.includes("filter=errandNumber:'AIA-25120019'"))).toBe(true);
   });
 
   it('propagates upstream errors from every read endpoint', async () => {

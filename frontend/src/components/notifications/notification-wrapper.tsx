@@ -1,8 +1,9 @@
 'use client';
 
+import { ErrorAlert } from '@components/misc/error-alert.component';
 import { MainPageMobileHeader } from '@components/mobile/main-page-mobile-header.component';
 import { getNotifications } from '@services/errand-service/errand-service';
-import { Alert, Button, cx, Divider, Header, Spinner } from '@sk-web-gui/react';
+import { Button, cx, Divider, Header, Spinner } from '@sk-web-gui/react';
 import { Mail, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -48,16 +49,7 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
 
   const notificationContent = (
     <div className="flex-grow mt-sm mb-0 p-24 pt-0 flex flex-col gap-24 overflow-auto">
-      {error && (
-        <div role="alert">
-          <Alert type="error">
-            <Alert.Icon />
-            <Alert.Content>
-              <Alert.Content.Description>{error}</Alert.Content.Description>
-            </Alert.Content>
-          </Alert>
-        </div>
-      )}
+      {error && <ErrorAlert message={error} />}
       {isLoading && !hasNotifications && !error ?
         <div className="flex justify-center p-24">
           <Spinner aria-label="Laddar notiser" />

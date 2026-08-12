@@ -1,7 +1,8 @@
 'use client';
 
+import { ErrorAlertList } from '@components/misc/error-alert.component';
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
-import { Alert, Button, Spinner } from '@sk-web-gui/react';
+import { Button, Spinner } from '@sk-web-gui/react';
 import { useTranslation } from 'react-i18next';
 
 import { MobileErrandCard } from './mobile-errand-card.component';
@@ -37,16 +38,7 @@ export const MobileErrandsList: React.FC<MobileErrandsListProps> = ({
 
   return (
     <div className="flex flex-col gap-8 px-16 pb-24">
-      {errors.map((message) => (
-        <div key={message} role="alert">
-          <Alert type="error">
-            <Alert.Icon />
-            <Alert.Content>
-              <Alert.Content.Description>{message}</Alert.Content.Description>
-            </Alert.Content>
-          </Alert>
-        </div>
-      ))}
+      <ErrorAlertList messages={errors} />
       {rows.map((errand, index) => (
         <MobileErrandCard key={`mobile-errand-${index}`} errand={errand} />
       ))}

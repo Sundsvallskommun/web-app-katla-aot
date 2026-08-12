@@ -3,6 +3,7 @@
   "submit_button_default": "Lägg till",
   "schema_load_error": "Kunde inte ladda schema: {{schemaName}}",
   "schema_validation_error": "Kunde inte validera {{schemaName}}",
+  "loading": "Laddar...",
   "facility_search": {
     "section_title": "Mer information om platsen",
     "add_label": "Lägg till plats där avvikelsen inträffat",

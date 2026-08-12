@@ -1,6 +1,7 @@
 'use client';
 
-import { Alert, Badge, Button } from '@sk-web-gui/react';
+import { ErrorAlert } from '@components/misc/error-alert.component';
+import { Badge, Button } from '@sk-web-gui/react';
 import { capitalize } from 'lodash';
 import { useStatusButtons } from 'src/hooks/use-status-buttons';
 
@@ -9,16 +10,7 @@ export const MobileStatusTabs: React.FC = () => {
 
   return (
     <div>
-      {error && (
-        <div role="alert" className="mx-16 mt-8">
-          <Alert type="error">
-            <Alert.Icon />
-            <Alert.Content>
-              <Alert.Content.Description>{error}</Alert.Content.Description>
-            </Alert.Content>
-          </Alert>
-        </div>
-      )}
+      {error && <ErrorAlert className="mx-16 mt-8" message={error} />}
       <div className="flex gap-8 overflow-x-auto px-16 py-8 no-scrollbar">
         {statusButtons.map((button) => {
           const isActive = activeStatus === button.label;

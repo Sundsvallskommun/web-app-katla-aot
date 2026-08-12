@@ -1,6 +1,7 @@
 'use client';
 
 import { jsonParametersToErrandFormData } from '@components/json/utils/schema-utils';
+import { ErrorAlert } from '@components/misc/error-alert.component';
 import { VisibleTabs } from '@components/tabs/tabs';
 import { MobileWizard } from '@components/wizard/mobile-wizard.component';
 import { FormValidationProvider } from '@contexts/form-validation-provider';
@@ -10,7 +11,7 @@ import BaseErrandLayout from '@layouts/base-errand-layout/base-errand-layout.com
 import { ErrandButtonGroup } from '@layouts/errand-button-group.component';
 import Main from '@layouts/main/main.component';
 import { getErrandUsingErrandNumber } from '@services/errand-service/errand-service';
-import { Alert, Spinner, Tabs } from '@sk-web-gui/react';
+import { Spinner, Tabs } from '@sk-web-gui/react';
 import { default as NextLink } from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -36,6 +37,12 @@ type ErrandRoute =
   | { identity: typeof REGISTER_ROUTE_IDENTITY; kind: 'register' }
   | { errandNumber: string; identity: string; kind: 'existing' }
   | { identity: typeof INVALID_ROUTE_IDENTITY; kind: 'invalid' };
+
+// Kontrollen finns för att avvisa svar från en tidigare route, inte för att
+// kräva kanonisk skiftlägesform. Jämför normaliserat så att en giltig djuplänk
+// med annan skiftlägesform fortfarande laddar ärendet.
+const matchesRequestedErrand = (errandNumber: string | undefined, requestedErrandNumber: string): boolean =>
+  errandNumber?.trim().toLocaleUpperCase('sv-SE') === requestedErrandNumber.trim().toLocaleUpperCase('sv-SE');
 
 const createDefaultErrand = (): ErrandFormDTO => ({
   title: 'Empty errand',
@@ -89,8 +96,8 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
     void getErrandUsingErrandNumber(requestedErrandNumber)
       .then((errand) => {
         if (!active) return;
-        if (errand.errandNumber !== requestedErrandNumber) {
-          throw new Error('The fetched errand does not match the requested route');
+        if (!matchesRequestedErrand(errand.errandNumber, requestedErrandNumber)) {
+          throw new Error('Det hämtade ärendet matchar inte den begärda routen');
         }
 
         const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
@@ -125,14 +132,7 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
       <FormProvider {...methods}>
         <div className="bg-background-100 h-screen min-h-screen flex items-center justify-center p-24">
           {loadState === 'error' ?
-            <div role="alert">
-              <Alert type="error">
-                <Alert.Icon />
-                <Alert.Content>
-                  <Alert.Content.Description>{t('api_errors.errand')}</Alert.Content.Description>
-                </Alert.Content>
-              </Alert>
-            </div>
+            <ErrorAlert message={t('api_errors.errand')} />
           : <Spinner aria-label={t('forms:loading')} />}
         </div>
       </FormProvider>
@@ -210,9 +210,9 @@ export const ErrandLayoutContent: React.FC<{ children: React.ReactNode }> = ({ c
     route = { identity: INVALID_ROUTE_IDENTITY, kind: 'invalid' };
   }
 
-  // A route identity owns exactly one RHF instance. The key tears down the
-  // previous form synchronously on A→B navigation, before B can render a header
-  // or actions, while the request cleanup rejects every late A response.
+  // En routeidentitet äger exakt en RHF-instans. Nyckeln river ned föregående
+  // formulär synkront vid A→B-navigation, innan B hinner rendera header eller
+  // åtgärder, medan requestupprensningen avvisar varje sent A-svar.
   return (
     <ErrandRouteContent key={route.identity} route={route}>
       {children}

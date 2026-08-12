@@ -52,7 +52,7 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
     if (requestTrackerRef.current.pending === 0) setIsLoading(false);
   }, []);
 
-  // Desktop uses the store's page, mobile always starts from 0
+  // Desktop använder sidan från storen, mobil börjar alltid på 0
   const effectivePage = mode === 'mobile' ? 0 : page;
 
   useEffect(() => {
@@ -72,17 +72,17 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
     };
   }, [setMetadata, t]);
 
-  // Main fetch — triggered by store changes (sort, filter, pagination)
-  // Mobile always fetches from page 0 and resets accumulated rows
+  // Huvudhämtningen — utlöses av ändringar i storen (sortering, filter, paginering).
+  // Mobil hämtar alltid från sida 0 och nollställer ackumulerade rader.
   useEffect(() => {
     const generation = requestGenerationRef.current + 1;
     requestGenerationRef.current = generation;
     requestTrackerRef.current = { generation, pending: 0 };
     mobilePageRef.current = 0;
     setMobilePage(0);
-    // Rows and totals belong to this exact query identity. Clear them for both
-    // desktop and mobile before requesting another page/filter/sort/size so a
-    // failed replacement can never be presented as results for the new query.
+    // Rader och totaler hör till exakt denna queryidentitet. Rensa dem för både
+    // desktop och mobil innan en ny sida/filter/sortering/storlek begärs, så att
+    // en misslyckad ersättning aldrig kan visas som resultat för den nya queryn.
     setRows([]);
     setTotalPages(1);
     setTotalElements(0);
@@ -139,7 +139,7 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
       })
       .catch(() => {
         if (requestGenerationRef.current !== generation) return;
-        // Roll back the page cursor so the user can retry the same page.
+        // Rulla tillbaka sidmarkören så att användaren kan försöka med samma sida igen.
         mobilePageRef.current = previousPage;
         setMobilePage(previousPage);
         setErrandsError(t('api_errors.errands'));

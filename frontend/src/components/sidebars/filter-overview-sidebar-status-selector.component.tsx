@@ -1,6 +1,7 @@
 'use client';
 
-import { Alert, Badge, Button } from '@sk-web-gui/react';
+import { ErrorAlert } from '@components/misc/error-alert.component';
+import { Badge, Button } from '@sk-web-gui/react';
 import { capitalize } from 'lodash';
 import { CircleAlert } from 'lucide-react';
 import { useStatusButtons } from 'src/hooks/use-status-buttons';
@@ -18,14 +19,7 @@ export const FilterOverviewSidebarStatusSelector: React.FC<{
             <CircleAlert aria-hidden="true" />
             <span className="sr-only">{error}</span>
           </div>
-        : <div role="alert" className="mb-8">
-            <Alert type="error">
-              <Alert.Icon />
-              <Alert.Content>
-                <Alert.Content.Description>{error}</Alert.Content.Description>
-              </Alert.Content>
-            </Alert>
-          </div>)}
+        : <ErrorAlert className="mb-8" message={error} />)}
       {statusButtons?.map((button) => {
         const isActive = activeStatus === button.label;
         return (

@@ -1,8 +1,9 @@
 'use client';
 
+import { ErrorAlertList } from '@components/misc/error-alert.component';
 import { StatusLabel } from '@components/misc/status-label.component';
 import { CenterDiv } from '@layouts/center-div.component';
-import { Alert, Spinner, Table } from '@sk-web-gui/react';
+import { Spinner, Table } from '@sk-web-gui/react';
 import { getTypeDisplayName } from '@utils/errand-helpers';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
@@ -33,16 +34,7 @@ export const ErrandTable: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-16 px-40">
-      {errors.map((message) => (
-        <div key={message} role="alert">
-          <Alert type="error">
-            <Alert.Icon />
-            <Alert.Content>
-              <Alert.Content.Description>{message}</Alert.Content.Description>
-            </Alert.Content>
-          </Alert>
-        </div>
-      ))}
+      <ErrorAlertList messages={errors} />
       {rows.length > 0 && (
         <Table data-cy="errand-table" dense={rowHeight === 'dense'}>
           <ErrandTableHeader />
