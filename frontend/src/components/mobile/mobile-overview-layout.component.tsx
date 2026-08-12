@@ -1,11 +1,11 @@
 'use client';
 
+import { LinkButton } from '@components/navigation/link-button.component';
 import { NotificationsBell } from '@components/notifications/notification-bell';
 import { NotificationsWrapper } from '@components/notifications/notification-wrapper';
 import { Button } from '@sk-web-gui/react';
 import { capitalize } from 'lodash';
 import { Menu } from 'lucide-react';
-import NextLink from 'next/link';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOverviewErrands } from 'src/hooks/use-overview-errands';
@@ -36,15 +36,18 @@ export const MobileOverviewLayout: React.FC = () => {
           <div className="flex items-center gap-12">
             <div className="[&>button]:!mx-0">
               <NotificationsBell
+                expanded={showNotifications}
                 toggleShow={() => {
-                  setShowNotifications(!showNotifications);
+                  setShowNotifications((current) => !current);
                 }}
               />
             </div>
             <Button
               iconButton
               variant="tertiary"
-              aria-label="Meny"
+              aria-label={t('layout:controls.open_menu')}
+              aria-controls="mobile-overview-menu"
+              aria-expanded={overlay === 'menu'}
               onClick={() => {
                 setOverlay('menu');
               }}
@@ -55,11 +58,9 @@ export const MobileOverviewLayout: React.FC = () => {
         }
       >
         <div className="px-24 py-12">
-          <NextLink href="/arende/registrera" className="no-underline w-full block">
-            <Button color="vattjom" variant="primary" className="w-full">
-              {t('filtering:new_errand_mobile')}
-            </Button>
-          </NextLink>
+          <LinkButton href="/arende/registrera" color="vattjom" variant="primary" className="w-full">
+            {t('filtering:new_errand_mobile')}
+          </LinkButton>
         </div>
 
         <div className="px-24 pt-8 pb-12">

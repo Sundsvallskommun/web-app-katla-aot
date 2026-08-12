@@ -18,9 +18,9 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
   setShow,
   open = false,
 }) => {
+  const { t } = useTranslation();
   const { activeNotifications, acknowledgedNotifications, setNotifications } = useNotificationStore();
   const isMobile = useMediaQuery(MOBILE_BREAKPOINT);
-  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,13 +52,13 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
       {error && <ErrorAlert message={error} />}
       {isLoading && !hasNotifications && !error ?
         <div className="flex justify-center p-24">
-          <Spinner aria-label="Laddar notiser" />
+          <Spinner aria-label={t('layout:notifications.loading')} />
         </div>
       : <>
           <div className="flex flex-col gap-4">
             <Divider.Section>
               <div className="flex gap-sm items-center">
-                <h2 className="text-h4-sm">Nya</h2>
+                <h2 className="text-h4-sm">{t('layout:notifications.new')}</h2>
               </div>
             </Divider.Section>
             {activeNotifications.length > 0 ?
@@ -70,13 +70,13 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
                 ))}
               </ul>
             : !error && !isLoading ?
-              <div className="m-md">Inga nya notifieringar</div>
+              <div className="m-md">{t('layout:notifications.none_new')}</div>
             : null}
           </div>
           <div>
             <Divider.Section>
               <div className="flex gap-sm items-center">
-                <h2 className="text-h4-sm">Tidigare</h2>
+                <h2 className="text-h4-sm">{t('layout:notifications.previous')}</h2>
               </div>
             </Divider.Section>
             {acknowledgedNotifications.length > 0 ?
@@ -88,7 +88,7 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
                 ))}
               </ul>
             : !error && !isLoading ?
-              <div className="m-md">Inga notifieringar</div>
+              <div className="m-md">{t('layout:notifications.none_previous')}</div>
             : null}
           </div>
         </>
@@ -100,11 +100,15 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
 
   if (isMobile) {
     return (
-      <div className="fixed inset-0 z-50 bg-background-content pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+      <section
+        id="notifications-panel"
+        aria-label={t('layout:notifications.panel')}
+        className="fixed inset-0 z-50 bg-background-content pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+      >
         <MainPageMobileHeader
           actions={
             <Button
-              aria-label="Stäng notiser"
+              aria-label={t('layout:notifications.close')}
               iconButton
               variant="tertiary"
               onClick={() => {
@@ -118,7 +122,7 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
         >
           {notificationContent}
         </MainPageMobileHeader>
-      </div>
+      </section>
     );
   }
 
@@ -131,6 +135,8 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
         )}
       ></div>
       <section
+        id="notifications-panel"
+        aria-label={t('layout:notifications.panel')}
         className={cx(
           open ? 'left-[32rem]' : 'left-[5.6rem]',
           `border-1 border-t-0 absolute bottom-0 top-0 bg-background-content transition-all ease-in-out duration-150 overflow-auto z-[20] shadow-100`,
@@ -139,11 +145,11 @@ export const NotificationsWrapper: React.FC<{ show: boolean; setShow: (arg0: boo
       >
         <Header className="h-[64px] flex justify-between" wrapperClasses="py-4 px-40">
           <div className="text-h4-sm flex items-center gap-12">
-            <Mail /> Notiser
+            <Mail aria-hidden="true" /> {t('layout:notifications.panel')}
           </div>
           <Button
             tabIndex={0}
-            aria-label="Stäng notiser"
+            aria-label={t('layout:notifications.close')}
             iconButton
             variant="tertiary"
             onClick={() => {

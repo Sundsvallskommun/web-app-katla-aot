@@ -2,7 +2,8 @@
 
 import { ErrandFilterQuery } from '@components/filtering/errand-filter-query.component';
 import Filtering from '@components/filtering/filtering.component';
-import { Button, Link } from '@sk-web-gui/react';
+import { LinkButton } from '@components/navigation/link-button.component';
+import { Button } from '@sk-web-gui/react';
 import { ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +19,8 @@ export const ErrandFilter: React.FC = () => {
         <ErrandFilterQuery />
         {appConfig.features.errandFilter && (
           <Button
+            aria-controls="errand-filter-panel"
+            aria-expanded={show}
             onClick={() => {
               setShow(!show);
             }}
@@ -30,14 +33,21 @@ export const ErrandFilter: React.FC = () => {
             {show ? t('filtering:hide_filter') : t('filtering:show_filter')}
           </Button>
         )}
-        <Link href={`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/registrera`} data-cy="register-new-errand-button">
-          <Button color={'vattjom'} variant={'primary'}>
-            {t('filtering:new_errand')}
-          </Button>
-        </Link>
+        <LinkButton
+          href={`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/registrera`}
+          data-cy="register-new-errand-button"
+          color="vattjom"
+          variant="primary"
+        >
+          {t('filtering:new_errand')}
+        </LinkButton>
       </div>
 
-      {show && <Filtering />}
+      {show && (
+        <section id="errand-filter-panel" aria-label={t('filtering:filter_panel')}>
+          <Filtering />
+        </section>
+      )}
     </>
   );
 };

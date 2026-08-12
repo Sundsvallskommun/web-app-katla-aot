@@ -58,6 +58,11 @@ interface ErrandRouteContentProps {
   route: ErrandRoute;
 }
 
+// Tabs identifies its direct Button child by component reference. Supplying the
+// polymorphic link props through an object keeps that identity while working
+// around the installed declaration, which does not expose the target's props.
+const createLinkTabProps = (href: string) => ({ as: NextLink, href });
+
 const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route }) => {
   const { t } = useTranslation();
   const registerNewErrand = route.kind === 'register';
@@ -145,13 +150,12 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
         <NextLink
           href="#content"
           passHref
-          tabIndex={1}
           onClick={() => {
             setInitalFocus();
           }}
           className="sr-only focus:not-sr-only bg-primary-light border-2 border-black p-4 text-black inline-block focus:absolute focus:top-0 focus:left-0 focus:right-0 focus:m-auto focus:w-80 text-center"
         >
-          Hoppa till innehåll
+          {t('layout:header.goto_content')}
         </NextLink>
         {registerNewErrand && <ReporterInit />}
         <BaseErrandLayout registerNewErrand={registerNewErrand}>
@@ -174,10 +178,8 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
                       {VisibleTabs.filter((tab) => tab.visible).map((tab) => {
                         return (
                           <Tabs.Item key={tab.label}>
-                            <Tabs.Button className={'text-base whitespace-nowrap'}>
-                              <NextLink href={tab.path} className="block w-full h-full">
-                                {tab.label}
-                              </NextLink>
+                            <Tabs.Button {...createLinkTabProps(tab.path)} className="text-base whitespace-nowrap">
+                              {tab.label}
                             </Tabs.Button>
                             <Tabs.Content>
                               <div className="pt-xl pb-64 px-16 md:px-40">{children}</div>

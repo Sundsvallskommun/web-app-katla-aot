@@ -1,29 +1,41 @@
 import { Badge, Button } from '@sk-web-gui/react';
 import { Bell } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useNotificationStore } from 'src/stores/notification-store';
 
-export const NotificationsBell = (props: { toggleShow: () => void }) => {
+interface NotificationsBellProps {
+  expanded: boolean;
+  toggleShow: () => void;
+}
+
+export const NotificationsBell = ({ expanded, toggleShow }: NotificationsBellProps) => {
+  const { t } = useTranslation();
   const { activeNotifications } = useNotificationStore();
+  const notificationCount = activeNotifications.length;
+  const accessibleName =
+    notificationCount > 0 ?
+      t('layout:notifications.open_with_count', { count: notificationCount })
+    : t('layout:notifications.open');
 
   return (
     <Button
-      role="menuitem"
-      size={'md'}
-      aria-label={'Notifieringar'}
-      onClick={() => {
-        props.toggleShow();
-      }}
+      size="md"
+      aria-label={accessibleName}
+      aria-controls="notifications-panel"
+      aria-expanded={expanded}
+      onClick={toggleShow}
       className="mx-md"
       variant="tertiary"
       iconButton
-      leftIcon={<Bell />}
+      leftIcon={<Bell aria-hidden="true" />}
     >
-      {activeNotifications.length > 0 && (
+      {notificationCount > 0 && (
         <Badge
+          aria-hidden="true"
           className="absolute -top-10 -right-10 text-white"
           rounded
           color="vattjom"
-          counter={activeNotifications.length > 99 ? '99+' : activeNotifications.length}
+          counter={notificationCount > 99 ? '99+' : notificationCount}
         />
       )}
     </Button>
