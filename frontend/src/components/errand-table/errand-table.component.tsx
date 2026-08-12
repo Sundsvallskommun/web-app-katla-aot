@@ -3,10 +3,10 @@
 import { ErrorAlertList } from '@components/misc/error-alert.component';
 import { StatusLabel } from '@components/misc/status-label.component';
 import { CenterDiv } from '@layouts/center-div.component';
-import { Spinner, Table } from '@sk-web-gui/react';
+import { Link, Spinner, Table } from '@sk-web-gui/react';
 import { getTypeDisplayName } from '@utils/errand-helpers';
 import dayjs from 'dayjs';
-import { useRouter } from 'next/navigation';
+import NextLink from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useOverviewErrands } from 'src/hooks/use-overview-errands';
 import { useSortStore } from 'src/stores/sort-store';
@@ -16,7 +16,6 @@ import { ErrandTableHeader } from './errand-table-header.component';
 
 export const ErrandTable: React.FC = () => {
   const { t } = useTranslation();
-  const router = useRouter();
   const { rowHeight } = useSortStore();
   const { rows, isLoading, totalPages, errandsError, metadataError } = useOverviewErrands();
 
@@ -25,7 +24,10 @@ export const ErrandTable: React.FC = () => {
   if (isLoading && rows.length === 0)
     return (
       <CenterDiv className="mt-[20rem]">
-        <Spinner />
+        <div role="status" aria-live="polite">
+          <Spinner aria-hidden="true" />
+          <span className="sr-only">{t('common:errand-table.loading')}</span>
+        </div>
       </CenterDiv>
     );
 
@@ -41,23 +43,19 @@ export const ErrandTable: React.FC = () => {
 
           <Table.Body>
             {rows.map((errand, index) => (
-              <Table.Row
-                className="cursor-pointer"
-                key={`errand-row-${index}`}
-                tabIndex={0}
-                onClick={() => {
-                  router.push(`/arende/${errand.errandNumber}/grundinformation`);
-                }}
-                onKeyDown={(e: React.KeyboardEvent) => {
-                  if (e.key === 'Enter') {
-                    router.push(`/arende/${errand.errandNumber}/grundinformation`);
-                  }
-                }}
-              >
+              <Table.Row key={`errand-row-${index}`}>
                 <Table.Column>
                   <StatusLabel status={errand?.status} />
                 </Table.Column>
-                <Table.Column>{errand.errandNumber}</Table.Column>
+                <Table.Column>
+                  <Link
+                    as={NextLink}
+                    href={`/arende/${errand.errandNumber}/grundinformation`}
+                    aria-label={t('common:errand-table.open_errand', { errandNumber: errand.errandNumber })}
+                  >
+                    {errand.errandNumber}
+                  </Link>
+                </Table.Column>
                 <Table.Column>{getTypeDisplayName(errand)}</Table.Column>
                 <Table.Column>{dayjs(errand.touched).format('YYYY-MM-DD HH:mm')}</Table.Column>
               </Table.Row>

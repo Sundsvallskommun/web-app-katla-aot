@@ -10,6 +10,8 @@
     "errand": "Ärendet kunde inte hämtas. Försök igen senare."
   },
   "errand-table": {
+    "loading": "Laddar ärenden",
+    "open_errand": "Öppna ärende {{errandNumber}}",
     "header": {
       "status": "Status",
       "errandNumber": "Ärendenummer",
