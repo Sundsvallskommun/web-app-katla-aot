@@ -86,6 +86,6 @@ Security alerts are handled locally with AI support via the `/deps-review` slash
 
 ## Environment
 
-- Node 22.22.2+ inom 22.x (använd den pinnade versionen i `.nvmrc`), Yarn
+- Node 26.1.0+ inom 26.x (använd den pinnade versionen i `.nvmrc`), Yarn
 - Frontend env: copy `.env-example` → `.env`
 - Backend env: copy `.env.example.local` → `.env.development.local`

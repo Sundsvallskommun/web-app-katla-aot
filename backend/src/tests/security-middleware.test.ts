@@ -27,10 +27,10 @@ describe('security middleware', () => {
     if (!Array.isArray(cookies)) {
       throw new Error('Expected one persisted session cookie');
     }
-    const cookie = cookies.at(0);
-    if (cookie === undefined) {
+    if (typeof cookies[0] !== 'string') {
       throw new Error('Expected one persisted session cookie');
     }
+    const cookie = cookies[0];
 
     expect(cookies).toHaveLength(1);
     expect(cookie).toContain('HttpOnly');

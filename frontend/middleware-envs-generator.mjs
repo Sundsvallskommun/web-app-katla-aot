@@ -1,6 +1,7 @@
 import { config } from 'dotenv';
-import { writeFileSync } from 'fs';
-config({ path: './.env', quiet: true });
+import { writeFileSync } from 'node:fs';
+
+config({ path: ['./.env.local', './.env'], quiet: true });
 
 const outputContent = `export const envs = {
   protectedRoutes: '${process.env.NEXT_PUBLIC_PROTECTED_ROUTES || ''}',
