@@ -3,6 +3,10 @@ Object.assign(process.env, {
   APP_NAME: 'Katla test',
   PORT: '3001',
   BASE_URL_PREFIX: '/api',
+  // Appens monteringsrot är '/' i testerna. express-session hoppar över hela middlewaren
+  // när request-pathen inte börjar med cookie.path, så en path bunden till API-prefixet
+  // gör att req.session saknas på rutter utanför /api (passport kastar då).
+  SESSION_COOKIE_PATH: '/',
   API_BASE_URL: 'http://localhost:3001',
   CLIENT_KEY: 'test-client-key',
   CLIENT_SECRET: 'test-client-secret',
