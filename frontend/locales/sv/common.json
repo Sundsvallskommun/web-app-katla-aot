@@ -1,7 +1,17 @@
 {
   "login": "logga in",
   "logout": "logga ut",
+  "api_errors": {
+    "metadata": "Metadata kunde inte hämtas. Försök igen senare.",
+    "errands": "Ärendena kunde inte hämtas. Försök igen senare.",
+    "counts": "Antalet ärenden kunde inte hämtas. Försök igen senare.",
+    "notifications": "Notiserna kunde inte hämtas. Försök igen senare.",
+    "acknowledge_notification": "Notisen kunde inte kvitteras.",
+    "errand": "Ärendet kunde inte hämtas. Försök igen senare."
+  },
   "errand-table": {
+    "loading": "Laddar ärenden",
+    "open_errand": "Öppna ärende {{errandNumber}}",
     "header": {
       "status": "Status",
       "errandNumber": "Ärendenummer",

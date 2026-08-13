@@ -3,6 +3,15 @@
   "submit_button_default": "Lägg till",
   "schema_load_error": "Kunde inte ladda schema: {{schemaName}}",
   "schema_validation_error": "Kunde inte validera {{schemaName}}",
+  "loading": "Laddar...",
+  "invalid_form_data": "Sparade uppgifter för {{schemaName}} innehåller ogiltig JSON och kan inte ändras eller sparas.",
+  "unsupported_form_data": "Sparade uppgifter för {{schemaName}} har ett format som inte kan redigeras i formuläret.",
+  "missing_schema_id": "Formuläret {{schemaName}} saknar schema-ID och kan inte sparas.",
+  "missing_schema_name": "Sparade JSON-uppgifter saknar schemanamn och kan inte sparas.",
+  "required_form_data": "Fyll i uppgifterna under {{schemaName}} innan du går vidare.",
+  "field_description": {
+    "new_tab_announcement": "Öppnas i en ny flik"
+  },
   "facility_search": {
     "section_title": "Mer information om platsen",
     "add_label": "Lägg till plats där avvikelsen inträffat",

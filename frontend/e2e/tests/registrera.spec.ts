@@ -14,19 +14,50 @@ import {
 } from '../utils/stakeholder';
 import { expect, test } from '../utils/test';
 
+const MOCK_FORM_SCHEMA_NAME = 'avvikelse-plats-handelse';
+const MOCK_FORM_SCHEMA_ID = 'e2e-avvikelse-plats-handelse-v1';
+const MOCK_INCIDENT_DESCRIPTION = 'Händelsen inträffade i testmiljön';
+const mockFormSchemaResponse = {
+  schemaId: MOCK_FORM_SCHEMA_ID,
+  schema: {
+    $schema: 'https://json-schema.org/draft/2020-12/schema',
+    type: 'object',
+    additionalProperties: false,
+    properties: {
+      incidentDescription: {
+        type: 'string',
+        title: 'Beskriv händelsen',
+        minLength: 1,
+      },
+    },
+    required: ['incidentDescription'],
+  },
+  uiSchema: {},
+};
+
 /** Registrerar ärendet och verifierar POST-anropet, motsvarar cy.wait('@createDraftErrand') med assertions */
 interface CreateErrandRequestBody {
+  jsonParameters?: { key: string; value: unknown; schemaId: string }[];
   parameters?: { key: string; values: string[] }[];
   stakeholders?: unknown[];
 }
 
-const registerErrandAndExpectDraft = async (page: Page, expectedStakeholderCount: number) => {
+/**
+ * Öppnar bekräftelsedialogen och returnerar submit-knappen. Delas av lyckade och
+ * misslyckade registreringar så att båda vägarna passerar samma kontroller.
+ */
+const openRegistrationConfirmation = async (page: Page) => {
   const registerButton = page.getByTestId('register-errand');
   await expect(registerButton).toBeEnabled();
   await registerButton.click();
   await expect(page.getByTestId('submit-logout-button')).toBeEnabled();
   const submitButton = page.getByTestId('submit-button');
   await expect(submitButton).toBeEnabled();
+  return submitButton;
+};
+
+const registerErrandAndExpectDraft = async (page: Page, expectedStakeholderCount: number) => {
+  const submitButton = await openRegistrationConfirmation(page);
   const createRequest = page.waitForRequest(
     (request) => request.url().includes('/supportmanagement/errand/create') && request.method() === 'POST'
   );
@@ -37,6 +68,13 @@ const registerErrandAndExpectDraft = async (page: Page, expectedStakeholderCount
   const body = request.postDataJSON() as CreateErrandRequestBody;
   expect(body.parameters).toContainEqual({ key: 'eventType', values: ['AVVIKELSE'] });
   expect(body.parameters).toContainEqual({ key: 'eventConcerns', values: ['ENSKILD_BRUKARE'] });
+  expect(body.jsonParameters).toEqual([
+    {
+      key: MOCK_FORM_SCHEMA_NAME,
+      value: { incidentDescription: MOCK_INCIDENT_DESCRIPTION },
+      schemaId: MOCK_FORM_SCHEMA_ID,
+    },
+  ]);
   expect(body.stakeholders?.length).toBe(expectedStakeholderCount);
 };
 
@@ -51,23 +89,44 @@ const selectRequiredErrandParameters = async (page: Page) => {
   await expect(eventType).toBeChecked();
 };
 
+/**
+ * Fyller i allt som krävs för att ärendet ska gå att registrera. Alla
+ * registreringstester går genom denna, så ett nytt obligatoriskt fält behöver
+ * bara läggas till här för att gälla både lyckad och misslyckad registrering.
+ */
+const completeRequiredErrandForm = async (page: Page) => {
+  await selectRequiredErrandParameters(page);
+
+  const incidentDescription = page.getByRole('textbox', { name: /Beskriv händelsen/ });
+  await expect(incidentDescription).toBeEditable();
+  await incidentDescription.fill(MOCK_INCIDENT_DESCRIPTION);
+  await expect(incidentDescription).toHaveValue(MOCK_INCIDENT_DESCRIPTION);
+};
+
 test.describe('Register new errand page', () => {
   test.beforeEach(async ({ page }) => {
     await page.route('**/employee/personal/*', jsonRoute(mockReporterStakeholder));
     await page.route('**/supportmanagement/errand/create', jsonRoute(mockErrand));
+    await page.route(`**/schemas/latest/${MOCK_FORM_SCHEMA_NAME}`, jsonRoute(mockFormSchemaResponse));
+    await page.route(`**/schemas/${MOCK_FORM_SCHEMA_ID}`, jsonRoute(mockFormSchemaResponse));
     // Cypress satte metadata via useMetadataStore.setState; här seedas motsvarande
     // persistade zustand-state i localStorage innan sidan laddas
     await page.addInitScript((metadata) => {
       window.localStorage.setItem('metadata-storage', JSON.stringify({ state: { metadata }, version: 0 }));
     }, mockMetadata);
     await page.goto('/arende/registrera');
+
+    // Att kontrollerna syns bevisar inte att de serverrenderade radioknapparna
+    // har hydrerats. Rapportören läggs till av en klienteffekt, så det är
+    // registreringsflödets observerbara readiness-gräns.
+    await expect(disclosureByTitle(page, 'Rapportör').getByTestId('stakeholder-card')).toHaveCount(1);
   });
 
   test('Add stakeholders using personnumber and register draft errand', async ({ page }) => {
     await expect(page.locator('main').first()).toBeVisible();
 
     //Om ärendet
-    await selectRequiredErrandParameters(page);
+    await completeRequiredErrandForm(page);
 
     //Brukare
     const brukare = disclosureByTitle(page, 'Brukare');
@@ -88,11 +147,32 @@ test.describe('Register new errand page', () => {
     await registerErrandAndExpectDraft(page, 4);
   });
 
+  test('Preserves entered data and stays on the form when registration fails', async ({ page }) => {
+    await page.route('**/supportmanagement/errand/create', jsonRoute({ message: 'Upstream unavailable' }, 502));
+    await expect(disclosureByTitle(page, 'Rapportör').getByTestId('stakeholder-card')).toHaveCount(1);
+    await completeRequiredErrandForm(page);
+
+    const submitButton = await openRegistrationConfirmation(page);
+    const failedResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes('/supportmanagement/errand/create') && response.request().method() === 'POST'
+    );
+    await submitButton.click();
+    const response = await failedResponse;
+    expect(response.status()).toBe(502);
+
+    await expect(page).toHaveURL(/\/arende\/registrera$/);
+    await expect(page.getByTestId('event-type-deviation')).toBeChecked();
+    await expect(page.getByTestId('event-concerns-individual')).toBeChecked();
+    await expect(page.getByText('Något gick fel när ärendet sparades')).toBeVisible();
+    await expect(page.getByText('Ärendet skickades in')).toHaveCount(0);
+  });
+
   test('Manually add stakeholders and register errand', async ({ page }) => {
     await expect(page.locator('main').first()).toBeVisible();
 
     //Om ärendet
-    await selectRequiredErrandParameters(page);
+    await completeRequiredErrandForm(page);
 
     //Brukare
     const brukare = disclosureByTitle(page, 'Brukare');
@@ -139,7 +219,7 @@ test.describe('Register new errand page', () => {
     await expect(page.locator('main').first()).toBeVisible();
 
     //Om ärendet
-    await selectRequiredErrandParameters(page);
+    await completeRequiredErrandForm(page);
 
     //Brukare
     const brukare = disclosureByTitle(page, 'Brukare');
@@ -202,7 +282,7 @@ test.describe('Register new errand page', () => {
     await expect(page.locator('main').first()).toBeVisible();
 
     //Om ärendet
-    await selectRequiredErrandParameters(page);
+    await completeRequiredErrandForm(page);
 
     //Övriga parter
     const ovrigaParter = disclosureByTitle(page, 'Övriga parter');

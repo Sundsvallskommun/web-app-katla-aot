@@ -1,11 +1,12 @@
 import { StatusLabel } from '@components/misc/status-label.component';
+import { LinkButton } from '@components/navigation/link-button.component';
+import { AppUserMenu } from '@components/user-menu/app-user-menu.component';
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
 import { PageHeader } from '@layouts/page-header.component';
-import { userMenuGroups } from '@layouts/userMenuGroup';
+import { createUserMenuGroups } from '@layouts/userMenuGroup';
 import { useUserStore } from '@services/user-service/user-service';
-import { Button, Divider, Link, Logo, PopupMenu, UserMenu } from '@sk-web-gui/react';
+import { Divider, Link, Logo, PopupMenu } from '@sk-web-gui/react';
 import { Menu } from 'lucide-react';
-import { Fragment } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -18,6 +19,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
   const user = useUserStore((s) => s.user);
   const { watch } = useFormContext<ErrandDTO>();
   const { t } = useTranslation();
+  const userMenuGroups = createUserMenuGroups(t);
 
   const errandNumber = watch('errandNumber');
   const status = watch('status');
@@ -54,8 +56,8 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
             logo={singleErrandTitle}
             userMenu={
               <div className="flex items-center h-fit">
-                <span data-cy="usermenu">
-                  <UserMenu
+                <div data-cy="usermenu">
+                  <AppUserMenu
                     initials={user.initials}
                     menuTitle={`${user.name} (${user.username})`}
                     menuSubTitle=""
@@ -63,23 +65,23 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
                     buttonRounded={false}
                     buttonSize="sm"
                   />
-                </span>
+                </div>
 
                 <Divider orientation="vertical" className="mx-24" />
-                <Link
+                <LinkButton
                   href={`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/registrera`}
                   data-cy="register-new-errand-button"
+                  color="primary"
+                  variant="tertiary"
                 >
-                  <Button color={'primary'} variant={'tertiary'}>
-                    {t('filtering:new_errand')}
-                  </Button>
-                </Link>
+                  {t('filtering:new_errand')}
+                </LinkButton>
               </div>
             }
             mobileMenu={
               registerNewErrand ? undefined : (
                 <PopupMenu align="end">
-                  <PopupMenu.Button iconButton>
+                  <PopupMenu.Button iconButton aria-label={t('layout:controls.open_menu')}>
                     <Menu />
                   </PopupMenu.Button>
                   <PopupMenu.Panel>
@@ -98,7 +100,9 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
                       {userMenuGroups.map((group, groupindex) => (
                         <PopupMenu.Group key={`mobilegroup-${groupindex}`}>
                           {group.elements.map((item, itemindex) => (
-                            <Fragment key={`mobilegroup-${groupindex}-${itemindex}`}>{item.element()}</Fragment>
+                            <PopupMenu.Item key={`mobilegroup-${groupindex}-${itemindex}`}>
+                              {item.element()}
+                            </PopupMenu.Item>
                           ))}
                         </PopupMenu.Group>
                       ))}

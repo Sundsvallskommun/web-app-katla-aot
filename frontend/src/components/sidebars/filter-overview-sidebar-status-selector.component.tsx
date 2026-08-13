@@ -1,16 +1,25 @@
 'use client';
 
+import { ErrorAlert } from '@components/misc/error-alert.component';
 import { Badge, Button } from '@sk-web-gui/react';
 import { capitalize } from 'lodash';
+import { CircleAlert } from 'lucide-react';
 import { useStatusButtons } from 'src/hooks/use-status-buttons';
 
 export const FilterOverviewSidebarStatusSelector: React.FC<{
   smallSideBar: boolean;
 }> = ({ smallSideBar }) => {
-  const { statusButtons, activeStatus, onSelectStatus, isLoading } = useStatusButtons();
+  const { statusButtons, activeStatus, onSelectStatus, isLoading, error } = useStatusButtons();
 
   return (
     <>
+      {error &&
+        (smallSideBar ?
+          <div role="alert" title={error} className="mb-8 flex justify-center text-error">
+            <CircleAlert aria-hidden="true" />
+            <span className="sr-only">{error}</span>
+          </div>
+        : <ErrorAlert className="mb-8" message={error} />)}
       {statusButtons?.map((button) => {
         const isActive = activeStatus === button.label;
         return (

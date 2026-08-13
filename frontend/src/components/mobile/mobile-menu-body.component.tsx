@@ -1,11 +1,13 @@
 'use client';
 
 import { LogoutButton } from '@components/buttons/logout-button.component';
+import { colorSchemeOptions } from '@components/misc/color-scheme-options';
 import { FilterOverviewSidebarStatusSelector } from '@components/sidebars/filter-overview-sidebar-status-selector.component';
 import { useUserStore } from '@services/user-service/user-service';
-import { Avatar, Button, ColorSchemeMode, Divider, RadioButton } from '@sk-web-gui/react';
+import { Avatar, Button, Divider, RadioButton } from '@sk-web-gui/react';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
-import { Monitor, Moon, Sun, X } from 'lucide-react';
+import { X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
 
 import { MainPageMobileHeader } from './main-page-mobile-header.component';
@@ -15,14 +17,19 @@ interface MobileMenuBodyProps {
 }
 
 export const MobileMenuBody: React.FC<MobileMenuBodyProps> = ({ onClose }) => {
+  const { t } = useTranslation();
   const user = useUserStore(useShallow((s) => s.user));
   const { colorScheme, setColorScheme } = useLocalStorage();
 
   return (
-    <div className="fixed inset-0 z-50 bg-background-content pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+    <section
+      id="mobile-overview-menu"
+      aria-label={t('filtering:menu_title')}
+      className="fixed inset-0 z-50 bg-background-content pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+    >
       <MainPageMobileHeader
         actions={
-          <Button iconButton variant="tertiary" aria-label="Stäng meny" onClick={onClose}>
+          <Button iconButton variant="tertiary" aria-label={t('layout:controls.close_menu')} onClick={onClose}>
             <X />
           </Button>
         }
@@ -45,36 +52,29 @@ export const MobileMenuBody: React.FC<MobileMenuBodyProps> = ({ onClose }) => {
           <Divider />
 
           <div className="flex flex-col gap-8">
-            <span className="text-small font-bold">Färgläge</span>
-            <div className="flex gap-8">
-              <RadioButton
-                value="light"
-                checked={colorScheme === ColorSchemeMode.Light}
-                onClick={() => {
-                  setColorScheme(ColorSchemeMode.Light);
-                }}
-              >
-                <Sun className={colorScheme === ColorSchemeMode.Light ? '' : 'opacity-50'} size={16} /> Ljust
-              </RadioButton>
-              <RadioButton
-                value="dark"
-                checked={colorScheme === ColorSchemeMode.Dark}
-                onClick={() => {
-                  setColorScheme(ColorSchemeMode.Dark);
-                }}
-              >
-                <Moon className={colorScheme === ColorSchemeMode.Dark ? '' : 'opacity-50'} size={16} /> Mörkt
-              </RadioButton>
-              <RadioButton
-                value="system"
-                checked={colorScheme === ColorSchemeMode.System}
-                onClick={() => {
-                  setColorScheme(ColorSchemeMode.System);
-                }}
-              >
-                <Monitor className={colorScheme === ColorSchemeMode.System ? '' : 'opacity-50'} size={16} /> System
-              </RadioButton>
-            </div>
+            <span id="mobile-color-scheme-label" className="text-small font-bold">
+              {t('layout:color_scheme.label')}
+            </span>
+            <RadioButton.Group
+              aria-labelledby="mobile-color-scheme-label"
+              className="flex gap-8"
+              name="mobile-color-scheme"
+              value={colorScheme}
+            >
+              {colorSchemeOptions.map(({ value, labelKey, icon: Icon }) => (
+                <RadioButton
+                  key={value}
+                  value={value}
+                  checked={colorScheme === value}
+                  onChange={() => {
+                    setColorScheme(value);
+                  }}
+                >
+                  <Icon aria-hidden="true" className={colorScheme === value ? '' : 'opacity-50'} size={16} />{' '}
+                  {t(labelKey)}
+                </RadioButton>
+              ))}
+            </RadioButton.Group>
           </div>
 
           <Divider />
@@ -82,6 +82,6 @@ export const MobileMenuBody: React.FC<MobileMenuBodyProps> = ({ onClose }) => {
           <LogoutButton smallSideBar={false} />
         </div>
       </MainPageMobileHeader>
-    </div>
+    </section>
   );
 };

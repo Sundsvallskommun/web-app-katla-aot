@@ -28,8 +28,6 @@ import errorMiddleware from '@middlewares/error.middleware';
 import { Strategy, VerifiedCallback } from '@node-saml/passport-saml';
 import { logger, stream } from '@utils/logger';
 import bodyParser from 'body-parser';
-import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
-import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -51,8 +49,8 @@ import swaggerUi from 'swagger-ui-express';
 import { HttpException } from './exceptions/HttpException';
 import { Profile } from './interfaces/profile.interface';
 import { authorizeGroups, getRole } from './services/authorization.service';
-import { additionalConverters } from './utils/custom-validation-classes';
 import { getSafeRedirect, getSamlRedirects } from './utils/isValidOrigin';
+import { buildOpenApiSchemas } from './utils/openapi-spec';
 
 type ControllerClass = new () => object;
 
@@ -410,11 +408,7 @@ class App {
   }
 
   private initializeSwagger(controllers: ControllerClass[]) {
-    const schemas = validationMetadatasToSchemas({
-      classTransformerMetadataStorage: defaultMetadataStorage,
-      refPointerPrefix: '#/components/schemas/',
-      additionalConverters: additionalConverters,
-    });
+    const schemas = buildOpenApiSchemas();
 
     const routingControllersOptions = {
       routePrefix: BASE_URL_PREFIX,

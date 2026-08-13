@@ -7,55 +7,24 @@ import { ComboboxWidget } from '@components/json/widgets/combobox-widget';
 import { DateWidget } from '@components/json/widgets/date-widget';
 import { FacilitySearchWidget } from '@components/json/widgets/facility-search-widget';
 import { RadiobuttonWidget } from '@components/json/widgets/radio-widget';
+import { RADIO_WIDGET_NAMES } from '@components/json/widgets/radio-widget-names';
 import { SelectWidget } from '@components/json/widgets/select-widget';
 import { TextWidget } from '@components/json/widgets/text-widget';
 import { TexteditorWidget } from '@components/json/widgets/texteditor-widget';
-import { stripHtml } from '@components/json/widgets/types';
 import Form, { IChangeEvent } from '@rjsf/core';
 import type { RegistryFieldsType, RegistryWidgetsType, RJSFSchema, UiSchema } from '@rjsf/utils';
-import { customizeValidator } from '@rjsf/validator-ajv8';
-import Ajv from 'ajv';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import createJsonErrorTransformer from '../utils/schema-form-error-handling';
-
-// Custom AJV class that counts text length without HTML tags for minLength/maxLength
-class HtmlAwareAjv extends Ajv {
-  constructor(opts?: ConstructorParameters<typeof Ajv>[0]) {
-    super(opts);
-    this.addHtmlAwareLengthKeyword('minLength', (len, limit) => len >= limit);
-    this.addHtmlAwareLengthKeyword('maxLength', (len, limit) => len <= limit);
-  }
-
-  private addHtmlAwareLengthKeyword(
-    keyword: 'minLength' | 'maxLength',
-    comparator: (len: number, limit: number) => boolean
-  ) {
-    this.removeKeyword(keyword);
-    this.addKeyword({
-      keyword,
-      type: 'string',
-      schemaType: 'number',
-      validate: (schema: number, data: string) => comparator(stripHtml(data || '').length, schema),
-    });
-  }
-}
-
-const validator = customizeValidator<Record<string, unknown>>({
-  ajvOptionsOverrides: {
-    allErrors: true,
-  },
-  AjvClass: HtmlAwareAjv,
-});
+import { getFormSchemaValidator } from './form-schema-validator';
 
 const widgets: RegistryWidgetsType = {
   TextWidget,
   text: TextWidget,
   SelectWidget,
   select: SelectWidget,
-  RadioWidget: RadiobuttonWidget,
-  radio: RadiobuttonWidget,
+  ...Object.fromEntries(RADIO_WIDGET_NAMES.map((name) => [name, RadiobuttonWidget])),
   CheckboxWidget,
   checkbox: CheckboxWidget,
   DateWidget,
@@ -66,12 +35,13 @@ const widgets: RegistryWidgetsType = {
   texteditor: TexteditorWidget,
 };
 
-// Custom fields for object types
+// Egna fält för objekttyper
 const fields: RegistryFieldsType = {
   FacilitySearchWidget,
 };
 
 interface SchemaFormProps {
+  schemaId: string;
   schema: RJSFSchema;
   uiSchema?: UiSchema<Record<string, unknown>>;
   formData?: Record<string, unknown>;
@@ -84,6 +54,7 @@ interface SchemaFormProps {
 }
 
 export default function SchemaForm({
+  schemaId,
   schema,
   uiSchema = {},
   formData,
@@ -100,6 +71,7 @@ export default function SchemaForm({
 
   const data = formData ?? localData;
   const shouldValidate = showValidation ?? hasSubmitted;
+  const validator = useMemo(() => getFormSchemaValidator(schemaId), [schemaId]);
 
   const handleChange = useCallback(
     (e: IChangeEvent<Record<string, unknown>>) => {
@@ -123,7 +95,7 @@ export default function SchemaForm({
 
   const errorTransformer = useMemo(() => createJsonErrorTransformer(schema, t), [schema, t]);
 
-  // Sends the original schema via formContext so ObjectFieldTemplate can read the conditions
+  // Skickar originalschemat via formContext så att ObjectFieldTemplate kan läsa villkoren
   const formContext = useMemo(() => ({ originalSchema: schema, compact }), [schema, compact]);
 
   return (

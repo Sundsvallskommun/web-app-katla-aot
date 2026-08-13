@@ -3,19 +3,23 @@
 import { LogoutButton } from '@components/buttons/logout-button.component';
 import { NotificationsBell } from '@components/notifications/notification-bell';
 import { NotificationsWrapper } from '@components/notifications/notification-wrapper';
-import { userMenuGroups } from '@layouts/userMenuGroup';
+import { AppUserMenu } from '@components/user-menu/app-user-menu.component';
+import { createUserMenuGroups } from '@layouts/userMenuGroup';
 import { useUserStore } from '@services/user-service/user-service';
-import { Button, cx, Divider, Logo, UserMenu } from '@sk-web-gui/react';
+import { Button, cx, Divider, Logo } from '@sk-web-gui/react';
 import { ChevronsLeft, ChevronsRight } from 'lucide-react';
 import NextLink from 'next/link';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
 
 import { FilterOverviewSidebarStatusSelector } from './filter-overview-sidebar-status-selector.component';
 
 export const OverviewSidebar: React.FC = () => {
+  const { t } = useTranslation();
   const [showNotifications, setShowNotifications] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(true);
+  const userMenuGroups = createUserMenuGroups(t);
 
   const user = useUserStore(useShallow((s) => s.user));
 
@@ -55,7 +59,7 @@ export const OverviewSidebar: React.FC = () => {
           >
             {open && (
               <div className="flex gap-12 justify-between items-center">
-                <UserMenu
+                <AppUserMenu
                   data-cy="avatar-aside"
                   initials={user.initials}
                   menuTitle={`${user.name} (${user.username})`}
@@ -70,8 +74,9 @@ export const OverviewSidebar: React.FC = () => {
               </div>
             )}
             <NotificationsBell
+              expanded={showNotifications}
               toggleShow={() => {
-                setShowNotifications(!showNotifications);
+                setShowNotifications((current) => !current);
               }}
             />
           </div>
@@ -90,7 +95,7 @@ export const OverviewSidebar: React.FC = () => {
               color="primary"
               size={'md'}
               variant="tertiary"
-              aria-label={open ? 'Stäng sidomeny' : 'Öppna sidomeny'}
+              aria-label={open ? t('layout:controls.close_sidebar') : t('layout:controls.open_sidebar')}
               iconButton
               leftIcon={open ? <ChevronsLeft /> : <ChevronsRight />}
               onClick={() => {

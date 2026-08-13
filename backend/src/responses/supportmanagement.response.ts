@@ -3,6 +3,7 @@ import { IsArray, IsBoolean, IsEnum, IsInt, IsNumber, IsOptional, IsString, Vali
 
 import {
   Classification,
+  CountResponse,
   Errand,
   ErrandAction,
   ErrandLabel,
@@ -17,6 +18,11 @@ import {
   SortObject,
   Stakeholder,
 } from '@/data-contracts/supportmanagement/data-contracts';
+
+export class ErrandCountDTO implements CountResponse {
+  @IsNumber()
+  count!: number;
+}
 
 export class ErrandsQueryDTO {
   @IsOptional()

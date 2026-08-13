@@ -1,6 +1,11 @@
 # compiled output
 .vscode
 /node_modules
+dist
+
+# Local environment files can contain OAuth, session and SAML secrets.
+.env
+.env.*
 
 # code formatter
 .eslintrc
@@ -10,6 +15,7 @@
 
 # test
 jest.config.js
+coverage
 
 # docker
 Dockerfile

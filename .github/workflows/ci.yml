@@ -69,6 +69,10 @@ jobs:
           cache: yarn
           cache-dependency-path: backend/yarn.lock
 
+      - name: Verify Node runtime contract
+        working-directory: .
+        run: node .github/scripts/verify-node-runtime-contract.mjs
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile --network-timeout 1000000
 

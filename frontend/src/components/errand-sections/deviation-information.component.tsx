@@ -2,44 +2,81 @@
 
 import { useFormSchema } from '@components/json/hooks/use-form-schema';
 import SchemaForm from '@components/json/schema/schema-form.component';
+import {
+  ERRAND_FORM_SCHEMA_NAMES,
+  errandFormDataContractErrorMessage,
+  isJsonObject,
+  parseErrandFormData,
+  upsertErrandFormDataItem,
+} from '@components/json/utils/schema-utils';
 import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandFormDTO } from '@interfaces/errand-form';
 import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 interface SchemaFormFieldProps {
   schemaName: string;
-  index: number;
   compact?: boolean;
 }
 
-function SchemaFormField({ schemaName, index, compact }: SchemaFormFieldProps) {
-  const { watch, setValue } = useFormContext<ErrandFormDTO>();
+function SchemaFormField({ schemaName, compact }: SchemaFormFieldProps) {
+  const { getValues, watch, setValue } = useFormContext<ErrandFormDTO>();
   const { showValidation } = useFormValidation();
-  const { schema, uiSchema, loading, error } = useFormSchema(schemaName);
+  const { t } = useTranslation('forms');
+  const errandFormData = watch('errandFormData');
+  const entry = errandFormData?.find((candidate) => candidate.schemaName === schemaName);
+  const { schema, uiSchema, schemaId, loading, error } = useFormSchema(
+    schemaName,
+    entry === undefined ? { kind: 'new' } : { kind: 'persisted', schemaId: entry.schemaId }
+  );
   const status = watch('status');
   const isDraft = status === 'DRAFT';
 
-  const rawData = watch(`errandFormData.${index}.data`) ?? '{}';
-  const formData = typeof rawData === 'string' ? (JSON.parse(rawData) as Record<string, unknown>) : rawData;
+  const rawData = entry?.data ?? '{}';
+  const parsedFormData = parseErrandFormData(rawData, schemaName);
+  const formData = parsedFormData.valid && isJsonObject(parsedFormData.value) ? parsedFormData.value : undefined;
+  const formDataError =
+    !parsedFormData.valid ? errandFormDataContractErrorMessage(parsedFormData.error, t)
+    : !formData ? t('unsupported_form_data', { schemaName })
+    : undefined;
 
   const handleChange = useCallback(
     (data: Record<string, unknown>) => {
-      setValue(`errandFormData.${index}`, { schemaName, data: JSON.stringify(data) });
+      if (!schemaId) {
+        throw new Error(`Cannot update ${schemaName} without a schema ID`);
+      }
+      setValue(
+        'errandFormData',
+        upsertErrandFormDataItem(getValues('errandFormData'), {
+          schemaName,
+          schemaId,
+          data: JSON.stringify(data),
+        })
+      );
     },
-    [setValue, index, schemaName]
+    [getValues, schemaId, schemaName, setValue]
   );
+
+  if (formDataError) {
+    return (
+      <div role="alert" className="text-error">
+        {formDataError}
+      </div>
+    );
+  }
 
   if (loading) {
     return <div className="text-gray-500">Laddar formulär...</div>;
   }
 
-  if (error || !schema) {
+  if (error || !schema || !schemaId) {
     return <div className="text-error">Fel: {error ?? 'Kunde inte ladda schema'}</div>;
   }
 
   return (
     <SchemaForm
+      schemaId={schemaId}
       schema={schema}
       uiSchema={uiSchema}
       formData={formData}
@@ -52,8 +89,6 @@ function SchemaFormField({ schemaName, index, compact }: SchemaFormFieldProps) {
   );
 }
 
-const SCHEMAS = ['avvikelse-plats-handelse'];
-
 interface DeviationInformationProps {
   compact?: boolean;
 }
@@ -61,8 +96,8 @@ interface DeviationInformationProps {
 export const DeviationInformation: React.FC<DeviationInformationProps> = ({ compact }) => {
   return (
     <div className="flex flex-col gap-24">
-      {SCHEMAS.map((schemaName, index) => (
-        <SchemaFormField key={schemaName} schemaName={schemaName} index={index} compact={compact} />
+      {ERRAND_FORM_SCHEMA_NAMES.map((schemaName) => (
+        <SchemaFormField key={schemaName} schemaName={schemaName} compact={compact} />
       ))}
     </div>
   );

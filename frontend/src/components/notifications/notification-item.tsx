@@ -2,8 +2,8 @@ import { NotificationDTO } from '@data-contracts/backend/data-contracts';
 import { acknowledgeNotification, getNotifications } from '@services/errand-service/errand-service';
 import { prettyTime } from '@services/helper-service';
 import { cx, useSnackbar } from '@sk-web-gui/react';
-import { sortBy } from 'lodash';
 import NextLink from 'next/link';
+import { useTranslation } from 'react-i18next';
 import { useNotificationStore } from 'src/stores/notification-store';
 
 import { NotificationRenderIcon } from './notification-render-icon';
@@ -25,32 +25,29 @@ const senderFallback = (name?: string): string => {
 
 export const NotificationItem: React.FC<{ notification: NotificationDTO }> = ({ notification }) => {
   const toastMessage = useSnackbar();
-  const { setAcknowledgedNotifications, setActiveNotifications } = useNotificationStore();
+  const { t } = useTranslation();
+  const { setNotifications } = useNotificationStore();
 
   const handleAcknowledge = async () => {
     try {
       await acknowledgeNotification(notification);
-
-      void getNotifications().then((res) => {
-        setActiveNotifications(
-          sortBy(
-            res.filter((n) => !n.acknowledged),
-            'created'
-          ).reverse()
-        );
-
-        setAcknowledgedNotifications(
-          sortBy(
-            res.filter((n) => n.acknowledged),
-            'created'
-          ).reverse()
-        );
-      });
     } catch {
       toastMessage({
         position: 'bottom',
         closeable: false,
-        message: 'Något gick fel när notifieringen skulle kvitteras',
+        message: t('api_errors.acknowledge_notification'),
+        status: 'error',
+      });
+      return;
+    }
+
+    try {
+      setNotifications(await getNotifications());
+    } catch {
+      toastMessage({
+        position: 'bottom',
+        closeable: false,
+        message: t('api_errors.notifications'),
         status: 'error',
       });
     }

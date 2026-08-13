@@ -84,12 +84,12 @@ describe('SAML callback redirects', () => {
 
     expect(successResponse.headers.location).toBe('http://localhost:3000/success');
 
-    app.get('/seed-saml-error', (req, res) => {
+    app.get('/api/seed-saml-error', (req, res) => {
       req.session.messages = ['SAML_LOGOUT_FAILED'];
       res.sendStatus(204);
     });
     const agent = request.agent(app);
-    await agent.get('/seed-saml-error').expect(204);
+    await agent.get('/api/seed-saml-error').expect(204);
 
     const failureResponse = await agent
       .get('/api/saml/logout/callback')

@@ -1,41 +1,34 @@
 import { LogoutButton } from '@components/buttons/logout-button.component';
 import { ColorSchemeItems } from '@components/misc/color-scheme-items.component';
+import type { MenuItemGroup } from '@sk-web-gui/react';
 import { PopupMenu } from '@sk-web-gui/react';
+import type { TFunction } from 'i18next';
 import { ChevronRight, Monitor } from 'lucide-react';
 
-export const userMenuGroups = [
+export const createUserMenuGroups = (t: TFunction): MenuItemGroup[] => [
   {
-    label: 'Annat',
-    showLabel: false,
-    showOnDesktop: true,
-    showOnMobile: true,
+    label: t('layout:controls.open_user_menu'),
     elements: [
       {
-        label: 'Färgläge',
+        label: t('layout:color_scheme.label'),
         element: () => (
-          <PopupMenu.Item>
-            <PopupMenu position="right" align="start">
-              <PopupMenu.Button className="justify-between w-full">
-                <Monitor />
-                <span className="w-full flex justify-between">
-                  Färgläge
-                  <ChevronRight />
-                </span>
-              </PopupMenu.Button>
-              <PopupMenu.Panel>
-                <ColorSchemeItems />
-              </PopupMenu.Panel>
-            </PopupMenu>
-          </PopupMenu.Item>
+          <PopupMenu position="right" align="start">
+            <PopupMenu.Button className="justify-between w-full">
+              <Monitor aria-hidden="true" />
+              <span className="w-full flex justify-between">
+                {t('layout:color_scheme.label')}
+                <ChevronRight aria-hidden="true" />
+              </span>
+            </PopupMenu.Button>
+            <PopupMenu.Panel>
+              <ColorSchemeItems />
+            </PopupMenu.Panel>
+          </PopupMenu>
         ),
       },
       {
-        label: 'Logga ut',
-        element: () => (
-          <PopupMenu.Item>
-            <LogoutButton testId="user-menu-logout-button" />
-          </PopupMenu.Item>
-        ),
+        label: t('common:logout'),
+        element: () => <LogoutButton testId="user-menu-logout-button" />,
       },
     ],
   },

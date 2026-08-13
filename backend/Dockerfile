@@ -1,9 +1,9 @@
 # Install dependencies only when needed
-ARG NODE_VERSION=26.1.0
+ARG NODE_VERSION=22.18.0
 ARG YARN_VERSION=1.22.22
 FROM node:${NODE_VERSION}-slim AS build-base
 ARG YARN_VERSION
-RUN npm install --global yarn@${YARN_VERSION}
+RUN test "$(yarn --version)" = "${YARN_VERSION}"
 
 FROM build-base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.

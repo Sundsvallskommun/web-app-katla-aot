@@ -10,6 +10,38 @@ declare global {
 // Förhindrar att axios gör riktiga XHR-anrop i jsdom-miljön
 (globalThis as { XMLHttpRequest?: typeof XMLHttpRequest }).XMLHttpRequest = undefined;
 
+const createMemoryStorage = (): Storage => {
+  const values = new Map<string, string>();
+
+  return {
+    get length() {
+      return values.size;
+    },
+    clear: () => {
+      values.clear();
+    },
+    getItem: (key) => values.get(key) ?? null,
+    key: (index) => [...values.keys()][index] ?? null,
+    removeItem: (key) => {
+      values.delete(key);
+    },
+    setItem: (key, value) => {
+      values.set(key, value);
+    },
+  };
+};
+
+// Node 26 exponerar valfria storage-globaler som är undefined utan konfigurerad backing-fil.
+// Tillhandahåll webbläsarkompatibel in-memory-storage så att persisterade Zustand-stores fungerar i jsdom.
+Object.defineProperty(globalThis, 'localStorage', {
+  configurable: true,
+  value: createMemoryStorage(),
+});
+Object.defineProperty(globalThis, 'sessionStorage', {
+  configurable: true,
+  value: createMemoryStorage(),
+});
+
 globalThis.resizeWindow = (width: number, height: number) => {
   window.innerWidth = width;
   window.innerHeight = height;

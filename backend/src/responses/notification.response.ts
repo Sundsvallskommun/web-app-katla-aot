@@ -1,6 +1,14 @@
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 import { Notification } from '@/data-contracts/supportmanagement/data-contracts';
+import type ApiResponse from '@/interfaces/api-service.interface';
+
+export class NotificationAcknowledgementResponse implements ApiResponse<boolean> {
+  @IsBoolean()
+  data!: boolean;
+  @IsString()
+  message!: string;
+}
 
 export class NotificationDTO implements Notification {
   @IsOptional()

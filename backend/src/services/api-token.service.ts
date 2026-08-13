@@ -39,6 +39,7 @@ class ApiTokenService {
 
     try {
       const { data: token } = await axios<Token>({
+        maxRedirects: 0,
         timeout: 30000, // NOTE: milliseconds
         method: 'POST',
         headers: {
@@ -56,7 +57,8 @@ class ApiTokenService {
 
       return await this.getToken();
     } catch (error) {
-      logger.error(`Failed to fetch JWT access token: ${JSON.stringify(error)}`);
+      const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+      logger.error(`Failed to fetch OAuth access token${status ? ` (status ${status})` : ''}`);
       throw new HttpException(502, 'Bad Gateway');
     }
   }

@@ -1,5 +1,6 @@
 'use client';
 
+import { ErrorAlertList } from '@components/misc/error-alert.component';
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
 import { Button, Spinner } from '@sk-web-gui/react';
 import { useTranslation } from 'react-i18next';
@@ -11,9 +12,16 @@ interface MobileErrandsListProps {
   isLoading: boolean;
   hasMore: boolean;
   loadMore: () => void;
+  errors?: string[];
 }
 
-export const MobileErrandsList: React.FC<MobileErrandsListProps> = ({ rows, isLoading, hasMore, loadMore }) => {
+export const MobileErrandsList: React.FC<MobileErrandsListProps> = ({
+  rows,
+  isLoading,
+  hasMore,
+  loadMore,
+  errors = [],
+}) => {
   const { t } = useTranslation();
 
   if (isLoading && rows.length === 0) {
@@ -24,12 +32,13 @@ export const MobileErrandsList: React.FC<MobileErrandsListProps> = ({ rows, isLo
     );
   }
 
-  if (rows.length === 0) {
+  if (rows.length === 0 && errors.length === 0) {
     return <div className="text-center py-40 text-dark-secondary">{t('errand-information:no_errands')}</div>;
   }
 
   return (
     <div className="flex flex-col gap-8 px-16 pb-24">
+      <ErrorAlertList messages={errors} />
       {rows.map((errand, index) => (
         <MobileErrandCard key={`mobile-errand-${index}`} errand={errand} />
       ))}

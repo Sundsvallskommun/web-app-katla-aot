@@ -4,14 +4,17 @@ import { Button, cx } from '@sk-web-gui/react';
 import { capitalize } from 'lodash';
 import { LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import type { ButtonHTMLAttributes } from 'react';
+import { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-interface LogoutButtonProps {
+interface LogoutButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'color'> {
   smallSideBar?: boolean;
   testId?: string;
 }
 
-export const LogoutButton: React.FC<LogoutButtonProps> = ({ smallSideBar = false, testId = 'logout-button' }) => {
+export const LogoutButton = forwardRef<HTMLButtonElement, LogoutButtonProps>((props, ref) => {
+  const { className, onClick, smallSideBar = false, testId = 'logout-button', ...rest } = props;
   const { t } = useTranslation();
   const router = useRouter();
 
@@ -22,20 +25,25 @@ export const LogoutButton: React.FC<LogoutButtonProps> = ({ smallSideBar = false
   const logOutString = capitalize(t('common:logout'));
 
   return (
-    <div className="flex justify-center w-full">
-      <Button
-        data-cy={testId}
-        onClick={handleLogout}
-        variant="ghost"
-        size="md"
-        color="primary"
-        className={cx('w-full hover:bg-dark-ghost', !smallSideBar ? 'justify-start' : '')}
-        leftIcon={<LogOut />}
-        aria-label={logOutString}
-        iconButton={smallSideBar}
-      >
-        {!smallSideBar && <span className="w-full flex justify-between">{logOutString}</span>}
-      </Button>
-    </div>
+    <Button
+      {...rest}
+      ref={ref}
+      data-cy={testId}
+      onClick={(event) => {
+        onClick?.(event);
+        handleLogout();
+      }}
+      variant="ghost"
+      size="md"
+      color="primary"
+      className={cx('flex w-full hover:bg-dark-ghost', smallSideBar ? 'justify-center' : 'justify-start', className)}
+      leftIcon={<LogOut aria-hidden="true" />}
+      aria-label={logOutString}
+      iconButton={smallSideBar}
+    >
+      {!smallSideBar && <span className="w-full flex justify-between">{logOutString}</span>}
+    </Button>
   );
-};
+});
+
+LogoutButton.displayName = 'LogoutButton';

@@ -7,7 +7,8 @@ import { getCommonProps, getWidgetOptions } from './types';
 const DEFAULT_CLASS = 'w-full';
 
 export function SelectWidget(props: WidgetProps) {
-  const { id, value, disabled, readonly, className, onChange } = getCommonProps(props, DEFAULT_CLASS);
+  const { id, value, disabled, readonly, required, invalid, describedBy, className, onChange, onBlur, onFocus } =
+    getCommonProps(props, DEFAULT_CLASS);
   const { enumOptions = [] } = getWidgetOptions(props.options);
 
   const currentValue = value ?? '';
@@ -20,7 +21,13 @@ export function SelectWidget(props: WidgetProps) {
       onChange={(e) => {
         onChange(e.currentTarget.value || undefined);
       }}
-      readOnly={disabled || readonly}
+      disabled={disabled || readonly}
+      aria-readonly={readonly}
+      required={required}
+      aria-describedby={describedBy}
+      aria-invalid={invalid}
+      onBlur={onBlur}
+      onFocus={onFocus}
     >
       {enumOptions.map((option) => (
         <Select.Option key={String(option.value)} value={option.value as string | number}>

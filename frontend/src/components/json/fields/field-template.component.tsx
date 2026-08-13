@@ -1,8 +1,13 @@
-import type { FieldTemplateProps } from '@rjsf/utils';
+import { isRadioWidgetName } from '@components/json/widgets/radio-widget-names';
+import { ariaDescribedByIds, descriptionId, errorId, type FieldTemplateProps, titleId } from '@rjsf/utils';
 import { FormControl, FormErrorMessage, FormLabel } from '@sk-web-gui/react';
+import { useTranslation } from 'react-i18next';
+
+import { sanitizeFieldDescription } from './sanitize-field-description';
 
 export function FieldTemplate(props: FieldTemplateProps) {
-  const { id, label, required, displayLabel, help, children, uiSchema, rawErrors, schema } = props;
+  const { t } = useTranslation('forms');
+  const { id, label, required, displayLabel, help, children, uiSchema, rawErrors, schema, disabled, readonly } = props;
 
   const hideLabel = uiSchema?.['ui:options']?.hideLabel;
   const hideDescription = uiSchema?.['ui:options']?.hideDescription;
@@ -15,30 +20,43 @@ export function FieldTemplate(props: FieldTemplateProps) {
     return <>{children}</>;
   }
 
-  const hasError = rawErrors && rawErrors.length > 0;
+  const hasError = Boolean(rawErrors?.length);
   const formControlClassName = className ? `form-row ${className}` : 'form-row w-full';
+  const isRadioGroup = isRadioWidgetName(uiSchema?.['ui:widget']);
 
-  // Get description from ui:description or schema.description
-  const descriptionText = (uiSchema?.['ui:description'] ?? '') || (schema.description ?? '');
+  const uiDescription = uiSchema?.['ui:description'];
+  const descriptionText = typeof uiDescription === 'string' ? uiDescription : (schema.description ?? '');
+  const newTabAnnouncementId = `${descriptionId(id)}__new-tab`;
+  const sanitizedDescription = sanitizeFieldDescription(descriptionText, newTabAnnouncementId);
 
   const renderDescription = (position: 'above' | 'below') => {
-    if (!descriptionText || hideDescription) return null;
+    if (!sanitizedDescription.html || hideDescription) return null;
     const marginClass = position === 'above' ? 'mb-2' : 'mt-2';
     return (
-      <div
-        id={`${id}-desc`}
-        className={`text-xs text-muted-foreground ${marginClass} [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4`}
-        dangerouslySetInnerHTML={{ __html: descriptionText }}
-      />
+      <>
+        <div
+          id={descriptionId(id)}
+          className={`text-xs text-muted-foreground ${marginClass} [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4`}
+          dangerouslySetInnerHTML={{ __html: sanitizedDescription.html }}
+        />
+        {sanitizedDescription.hasNewTabLink && (
+          <span id={newTabAnnouncementId} className="sr-only">
+            {t('field_description.new_tab_announcement')}
+          </span>
+        )}
+      </>
     );
   };
 
-  return (
-    <FormControl className={formControlClassName} invalid={hasError}>
-      {displayLabel && !hideLabel && (
-        <FormLabel htmlFor={id}>
+  const fieldContent = (
+    <>
+      {displayLabel && (
+        <FormLabel
+          id={titleId(id)}
+          {...(isRadioGroup ? { as: 'legend' } : { htmlFor: id })}
+          className={hideLabel ? 'sr-only' : undefined}
+        >
           {label}
-          {required ? ' *' : ''}
         </FormLabel>
       )}
 
@@ -48,9 +66,47 @@ export function FieldTemplate(props: FieldTemplateProps) {
 
       {descriptionBelow && renderDescription('below')}
 
-      {hasError && <FormErrorMessage className="text-error">{rawErrors[0]}</FormErrorMessage>}
+      {hasError && (
+        <FormErrorMessage id={errorId(id)} className="text-error">
+          {rawErrors?.[0]}
+        </FormErrorMessage>
+      )}
 
       {help}
+    </>
+  );
+
+  if (isRadioGroup) {
+    return (
+      <FormControl
+        className={formControlClassName}
+        required={required}
+        invalid={hasError}
+        disabled={disabled || readonly}
+        readOnly={readonly}
+      >
+        <fieldset
+          id={id}
+          className="m-0 min-w-0 w-full border-0 p-0"
+          disabled={disabled || readonly}
+          aria-describedby={ariaDescribedByIds(id)}
+          aria-invalid={hasError}
+        >
+          {fieldContent}
+        </fieldset>
+      </FormControl>
+    );
+  }
+
+  return (
+    <FormControl
+      className={formControlClassName}
+      required={required}
+      invalid={hasError}
+      disabled={disabled}
+      readOnly={readonly}
+    >
+      {fieldContent}
     </FormControl>
   );
 }

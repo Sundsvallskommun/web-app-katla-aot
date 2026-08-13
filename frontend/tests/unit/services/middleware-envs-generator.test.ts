@@ -62,6 +62,7 @@ describe('middleware environment generation', () => {
   adminUrl: 'https://local.example.com',
   basePath: '/local',
   apiUrl: 'https://local.example.com/api',
+  sessionCookieName: 'connect.sid',
 };\n`);
   });
 

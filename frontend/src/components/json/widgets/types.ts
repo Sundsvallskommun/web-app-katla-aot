@@ -1,4 +1,4 @@
-import type { WidgetProps } from '@rjsf/utils';
+import { ariaDescribedByIds, type WidgetProps } from '@rjsf/utils';
 
 export interface EnumOption {
   value: string | number | boolean;
@@ -6,7 +6,7 @@ export interface EnumOption {
 }
 
 /**
- * Extended options that can be passed via ui:options in schema
+ * Utökade alternativ som kan skickas via ui:options i schemat
  */
 export interface WidgetOptions {
   className?: string;
@@ -32,12 +32,19 @@ export interface CommonWidgetProps {
   value: unknown;
   disabled: boolean;
   readonly: boolean;
+  required: boolean;
+  invalid: boolean;
+  describedBy: string;
+  label: string;
+  hideLabel: boolean;
   className: string;
   onChange: (value: unknown) => void;
+  onBlur: () => void;
+  onFocus: () => void;
 }
 
 export function getCommonProps(props: WidgetProps, defaultClassName: string): CommonWidgetProps {
-  const { id, disabled, readonly, onChange } = props;
+  const { id, disabled, readonly, required, rawErrors, label, hideLabel, onChange } = props;
   const value: unknown = props.value;
   const options = getWidgetOptions(props.options);
 
@@ -46,21 +53,32 @@ export function getCommonProps(props: WidgetProps, defaultClassName: string): Co
     value,
     disabled: !!disabled,
     readonly: !!readonly,
+    required: !!required,
+    invalid: Boolean(rawErrors?.length),
+    describedBy: ariaDescribedByIds(id),
+    label,
+    hideLabel: !!hideLabel,
     className: (options.className ?? '') || defaultClassName,
     onChange,
+    onBlur: () => {
+      props.onBlur(id, value);
+    },
+    onFocus: () => {
+      props.onFocus(id, value);
+    },
   };
 }
 
 /**
- * Strips HTML tags from a string to get plain text.
- * Used for validating text length without counting HTML markup.
+ * Tar bort HTML-taggar ur en sträng för att få ren text.
+ * Används för att validera textlängd utan att räkna med HTML-uppmärkning.
  */
 export function stripHtml(html: string): string {
   if (typeof DOMParser !== 'undefined') {
     const doc = new DOMParser().parseFromString(html, 'text/html');
     return (doc.body.textContent || '').trim();
   }
-  // Fallback for SSR: iterative parser instead of regex to avoid ReDoS
+  // Reserv för SSR: iterativ parser i stället för regex för att undvika ReDoS
   let result = '';
   let inTag = false;
   for (const char of html) {

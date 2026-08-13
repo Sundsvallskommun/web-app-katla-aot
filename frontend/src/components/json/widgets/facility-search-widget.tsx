@@ -1,6 +1,6 @@
 'use client';
 import { FacilityInfoDTO, OrgLeafNodeDTO, UserEmploymentDTO } from '@data-contracts/backend/data-contracts';
-import type { FieldProps } from '@rjsf/utils';
+import { ariaDescribedByIds, type FieldProps } from '@rjsf/utils';
 import { getUserEmployments } from '@services/employee-service/employee-service';
 import { getOrgLeafNodes } from '@services/organization/organization-service';
 import { Button, Combobox, FormControl, FormLabel } from '@sk-web-gui/react';
@@ -10,8 +10,11 @@ import { useTranslation } from 'react-i18next';
 
 export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
   const { t } = useTranslation('forms');
-  const { idSchema, formData, disabled, readonly, onChange, uiSchema } = props;
+  const { idSchema, formData, disabled, readonly, required, rawErrors, onBlur, onChange, onFocus, uiSchema } = props;
   const id = idSchema.$id;
+  const searchLabelId = `${id}__search-label`;
+  const describedBy = ariaDescribedByIds(id);
+  const invalid = Boolean(rawErrors?.length);
 
   const uiOptions = (uiSchema?.['ui:options'] ?? {}) as Record<string, unknown>;
   const className = (uiOptions.className as string) || 'w-full';
@@ -112,6 +115,7 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
   }, [leafNodes, searchValue]);
 
   const hasSelection = !!facilityInfo?.orgId;
+  const isUnavailable = !!disabled || !!readonly || hasSelection || isLoadingLeafNodes;
 
   return (
     <div className={className}>
@@ -119,17 +123,20 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
         {t('facility_search.section_title', 'Mer information om platsen')}
       </h2>
 
-      <FormControl disabled={!!disabled || !!readonly || hasSelection || isLoadingLeafNodes} className="w-full">
-        <FormLabel className="font-bold">
+      <FormControl disabled={isUnavailable} invalid={invalid} required={required} className="w-full">
+        <FormLabel id={searchLabelId} htmlFor={id} className="font-bold">
           {t('facility_search.add_label', 'Lägg till plats där avvikelsen inträffat')}
         </FormLabel>
         <Combobox
-          id={id}
+          id={`${id}__combobox`}
           className="w-full"
           value={hasSelection ? String(facilityInfo.orgId) : ''}
+          aria-labelledby={searchLabelId}
+          aria-describedby={describedBy}
           onChange={handleSelectOrg}
         >
           <Combobox.Input
+            id={id}
             placeholder={
               isLoadingLeafNodes ?
                 t('facility_search.loading', 'Laddar...')
@@ -137,6 +144,18 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
             }
             className="w-full"
             value={hasSelection ? (facilityInfo.orgName ?? '') : undefined}
+            disabled={isUnavailable}
+            readOnly={!!readonly}
+            required={required}
+            aria-labelledby={searchLabelId}
+            aria-describedby={describedBy}
+            aria-invalid={invalid}
+            onBlur={() => {
+              onBlur(id, formData);
+            }}
+            onFocus={() => {
+              onFocus(id, formData);
+            }}
           />
           <Combobox.List>
             {filteredLeafNodes.map((node) => (

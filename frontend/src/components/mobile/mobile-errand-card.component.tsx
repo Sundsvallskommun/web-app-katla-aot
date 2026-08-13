@@ -1,19 +1,19 @@
 'use client';
 
 import { StatusLabel } from '@components/misc/status-label.component';
+import { LinkButton } from '@components/navigation/link-button.component';
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
-import { Button } from '@sk-web-gui/react';
 import { getTypeDisplayName } from '@utils/errand-helpers';
 import dayjs from 'dayjs';
 import { ArrowRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 
 interface MobileErrandCardProps {
   errand: ErrandDTO;
 }
 
 export const MobileErrandCard: React.FC<MobileErrandCardProps> = ({ errand }) => {
-  const router = useRouter();
+  const { t } = useTranslation();
   const url = `/arende/${errand.errandNumber}/grundinformation`;
 
   return (
@@ -35,17 +35,15 @@ export const MobileErrandCard: React.FC<MobileErrandCardProps> = ({ errand }) =>
           </div>
         </div>
 
-        <Button
+        <LinkButton
+          href={url}
+          aria-label={t('layout:controls.open_errand', { errandNumber: errand.errandNumber })}
           className="flex items-center justify-center p-[1.2rem]"
           iconButton
-          type="button"
           size="lg"
-          leftIcon={<ArrowRight />}
+          leftIcon={<ArrowRight aria-hidden="true" />}
           color="primary"
           variant="tertiary"
-          onClick={() => {
-            router.push(url);
-          }}
         />
       </div>
     </div>

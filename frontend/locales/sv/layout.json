@@ -2,6 +2,32 @@
   "header": {
     "goto_content": "Hoppa till innehåll"
   },
+  "controls": {
+    "open_user_menu": "Öppna användarmeny",
+    "open_menu": "Öppna meny",
+    "close_menu": "Stäng meny",
+    "open_errand": "Öppna ärende {{errandNumber}}",
+    "open_sidebar": "Öppna sidomeny",
+    "close_sidebar": "Stäng sidomeny"
+  },
+  "notifications": {
+    "open": "Öppna notifieringar",
+    "open_with_count_one": "Öppna notifieringar ({{count}} oläst)",
+    "open_with_count_other": "Öppna notifieringar ({{count}} olästa)",
+    "panel": "Notifieringar",
+    "close": "Stäng notifieringar",
+    "loading": "Laddar notifieringar",
+    "new": "Nya",
+    "previous": "Tidigare",
+    "none_new": "Inga nya notifieringar",
+    "none_previous": "Inga tidigare notifieringar"
+  },
+  "color_scheme": {
+    "label": "Färgläge",
+    "light": "Ljust",
+    "dark": "Mörkt",
+    "system": "System"
+  },
   "cookies": {
     "title": "Kakor på {{app}}",
     "description": "Vi använder kakor, cookies, för att ge dig en förbättrad upplevelse, sammanställa statistik och för att viss nödvändig funktionalitet ska fungera på webbplatsen.",
