@@ -7,6 +7,7 @@ import { ComboboxWidget } from '@components/json/widgets/combobox-widget';
 import { DateWidget } from '@components/json/widgets/date-widget';
 import { FacilitySearchWidget } from '@components/json/widgets/facility-search-widget';
 import { RadiobuttonWidget } from '@components/json/widgets/radio-widget';
+import { RADIO_WIDGET_NAMES } from '@components/json/widgets/radio-widget-names';
 import { SelectWidget } from '@components/json/widgets/select-widget';
 import { TextWidget } from '@components/json/widgets/text-widget';
 import { TexteditorWidget } from '@components/json/widgets/texteditor-widget';
@@ -23,8 +24,7 @@ const widgets: RegistryWidgetsType = {
   text: TextWidget,
   SelectWidget,
   select: SelectWidget,
-  RadioWidget: RadiobuttonWidget,
-  radio: RadiobuttonWidget,
+  ...Object.fromEntries(RADIO_WIDGET_NAMES.map((name) => [name, RadiobuttonWidget])),
   CheckboxWidget,
   checkbox: CheckboxWidget,
   DateWidget,

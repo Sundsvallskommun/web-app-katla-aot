@@ -1,3 +1,4 @@
+import { isRadioWidgetName } from '@components/json/widgets/radio-widget-names';
 import { ariaDescribedByIds, descriptionId, errorId, type FieldTemplateProps, titleId } from '@rjsf/utils';
 import { FormControl, FormErrorMessage, FormLabel } from '@sk-web-gui/react';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +22,7 @@ export function FieldTemplate(props: FieldTemplateProps) {
 
   const hasError = Boolean(rawErrors?.length);
   const formControlClassName = className ? `form-row ${className}` : 'form-row w-full';
-  const isRadioGroup = uiSchema?.['ui:widget'] === 'radio';
+  const isRadioGroup = isRadioWidgetName(uiSchema?.['ui:widget']);
 
   const uiDescription = uiSchema?.['ui:description'];
   const descriptionText = typeof uiDescription === 'string' ? uiDescription : (schema.description ?? '');

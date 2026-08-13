@@ -29,17 +29,12 @@ export interface SanitizedFieldDescription {
   hasNewTabLink: boolean;
 }
 
-/** Sanitizes externally managed schema text without depending on browser globals. */
+/** Sanerar schemaägd text utan att vara beroende av webbläsarglobaler. */
 export function sanitizeFieldDescription(unsafeHtml: string, newTabAnnouncementId: string): SanitizedFieldDescription {
   let hasNewTabLink = false;
-  const sanitizedHtml = SanitizeHTML(unsafeHtml, {
-    allowedTags: [...FIELD_DESCRIPTION_TAGS],
-    allowedAttributes: {
-      a: ['href', 'target'],
-    },
-    allowedSchemes: ['http', 'https', 'mailto'],
-    allowProtocolRelative: false,
-  });
+  // Ett pass räcker: transformen bygger länkattributen från grunden och kopierar
+  // bara href, så inkommande rel eller aria-describedby kan aldrig överleva.
+  // Scheman filtreras av allowedSchemes efter transformen.
   const options: SanitizeHTML.IOptions = {
     allowedTags: [...FIELD_DESCRIPTION_TAGS],
     allowedAttributes: {
@@ -52,8 +47,8 @@ export function sanitizeFieldDescription(unsafeHtml: string, newTabAnnouncementI
         const safeAttributes: Record<string, string> = {};
         if (attributes.href) safeAttributes.href = attributes.href;
 
-        // Only the canonical HTML keyword opens a new browsing context. Named targets
-        // and differently cased lookalikes are removed instead of being trusted.
+        // Endast det kanoniska HTML-nyckelordet öppnar en ny flik. Namngivna mål
+        // och varianter med annan skiftlägesform tas bort i stället för att litas på.
         if (attributes.target !== '_blank' || !attributes.href) return { tagName, attribs: safeAttributes };
 
         hasNewTabLink = true;
@@ -71,7 +66,7 @@ export function sanitizeFieldDescription(unsafeHtml: string, newTabAnnouncementI
   };
 
   return {
-    html: SanitizeHTML(sanitizedHtml, options),
+    html: SanitizeHTML(unsafeHtml, options),
     hasNewTabLink,
   };
 }
