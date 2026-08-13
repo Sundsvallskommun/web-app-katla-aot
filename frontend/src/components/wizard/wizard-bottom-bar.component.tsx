@@ -46,7 +46,7 @@ export const WizardBottomBar: React.FC = () => {
       const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
       toastMessage({ position: 'bottom', status: 'success', message: t('errand-information:save_message.draft') });
       reset({ ...errand, errandFormData });
-      router.push(`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/${errand.errandNumber}/grundinformation`);
+      router.push(`/arende/${errand.errandNumber}/grundinformation`);
     } catch (error: unknown) {
       toastMessage({
         position: 'bottom',
@@ -69,9 +69,9 @@ export const WizardBottomBar: React.FC = () => {
       });
       reset({ ...errand, errandFormData });
       if (logout) {
-        router.push(`${process.env.NEXT_PUBLIC_BASE_PATH}/logout`);
+        router.push('/logout');
       } else {
-        router.push(`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/${errand.errandNumber}/grundinformation`);
+        router.push(`/arende/${errand.errandNumber}/grundinformation`);
       }
     } catch (error: unknown) {
       toastMessage({
