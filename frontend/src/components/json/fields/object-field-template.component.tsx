@@ -163,9 +163,16 @@ function SectionDisclosure({ section, hasError = false, children }: SectionDiscl
     <Disclosure variant="alt" className="w-full" open={open} onToggleOpen={setOpen}>
       <Disclosure.Header>
         {SectionIcon && <Disclosure.Icon icon={React.createElement(SectionIcon)} />}
-        <Disclosure.Title>{section.title}</Disclosure.Title>
+        {/* min-w-0 låter rubriken krympa i stället för att trycka ut statusetiketten över kanten */}
+        <Disclosure.Title className="min-w-0">{section.title}</Disclosure.Title>
         {hasError && (
-          <Label inverted rounded color="error" data-cy={`section-error-${section.id}`}>
+          <Label
+            inverted
+            rounded
+            color="error"
+            className="sk-disclosure-label whitespace-nowrap"
+            data-cy={`section-error-${section.id}`}
+          >
             {t('section_has_errors')}
           </Label>
         )}

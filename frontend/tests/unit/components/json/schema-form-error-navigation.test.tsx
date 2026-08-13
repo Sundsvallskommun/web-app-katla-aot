@@ -7,7 +7,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => (key === 'section_has_errors' ? 'Behöver kompletteras' : key),
+    t: (key: string) => (key === 'section_has_errors' ? 'Ofullständig' : key),
   }),
 }));
 
@@ -50,7 +50,7 @@ describe('felnavigering i schemaformuläret', () => {
     render(<ErrorNavigationForm />);
 
     expect(document.querySelector(`[${INVALID_FIELD_ATTRIBUTE}]`)).not.toBeInTheDocument();
-    expect(screen.queryByText('Behöver kompletteras')).not.toBeInTheDocument();
+    expect(screen.queryByText('Ofullständig')).not.toBeInTheDocument();
   });
 
   it('öppnar avsnittet och flyttar fokus till första fältet som saknas', () => {
@@ -61,7 +61,7 @@ describe('felnavigering i schemaformuläret', () => {
     const markedFields = document.querySelectorAll(`[${INVALID_FIELD_ATTRIBUTE}]`);
     expect(markedFields).toHaveLength(2);
     expect(markedFields[0].getAttribute(INVALID_FIELD_ATTRIBUTE)).toBe('root_eventDate');
-    expect(screen.getAllByText('Behöver kompletteras')).toHaveLength(2);
+    expect(screen.getAllByText('Ofullständig')).toHaveLength(2);
 
     const eventSection = document.querySelector('[data-cy="section-error-event"]')?.closest('[data-open]');
     expect(eventSection).toHaveAttribute('data-open', 'false');

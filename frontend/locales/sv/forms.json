@@ -11,7 +11,7 @@
   "required_form_data": "Fyll i uppgifterna under {{schemaName}} innan du går vidare.",
   "form_field_error": "{{schemaTitle}} – {{fieldTitle}}: {{message}}",
   "form_error": "{{schemaTitle}}: {{message}}",
-  "section_has_errors": "Behöver kompletteras",
+  "section_has_errors": "Ofullständig",
   "field_description": {
     "new_tab_announcement": "Öppnas i en ny flik"
   },
