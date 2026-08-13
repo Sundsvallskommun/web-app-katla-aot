@@ -31,7 +31,7 @@ export const WizardBottomBar: React.FC = () => {
   const { currentStep, goNext, goBack, setStepErrors } = useWizardStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
-  const { prepareErrandForApi, getFacilityOrgName } = usePrepareErrand();
+  const { prepareErrandForApi, getFacilityStatus } = usePrepareErrand();
 
   const steps = useActiveWizardSteps();
   const errandId = watch('id');
@@ -129,11 +129,21 @@ export const WizardBottomBar: React.FC = () => {
       return;
     }
 
-    if (eventConcerns === 'GRUPP_VERKSAMHET' && !getFacilityOrgName(values.errandFormData)) {
+    const facilityStatus = getFacilityStatus(values.errandFormData);
+    if (eventConcerns === 'GRUPP_VERKSAMHET' && facilityStatus === 'NONE') {
       toastMessage({
         position: 'bottom',
         status: 'error',
         message: t('errand-information:about.event_concerns_group_facility_required'),
+      });
+      return;
+    }
+    // En plats som inte är vald hela vägen ner ger fel label, och därmed fel behörighet
+    if (facilityStatus === 'INCOMPLETE') {
+      toastMessage({
+        position: 'bottom',
+        status: 'error',
+        message: t('errand-information:about.facility_incomplete'),
       });
       return;
     }

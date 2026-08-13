@@ -1,13 +1,37 @@
 import SchemaForm from '@components/json/schema/schema-form.component';
+import type { LabelDTO } from '@data-contracts/backend/data-contracts';
 import { descriptionId, errorId, type RJSFSchema, titleId, type UiSchema } from '@rjsf/utils';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ComponentType } from 'react';
 import { renderToString } from 'react-dom/server';
+import { useMetadataStore } from 'src/stores/metadata-store';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 type FormUiSchema = UiSchema<Record<string, unknown>>;
 const ACCESSIBILITY_TEST_SCHEMA_ID = 'accessibility-test-schema:1';
+
+// Platswidgeten bygger sökningen ur labelstrukturen och renderar bara en laddtext
+// utan den, så testet måste seeda en struktur för att nå fältet alls.
+const placeLabelStructure: LabelDTO[] = [
+  {
+    id: 'platsstruktur',
+    classification: 'PLACE',
+    displayName: 'Platsstruktur',
+    resourceName: 'PLATSSTRUKTUR',
+    resourcePath: 'PLATSSTRUKTUR',
+    labels: [
+      {
+        id: 'aldreboende',
+        classification: 'PLACE',
+        displayName: 'VOF Äldreboende',
+        resourceName: 'VOF_ALDREBOENDE',
+        resourcePath: 'PLATSSTRUKTUR/VOF_ALDREBOENDE',
+        labels: [],
+      },
+    ],
+  },
+];
 
 interface TextEditorStubProps {
   className?: string;
@@ -47,6 +71,7 @@ vi.mock('@services/organization/organization-service', () => ({
 afterEach(() => {
   vi.clearAllMocks();
   vi.unstubAllGlobals();
+  useMetadataStore.setState({ metadata: undefined });
 });
 
 describe('SchemaForm accessibility contract', () => {
@@ -314,12 +339,15 @@ describe('SchemaForm accessibility contract', () => {
       },
     };
 
+    useMetadataStore.setState({ metadata: { labels: { labelStructure: placeLabelStructure } } });
+
     render(<SchemaForm schemaId={ACCESSIBILITY_TEST_SCHEMA_ID} schema={schema} uiSchema={uiSchema} hideSubmitButton />);
 
-    const input = screen.getByRole('textbox', { name: 'Lägg till plats där avvikelsen inträffat' });
+    // i18n-mocken ekar nyckeln, så det är nyckeln som blir fältets tillgängliga namn här.
+    const input = screen.getByRole('textbox', { name: 'facility_search.add_label' });
     const searchLabel = document.querySelector(`label[for="${input.id}"]`);
 
-    expect(searchLabel).toHaveTextContent('Lägg till plats där avvikelsen inträffat');
+    expect(searchLabel).toHaveTextContent('facility_search.add_label');
     expect(input).toHaveAttribute('aria-labelledby', searchLabel?.id);
     expect(input).toHaveAttribute('aria-describedby', expect.stringContaining(descriptionId(input.id)));
   });

@@ -32,7 +32,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
   const { setShowValidation } = useFormValidation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isCancelOpen, setIsCancelOpen] = useState<boolean>(false);
-  const { prepareErrandForApi, getFacilityOrgName } = usePrepareErrand();
+  const { prepareErrandForApi, getFacilityStatus } = usePrepareErrand();
 
   const errandStatus = watch('status');
   const errandId = watch('id');
@@ -121,11 +121,21 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
       return;
     }
 
-    if (eventConcerns === 'GRUPP_VERKSAMHET' && !getFacilityOrgName(values.errandFormData)) {
+    const facilityStatus = getFacilityStatus(values.errandFormData);
+    if (eventConcerns === 'GRUPP_VERKSAMHET' && facilityStatus === 'NONE') {
       toastMessage({
         position: 'bottom',
         status: 'error',
         message: t('errand-information:about.event_concerns_group_facility_required'),
+      });
+      return;
+    }
+    // En plats som inte är vald hela vägen ner ger fel label, och därmed fel behörighet
+    if (facilityStatus === 'INCOMPLETE') {
+      toastMessage({
+        position: 'bottom',
+        status: 'error',
+        message: t('errand-information:about.facility_incomplete'),
       });
       return;
     }
