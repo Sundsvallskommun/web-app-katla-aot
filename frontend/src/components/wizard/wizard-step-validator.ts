@@ -4,7 +4,17 @@ import type { TFunction } from 'i18next';
 
 import { WizardStep } from './wizard-steps';
 
-export async function validateStep(step: WizardStep, formValues: ErrandFormDTO, t?: TFunction): Promise<string[]> {
+/**
+ * `t` är obligatorisk. Med en valfri parameter och svensk reservtext skulle en glömd
+ * inkoppling ge svenska valideringsfel i ett engelskt gränssnitt, utan att vare sig
+ * typkontroll eller test reagerar.
+ */
+export async function validateStep(
+  step: WizardStep,
+  formValues: ErrandFormDTO,
+  t: TFunction,
+  locale?: string
+): Promise<string[]> {
   switch (step.id) {
     case 'about': {
       const errors: string[] = [];
@@ -12,16 +22,16 @@ export async function validateStep(step: WizardStep, formValues: ErrandFormDTO, 
       const eventConcerns = formValues.parameters?.find((p) => p.key === 'eventConcerns')?.values?.[0];
 
       if (!eventType) {
-        errors.push(t ? t('errand-information:about.event_type_required') : 'Välj en händelsetyp');
+        errors.push(t('errand-information:about.event_type_required'));
       }
       if (!eventConcerns) {
-        errors.push(t ? t('errand-information:about.event_concerns_required') : 'Välj vad händelsen berör');
+        errors.push(t('errand-information:about.event_concerns_required'));
       }
       return errors;
     }
 
     case 'deviation': {
-      return validateErrandFormData(formValues.errandFormData, t);
+      return validateErrandFormData(formValues.errandFormData, t, locale);
     }
 
     case 'reporter':

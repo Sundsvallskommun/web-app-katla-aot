@@ -3,6 +3,7 @@
 import { Button } from '@sk-web-gui/react';
 import { X } from 'lucide-react';
 import { ReactElement, ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface MobileOverlayPageProps {
   title: string;
@@ -12,6 +13,8 @@ interface MobileOverlayPageProps {
 }
 
 export const MobileOverlayPage: React.FC<MobileOverlayPageProps> = ({ title, icon, onClose, children }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-background-content pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
       <header className="flex items-center justify-between px-16 py-12 border-b-1 border-divider min-h-[56px]">
@@ -22,7 +25,7 @@ export const MobileOverlayPage: React.FC<MobileOverlayPageProps> = ({ title, ico
         <Button
           iconButton
           variant="tertiary"
-          aria-label="Stäng"
+          aria-label={t('layout:controls.close')}
           onClick={onClose}
           className="min-w-[44px] min-h-[44px]"
         >

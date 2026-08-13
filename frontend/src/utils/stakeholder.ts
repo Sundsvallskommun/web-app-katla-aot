@@ -1,4 +1,5 @@
 import { RoleDTO, StakeholderDTO } from '@data-contracts/backend/data-contracts';
+import type { TFunction } from 'i18next';
 import { appConfig } from 'src/config/appconfig';
 import * as yup from 'yup';
 
@@ -42,51 +43,50 @@ export function phoneNumberFormatter(phoneNumber: string | undefined | null): st
   return formatted;
 }
 
-export const stakeholderSchema = yup.object({
-  firstName: yup.string().trim().required('Förnamn får inte vara tomt'),
-  lastName: yup.string().trim().required('Efternamn får inte vara tomt'),
-  personNumber: yup
-    .string()
-    .nullable()
-    .notRequired()
-    .matches(personNumberRegex, {
-      message: 'Personnummer måste vara ÅÅÅÅMMDDXXXX eller ÅÅÅÅMMDD-XXXX',
-      excludeEmptyString: true,
-    })
-    .test('valid-date', 'Ogiltigt datum i personnummer', (value) => {
-      if (!value) return true;
-      const normalized = value.replace('-', '');
-
-      const year = Number(normalized.slice(0, 4));
-      const month = Number(normalized.slice(4, 6)) - 1;
-      const day = Number(normalized.slice(6, 8));
-
-      const date = new Date(year, month, day);
-      return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day;
-    }),
-  emails: yup
-    .array()
-    .of(
-      yup.string().matches(emailRegExp, {
-        message: 'Ogiltig e-postadress',
+/**
+ * Fabrik i stället för ett färdigt schema: yup binder felmeddelandena när schemat byggs,
+ * så ett schema på modulnivå skulle låsa fast språket vid det som råkade gälla när modulen
+ * lästes in. Anropas via useMemo på det aktiva språket.
+ */
+export const createStakeholderSchema = (t: TFunction) =>
+  yup.object({
+    firstName: yup.string().trim().required(t('validation:stakeholder.first_name_required')),
+    lastName: yup.string().trim().required(t('validation:stakeholder.last_name_required')),
+    personNumber: yup
+      .string()
+      .nullable()
+      .notRequired()
+      .matches(personNumberRegex, {
+        message: t('validation:stakeholder.person_number_format'),
         excludeEmptyString: true,
       })
-    )
-    .notRequired(),
-  phoneNumbers: yup
-    .array()
-    .of(
-      yup
-        .string()
-        .matches(
-          phoneRegExp,
-          'Fyll i ett giltigt mobilnummer, till exempel 0731234567, +46731234567 eller 0046731234567.'
-        )
-        .nullable()
-        .optional()
-    )
-    .notRequired(),
-});
+      .test('valid-date', t('validation:stakeholder.person_number_invalid_date'), (value) => {
+        if (!value) return true;
+        const normalized = value.replace('-', '');
+
+        const year = Number(normalized.slice(0, 4));
+        const month = Number(normalized.slice(4, 6)) - 1;
+        const day = Number(normalized.slice(6, 8));
+
+        const date = new Date(year, month, day);
+        return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day;
+      }),
+    emails: yup
+      .array()
+      .of(
+        yup.string().matches(emailRegExp, {
+          message: t('validation:stakeholder.email_invalid'),
+          excludeEmptyString: true,
+        })
+      )
+      .notRequired(),
+    phoneNumbers: yup
+      .array()
+      .of(yup.string().matches(phoneRegExp, t('validation:stakeholder.phone_invalid')).nullable().optional())
+      .notRequired(),
+  });
+
+export type StakeholderSchema = ReturnType<typeof createStakeholderSchema>;
 
 export const getReporterStakeholder: (stakeholders: StakeholderDTO[] | undefined) => StakeholderDTO | undefined = (
   stakeholders

@@ -1,0 +1,7 @@
+{
+  "warning_title": "Are you still there?",
+  "warning_message": "You will be logged out automatically in",
+  "warning_message_suffix": "minutes. Choose whether you want to log out or stay.",
+  "logout_button": "Log out",
+  "stay_button": "Stay logged in"
+}

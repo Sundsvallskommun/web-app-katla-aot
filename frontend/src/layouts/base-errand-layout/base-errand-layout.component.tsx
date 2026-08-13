@@ -31,7 +31,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
         <Logo variant="symbol" className="h-32 md:h-40" />
       : <a
           href={`${process.env.NEXT_PUBLIC_BASE_PATH}/oversikt`}
-          title={`Katla - ${process.env.NEXT_PUBLIC_APP_NAME}. Gå till startsidan.`}
+          title={t('layout:controls.go_to_start', { app: process.env.NEXT_PUBLIC_APP_NAME })}
         >
           <Logo variant="symbol" className="h-32 md:h-40" />
         </a>

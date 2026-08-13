@@ -1,6 +1,7 @@
 import { ErrandContentLock } from '@components/errand-content-lock/errand-content-lock.component';
 import { Checkbox, Disclosure, Divider, Label } from '@sk-web-gui/react';
 import { ReactElement, ReactNode, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
 
 export const ErrandDisclosure: React.FC<{
@@ -11,6 +12,7 @@ export const ErrandDisclosure: React.FC<{
   disabled?: boolean;
   initialOpen?: boolean;
 }> = ({ header, icon, children, errandInformationSection, disabled = false, initialOpen = true }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(disabled ? false : initialOpen);
   const [doneMark, setDoneMark] = useState(false);
 
@@ -47,7 +49,7 @@ export const ErrandDisclosure: React.FC<{
         <Disclosure.Title>{header}</Disclosure.Title>
         {doneMark && (
           <Label inverted rounded color="gronsta">
-            Komplett
+            {t('errand-information:section.complete')}
           </Label>
         )}
         <Disclosure.Button />
@@ -65,7 +67,7 @@ export const ErrandDisclosure: React.FC<{
               checked={doneMark}
               disabled={disabled}
             >
-              Markera avsnittet som komplett
+              {t('errand-information:section.mark_complete')}
             </Checkbox>
           )}
         </ErrandContentLock>

@@ -4,6 +4,7 @@ import { Button } from '@sk-web-gui/react';
 import { getStakeholderRoleDisplayName, shouldShowContactDetails } from '@utils/stakeholder';
 import { Pen, X } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMetadataStore } from 'src/stores/metadata-store';
 
 export const StakeholderCard: React.FC<{
@@ -15,6 +16,7 @@ export const StakeholderCard: React.FC<{
   index?: number;
   roles?: string[];
 }> = ({ stakeholder, isEditable, hideRemove, editableFields, onRemove, index, roles }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { metadata } = useMetadataStore();
 
@@ -74,7 +76,7 @@ export const StakeholderCard: React.FC<{
                   setIsOpen(true);
                 }}
               >
-                Redigera uppgifter
+                {t('errand-information:stakeholder.edit_details')}
               </Button>
               {!hideRemove && (
                 <Button
@@ -84,7 +86,7 @@ export const StakeholderCard: React.FC<{
                   size="sm"
                   onClick={onRemove}
                 >
-                  Ta bort
+                  {t('errand-information:stakeholder.remove')}
                 </Button>
               )}
             </div>

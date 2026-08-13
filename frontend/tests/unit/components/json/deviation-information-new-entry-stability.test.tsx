@@ -23,7 +23,7 @@ vi.mock('@components/json/utils/schema-utils', async (importOriginal) => {
 });
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: translateMock }),
+  useTranslation: () => ({ t: translateMock, i18n: { resolvedLanguage: 'sv' } }),
 }));
 
 const schema: RJSFSchema = {

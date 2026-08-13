@@ -67,7 +67,7 @@ function SchemaFormField({ schemaName, compact }: SchemaFormFieldProps) {
   }
 
   if (loading) {
-    return <div className="text-gray-500">Laddar formulär...</div>;
+    return <div className="text-gray-500">{t('errand-information:deviation_information.loading_form')}</div>;
   }
 
   if (error || !schema || !schemaId) {

@@ -1,4 +1,5 @@
 import { ColorSchemeItems } from '@components/misc/color-scheme-items.component';
+import { LanguageItems } from '@components/misc/language-items.component';
 import { MobileErrandCard } from '@components/mobile/mobile-errand-card.component';
 import { NotificationsBell } from '@components/notifications/notification-bell';
 import { AppUserMenu } from '@components/user-menu/app-user-menu.component';
@@ -15,6 +16,7 @@ import commonSv from '../../../locales/sv/common.json';
 import layoutSv from '../../../locales/sv/layout.json';
 
 const routerPushMock = vi.hoisted(() => vi.fn());
+const pathnameMock = vi.hoisted(() => ({ value: '/oversikt' }));
 const colorSchemeStoreMock = vi.hoisted(() => ({
   colorScheme: 'system',
   setColorScheme: vi.fn(),
@@ -23,6 +25,7 @@ const i18n = createInstance();
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: routerPushMock }),
+  usePathname: () => pathnameMock.value,
 }));
 
 vi.mock('@utils/use-localstorage.hook', () => ({
@@ -49,6 +52,7 @@ describe('control semantics', () => {
 
   afterEach(() => {
     routerPushMock.mockReset();
+    pathnameMock.value = '/oversikt';
     colorSchemeStoreMock.colorScheme = 'system';
     colorSchemeStoreMock.setColorScheme.mockReset();
     useNotificationStore.setState({ activeNotifications: [], acknowledgedNotifications: [] });
@@ -164,5 +168,46 @@ describe('control semantics', () => {
 
     expect(colorSchemeStoreMock.setColorScheme).toHaveBeenCalledWith(ColorSchemeMode.Light);
     expect(screen.getByRole('menuitemradio', { name: 'Mörkt' })).toBeVisible();
+  });
+
+  it('exposes languages by their native names as one radio set', () => {
+    renderLocalized(
+      <PopupMenu open>
+        <PopupMenu.Button>Språk</PopupMenu.Button>
+        <PopupMenu.Panel>
+          <LanguageItems />
+        </PopupMenu.Panel>
+      </PopupMenu>
+    );
+
+    // Namnen står på språket självt så att en användare som inte läser svenska
+    // känner igen sitt eget språk i menyn.
+    const swedish = screen.getByRole('menuitemradio', { name: 'Svenska' });
+    const english = screen.getByRole('menuitemradio', { name: 'English' });
+
+    expect([swedish, english].map((radio) => radio.getAttribute('name'))).toEqual([
+      'user-menu-language',
+      'user-menu-language',
+    ]);
+    expect(swedish).toBeChecked();
+    expect(english).toHaveAttribute('lang', 'en');
+  });
+
+  it('switches language by navigating to the same page under an explicit locale prefix', () => {
+    pathnameMock.value = '/arende/AIA-25120019/grundinformation';
+
+    renderLocalized(
+      <PopupMenu open>
+        <PopupMenu.Button>Språk</PopupMenu.Button>
+        <PopupMenu.Panel>
+          <LanguageItems />
+        </PopupMenu.Panel>
+      </PopupMenu>
+    );
+
+    fireEvent.click(screen.getByRole('menuitemradio', { name: 'English' }));
+
+    // Samma sida, inte en återgång till startsidan – annars tappar användaren sin plats.
+    expect(routerPushMock).toHaveBeenCalledWith('/en/arende/AIA-25120019/grundinformation');
   });
 });

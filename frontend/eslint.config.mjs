@@ -22,7 +22,6 @@ export default tseslint.config(
       'playwright-report/**',
       'test-results/**',
       'next-env.d.ts',
-      'next-i18next-env.d.ts',
       'src/data-contracts/**',
       '*.config.js',
       '*.config.mjs',

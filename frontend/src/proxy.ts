@@ -1,4 +1,5 @@
 import i18nConfig from '@app/i18nConfig';
+import { pathWithoutLocale } from '@app/locale-path';
 import { NextRequest, NextResponse } from 'next/server';
 import { i18nRouter } from 'next-i18n-router';
 
@@ -6,12 +7,16 @@ import { envs } from '../middleware-envs';
 
 export async function proxy(req: NextRequest) {
   const { pathname, origin } = req.nextUrl;
+  // Skyddade rutter och admin-omdirigeringen listas utan språkprefix. Jämför därför mot
+  // den språkskalade sökvägen – annars slutar /en/... matcha listan och kontrollen hoppas
+  // över helt på andra språk än standardspråket.
+  const unprefixedPathname = pathWithoutLocale(pathname);
 
-  if (pathname === '/admin') {
+  if (unprefixedPathname === '/admin') {
     return NextResponse.redirect(new URL(envs.adminUrl));
   }
 
-  if (envs.protectedRoutes.includes(pathname)) {
+  if (envs.protectedRoutes.includes(unprefixedPathname)) {
     const cookieName = envs.sessionCookieName;
     const token = req.cookies.get(cookieName)?.value ?? '';
 

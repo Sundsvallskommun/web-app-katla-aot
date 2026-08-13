@@ -48,7 +48,7 @@ vi.mock('src/stores/wizard-store', () => ({
 }));
 
 vi.mock('@components/tabs/tabs', () => ({
-  VisibleTabs: [{ label: 'Grundinformation', path: '/grundinformation', visible: true }],
+  VisibleTabs: [{ labelKey: 'common:tabs.basic_information', path: '/grundinformation', visible: true }],
 }));
 vi.mock('@components/wizard/mobile-wizard.component', () => ({ MobileWizard: () => <div>mobile-wizard</div> }));
 vi.mock('@contexts/form-validation-provider', () => ({

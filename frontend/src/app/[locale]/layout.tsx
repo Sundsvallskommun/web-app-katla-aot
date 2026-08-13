@@ -3,6 +3,11 @@ import { headers } from 'next/headers';
 import { ReactNode } from 'react';
 
 import initLocalization from '../i18n';
+import { pathWithoutLocale } from '../locale-path';
+
+/** Behåller null-fallet, som skiljer "ingen sökväg" från rotsökvägen i titellogiken. */
+const pathWithoutLocaleOrNull = (path: string | null): string | null =>
+  path === null ? null : pathWithoutLocale(path);
 
 interface LocaleLayoutProps {
   children: ReactNode;
@@ -32,7 +37,10 @@ const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {
 export const generateMetadata = async ({ params }: LocaleLayoutProps) => {
   const { locale } = await params;
   const { t } = await initLocalization(locale, namespaces);
-  const path = (await headers()).get('x-path');
+  // Nycklarna i paths.json är språkoberoende, medan x-path bär språkprefixet för alla
+  // språk utom standardspråket. Utan skalningen missar uppslaget på varje /en-sida och
+  // titeln faller tillbaka på den härledda sökvägen ("En, Login").
+  const path = pathWithoutLocaleOrNull((await headers()).get('x-path'));
 
   const pathName =
     !path ? null : (

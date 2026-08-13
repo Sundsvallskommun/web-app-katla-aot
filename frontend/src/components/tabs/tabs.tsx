@@ -1,11 +1,11 @@
 interface TabItem {
-  label: string;
+  labelKey: string;
   path: string;
   visible: boolean;
 }
 
 export const VisibleTabs: TabItem[] = [
-  { label: 'Grundinformation', path: `/arende/registrera`, visible: true },
-  // { label: 'Meddelanden', path: `/arende/${errandnumber}/meddelanden`, visible: true },
-  // { label: 'Bilagor', path: `/arende/${errandnumber}/bilagor`, visible: true },
+  { labelKey: 'common:tabs.basic_information', path: `/arende/registrera`, visible: true },
+  // { labelKey: 'common:tabs.messages', path: `/arende/${errandnumber}/meddelanden`, visible: true },
+  // { labelKey: 'common:tabs.attachments', path: `/arende/${errandnumber}/bilagor`, visible: true },
 ];

@@ -12,5 +12,13 @@
   "url": "Ange en giltig länk (URL)",
   "date": "Ange ett datum i giltigt format (ÅÅÅÅ-MM-DD)",
   "date_time": "Ange datum och tid i giltigt format",
-  "format": "Värdet matchar inte formatet \"{{format}}\""
+  "format": "Värdet matchar inte formatet \"{{format}}\"",
+  "stakeholder": {
+    "first_name_required": "Förnamn får inte vara tomt",
+    "last_name_required": "Efternamn får inte vara tomt",
+    "person_number_format": "Personnummer måste vara ÅÅÅÅMMDDXXXX eller ÅÅÅÅMMDD-XXXX",
+    "person_number_invalid_date": "Ogiltigt datum i personnummer",
+    "email_invalid": "Ogiltig e-postadress",
+    "phone_invalid": "Fyll i ett giltigt mobilnummer, till exempel 0731234567, +46731234567 eller 0046731234567."
+  }
 }

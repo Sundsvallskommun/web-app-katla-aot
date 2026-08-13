@@ -1,3 +1,4 @@
+import i18nConfig from '@app/i18nConfig';
 import { CancelErrandDialog } from '@components/cancel-errand-dialog.component';
 import {
   errandFormDataContractErrorMessage,
@@ -24,7 +25,8 @@ interface ErrandButtonGroupProps {
 
 export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErrand }) => {
   const { t } = useTranslation();
-  const { t: tForms } = useTranslation('forms');
+  const { t: tForms, i18n } = useTranslation('forms');
+  const locale = i18n.resolvedLanguage ?? i18nConfig.defaultLocale;
   const toastMessage = useSnackbar();
   const router = useRouter();
   const context = useFormContext<ErrandFormDTO>();
@@ -109,7 +111,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
       return;
     }
     // Validera errandFormData innan affärsregler läser värden ur JSON-strukturen.
-    const formDataErrors = await validateErrandFormData(values.errandFormData, tForms);
+    const formDataErrors = await validateErrandFormData(values.errandFormData, tForms, locale);
 
     if (formDataErrors.length > 0) {
       reportValidationError(formDataErrors[0]);
@@ -181,7 +183,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
           <CenterDiv>
             <Inbox size={32} className="mb-[1.6rem] text-vattjom-surface-primary" />
             <h3 className="text-h3-md">{t('errand-information:register')}</h3>
-            <span className="text-dark-secondary text-md">Vill du skicka in ärendet?</span>
+            <span className="text-dark-secondary text-md">{t('errand-information:submit_confirm.question')}</span>
           </CenterDiv>
         </Dialog.Content>
 
@@ -192,7 +194,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
               setIsOpen(false);
             }}
           >
-            Nej
+            {t('errand-information:submit_confirm.no')}
           </Button>
           <Button
             data-cy="submit-button"
@@ -201,7 +203,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
               void onRegister();
             }}
           >
-            Skicka in
+            {t('errand-information:submit_confirm.submit')}
           </Button>
           <Button
             data-cy="submit-logout-button"
@@ -211,7 +213,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
               void onRegister(true);
             }}
           >
-            Skicka in och logga ut
+            {t('errand-information:submit_confirm.submit_and_logout')}
           </Button>
         </Dialog.Buttons>
       </Dialog>

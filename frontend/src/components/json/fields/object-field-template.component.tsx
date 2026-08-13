@@ -196,7 +196,7 @@ function SectionDisclosure({ section, status, children }: SectionDisclosureProps
           <Divider className="mt-16" />
           {appConfig.features.disclosureDoneMark && (
             <Checkbox className="mt-16" onClick={handleDoneMarkChange} checked={doneMark}>
-              Markera avsnittet som komplett
+              {t('errand-information:section.mark_complete')}
             </Checkbox>
           )}
         </ErrandContentLock>

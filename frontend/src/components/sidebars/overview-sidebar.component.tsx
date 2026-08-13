@@ -28,7 +28,7 @@ export const OverviewSidebar: React.FC = () => {
     <NextLink
       href="/"
       className="no-underline"
-      aria-label={`Katla - ${process.env.NEXT_PUBLIC_APP_NAME}. Gå till startsidan.`}
+      aria-label={t('layout:controls.go_to_start', { app: process.env.NEXT_PUBLIC_APP_NAME })}
     >
       <Logo
         className={cx(open ? '' : 'w-[2.8rem]')}
