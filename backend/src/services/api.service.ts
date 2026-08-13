@@ -28,6 +28,15 @@ interface ResolvedRequestUrl {
   boundaryUrl: URL;
 }
 
+interface AuthenticatedResponse<T> {
+  response: AxiosResponse<T>;
+  token: string;
+}
+
+type AuthenticatedRequestConfig = Omit<AxiosRequestConfig, 'headers'> & {
+  headers: RawAxiosRequestHeaders;
+};
+
 const asDirectoryUrl = (url: URL): URL => {
   const directoryUrl = new URL(url.toString());
   directoryUrl.pathname = `${directoryUrl.pathname.replace(/\/+$/, '')}/`;
@@ -130,6 +139,38 @@ const getBoundedLocation = (location: string, requestUrl: URL, boundaryUrl: URL)
 class ApiService {
   private apiTokenService = new ApiTokenService();
 
+  /**
+   * Ett 401 från API-gatewayen betyder att den processcachade OAuth-tokenen
+   * inte längre accepteras. Uppdatera den delade tokenen och prova samma
+   * HTTP-anrop exakt en gång till. Anroparen hanterar ett eventuellt andra fel.
+   */
+  private async executeAuthenticatedRequest<T>(config: AuthenticatedRequestConfig, token: string): Promise<AuthenticatedResponse<T>> {
+    try {
+      return { response: await axios<T>(config), token };
+    } catch (error) {
+      const response = axios.isAxiosError(error) ? error.response : undefined;
+      if (response?.status !== 401) throw error;
+
+      logAxiosErrorResponse(response);
+      const refreshedToken = await this.apiTokenService.refreshToken(token);
+      const retryRequestId = uuidv4();
+      const retryConfig: AuthenticatedRequestConfig = {
+        ...config,
+        headers: {
+          ...config.headers,
+          Authorization: `Bearer ${refreshedToken}`,
+          'X-Request-Id': retryRequestId,
+        },
+      };
+
+      if (process.env.NODE_ENV === 'development') {
+        logger.info(`Retrying API request after OAuth refresh; x-request-id: ${retryRequestId}`);
+      }
+
+      return { response: await axios<T>(retryConfig), token: refreshedToken };
+    }
+  }
+
   private async request<T>(config: ApiRequestConfig, req?: ApiRequest): Promise<ApiResponse<T>> {
     const { propagateClientError = false, ...axiosConfig } = config;
     const { requestUrl, boundaryUrl } = resolveRequestUrl(axiosConfig);
@@ -141,7 +182,7 @@ class ApiService {
     // Anropare skickar alltid vanliga header-objekt; typen breddas för att kunna spridas säkert.
     const configHeaders: RawAxiosRequestHeaders | undefined = axiosConfig.headers;
 
-    const preparedConfig: AxiosRequestConfig = {
+    const preparedConfig: AuthenticatedRequestConfig = {
       ...axiosConfig,
       headers: {
         'Content-Type': 'application/json',
@@ -162,7 +203,8 @@ class ApiService {
         logger.info(`API request [${preparedConfig.method}]: ${preparedConfig.url}`);
         logger.info(`x-request-id: ${requestId}`);
       }
-      const res = await axios<T>(preparedConfig);
+      const authenticatedResponse = await this.executeAuthenticatedRequest<T>(preparedConfig, token);
+      const res = authenticatedResponse.response;
 
       const location = res.headers.location as string | undefined;
       if (!location) {
@@ -170,13 +212,19 @@ class ApiService {
       }
 
       const responseUrl = getBoundedLocation(location, requestUrl, boundaryUrl);
-      const getRes = await axios.get<T>(responseUrl, {
-        headers: preparedConfig.headers,
+      const redirectConfig: AuthenticatedRequestConfig = {
+        headers: {
+          ...preparedConfig.headers,
+          Authorization: `Bearer ${authenticatedResponse.token}`,
+        },
         maxRedirects: 0,
+        method: 'GET',
         timeout: API_REQUEST_TIMEOUT_MS,
-      });
+        url: responseUrl,
+      };
+      const getRes = await this.executeAuthenticatedRequest<T>(redirectConfig, authenticatedResponse.token);
 
-      return { data: getRes.data, message: 'success' };
+      return { data: getRes.response.data, message: 'success' };
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

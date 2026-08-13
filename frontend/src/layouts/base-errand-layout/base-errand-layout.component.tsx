@@ -69,7 +69,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
 
                 <Divider orientation="vertical" className="mx-24" />
                 <LinkButton
-                  href={`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/registrera`}
+                  href="/arende/registrera"
                   data-cy="register-new-errand-button"
                   color="primary"
                   variant="tertiary"

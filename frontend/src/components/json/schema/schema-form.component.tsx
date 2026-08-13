@@ -11,6 +11,7 @@ import { RADIO_WIDGET_NAMES } from '@components/json/widgets/radio-widget-names'
 import { SelectWidget } from '@components/json/widgets/select-widget';
 import { TextWidget } from '@components/json/widgets/text-widget';
 import { TexteditorWidget } from '@components/json/widgets/texteditor-widget';
+import { TimeWidget } from '@components/json/widgets/time-widget';
 import Form, { IChangeEvent } from '@rjsf/core';
 import type { RegistryFieldsType, RegistryWidgetsType, RJSFSchema, UiSchema } from '@rjsf/utils';
 import { useCallback, useMemo, useState } from 'react';
@@ -29,6 +30,9 @@ const widgets: RegistryWidgetsType = {
   checkbox: CheckboxWidget,
   DateWidget,
   date: DateWidget,
+  // Namnet TimeWidget ersätter även RJSF:s standardwidget för `format: "time"`
+  TimeWidget,
+  time: TimeWidget,
   ComboboxWidget,
   combobox: ComboboxWidget,
   TexteditorWidget,

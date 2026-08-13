@@ -1,10 +1,22 @@
 import { MUNICIPALITY_ID } from '@/config';
 import { ContactChannel, Parameter, Stakeholder } from '@/data-contracts/supportmanagement/data-contracts';
+import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { StakeholderDTO } from '@/responses/supportmanagement.response';
 import ApiService from '@/services/api.service';
 
 import { apiURL } from './util';
+
+const getCitizenPersonNumber = (value: unknown): string => {
+  if (typeof value === 'string') return value;
+
+  // Citizen dokumenterar svaret som en sträng, men gatewayen kan JSON-parsa
+  // det tolvsiffriga värdet som ett tal. Acceptera bara heltal som kan
+  // konverteras utan precisionsförlust.
+  if (typeof value === 'number' && Number.isSafeInteger(value)) return String(value);
+
+  throw new HttpException(502, 'Invalid person number response from Citizen API');
+};
 
 export async function mapStakeholderToStakeholderDTO(stakeholder: Stakeholder, req: RequestWithUser): Promise<StakeholderDTO> {
   const apiService = new ApiService();
@@ -13,7 +25,8 @@ export async function mapStakeholderToStakeholderDTO(stakeholder: Stakeholder, r
   let personNumber = '';
 
   if (stakeholder.externalId) {
-    personNumber = (await apiService.get<string>({ url: citizenUrl, baseURL }, req)).data;
+    const citizenResponse = await apiService.get<unknown>({ url: citizenUrl, baseURL }, req);
+    personNumber = getCitizenPersonNumber(citizenResponse.data);
   }
 
   const { contactChannels, parameters, ...rest } = stakeholder;

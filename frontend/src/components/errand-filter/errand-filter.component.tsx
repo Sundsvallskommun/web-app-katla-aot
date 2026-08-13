@@ -33,12 +33,7 @@ export const ErrandFilter: React.FC = () => {
             {show ? t('filtering:hide_filter') : t('filtering:show_filter')}
           </Button>
         )}
-        <LinkButton
-          href={`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/registrera`}
-          data-cy="register-new-errand-button"
-          color="vattjom"
-          variant="primary"
-        >
+        <LinkButton href="/arende/registrera" data-cy="register-new-errand-button" color="vattjom" variant="primary">
           {t('filtering:new_errand')}
         </LinkButton>
       </div>

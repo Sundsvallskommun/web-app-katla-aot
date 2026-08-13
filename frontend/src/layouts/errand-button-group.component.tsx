@@ -50,7 +50,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
       reset({ ...errand, errandFormData });
 
       if (isNewErrand) {
-        router.push(`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/${errand.errandNumber}/grundinformation`);
+        router.push(`/arende/${errand.errandNumber}/grundinformation`);
       }
     } catch (error: unknown) {
       toastMessage({

@@ -1,5 +1,5 @@
 import type { AxiosRequestConfig } from 'axios';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type MockInstance, vi } from 'vitest';
 
 import { HttpException } from '@/exceptions/HttpException';
 import ApiService from '@/services/api.service';
@@ -7,19 +7,18 @@ import ApiTokenService from '@/services/api-token.service';
 import { logger } from '@/utils/logger';
 
 const axiosMocks = vi.hoisted(() => ({
-  get: vi.fn<(url: string, config?: AxiosRequestConfig) => Promise<{ data: unknown }>>(),
   isAxiosError: vi.fn<(error: unknown) => boolean>(),
   request: vi.fn<(config: AxiosRequestConfig) => Promise<{ data: unknown; headers: Record<string, unknown> }>>(),
 }));
 
 vi.mock('axios', () => ({
   default: Object.assign(axiosMocks.request, {
-    get: axiosMocks.get,
     isAxiosError: axiosMocks.isAxiosError,
   }),
 }));
 
 const loggerError = vi.spyOn(logger, 'error').mockImplementation(() => logger);
+let refreshTokenSpy: MockInstance<ApiTokenService['refreshToken']>;
 
 const getLoggedMessages = (): string[] => loggerError.mock.calls.flatMap(([message]) => (typeof message === 'string' ? [message] : []));
 
@@ -28,6 +27,7 @@ describe('ApiService security boundaries', () => {
     vi.clearAllMocks();
     axiosMocks.isAxiosError.mockReturnValue(false);
     vi.spyOn(ApiTokenService.prototype, 'getToken').mockResolvedValue('top-secret-bearer-token');
+    refreshTokenSpy = vi.spyOn(ApiTokenService.prototype, 'refreshToken').mockResolvedValue('refreshed-integration-test-token');
   });
 
   it('logs request metadata without credentials or payload data', async () => {
@@ -71,7 +71,7 @@ describe('ApiService security boundaries', () => {
 
     await expect(new ApiService().post({ baseURL: 'https://api.example.test', url: '/errands' })).rejects.toMatchObject({ status: 502 });
 
-    expect(axiosMocks.get).not.toHaveBeenCalled();
+    expect(axiosMocks.request).toHaveBeenCalledTimes(1);
   });
 
   it('resolves same-origin Location responses with the request timeout', async () => {
@@ -79,17 +79,21 @@ describe('ApiService security boundaries', () => {
       data: undefined,
       headers: { location: '/errands/123' },
     });
-    axiosMocks.get.mockResolvedValueOnce({ data: { id: '123' } });
+    axiosMocks.request.mockResolvedValueOnce({ data: { id: '123' }, headers: {} });
 
     await expect(new ApiService().post({ baseURL: 'https://api.example.test', url: '/errands' })).resolves.toEqual({
       data: { id: '123' },
       message: 'success',
     });
 
-    const [redirectUrl, redirectConfig] = axiosMocks.get.mock.calls[0] ?? [];
-    expect(redirectUrl).toBe('https://api.example.test/errands/123');
-    expect(redirectConfig).toMatchObject({ maxRedirects: 0, timeout: 30_000 });
-    expect(redirectConfig?.headers).toMatchObject({ Authorization: 'Bearer top-secret-bearer-token' });
+    const [redirectConfig] = axiosMocks.request.mock.calls[1] ?? [];
+    expect(redirectConfig).toMatchObject({
+      headers: { Authorization: 'Bearer top-secret-bearer-token' },
+      maxRedirects: 0,
+      method: 'GET',
+      timeout: 30_000,
+      url: 'https://api.example.test/errands/123',
+    });
   });
 
   it('sets a timeout on ordinary upstream requests', async () => {
@@ -221,7 +225,7 @@ describe('ApiService security boundaries', () => {
       },
     };
 
-    axiosMocks.request.mockRejectedValueOnce({ response });
+    axiosMocks.request.mockRejectedValueOnce({ response }).mockRejectedValueOnce({ response });
     axiosMocks.isAxiosError.mockReturnValue(true);
 
     await expect(
@@ -239,5 +243,7 @@ describe('ApiService security boundaries', () => {
     });
 
     expect(getLoggedMessages().some(message => message.includes('Upstream authentication details'))).toBe(false);
+    expect(refreshTokenSpy).toHaveBeenCalledTimes(1);
+    expect(axiosMocks.request).toHaveBeenCalledTimes(2);
   });
 });

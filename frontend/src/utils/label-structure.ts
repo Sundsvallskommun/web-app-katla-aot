@@ -6,12 +6,20 @@ import { LabelDTO } from '@data-contracts/backend/data-contracts';
  * trädet istället för från organisationsträdet i company-API:t.
  */
 const PLACE_STRUCTURE_ROOT_NAMES = ['platsstruktur', 'place_structure', 'placestructure'];
+const PLACE_STRUCTURE_ROOT_LEVEL = 2;
+const PLACE_LEVEL = 6;
+const DEPARTMENT_LEVEL = 7;
 
 export interface PlaceNode {
   /** Labelnoden själv */
   label: LabelDTO;
   /** Kedjan från platsstrukturens rot ner till och med noden */
   path: LabelDTO[];
+}
+
+export interface PlaceSelectionPresentation {
+  place: string;
+  department?: string;
 }
 
 export const normalizeLabelName = (value: string | undefined): string =>
@@ -76,18 +84,49 @@ export const qualifiedPlaceName = (node: PlaceNode): string => {
   return parentName ? `${parentName} ${placeName(node)}` : placeName(node);
 };
 
-/** Vägen från översta platsnivån ner till noden, utan roten. Används i sökträffar. */
-export const placePathText = (node: PlaceNode, separator = ' › '): string =>
-  node.path.slice(1).map(labelName).join(separator);
+const labelAtLevel = (node: PlaceNode, level: number): LabelDTO | undefined =>
+  node.path[level - PLACE_STRUCTURE_ROOT_LEVEL];
 
-/** Hela labelkedjan inklusive roten. Visas för användaren som "det här blir label på ärendet". */
-export const placeLabelChainText = (node: PlaceNode, separator = ' › '): string =>
-  node.path.map(labelName).join(separator);
+/**
+ * Nivå 6 är platsen som visas. Nivå 7 är en valfri avdelning under platsen.
+ * För ett ännu ofullständigt val på nivå 3–5 visas den aktuella noden tills användaren valt vidare.
+ */
+export const getPlaceSelectionPresentation = (node: PlaceNode): PlaceSelectionPresentation => {
+  const place = labelAtLevel(node, PLACE_LEVEL) ?? node.label;
+  const department = labelAtLevel(node, DEPARTMENT_LEVEL);
+
+  return {
+    place: labelName(place),
+    ...(department ? { department: labelName(department) } : {}),
+  };
+};
+
+/** Sökindexet innehåller samtliga användarnivåer 3–7 men inte den tekniska roten på nivå 2. */
+export const placeSearchText = (node: PlaceNode): string =>
+  node.path
+    .slice(1, DEPARTMENT_LEVEL - PLACE_STRUCTURE_ROOT_LEVEL + 1)
+    .map(labelName)
+    .join(' ');
+
+/** Sökord får ligga på olika nivåer i strukturen och behöver därför inte stå direkt efter varandra. */
+export const matchesPlaceSearch = (node: PlaceNode, query: string): boolean => {
+  const searchableText = normalizeLabelName(placeSearchText(node));
+  const terms = normalizeLabelName(query).split(' ').filter(Boolean);
+  return terms.every((term) => searchableText.includes(term));
+};
 
 export const placeKey = (node: PlaceNode): string => node.label.resourcePath ?? node.path.map(labelName).join('/');
 
 export const findPlaceNodeByKey = (nodes: PlaceNode[], key: string): PlaceNode | undefined =>
   nodes.find((node) => placeKey(node) === key);
+
+/** Närmaste föräldern inom platsstrukturen. Den tekniska roten returneras aldrig som valbar plats. */
+export const getParentPlaceNode = (nodes: PlaceNode[], node: PlaceNode): PlaceNode | undefined => {
+  const parentLabel = node.path.at(-2);
+  if (!parentLabel || isSameLabel(parentLabel, node.path[0])) return undefined;
+
+  return nodes.find((candidate) => isSameLabel(candidate.label, parentLabel));
+};
 
 /** Direkta barn till en nod, som PlaceNode så att de bär med sig hela sin väg */
 export const getSubPlaceNodes = (nodes: PlaceNode[], parent: PlaceNode): PlaceNode[] =>

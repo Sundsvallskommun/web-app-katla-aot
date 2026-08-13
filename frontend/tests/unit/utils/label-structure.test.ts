@@ -2,15 +2,17 @@ import { LabelDTO } from '@data-contracts/backend/data-contracts';
 import {
   findPlaceNode,
   findPlaceNodeByKey,
+  getParentPlaceNode,
   getPlaceNodes,
+  getPlaceSelectionPresentation,
   getPlaceStructureRoot,
   getSubPlaceNodes,
   hasSubPlaces,
+  matchesPlaceSearch,
   placeKey,
-  placeLabelChainText,
   PlaceNode,
   placeParentName,
-  placePathText,
+  placeSearchText,
   qualifiedPlaceName,
   toErrandLabels,
 } from '@utils/label-structure';
@@ -98,13 +100,56 @@ describe('label-structure', () => {
     expect(hasSubPlaces(node)).toBe(false);
   });
 
-  it('utelämnar roten i sökvägstexten men har med den i labelkedjan', () => {
+  it('visar bara nivå 6 när platsen saknar avdelning och söker i nivå 3–6', () => {
     const node = requirePlace('Blå', 'VOF ÄB Solhaga geme.');
 
-    expect(placePathText(node)).toBe('VOF Äldreboende › VOF ÄB Solhaga › VOF ÄB Solhaga geme. › Blå');
-    expect(placeLabelChainText(node)).toBe(
-      'Platsstruktur › VOF Äldreboende › VOF ÄB Solhaga › VOF ÄB Solhaga geme. › Blå'
-    );
+    expect(getPlaceSelectionPresentation(node)).toEqual({ place: 'Blå' });
+    expect(placeSearchText(node)).toBe('VOF Äldreboende VOF ÄB Solhaga VOF ÄB Solhaga geme. Blå');
+    expect(matchesPlaceSearch(node, 'solhaga')).toBe(true);
+    expect(matchesPlaceSearch(node, 'blå')).toBe(true);
+    expect(matchesPlaceSearch(node, 'solhaga blå')).toBe(true);
+    expect(matchesPlaceSearch(node, 'skottsundsbacken blå')).toBe(false);
+  });
+
+  it('visar nivå 6 och 7 tillsammans och särskiljer samma avdelningsnamn genom anläggningen', () => {
+    const structureWithDepartments: LabelDTO[] = [
+      {
+        id: 'platsstruktur',
+        classification: 'PLACE',
+        displayName: 'Platsstruktur',
+        resourceName: 'PLATSSTRUKTUR',
+        resourcePath: 'PLATSSTRUKTUR',
+        labels: [
+          label('IAF Vuxenutbildningen', 'PLATSSTRUKTUR/VUX', [
+            label('IAF VUX SFI SO och Grl', 'PLATSSTRUKTUR/VUX/SFI', [
+              label('IAF VUX SFI egen extern och SO', 'PLATSSTRUKTUR/VUX/SFI/EGEN', [
+                label('Solhaga', 'PLATSSTRUKTUR/VUX/SFI/EGEN/SOLHAGA', [
+                  label('Blå', 'PLATSSTRUKTUR/VUX/SFI/EGEN/SOLHAGA/BLA'),
+                ]),
+                label('Skottsundsbacken', 'PLATSSTRUKTUR/VUX/SFI/EGEN/SKOTTSUNDSBACKEN', [
+                  label('Blå', 'PLATSSTRUKTUR/VUX/SFI/EGEN/SKOTTSUNDSBACKEN/BLA'),
+                ]),
+              ]),
+            ]),
+          ]),
+        ],
+      },
+    ];
+    const departmentNodes = getPlaceNodes(structureWithDepartments);
+    const solhagaBlue = findPlaceNode(departmentNodes, 'Blå', 'Solhaga');
+    const skottsundsbackenBlue = findPlaceNode(departmentNodes, 'Blå', 'Skottsundsbacken');
+
+    if (!solhagaBlue || !skottsundsbackenBlue) throw new Error('Hittade inte testavdelningarna');
+
+    expect(getPlaceSelectionPresentation(solhagaBlue)).toEqual({ place: 'Solhaga', department: 'Blå' });
+    expect(getPlaceSelectionPresentation(skottsundsbackenBlue)).toEqual({
+      place: 'Skottsundsbacken',
+      department: 'Blå',
+    });
+    expect(matchesPlaceSearch(solhagaBlue, 'solhaga')).toBe(true);
+    expect(matchesPlaceSearch(solhagaBlue, 'blå')).toBe(true);
+    expect(matchesPlaceSearch(solhagaBlue, 'sfi blå')).toBe(true);
+    expect(matchesPlaceSearch(solhagaBlue, 'skottsundsbacken')).toBe(false);
   });
 
   it('ger toppnivåns platser inget föräldrapåhäng', () => {
@@ -118,6 +163,13 @@ describe('label-structure', () => {
     const parent = requirePlace('VOF ÄB Skottsundsbacken geme.');
 
     expect(getSubPlaceNodes(placeNodes, parent).map((node) => node.label.displayName)).toEqual(['Blå', 'Gul', 'Röd']);
+  });
+
+  it('hittar föräldern så att syskonval kan ligga kvar efter ett slutval', () => {
+    const node = requirePlace('Blå', 'VOF ÄB Skottsundsbacken geme.');
+
+    expect(getParentPlaceNode(placeNodes, node)?.label.displayName).toBe('VOF ÄB Skottsundsbacken geme.');
+    expect(getParentPlaceNode(placeNodes, requirePlace('VOF Äldreboende'))).toBeUndefined();
   });
 
   it('hittar tillbaka till noden via sin nyckel', () => {

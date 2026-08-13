@@ -100,6 +100,23 @@ function getSectionDefinitions(uiSchema: UiSchema | undefined): SectionDefinitio
 }
 
 /**
+ * UI-schemat använder Lucides stabila kebab-case-namn medan lucide-reacts
+ * ikonregister använder PascalCase som objektnycklar.
+ */
+function getSectionIcon(iconName: string | undefined) {
+  if (!iconName) return undefined;
+
+  const iconKey = iconName
+    .trim()
+    .split('-')
+    .filter(Boolean)
+    .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
+    .join('') as keyof typeof icons;
+
+  return icons[iconKey];
+}
+
+/**
  * Section component with completion checkbox
  */
 interface SectionDisclosureProps {
@@ -110,6 +127,7 @@ interface SectionDisclosureProps {
 function SectionDisclosure({ section, children }: SectionDisclosureProps) {
   const [open, setOpen] = useState(section.defaultOpen ?? false);
   const [doneMark, setDoneMark] = useState(false);
+  const SectionIcon = getSectionIcon(section.icon);
 
   const handleDoneMarkChange = () => {
     const newDoneMark = !doneMark;
@@ -123,9 +141,7 @@ function SectionDisclosure({ section, children }: SectionDisclosureProps) {
   return (
     <Disclosure variant="alt" className="w-full" open={open} onToggleOpen={setOpen}>
       <Disclosure.Header>
-        {section.icon && icons[section.icon as keyof typeof icons] && (
-          <Disclosure.Icon icon={React.createElement(icons[section.icon as keyof typeof icons])} />
-        )}
+        {SectionIcon && <Disclosure.Icon icon={React.createElement(SectionIcon)} />}
         <Disclosure.Title>{section.title}</Disclosure.Title>
         {doneMark && (
           <Label inverted rounded color="gronsta">

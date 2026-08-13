@@ -6,7 +6,7 @@ import { jsonRoute } from '../utils/routes';
 import { expect, test } from '../utils/test';
 
 test.describe('Overview page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ baseURL, page }) => {
     await page.route(
       (url) => url.pathname.endsWith('/supportmanagement/errands') && url.searchParams.get('page') === '0',
       jsonRoute(mockErrands)
@@ -25,7 +25,8 @@ test.describe('Overview page', () => {
     );
     await page.route('**/supportmanagement/notifications', jsonRoute(mockNotifications));
     await page.route('**/supportmanagement/metadata', jsonRoute(mockMetadata));
-    await page.goto('/oversikt');
+    const appBaseUrl = (baseURL ?? 'http://localhost:3000').replace(/\/$/, '');
+    await page.goto(`${appBaseUrl}/oversikt`);
   });
 
   test('Show sidebar filter buttons with errand count', async ({ page }) => {
@@ -57,6 +58,16 @@ test.describe('Overview page', () => {
     await expect(headerCells.nth(3).locator('span').first()).toHaveText('Rapporterat');
 
     await expect(table.locator('.sk-table-tbody-tr')).toHaveCount(mockErrands?.content?.length ?? 0);
+  });
+
+  test('Links to registration exactly once below the configured base path', async ({ baseURL, page }) => {
+    const appBaseUrl = new URL(baseURL ?? 'http://localhost:3000');
+    const basePath = appBaseUrl.pathname.replace(/\/$/, '');
+
+    await expect(page.getByTestId('register-new-errand-button')).toHaveAttribute(
+      'href',
+      `${basePath}/arende/registrera`
+    );
   });
 
   // TODO: Add test for search field when frontend functionality is ready

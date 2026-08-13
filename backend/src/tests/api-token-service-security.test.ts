@@ -43,4 +43,27 @@ describe('ApiTokenService security boundaries', () => {
     expect(loggedMessages.some(message => message.includes('base64-client-secret'))).toBe(false);
     expect(loggedMessages.some(message => message.includes('sensitive provider response'))).toBe(false);
   });
+
+  it('shares one token request between concurrent callers', async () => {
+    const service = new ApiTokenService();
+    service.setToken({ access_token: 'expired-token', expires_in: 0 });
+
+    let resolveTokenRequest: ((response: { data: { access_token: string; expires_in: number } }) => void) | undefined;
+    axiosMocks.request.mockImplementationOnce(
+      async () =>
+        await new Promise(resolve => {
+          resolveTokenRequest = resolve;
+        }),
+    );
+
+    const firstToken = service.getToken();
+    const secondToken = service.getToken();
+    const thirdToken = service.getToken();
+
+    expect(axiosMocks.request).toHaveBeenCalledTimes(1);
+    resolveTokenRequest?.({ data: { access_token: 'shared-token', expires_in: 0 } });
+
+    await expect(Promise.all([firstToken, secondToken, thirdToken])).resolves.toEqual(['shared-token', 'shared-token', 'shared-token']);
+    expect(axiosMocks.request).toHaveBeenCalledTimes(1);
+  });
 });
