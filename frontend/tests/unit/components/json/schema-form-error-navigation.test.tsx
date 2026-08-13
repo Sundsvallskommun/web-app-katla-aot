@@ -5,9 +5,14 @@ import { focusFirstInvalidField, INVALID_FIELD_ATTRIBUTE } from '@utils/focus-fi
 import { FormProvider, useForm } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 
+const translations: Record<string, string> = {
+  section_incomplete: 'Ofullständig',
+  section_complete: 'Komplett',
+};
+
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => (key === 'section_has_errors' ? 'Ofullständig' : key),
+    t: (key: string) => translations[key] ?? key,
   }),
 }));
 
@@ -29,7 +34,13 @@ const uiSchema: UiSchema<Record<string, unknown>> = {
   ],
 };
 
-function ErrorNavigationForm({ showValidation }: { showValidation?: boolean }) {
+function ErrorNavigationForm({
+  showValidation,
+  formData,
+}: {
+  showValidation?: boolean;
+  formData?: Record<string, unknown>;
+}) {
   const methods = useForm({ defaultValues: { status: 'DRAFT' } });
 
   return (
@@ -40,17 +51,26 @@ function ErrorNavigationForm({ showValidation }: { showValidation?: boolean }) {
         uiSchema={uiSchema}
         hideSubmitButton
         showValidation={showValidation}
+        formData={formData}
       />
     </FormProvider>
   );
 }
 
 describe('felnavigering i schemaformuläret', () => {
-  it('märker fälten som har fel och visar vilka avsnitt som behöver kompletteras', () => {
+  it('håller avsnitten omärkta tills valideringen är igång', () => {
     render(<ErrorNavigationForm />);
 
     expect(document.querySelector(`[${INVALID_FIELD_ATTRIBUTE}]`)).not.toBeInTheDocument();
     expect(screen.queryByText('Ofullständig')).not.toBeInTheDocument();
+    expect(screen.queryByText('Komplett')).not.toBeInTheDocument();
+  });
+
+  it('märker ifyllda avsnitt som kompletta och avsnitt med fel som ofullständiga', () => {
+    render(<ErrorNavigationForm showValidation formData={{ eventDate: '2026-08-13' }} />);
+
+    expect(document.querySelector('[data-cy="section-status-event"]')).toHaveTextContent('Komplett');
+    expect(document.querySelector('[data-cy="section-status-details"]')).toHaveTextContent('Ofullständig');
   });
 
   it('öppnar avsnittet och flyttar fokus till första fältet som saknas', () => {
@@ -63,7 +83,7 @@ describe('felnavigering i schemaformuläret', () => {
     expect(markedFields[0].getAttribute(INVALID_FIELD_ATTRIBUTE)).toBe('root_eventDate');
     expect(screen.getAllByText('Ofullständig')).toHaveLength(2);
 
-    const eventSection = document.querySelector('[data-cy="section-error-event"]')?.closest('[data-open]');
+    const eventSection = document.querySelector('[data-cy="section-status-event"]')?.closest('[data-open]');
     expect(eventSection).toHaveAttribute('data-open', 'false');
 
     let navigated = false;

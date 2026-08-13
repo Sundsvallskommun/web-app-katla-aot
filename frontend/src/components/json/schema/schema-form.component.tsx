@@ -100,7 +100,10 @@ export default function SchemaForm({
   const errorTransformer = useMemo(() => createJsonErrorTransformer(schema, t), [schema, t]);
 
   // Skickar originalschemat via formContext så att ObjectFieldTemplate kan läsa villkoren
-  const formContext = useMemo(() => ({ originalSchema: schema, compact }), [schema, compact]);
+  const formContext = useMemo(
+    () => ({ originalSchema: schema, compact, validationActive: shouldValidate }),
+    [schema, compact, shouldValidate]
+  );
 
   return (
     <Form

@@ -34,6 +34,7 @@ interface SectionDefinition {
 interface FormContext {
   originalSchema?: RJSFSchema;
   compact?: boolean;
+  validationActive?: boolean;
 }
 
 function isConditionMet(condition: ConditionalRule['if'], formData: Record<string, unknown>): boolean {
@@ -136,15 +137,21 @@ function sectionHasErrors(fieldNames: string[], errorSchema: ErrorSchema | undef
 }
 
 /**
+ * Avsnitten får sin status först när valideringen är igång. Innan dess vet formuläret inte
+ * om ett tomt fält är ett fel eller bara något användaren inte hunnit fram till.
+ */
+type SectionStatus = 'error' | 'complete';
+
+/**
  * Section component with completion checkbox
  */
 interface SectionDisclosureProps {
   section: SectionDefinition;
-  hasError?: boolean;
+  status?: SectionStatus;
   children: React.ReactNode;
 }
 
-function SectionDisclosure({ section, hasError = false, children }: SectionDisclosureProps) {
+function SectionDisclosure({ section, status, children }: SectionDisclosureProps) {
   const { t } = useTranslation('forms');
   const [open, setOpen] = useState(section.defaultOpen ?? false);
   const [doneMark, setDoneMark] = useState(false);
@@ -165,20 +172,20 @@ function SectionDisclosure({ section, hasError = false, children }: SectionDiscl
         {SectionIcon && <Disclosure.Icon icon={React.createElement(SectionIcon)} />}
         {/* min-w-0 låter rubriken krympa i stället för att trycka ut statusetiketten över kanten */}
         <Disclosure.Title className="min-w-0">{section.title}</Disclosure.Title>
-        {hasError && (
+        {status && (
           <Label
             inverted
             rounded
-            color="error"
+            color={status === 'error' ? 'error' : 'gronsta'}
             className="sk-disclosure-label whitespace-nowrap"
-            data-cy={`section-error-${section.id}`}
+            data-cy={`section-status-${section.id}`}
           >
-            {t('section_has_errors')}
+            {t(status === 'error' ? 'section_incomplete' : 'section_complete')}
           </Label>
         )}
-        {doneMark && (
-          <Label inverted rounded color="gronsta">
-            Komplett
+        {doneMark && status !== 'complete' && (
+          <Label inverted rounded color="gronsta" className="sk-disclosure-label whitespace-nowrap">
+            {t('section_complete')}
           </Label>
         )}
         <Disclosure.Button />
@@ -285,6 +292,7 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
   }
 
   const compact = ctx?.compact ?? false;
+  const validationActive = ctx?.validationActive ?? false;
 
   // If no sections defined, use original flat rendering
   if (sections.length === 0) {
@@ -331,12 +339,13 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
           );
         }
 
+        const status =
+          !validationActive ? undefined
+          : sectionHasErrors(sectionFieldsInOrder, errorSchema) ? 'error'
+          : 'complete';
+
         return (
-          <SectionDisclosure
-            key={section.id}
-            section={section}
-            hasError={sectionHasErrors(sectionFieldsInOrder, errorSchema)}
-          >
+          <SectionDisclosure key={section.id} section={section} status={status}>
             <div className="flex flex-col gap-32 py-16">
               {renderFields(sectionFieldsInOrder, properties, visibleFields, rows, rowFieldNames, renderedRows)}
             </div>
