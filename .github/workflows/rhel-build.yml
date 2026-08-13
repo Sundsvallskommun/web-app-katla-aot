@@ -1,0 +1,94 @@
+name: RHEL 8.10 build
+
+# Verifierar att frontend och backend går att installera och bygga i samma
+# miljö som våra servrar kör (RHEL 8.10). Fångar t.ex. glibc-inkompatibilitet
+# i Node-binärer och native moduler som bara byggs på Ubuntu-runnern.
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - develop
+      - main
+
+concurrency:
+  group: rhel-build-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  YARN_VERSION: 1.22.22
+
+jobs:
+  build:
+    name: ${{ matrix.package }} – yarn install & build (RHEL 8.10)
+    runs-on: ubuntu-latest
+    container:
+      # UBI 8.10 = RHEL 8.10 userspace, fritt att hämta utan subscription.
+      image: registry.access.redhat.com/ubi8/ubi:8.10
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [backend, frontend]
+    env:
+      YARN_CACHE_FOLDER: ${{ github.workspace }}/.yarn-cache
+      # next.config.js kör envalid.cleanEnv vid build – dessa måste finnas.
+      NEXT_PUBLIC_APP_NAME: 'Katla'
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api
+      DOMAIN_NAME: localhost
+      NEXT_PUBLIC_BASE_PATH: ''
+      NEXT_PUBLIC_PROTECTED_ROUTES: ''
+      HEALTH_AUTH: false
+      HEALTH_USERNAME: ''
+      HEALTH_PASSWORD: ''
+      NEXT_TELEMETRY_DISABLED: 1
+    steps:
+      # Måste ligga före checkout: UBI-imagen saknar git/tar som actions behöver.
+      - name: Install OS build dependencies
+        run: |
+          dnf install -y --setopt=install_weak_deps=False \
+            git tar gzip xz gcc-c++ make python3
+          dnf clean all
+
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install Node.js (version från .nvmrc)
+        run: |
+          set -euo pipefail
+          NODE_VERSION="$(tr -d '[:space:]v' < .nvmrc)"
+          echo "Installerar Node.js v${NODE_VERSION}"
+          curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" \
+            -o /tmp/node.tar.xz
+          mkdir -p /usr/local/lib/nodejs
+          tar -xJf /tmp/node.tar.xz -C /usr/local/lib/nodejs
+          echo "/usr/local/lib/nodejs/node-v${NODE_VERSION}-linux-x64/bin" >> "$GITHUB_PATH"
+
+      - name: Install Yarn
+        run: npm install --global "yarn@${YARN_VERSION}"
+
+      - name: Environment info
+        run: |
+          cat /etc/redhat-release
+          ldd --version | head -n 1
+          echo "node  $(node --version)"
+          echo "yarn  $(yarn --version)"
+
+      - name: Restore Yarn cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.YARN_CACHE_FOLDER }}
+          key: rhel8-yarn-${{ matrix.package }}-${{ hashFiles(format('{0}/yarn.lock', matrix.package)) }}
+          restore-keys: |
+            rhel8-yarn-${{ matrix.package }}-
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.package }}
+        run: yarn install --frozen-lockfile --network-timeout 1000000
+
+      - name: Build
+        working-directory: ${{ matrix.package }}
+        run: yarn build
