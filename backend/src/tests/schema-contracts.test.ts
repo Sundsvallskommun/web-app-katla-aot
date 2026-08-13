@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import App from '@/app';
 import { SchemaController } from '@/controllers/schema.controller';
 import { HttpException } from '@/exceptions/HttpException';
+import { SchemaResponseDTO } from '@/responses/schema.response';
 import ApiService from '@/services/api.service';
 
 vi.mock('@/middlewares/auth.middleware', () => ({
@@ -108,5 +109,70 @@ describe('JSON schema adapter contracts', () => {
     const response = await request(app).get('/api/schemas/latest/schema-name').expect(200);
 
     expect(response.body).toEqual({ schema: { type: 'object' }, uiSchema: {}, schemaId: 'schema-v1' });
+  });
+
+  describe('language', () => {
+    const localizedUiSchema = {
+      'ui:title': 'Plats och händelseförlopp',
+      'x-i18n': { en: { 'ui:title': 'Location and sequence of events' } },
+      eventTime: {
+        'ui:widget': 'time',
+        'ui:title': 'Tid',
+        'x-i18n': { en: { 'ui:title': 'Time' } },
+      },
+    };
+
+    const mockUpstream = () =>
+      vi
+        .spyOn(ApiService.prototype, 'get')
+        .mockResolvedValueOnce({
+          data: { id: 'schema-v1', value: { type: 'object', title: 'Plats och händelseförlopp' } },
+          message: 'success',
+        })
+        .mockResolvedValueOnce({ data: { value: localizedUiSchema }, message: 'success' });
+
+    it('serves the requested language and never exposes the translation block', async () => {
+      mockUpstream();
+
+      const response = await request(app).get('/api/schemas/schema-v1').set('Accept-Language', 'en').expect(200);
+      const body = response.body as SchemaResponseDTO;
+
+      expect(body.uiSchema).toEqual({
+        'ui:title': 'Location and sequence of events',
+        eventTime: { 'ui:widget': 'time', 'ui:title': 'Time' },
+      });
+      // Rubriken namnger formuläret i felsammanfattningen och ligger i JSON-schemat,
+      // som bara kan ändras med en ny version — den hämtas därför ur ui-schemats rot.
+      expect(body.schema).toEqual({ type: 'object', title: 'Location and sequence of events' });
+      expect(JSON.stringify(body)).not.toContain('x-i18n');
+    });
+
+    it('falls back to Swedish when no language is requested', async () => {
+      mockUpstream();
+
+      const response = await request(app).get('/api/schemas/schema-v1').expect(200);
+      const body = response.body as SchemaResponseDTO;
+
+      expect(body.uiSchema).toEqual({
+        'ui:title': 'Plats och händelseförlopp',
+        eventTime: { 'ui:widget': 'time', 'ui:title': 'Tid' },
+      });
+      expect(body.schema).toEqual({ type: 'object', title: 'Plats och händelseförlopp' });
+      expect(JSON.stringify(body)).not.toContain('x-i18n');
+    });
+
+    it('applies the same resolution to the latest-version route', async () => {
+      mockUpstream();
+
+      const response = await request(app)
+        .get('/api/schemas/latest/avvikelse-plats-handelse')
+        .set('Accept-Language', 'en-GB,en;q=0.9')
+        .expect(200);
+      const body = response.body as SchemaResponseDTO;
+      const eventTime = body.uiSchema.eventTime as Record<string, unknown>;
+
+      expect(eventTime['ui:title']).toBe('Time');
+      expect(body.schemaId).toBe('schema-v1');
+    });
   });
 });
