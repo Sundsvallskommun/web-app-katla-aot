@@ -1,9 +1,10 @@
 'use client';
 import { ErrandContentLock } from '@components/errand-content-lock/errand-content-lock.component';
-import type { ObjectFieldTemplateProps, RJSFSchema, UiSchema } from '@rjsf/utils';
+import type { ErrorSchema, ObjectFieldTemplateProps, RJSFSchema, UiSchema } from '@rjsf/utils';
 import { Checkbox, Disclosure, Divider, Label } from '@sk-web-gui/react';
 import { icons } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
 
 interface ConditionalRule {
@@ -117,14 +118,34 @@ function getSectionIcon(iconName: string | undefined) {
 }
 
 /**
+ * Fältet kan ha fel både på sig självt och i underliggande objekt, så hela grenen gås igenom.
+ */
+function containsErrors(node: unknown): boolean {
+  if (typeof node !== 'object' || node === null) return false;
+
+  const branch = node as Record<string, unknown>;
+  if (Array.isArray(branch.__errors) && branch.__errors.length > 0) return true;
+
+  return Object.entries(branch).some(([key, value]) => key !== '__errors' && containsErrors(value));
+}
+
+function sectionHasErrors(fieldNames: string[], errorSchema: ErrorSchema | undefined): boolean {
+  if (!errorSchema) return false;
+  const errors = errorSchema as Record<string, unknown>;
+  return fieldNames.some((fieldName) => containsErrors(errors[fieldName]));
+}
+
+/**
  * Section component with completion checkbox
  */
 interface SectionDisclosureProps {
   section: SectionDefinition;
+  hasError?: boolean;
   children: React.ReactNode;
 }
 
-function SectionDisclosure({ section, children }: SectionDisclosureProps) {
+function SectionDisclosure({ section, hasError = false, children }: SectionDisclosureProps) {
+  const { t } = useTranslation('forms');
   const [open, setOpen] = useState(section.defaultOpen ?? false);
   const [doneMark, setDoneMark] = useState(false);
   const SectionIcon = getSectionIcon(section.icon);
@@ -143,6 +164,11 @@ function SectionDisclosure({ section, children }: SectionDisclosureProps) {
       <Disclosure.Header>
         {SectionIcon && <Disclosure.Icon icon={React.createElement(SectionIcon)} />}
         <Disclosure.Title>{section.title}</Disclosure.Title>
+        {hasError && (
+          <Label inverted rounded color="error" data-cy={`section-error-${section.id}`}>
+            {t('section_has_errors')}
+          </Label>
+        )}
         {doneMark && (
           <Label inverted rounded color="gronsta">
             Komplett
@@ -221,7 +247,7 @@ function renderFields(
  * and supports ui:rows for horizontal field grouping and ui:sections for Disclosure grouping
  */
 export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
-  const { properties, uiSchema } = props;
+  const { properties, uiSchema, errorSchema } = props;
   const formData = props.formData as Record<string, unknown> | undefined;
 
   // Get original schema from formContext (RJSF processes and removes allOf from schema prop)
@@ -299,7 +325,11 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
         }
 
         return (
-          <SectionDisclosure key={section.id} section={section}>
+          <SectionDisclosure
+            key={section.id}
+            section={section}
+            hasError={sectionHasErrors(sectionFieldsInOrder, errorSchema)}
+          >
             <div className="flex flex-col gap-32 py-16">
               {renderFields(sectionFieldsInOrder, properties, visibleFields, rows, rowFieldNames, renderedRows)}
             </div>
