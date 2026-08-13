@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
 
-import App, { getSessionCookieOptions } from '@/app';
+import App, { getSessionCookieOptions, getSessionCookiePath } from '@/app';
 import { IndexController } from '@/controllers/index.controller';
 import { localApi } from '@/utils/util';
 
@@ -45,7 +45,13 @@ describe('security middleware', () => {
     expect(cookies).toHaveLength(1);
     expect(cookie).toContain('HttpOnly');
     expect(cookie).toContain('SameSite=Lax');
-    expect(cookie).toContain('Path=/api');
+    // Kakans path ägs av getSessionCookiePath och måste täcka hela appen, inte bara
+    // API-prefixet: Next-middlewaren läser kakan på UI-vägar, och en kaka begränsad
+    // till /api skickas aldrig dit (RFC 6265 §5.1.4). Assertionen låser att
+    // sessionsmiddlewaren faktiskt använder helpern, så en återgång till ett hårdkodat
+    // prefix syns här i stället för som en inloggningsloop.
+    expect(cookie).toContain(`Path=${getSessionCookiePath()}`);
+    expect(getSessionCookiePath().startsWith('/api')).toBe(false);
   });
 
   // En cross-site POST från IdP:n (SAML-callbacken) bär en Origin-header som aldrig ligger i
