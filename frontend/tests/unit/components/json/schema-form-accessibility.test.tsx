@@ -22,12 +22,81 @@ const placeLabelStructure: LabelDTO[] = [
     resourcePath: 'PLATSSTRUKTUR',
     labels: [
       {
-        id: 'aldreboende',
+        id: 'vuxenutbildningen',
         classification: 'PLACE',
-        displayName: 'VOF Äldreboende',
-        resourceName: 'VOF_ALDREBOENDE',
-        resourcePath: 'PLATSSTRUKTUR/VOF_ALDREBOENDE',
-        labels: [],
+        displayName: 'IAF Vuxenutbildningen',
+        resourceName: 'VUXENUTBILDNINGEN',
+        resourcePath: 'PLATSSTRUKTUR/VUXENUTBILDNINGEN',
+        labels: [
+          {
+            id: 'sfi',
+            classification: 'PLACE',
+            displayName: 'IAF VUX SFI SO och Grl',
+            resourceName: 'SFI',
+            resourcePath: 'PLATSSTRUKTUR/VUXENUTBILDNINGEN/SFI',
+            labels: [
+              {
+                id: 'egen',
+                classification: 'PLACE',
+                displayName: 'IAF VUX SFI egen extern och SO',
+                resourceName: 'EGEN',
+                resourcePath: 'PLATSSTRUKTUR/VUXENUTBILDNINGEN/SFI/EGEN',
+                labels: [
+                  {
+                    id: 'solhaga',
+                    classification: 'PLACE',
+                    displayName: 'Solhaga',
+                    resourceName: 'SOLHAGA',
+                    resourcePath: 'PLATSSTRUKTUR/VUXENUTBILDNINGEN/SFI/EGEN/SOLHAGA',
+                    labels: [
+                      {
+                        id: 'solhaga-bla',
+                        classification: 'PLACE',
+                        displayName: 'Blå',
+                        resourceName: 'BLA',
+                        resourcePath: 'PLATSSTRUKTUR/VUXENUTBILDNINGEN/SFI/EGEN/SOLHAGA/BLA',
+                        labels: [],
+                      },
+                      {
+                        id: 'solhaga-gul',
+                        classification: 'PLACE',
+                        displayName: 'Gul',
+                        resourceName: 'GUL',
+                        resourcePath: 'PLATSSTRUKTUR/VUXENUTBILDNINGEN/SFI/EGEN/SOLHAGA/GUL',
+                        labels: [],
+                      },
+                    ],
+                  },
+                  {
+                    id: 'skottsundsbacken',
+                    classification: 'PLACE',
+                    displayName: 'Skottsundsbacken',
+                    resourceName: 'SKOTTSUNDSBACKEN',
+                    resourcePath: 'PLATSSTRUKTUR/VUXENUTBILDNINGEN/SFI/EGEN/SKOTTSUNDSBACKEN',
+                    labels: [
+                      {
+                        id: 'skottsundsbacken-bla',
+                        classification: 'PLACE',
+                        displayName: 'Blå',
+                        resourceName: 'BLA',
+                        resourcePath: 'PLATSSTRUKTUR/VUXENUTBILDNINGEN/SFI/EGEN/SKOTTSUNDSBACKEN/BLA',
+                        labels: [],
+                      },
+                    ],
+                  },
+                  {
+                    id: 'utan-avdelning',
+                    classification: 'PLACE',
+                    displayName: 'Anläggning utan avdelning',
+                    resourceName: 'UTAN_AVDELNING',
+                    resourcePath: 'PLATSSTRUKTUR/VUXENUTBILDNINGEN/SFI/EGEN/UTAN_AVDELNING',
+                    labels: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
     ],
   },
@@ -318,7 +387,7 @@ describe('SchemaForm accessibility contract', () => {
     });
   });
 
-  it('associates the facility search label with its actual input', () => {
+  it('söker separat på anläggning, avdelning och överordnad nivå men visar bara nivå 6–7', async () => {
     const schema: RJSFSchema = {
       type: 'object',
       properties: {
@@ -329,6 +398,7 @@ describe('SchemaForm accessibility contract', () => {
           properties: {
             orgId: { type: 'number' },
             orgName: { type: 'string' },
+            parentOrgName: { type: 'string' },
           },
         },
       },
@@ -341,6 +411,7 @@ describe('SchemaForm accessibility contract', () => {
 
     useMetadataStore.setState({ metadata: { labels: { labelStructure: placeLabelStructure } } });
 
+    const user = userEvent.setup();
     render(<SchemaForm schemaId={ACCESSIBILITY_TEST_SCHEMA_ID} schema={schema} uiSchema={uiSchema} hideSubmitButton />);
 
     // i18n-mocken ekar nyckeln, så det är nyckeln som blir fältets tillgängliga namn här.
@@ -350,5 +421,141 @@ describe('SchemaForm accessibility contract', () => {
     expect(searchLabel).toHaveTextContent('facility_search.add_label');
     expect(input).toHaveAttribute('aria-labelledby', searchLabel?.id);
     expect(input).toHaveAttribute('aria-describedby', expect.stringContaining(descriptionId(input.id)));
+    const list = document.querySelector('.sk-form-combobox-list');
+    expect(list).toHaveTextContent('Solhaga — facility_search.department_label: Blå');
+    expect(list).toHaveTextContent('Skottsundsbacken — facility_search.department_label: Blå');
+    expect(list).toHaveTextContent('Anläggning utan avdelning');
+    expect(list).not.toHaveTextContent('IAF Vuxenutbildningen');
+
+    await user.type(input, 'Blå');
+
+    let visibleOptions = document.querySelectorAll('.sk-form-combobox-list-option');
+    expect(visibleOptions).toHaveLength(2);
+    expect(visibleOptions[0]).toHaveTextContent('Solhaga — facility_search.department_label: Blå');
+    expect(visibleOptions[1]).toHaveTextContent('Skottsundsbacken — facility_search.department_label: Blå');
+
+    await user.clear(input);
+    await user.type(input, 'Solhaga');
+
+    visibleOptions = document.querySelectorAll('.sk-form-combobox-list-option');
+    expect(visibleOptions).toHaveLength(2);
+    expect(visibleOptions[0]).toHaveTextContent('Solhaga — facility_search.department_label: Blå');
+    expect(visibleOptions[1]).toHaveTextContent('Solhaga — facility_search.department_label: Gul');
+
+    await user.clear(input);
+    await user.type(input, 'SFI SO');
+
+    visibleOptions = document.querySelectorAll('.sk-form-combobox-list-option');
+    expect(visibleOptions).toHaveLength(4);
+    expect(list).not.toHaveTextContent('IAF VUX SFI SO och Grl');
+  });
+
+  it('visar anläggning och avdelning med en enda åtgärd som öppnar platsväljaren igen', async () => {
+    const schema: RJSFSchema = {
+      type: 'object',
+      properties: {
+        facility: {
+          type: 'object',
+          title: 'Plats',
+          properties: {
+            orgName: { type: 'string' },
+            parentOrgName: { type: 'string' },
+          },
+        },
+      },
+    };
+    const uiSchema: FormUiSchema = {
+      facility: {
+        'ui:field': 'FacilitySearchWidget',
+      },
+    };
+
+    useMetadataStore.setState({ metadata: { labels: { labelStructure: placeLabelStructure } } });
+
+    const user = userEvent.setup();
+    render(
+      <SchemaForm
+        schemaId={ACCESSIBILITY_TEST_SCHEMA_ID}
+        schema={schema}
+        uiSchema={uiSchema}
+        formData={{
+          facility: {
+            orgName: 'Blå',
+            parentOrgName: 'Solhaga',
+          },
+        }}
+        hideSubmitButton
+      />
+    );
+
+    expect(document.querySelector('[data-cy="facility-name"]')).toHaveTextContent('Solhaga');
+    expect(document.querySelector('[data-cy="facility-department"]')).toHaveTextContent(
+      'facility_search.department_label: Blå'
+    );
+    expect(document.querySelector('[data-cy="facility-label-preview"]')).not.toBeInTheDocument();
+    expect(document.querySelector('[data-cy="facility-confirm-button"]')).not.toBeInTheDocument();
+    expect(document.querySelector('[data-cy="facility-remove-button"]')).not.toBeInTheDocument();
+
+    const subPlaceOptions = document.querySelector('[data-cy="facility-sub-place-options"]');
+    expect(subPlaceOptions).toBeInTheDocument();
+    expect(within(subPlaceOptions as HTMLElement).getByRole('radio', { name: 'Blå' })).toBeChecked();
+    expect(within(subPlaceOptions as HTMLElement).getByRole('radio', { name: 'Gul' })).not.toBeChecked();
+
+    await user.click(within(subPlaceOptions as HTMLElement).getByRole('radio', { name: 'Gul' }));
+
+    expect(document.querySelector('[data-cy="facility-department"]')).toHaveTextContent(
+      'facility_search.department_label: Gul'
+    );
+    expect(document.querySelector('[data-cy="facility-sub-place-options"]')).toBeInTheDocument();
+
+    const changeButton = screen.getByRole('button', { name: 'facility_search.change' });
+    expect(changeButton).not.toHaveClass('flex-1');
+
+    await user.click(changeButton);
+
+    expect(await screen.findByRole('textbox', { name: 'facility_search.add_label' })).toBeInTheDocument();
+  });
+
+  it('visar bara anläggningen för ett val på nivå 6 utan avdelning', () => {
+    const schema: RJSFSchema = {
+      type: 'object',
+      properties: {
+        facility: {
+          type: 'object',
+          title: 'Plats',
+          properties: {
+            orgName: { type: 'string' },
+            parentOrgName: { type: 'string' },
+          },
+        },
+      },
+    };
+    const uiSchema: FormUiSchema = {
+      facility: {
+        'ui:field': 'FacilitySearchWidget',
+      },
+    };
+
+    useMetadataStore.setState({ metadata: { labels: { labelStructure: placeLabelStructure } } });
+
+    render(
+      <SchemaForm
+        schemaId={ACCESSIBILITY_TEST_SCHEMA_ID}
+        schema={schema}
+        uiSchema={uiSchema}
+        formData={{
+          facility: {
+            orgName: 'Anläggning utan avdelning',
+            parentOrgName: 'IAF VUX SFI egen extern och SO',
+          },
+        }}
+        hideSubmitButton
+      />
+    );
+
+    expect(document.querySelector('[data-cy="facility-name"]')).toHaveTextContent('Anläggning utan avdelning');
+    expect(document.querySelector('[data-cy="facility-department"]')).not.toBeInTheDocument();
+    expect(document.querySelector('[data-cy="facility-sub-place-options"]')).not.toBeInTheDocument();
+    expect(document.querySelector('[data-cy="facility-label-preview"]')).not.toBeInTheDocument();
   });
 });

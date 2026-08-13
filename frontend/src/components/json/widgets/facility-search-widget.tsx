@@ -6,18 +6,20 @@ import { Button, Combobox, FormControl, FormLabel, RadioButton } from '@sk-web-g
 import {
   findPlaceNode,
   findPlaceNodeByKey,
+  getParentPlaceNode,
   getPlaceNodes,
+  getPlaceSelectionPresentation,
   getSubPlaceNodes,
+  hasSubPlaces,
   isDescendantOrSelf,
   isSameLabel,
+  matchesPlaceSearch,
   placeKey,
-  placeLabelChainText,
   placeName,
   PlaceNode,
   placeParentName,
-  placePathText,
 } from '@utils/label-structure';
-import { Check, X } from 'lucide-react';
+import { Pen } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMetadataStore } from 'src/stores/metadata-store';
@@ -39,8 +41,9 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
 
   const metadata = useMetadataStore((state) => state.metadata);
   const placeNodes = useMemo(() => getPlaceNodes(metadata?.labels?.labelStructure), [metadata?.labels?.labelStructure]);
+  const selectablePlaceNodes = useMemo(() => placeNodes.filter((node) => !hasSubPlaces(node)), [placeNodes]);
 
-  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [placeSearchValue, setPlaceSearchValue] = useState('');
   const employmentMatchRef = useRef<{ node: PlaceNode; employment: UserEmploymentDTO } | null>(null);
   const prefillDoneRef = useRef(false);
 
@@ -50,11 +53,33 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
     () => findPlaceNode(placeNodes, formData?.orgName, formData?.parentOrgName),
     [placeNodes, formData?.orgName, formData?.parentOrgName]
   );
-  const subPlaceNodes = useMemo(
-    () => (selectedNode ? getSubPlaceNodes(placeNodes, selectedNode) : []),
-    [placeNodes, selectedNode]
+  const selectedPlacePresentation = useMemo(
+    () => (selectedNode ? getPlaceSelectionPresentation(selectedNode) : undefined),
+    [selectedNode]
   );
-  const needsSubPlaceChoice = subPlaceNodes.length > 0;
+  const filteredSelectablePlaceNodes = useMemo(
+    () => selectablePlaceNodes.filter((node) => matchesPlaceSearch(node, placeSearchValue)),
+    [placeSearchValue, selectablePlaceNodes]
+  );
+  const subPlaceParentNode = useMemo(() => {
+    if (!selectedNode) return undefined;
+    if (hasSubPlaces(selectedNode)) return selectedNode;
+    return selectedPlacePresentation?.department ? getParentPlaceNode(placeNodes, selectedNode) : undefined;
+  }, [placeNodes, selectedNode, selectedPlacePresentation?.department]);
+  const subPlaceNodes = useMemo(
+    () => (subPlaceParentNode ? getSubPlaceNodes(placeNodes, subPlaceParentNode) : []),
+    [placeNodes, subPlaceParentNode]
+  );
+  const selectedSubPlaceKey = useMemo(
+    () =>
+      selectedNode && subPlaceNodes.some((node) => isSameLabel(node.label, selectedNode.label)) ?
+        placeKey(selectedNode)
+      : '',
+    [selectedNode, subPlaceNodes]
+  );
+  const mustChooseSubPlace = Boolean(selectedNode && hasSubPlaces(selectedNode));
+  const showSubPlaceChoice =
+    mustChooseSubPlace || Boolean(selectedPlacePresentation?.department && subPlaceNodes.length > 1);
 
   const selectPlace = useCallback(
     (node: PlaceNode) => {
@@ -68,7 +93,6 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
         parentOrgName: placeParentName(node),
         manager: withinEmploymentBranch ? match.employment.manager : undefined,
       });
-      setIsConfirmed(false);
     },
     [onChange]
   );
@@ -113,9 +137,9 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
     [placeNodes, selectPlace]
   );
 
-  const handleRemove = useCallback(() => {
+  const handleChangePlace = useCallback(() => {
     onChange(undefined);
-    setIsConfirmed(false);
+    setPlaceSearchValue('');
   }, [onChange]);
 
   const sectionTitle = <h2 className="hidden md:block text-xl font-bold mb-6">{t('facility_search.section_title')}</h2>;
@@ -152,9 +176,14 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
           <Combobox
             id={`${id}__combobox`}
             className="w-full"
+            size="lg"
             value=""
+            autofilter={false}
             aria-labelledby={searchLabelId}
             aria-describedby={describedBy}
+            onChangeSearch={(e) => {
+              setPlaceSearchValue(e.target.value);
+            }}
             onChange={(e: { target: { value: unknown } }) => {
               handleSelectPlace(String(e.target.value));
             }}
@@ -177,12 +206,30 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
                 onFocus(id, formData);
               }}
             />
-            <Combobox.List>
-              {placeNodes.map((node) => (
-                <Combobox.Option key={placeKey(node)} value={placeKey(node)}>
-                  {placePathText(node)}
-                </Combobox.Option>
-              ))}
+            <Combobox.List style={{ maxHeight: '32rem' }}>
+              {filteredSelectablePlaceNodes.map((node) => {
+                const presentation = getPlaceSelectionPresentation(node);
+                const optionText =
+                  presentation.department ?
+                    `${presentation.place} — ${t('facility_search.department_label')}: ${presentation.department}`
+                  : presentation.place;
+
+                return (
+                  <Combobox.Option
+                    key={placeKey(node)}
+                    value={placeKey(node)}
+                    style={{
+                      alignItems: 'flex-start',
+                      lineHeight: 1.4,
+                      overflowWrap: 'anywhere',
+                      paddingBlock: '0.75rem',
+                      whiteSpace: 'normal',
+                    }}
+                  >
+                    {optionText}
+                  </Combobox.Option>
+                );
+              })}
             </Combobox.List>
           </Combobox>
           <span className="text-small text-text-secondary mt-4">{t('facility_search.label_hint')}</span>
@@ -191,22 +238,27 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
 
       {selectedNode && (
         <div className="border-1 rounded-12 bg-background-content w-full mt-16" data-cy="facility-card">
-          <div className="rounded-t-12 bg-vattjom-background-200 h-[4rem] flex items-center">
-            <strong className="px-[1rem]">{t('facility_search.card_header')}</strong>
+          <div className="rounded-t-12 bg-vattjom-background-200 px-16 py-12">
+            <strong>{t('facility_search.card_header')}</strong>
           </div>
-          <div className="p-[1rem]">
-            <div className="flex flex-col gap-12">
+          <div className="p-16">
+            <div className="flex flex-col gap-16">
               <div className="min-w-0">
                 <p className="text-[1.6rem] font-semibold break-words" data-cy="facility-name">
-                  {placeName(selectedNode)}
+                  {selectedPlacePresentation?.place}
                 </p>
-                <p className="text-small text-text-secondary break-words">{placePathText(selectedNode)}</p>
+                {selectedPlacePresentation?.department && (
+                  <p className="text-small text-text-secondary break-words" data-cy="facility-department">
+                    <span className="font-semibold">{t('facility_search.department_label')}:</span>{' '}
+                    {selectedPlacePresentation.department}
+                  </p>
+                )}
               </div>
 
-              {needsSubPlaceChoice ?
-                <FormControl disabled={!isEditable} required className="w-full">
+              {showSubPlaceChoice && subPlaceParentNode ?
+                <FormControl disabled={!isEditable} required={mustChooseSubPlace} className="w-full">
                   <FormLabel id={subPlaceLabelId} className="font-bold">
-                    {t('facility_search.select_sub_place', { place: placeName(selectedNode) })}
+                    {t('facility_search.select_sub_place', { place: placeName(subPlaceParentNode) })}
                   </FormLabel>
                   {subPlaceNodes.length <= MAX_RADIO_SUB_PLACES ?
                     <RadioButton.Group aria-labelledby={subPlaceLabelId} data-cy="facility-sub-place-options">
@@ -215,7 +267,7 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
                           key={placeKey(node)}
                           name="facility-sub-place"
                           value={placeKey(node)}
-                          checked={false}
+                          checked={isSameLabel(node.label, selectedNode.label)}
                           disabled={!isEditable}
                           onChange={(e) => {
                             handleSelectPlace(e.target.value);
@@ -227,7 +279,7 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
                     </RadioButton.Group>
                   : <Combobox
                       className="w-full"
-                      value=""
+                      value={selectedSubPlaceKey}
                       aria-labelledby={subPlaceLabelId}
                       onChange={(e: { target: { value: unknown } }) => {
                         handleSelectPlace(String(e.target.value));
@@ -235,90 +287,42 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
                       data-cy="facility-sub-place-options"
                     >
                       <Combobox.Input placeholder={t('facility_search.placeholder')} className="w-full" />
-                      <Combobox.List>
+                      <Combobox.List style={{ maxHeight: '32rem' }}>
                         {subPlaceNodes.map((node) => (
-                          <Combobox.Option key={placeKey(node)} value={placeKey(node)}>
+                          <Combobox.Option
+                            key={placeKey(node)}
+                            value={placeKey(node)}
+                            style={{ overflowWrap: 'anywhere', whiteSpace: 'normal' }}
+                          >
                             {placeName(node)}
                           </Combobox.Option>
                         ))}
                       </Combobox.List>
                     </Combobox>
                   }
-                  <span className="text-small mt-4" data-cy="facility-sub-place-required">
-                    {t('facility_search.sub_place_required')}
-                  </span>
+                  {mustChooseSubPlace && (
+                    <span className="text-small mt-4" data-cy="facility-sub-place-required">
+                      {t('facility_search.sub_place_required')}
+                    </span>
+                  )}
                 </FormControl>
-              : <div className="text-small text-text-secondary break-words" data-cy="facility-label-preview">
-                  {t('facility_search.label_preview')} {placeLabelChainText(selectedNode)}
-                </div>
-              }
+              : null}
 
-              <div className="flex gap-8 justify-center">
-                {needsSubPlaceChoice ?
-                  isEditable && (
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      leftIcon={<X size={16} />}
-                      onClick={handleRemove}
-                      className="flex-1"
-                      data-cy="facility-remove-button"
-                    >
-                      {t('facility_search.remove')}
-                    </Button>
-                  )
-                : <>
-                    {disabled || readonly || isConfirmed ?
-                      <>
-                        <span className="flex items-center gap-4 text-gronsta-surface-primary">
-                          <Check size={16} />
-                          {t('facility_search.confirmed')}
-                        </span>
-                        {isEditable && (
-                          <Button
-                            type="button"
-                            variant="tertiary"
-                            size="sm"
-                            onClick={() => {
-                              setIsConfirmed(false);
-                            }}
-                            className="flex-1"
-                          >
-                            {t('facility_search.edit')}
-                          </Button>
-                        )}
-                      </>
-                    : <>
-                        <Button
-                          type="button"
-                          variant="primary"
-                          size="sm"
-                          leftIcon={<Check size={16} />}
-                          onClick={() => {
-                            setIsConfirmed(true);
-                          }}
-                          className="flex-1"
-                          data-cy="facility-confirm-button"
-                        >
-                          {t('facility_search.confirm')}
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          size="sm"
-                          leftIcon={<X size={16} />}
-                          onClick={handleRemove}
-                          className="flex-1"
-                          data-cy="facility-remove-button"
-                        >
-                          {t('facility_search.remove')}
-                        </Button>
-                      </>
-                    }
-                  </>
-                }
-              </div>
+              {isEditable && (
+                <div className="flex flex-wrap border-t-1 border-divider pt-12">
+                  <Button
+                    type="button"
+                    variant="tertiary"
+                    color="vattjom"
+                    size="sm"
+                    leftIcon={<Pen size={16} aria-hidden="true" />}
+                    onClick={handleChangePlace}
+                    data-cy="facility-change-button"
+                  >
+                    {t('facility_search.change')}
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
