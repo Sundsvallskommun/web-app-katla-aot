@@ -3,6 +3,7 @@ import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
 import { Alert } from '@sk-web-gui/alert';
 import { FormControl, FormErrorMessage, FormLabel, RadioButton } from '@sk-web-gui/react';
+import { INVALID_FIELD_ATTRIBUTE } from '@utils/focus-first-error';
 import { Info } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +18,10 @@ export const AboutErrandContent: React.FC = () => {
   const eventConcerns = parameters.find((p) => p.key === 'eventConcerns')?.values?.[0] ?? '';
 
   const stakeholders = watch('stakeholders') ?? [];
+
+  // Märker fälten så att felnavigeringen kan flytta fokus hit när ärendet inte går att registrera.
+  const missingEventType = showValidation && !eventType;
+  const missingEventConcerns = showValidation && !eventConcerns;
 
   const setParameter = (key: string, value: string) => {
     const currentParameters = getValues('parameters') ?? [];
@@ -36,7 +41,7 @@ export const AboutErrandContent: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-[2.4rem] pb-[2.4rem]">
-      <FormControl required id="event-type">
+      <FormControl required id="event-type" {...(missingEventType ? { [INVALID_FIELD_ATTRIBUTE]: 'event-type' } : {})}>
         <FormLabel>{t('errand-information:about.event_type_label')}</FormLabel>
         <RadioButton.Group data-cy="event-type-group" className="mb-18">
           <RadioButton
@@ -60,9 +65,7 @@ export const AboutErrandContent: React.FC = () => {
             {t('errand-information:about.event_type_misconduct')}
           </RadioButton>
         </RadioButton.Group>
-        {showValidation && !eventType && (
-          <FormErrorMessage>{t('errand-information:about.event_type_required')}</FormErrorMessage>
-        )}
+        {missingEventType && <FormErrorMessage>{t('errand-information:about.event_type_required')}</FormErrorMessage>}
         {eventType === 'MISSFORHALLANDE' && (
           <Alert type="info" data-cy="misconduct-alert">
             <Alert.Icon />
@@ -76,7 +79,11 @@ export const AboutErrandContent: React.FC = () => {
         )}
       </FormControl>
 
-      <FormControl required id="event-concerns">
+      <FormControl
+        required
+        id="event-concerns"
+        {...(missingEventConcerns ? { [INVALID_FIELD_ATTRIBUTE]: 'event-concerns' } : {})}
+      >
         <FormLabel>{t('errand-information:about.event_concerns_label')}</FormLabel>
         <span className="text-dark-secondary text-small mb-8">
           {t('errand-information:about.event_concerns_describe_note')}
@@ -113,7 +120,7 @@ export const AboutErrandContent: React.FC = () => {
             {t('errand-information:about.event_concerns_other')}
           </RadioButton>
         </RadioButton.Group>
-        {showValidation && !eventConcerns && (
+        {missingEventConcerns && (
           <FormErrorMessage>{t('errand-information:about.event_concerns_required')}</FormErrorMessage>
         )}
       </FormControl>

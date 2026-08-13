@@ -9,6 +9,10 @@
   "missing_schema_id": "Formuläret {{schemaName}} saknar schema-ID och kan inte sparas.",
   "missing_schema_name": "Sparade JSON-uppgifter saknar schemanamn och kan inte sparas.",
   "required_form_data": "Fyll i uppgifterna under {{schemaName}} innan du går vidare.",
+  "form_field_error": "{{schemaTitle}} – {{fieldTitle}}: {{message}}",
+  "form_error": "{{schemaTitle}}: {{message}}",
+  "section_incomplete": "Ofullständig",
+  "section_complete": "Komplett",
   "field_description": {
     "new_tab_announcement": "Öppnas i en ny flik"
   },

@@ -18,6 +18,12 @@ const hasFormat = (e: RJSFValidationError): e is Omit<RJSFValidationError, 'para
   return !!p && typeof (p as FormatParams).format === 'string';
 };
 
+/**
+ * Nycklarna är namnrymdskvalificerade eftersom transformeraren anropas både från formuläret
+ * och från sammanfattande validering, som har sina t-funktioner bundna till olika namnrymder.
+ */
+const validationKey = (key: string) => `validation:${key}`;
+
 // Mapping from error name to translation key for limit-based errors
 const limitErrorMap: Record<string, string> = {
   minItems: 'min_items',
@@ -35,13 +41,60 @@ const formatMap: Record<string, string> = {
   'date-time': 'date_time',
 };
 
+function propertiesOf(schema: RJSFSchema): Record<string, RJSFSchema> | undefined {
+  return schema.properties as Record<string, RJSFSchema> | undefined;
+}
+
+function isSchemaObject(value: unknown): value is RJSFSchema {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+/**
+ * Villkorade fält kan bo i if/then-grenar i stället för direkt under `properties`,
+ * så uppslaget följer samma grenar som formuläret renderar fält ur.
+ */
+function propertySchemaOf(schema: RJSFSchema, property: string): RJSFSchema | undefined {
+  const direct = propertiesOf(schema)?.[property];
+  if (direct) return direct;
+
+  const branches: unknown[] = [...(Array.isArray(schema.allOf) ? schema.allOf : []), schema.then, schema.else];
+  for (const branch of branches) {
+    if (!isSchemaObject(branch)) continue;
+    const found = propertySchemaOf(branch, property);
+    if (found) return found;
+  }
+
+  return undefined;
+}
+
+/**
+ * Översätter en felsökväg (t.ex. `.facility.orgName`) till fältets rubrik i schemat,
+ * så att ett sammanfattande felmeddelande kan peka ut fältet med samma namn som formuläret visar.
+ */
+export function fieldTitleFromSchema(schema: RJSFSchema, property: string | undefined): string | undefined {
+  const path = (property ?? '').split('.').filter(Boolean);
+  if (path.length === 0) return undefined;
+
+  let current: RJSFSchema = schema;
+  let title: string | undefined;
+
+  for (const segment of path) {
+    const next = propertySchemaOf(current, segment);
+    if (!next) return undefined;
+    title = typeof next.title === 'string' ? next.title : undefined;
+    current = next;
+  }
+
+  return title;
+}
+
 // Get limit from schema based on property path
 function getLimitFromSchema(
   schema: RJSFSchema,
   property: string,
   keyword: 'minLength' | 'maxLength'
 ): number | undefined {
-  const props = schema.properties as Record<string, RJSFSchema> | undefined;
+  const props = propertiesOf(schema);
   if (!props) return undefined;
   const propSchema = props[property];
   if (!propSchema) return undefined;
@@ -52,7 +105,7 @@ export function createJsonErrorTransformer(schema: RJSFSchema, t: TFunction) {
   return (errors: RJSFValidationError[]): RJSFValidationError[] =>
     errors.map((e) => {
       if (e.name === 'required') {
-        return { ...e, message: t('required') };
+        return { ...e, message: t(validationKey('required')) };
       }
 
       // Handle minLength/maxLength - both standard AJV and custom keyword
@@ -62,35 +115,38 @@ export function createJsonErrorTransformer(schema: RJSFSchema, t: TFunction) {
           hasLimit(e) ? e.params.limit : getLimitFromSchema(schema, e.property?.replace('.', '') ?? '', keyword);
         if (limit !== undefined) {
           const translationKey = keyword === 'minLength' ? 'min_length' : 'max_length';
-          return { ...e, message: t(translationKey, { limit }) };
+          return { ...e, message: t(validationKey(translationKey), { limit }) };
         }
       }
 
       // Handle other limit-based errors using lookup table
       const limitTranslationKey = limitErrorMap[e.name ?? ''];
       if (limitTranslationKey && hasLimit(e)) {
-        return { ...e, message: t(limitTranslationKey, { limit: e.params.limit }) };
+        return { ...e, message: t(validationKey(limitTranslationKey), { limit: e.params.limit }) };
       }
 
       if (e.name === 'pattern') {
-        return { ...e, message: t('pattern') };
+        return { ...e, message: t(validationKey('pattern')) };
       }
 
       if (e.name === 'format' && hasFormat(e)) {
         const translationKey = formatMap[e.params.format];
         return {
           ...e,
-          message: t(translationKey || 'format', translationKey ? undefined : { format: e.params.format }),
+          message: t(
+            validationKey(translationKey || 'format'),
+            translationKey ? undefined : { format: e.params.format }
+          ),
         };
       }
 
       if (e.name === 'enum' || e.name === 'not') {
-        return { ...e, message: t('required') };
+        return { ...e, message: t(validationKey('required')) };
       }
 
       // Handle const errors (e.g. checkbox that must be true)
       if (e.name === 'const') {
-        return { ...e, message: t('checkbox_required') };
+        return { ...e, message: t(validationKey('checkbox_required')) };
       }
 
       return e;

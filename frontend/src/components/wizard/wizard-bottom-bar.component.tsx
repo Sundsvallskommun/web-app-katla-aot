@@ -27,7 +27,7 @@ export const WizardBottomBar: React.FC = () => {
   const toastMessage = useSnackbar();
   const router = useRouter();
   const { getValues, reset, watch } = useFormContext<ErrandFormDTO>();
-  const { setShowValidation } = useFormValidation();
+  const { setShowValidation, focusFirstError } = useFormValidation();
   const { currentStep, goNext, goBack, setStepErrors } = useWizardStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
@@ -82,6 +82,13 @@ export const WizardBottomBar: React.FC = () => {
     }
   };
 
+  // Felmeddelandet berättar vad som saknas och fokus flyttas till fältet, så att det går att
+  // åtgärda direkt även när fältet ligger långt ner i steget.
+  const reportValidationError = (message: string) => {
+    toastMessage({ position: 'bottom', status: 'error', message });
+    focusFirstError();
+  };
+
   const handleNext = async () => {
     const step = steps[currentStep];
     const errors = await validateStep(step, getValues(), step.id === 'deviation' ? tForms : t);
@@ -89,6 +96,7 @@ export const WizardBottomBar: React.FC = () => {
 
     if (errors.length > 0) {
       setShowValidation(true);
+      reportValidationError(errors[0]);
       return;
     }
 
@@ -104,47 +112,27 @@ export const WizardBottomBar: React.FC = () => {
     const eventConcerns = values.parameters?.find((p) => p.key === 'eventConcerns')?.values?.[0];
 
     if (!eventType) {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: t('errand-information:about.event_type_required'),
-      });
+      reportValidationError(t('errand-information:about.event_type_required'));
       return;
     }
     if (!eventConcerns) {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: t('errand-information:about.event_concerns_required'),
-      });
+      reportValidationError(t('errand-information:about.event_concerns_required'));
       return;
     }
     const formDataErrors = await validateErrandFormData(values.errandFormData, tForms);
     if (formDataErrors.length > 0) {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: formDataErrors[0],
-      });
+      reportValidationError(formDataErrors[0]);
       return;
     }
 
     const facilityStatus = getFacilityStatus(values.errandFormData);
     if (eventConcerns === 'GRUPP_VERKSAMHET' && facilityStatus === 'NONE') {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: t('errand-information:about.event_concerns_group_facility_required'),
-      });
+      reportValidationError(t('errand-information:about.event_concerns_group_facility_required'));
       return;
     }
     // En plats som inte är vald hela vägen ner ger fel label, och därmed fel behörighet
     if (facilityStatus === 'INCOMPLETE') {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: t('errand-information:about.facility_incomplete'),
-      });
+      reportValidationError(t('errand-information:about.facility_incomplete'));
       return;
     }
 

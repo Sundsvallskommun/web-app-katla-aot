@@ -1,6 +1,7 @@
 import { isRadioWidgetName } from '@components/json/widgets/radio-widget-names';
 import { ariaDescribedByIds, descriptionId, errorId, type FieldTemplateProps, titleId } from '@rjsf/utils';
 import { FormControl, FormErrorMessage, FormLabel } from '@sk-web-gui/react';
+import { INVALID_FIELD_ATTRIBUTE } from '@utils/focus-first-error';
 import { useTranslation } from 'react-i18next';
 
 import { sanitizeFieldDescription } from './sanitize-field-description';
@@ -23,6 +24,8 @@ export function FieldTemplate(props: FieldTemplateProps) {
   const hasError = Boolean(rawErrors?.length);
   const formControlClassName = className ? `form-row ${className}` : 'form-row w-full';
   const isRadioGroup = isRadioWidgetName(uiSchema?.['ui:widget']);
+  // Märker fältet så att felnavigeringen hittar det, oavsett var i formuläret det ligger.
+  const invalidFieldProps = hasError ? { [INVALID_FIELD_ATTRIBUTE]: id } : {};
 
   const uiDescription = uiSchema?.['ui:description'];
   const descriptionText = typeof uiDescription === 'string' ? uiDescription : (schema.description ?? '');
@@ -84,6 +87,7 @@ export function FieldTemplate(props: FieldTemplateProps) {
         invalid={hasError}
         disabled={disabled || readonly}
         readOnly={readonly}
+        {...invalidFieldProps}
       >
         <fieldset
           id={id}
@@ -105,6 +109,7 @@ export function FieldTemplate(props: FieldTemplateProps) {
       invalid={hasError}
       disabled={disabled}
       readOnly={readonly}
+      {...invalidFieldProps}
     >
       {fieldContent}
     </FormControl>

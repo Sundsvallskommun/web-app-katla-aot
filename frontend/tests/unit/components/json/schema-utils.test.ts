@@ -1,5 +1,6 @@
 import type { ErrandFormDataItem } from '@interfaces/errand-form';
 import type { RJSFSchema } from '@rjsf/utils';
+import type { TFunction } from 'i18next';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -221,6 +222,37 @@ describe('validateErrandFormData', () => {
     expect(fetchMock).toHaveBeenCalledWith(`http://localhost:3001/api/schemas/${requestedSchemaId}`, {
       credentials: 'include',
     });
+  });
+
+  it('reports missing fields with the translated message and the field title from the schema', async () => {
+    const schema: RJSFSchema = {
+      $schema: 'https://json-schema.org/draft/2020-12/schema',
+      title: 'Plats och händelse',
+      type: 'object',
+      required: ['eventDate'],
+      properties: {
+        eventDate: { type: 'string', title: 'Datum för händelsen' },
+      },
+    };
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(JSON.stringify({ schema, schemaId: 'translated-error-v1' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const translations: Record<string, string> = {
+      'validation:required': 'Obligatoriskt fält',
+    };
+    const t = ((key: string, params?: Record<string, string>) =>
+      key === 'form_field_error' ?
+        `${params?.schemaTitle} – ${params?.fieldTitle}: ${params?.message}`
+      : (translations[key] ?? key)) as unknown as TFunction;
+
+    await expect(
+      validateErrandFormData([{ schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'translated-error-v1', data: '{}' }], t)
+    ).resolves.toEqual(['Plats och händelse – Datum för händelsen: Obligatoriskt fält']);
   });
 });
 

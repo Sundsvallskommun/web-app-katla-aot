@@ -1,9 +1,10 @@
 import type { JsonParameterDTO } from '@data-contracts/backend/data-contracts';
 import type { ErrandFormDataItem } from '@interfaces/errand-form';
-import type { RJSFSchema, UiSchema } from '@rjsf/utils';
+import type { RJSFSchema, RJSFValidationError, UiSchema } from '@rjsf/utils';
 import type { TFunction } from 'i18next';
 
 import { getJsonValueSchemaValidator } from '../schema/form-schema-validator';
+import { createJsonErrorTransformer, fieldTitleFromSchema } from './schema-form-error-handling';
 
 export const ERRAND_FORM_SCHEMA_NAMES = ['avvikelse-plats-handelse'] as const;
 
@@ -212,6 +213,31 @@ function requiredFormDataError(schemaName: string, t?: TFunction): string {
 }
 
 /**
+ * AJV formulerar sina fel på engelska och namnger fältet med nyckeln ur schemat. Sammanfattningen
+ * som visas för användaren återanvänder därför formulärets översatta meddelanden och fältrubriker,
+ * så att felet går att koppla till fältet på skärmen.
+ */
+function schemaFieldValidationError(
+  schema: RJSFSchema,
+  schemaName: string,
+  validationErrors: RJSFValidationError[],
+  t?: TFunction
+): string {
+  const schemaTitle = schema.title ?? schemaName;
+  const [firstError] = t ? createJsonErrorTransformer(schema, t)(validationErrors) : validationErrors;
+  const message = firstError.message ?? '';
+  const fieldTitle = fieldTitleFromSchema(schema, firstError.property);
+
+  if (!t) {
+    return fieldTitle ? `${schemaTitle} – ${fieldTitle}: ${message}` : `${schemaTitle}: ${message}`;
+  }
+
+  return fieldTitle ?
+      t('form_field_error', { schemaTitle, fieldTitle, message })
+    : t('form_error', { schemaTitle, message });
+}
+
+/**
  * Validerar all ärendeformulärdata mot sina scheman.
  * Returnerar en lista med felmeddelanden, tom om allt är giltigt.
  * @param formDataEntries - Posterna som ska valideras
@@ -252,8 +278,7 @@ export async function validateErrandFormData(
       const { errors: validationErrors } = validator.validateFormData(parsedData.value, schema);
 
       if (validationErrors.length > 0) {
-        const schemaTitle = schema.title ?? entry.schemaName;
-        errors.push(`${schemaTitle}: ${validationErrors[0].message}`);
+        errors.push(schemaFieldValidationError(schema, entry.schemaName, validationErrors, t));
       }
     } catch (error: unknown) {
       errors.push(errandFormDataContractErrorMessage(error, t) ?? schemaValidationError(entry.schemaName, t));

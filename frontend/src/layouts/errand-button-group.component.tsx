@@ -29,7 +29,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
   const router = useRouter();
   const context = useFormContext<ErrandFormDTO>();
   const { getValues, reset, watch } = context;
-  const { setShowValidation } = useFormValidation();
+  const { setShowValidation, focusFirstError } = useFormValidation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isCancelOpen, setIsCancelOpen] = useState<boolean>(false);
   const { prepareErrandForApi, getFacilityStatus } = usePrepareErrand();
@@ -85,6 +85,13 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
     }
   };
 
+  // Felmeddelandet berättar vad som saknas och fokus flyttas till fältet, så att det går att
+  // åtgärda direkt även när fältet ligger långt ner eller i ett hopfällt avsnitt.
+  const reportValidationError = (message: string) => {
+    toastMessage({ position: 'bottom', status: 'error', message });
+    focusFirstError();
+  };
+
   const onValidateBeforeRegister = async () => {
     // Aktivera validering för JSON-formulär
     setShowValidation(true);
@@ -94,49 +101,29 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
     const eventType = values.parameters?.find((p) => p.key === 'eventType')?.values?.[0];
     const eventConcerns = values.parameters?.find((p) => p.key === 'eventConcerns')?.values?.[0];
     if (!eventType) {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: t('errand-information:about.event_type_required'),
-      });
+      reportValidationError(t('errand-information:about.event_type_required'));
       return;
     }
     if (!eventConcerns) {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: t('errand-information:about.event_concerns_required'),
-      });
+      reportValidationError(t('errand-information:about.event_concerns_required'));
       return;
     }
     // Validera errandFormData innan affärsregler läser värden ur JSON-strukturen.
     const formDataErrors = await validateErrandFormData(values.errandFormData, tForms);
 
     if (formDataErrors.length > 0) {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: formDataErrors[0],
-      });
+      reportValidationError(formDataErrors[0]);
       return;
     }
 
     const facilityStatus = getFacilityStatus(values.errandFormData);
     if (eventConcerns === 'GRUPP_VERKSAMHET' && facilityStatus === 'NONE') {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: t('errand-information:about.event_concerns_group_facility_required'),
-      });
+      reportValidationError(t('errand-information:about.event_concerns_group_facility_required'));
       return;
     }
     // En plats som inte är vald hela vägen ner ger fel label, och därmed fel behörighet
     if (facilityStatus === 'INCOMPLETE') {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: t('errand-information:about.facility_incomplete'),
-      });
+      reportValidationError(t('errand-information:about.facility_incomplete'));
       return;
     }
 
