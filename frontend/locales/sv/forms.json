@@ -8,6 +8,7 @@
   "unsupported_form_data": "Sparade uppgifter för {{schemaName}} har ett format som inte kan redigeras i formuläret.",
   "missing_schema_id": "Formuläret {{schemaName}} saknar schema-ID och kan inte sparas.",
   "missing_schema_name": "Sparade JSON-uppgifter saknar schemanamn och kan inte sparas.",
+  "required_form_data": "Fyll i uppgifterna under {{schemaName}} innan du går vidare.",
   "facility_search": {
     "section_title": "Mer information om platsen",
     "add_label": "Lägg till plats där avvikelsen inträffat",

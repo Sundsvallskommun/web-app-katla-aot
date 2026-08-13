@@ -35,7 +35,7 @@ const widgets: RegistryWidgetsType = {
   texteditor: TexteditorWidget,
 };
 
-// Custom fields for object types
+// Egna fält för objekttyper
 const fields: RegistryFieldsType = {
   FacilitySearchWidget,
 };
@@ -95,7 +95,7 @@ export default function SchemaForm({
 
   const errorTransformer = useMemo(() => createJsonErrorTransformer(schema, t), [schema, t]);
 
-  // Sends the original schema via formContext so ObjectFieldTemplate can read the conditions
+  // Skickar originalschemat via formContext så att ObjectFieldTemplate kan läsa villkoren
   const formContext = useMemo(() => ({ originalSchema: schema, compact }), [schema, compact]);
 
   return (

@@ -45,8 +45,8 @@ export function useFormSchema(schemaName: string, source: FormSchemaSource = { k
     setLoading(true);
     setError(null);
 
-    // Defer the loader call so a missing persisted ID is handled as a rejected
-    // contract promise instead of escaping synchronously from the effect.
+    // Skjut upp anropet till laddaren så att ett saknat persisterat ID hanteras
+    // som ett avvisat kontraktslöfte i stället för att kastas synkront ur effekten.
     const schemaPromise = Promise.resolve().then(() =>
       sourceKind === 'new' ? loadFormSchema(schemaName, t) : loadFormSchemaForEntry(schemaName, persistedSchemaId, t)
     );

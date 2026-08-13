@@ -59,7 +59,7 @@ function requireSchemaId(schemaId: unknown, schemaName: string): string {
   return schemaId;
 }
 
-// Cache schema to avoid repeated fetches
+// Cachea schemat för att undvika upprepade hämtningar
 const schemaCache = new Map<
   string,
   { schema: RJSFSchema; uiSchema?: UiSchema<Record<string, unknown>>; schemaId: string }
@@ -122,7 +122,7 @@ export async function loadFormSchema(
     }
     const schemaId = requireSchemaId(responseSchemaId, schemaName);
 
-    // Save the exact version under both its logical name and immutable ID.
+    // Spara den exakta versionen under både sitt logiska namn och sitt oföränderliga ID.
     const result = { schema, uiSchema, schemaId };
     schemaCache.set(schemaName, result);
     schemaCache.set(schemaId, result);
@@ -205,11 +205,17 @@ function schemaValidationError(schemaName: string, t?: TFunction): string {
   return t ? t('schema_validation_error', { schemaName }) : `Could not validate ${schemaName}`;
 }
 
+// En post saknas tills användaren rört formuläret. Det är inte ett systemfel
+// utan ett ifyllnadskrav, och meddelandet måste säga det för att vara handlingsbart.
+function requiredFormDataError(schemaName: string, t?: TFunction): string {
+  return t ? t('required_form_data', { schemaName }) : `Fill in ${schemaName} before continuing`;
+}
+
 /**
- * Validate all errand form data against their schemas
- * Returns array of error messages, empty if all valid
- * @param formDataEntries - Array of form data entries to validate
- * @param t - Optional translation function for error messages
+ * Validerar all ärendeformulärdata mot sina scheman.
+ * Returnerar en lista med felmeddelanden, tom om allt är giltigt.
+ * @param formDataEntries - Posterna som ska valideras
+ * @param t - Valfri översättningsfunktion för felmeddelanden
  */
 export async function validateErrandFormData(
   formDataEntries: ErrandFormDataItem[] | undefined,
@@ -222,7 +228,7 @@ export async function validateErrandFormData(
   );
 
   for (const schemaName of missingSchemaNames) {
-    errors.push(schemaValidationError(schemaName, t));
+    errors.push(requiredFormDataError(schemaName, t));
   }
 
   for (const entry of entries) {
