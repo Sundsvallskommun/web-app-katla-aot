@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const envalid = require('envalid');
+const path = require('node:path');
 
 const authDependent = envalid.makeValidator((x) => {
   const authEnabled = process.env.HEALTH_AUTH === 'true';
@@ -20,6 +21,9 @@ envalid.cleanEnv(process.env, {
 
 module.exports = {
   output: 'standalone',
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
   allowedDevOrigins: ['dev.test'],
   images: {
     remotePatterns: process.env.DOMAIN_NAME ? [{ protocol: 'https', hostname: process.env.DOMAIN_NAME }] : [],
