@@ -78,6 +78,47 @@ describe('SupportManagement HTTP error contracts', () => {
     expect(postSpy).toHaveBeenCalledWith(expect.objectContaining({ propagateClientError: true }), expect.anything());
   });
 
+  it('maps a numeric person number returned by Citizen after creating an errand', async () => {
+    vi.spyOn(ApiService.prototype, 'post').mockResolvedValue({
+      data: {
+        id: 'errand-id',
+        errandNumber: 'ERRAND-1',
+        stakeholders: [{ externalId: 'd09ed58d-680d-4473-9b8b-5d4b17884c9c' }],
+      },
+      message: 'success',
+    });
+    vi.spyOn(ApiService.prototype, 'get').mockResolvedValue({ data: 199001011234, message: 'success' });
+
+    const response = await request(app).post('/api/supportmanagement/errand/create').send({}).expect(200);
+
+    expect(response.body).toEqual({
+      id: 'errand-id',
+      errandNumber: 'ERRAND-1',
+      stakeholders: [
+        {
+          externalId: 'd09ed58d-680d-4473-9b8b-5d4b17884c9c',
+          personNumber: '19900101-1234',
+        },
+      ],
+    });
+  });
+
+  it('fails explicitly when Citizen returns an unsupported person number shape', async () => {
+    vi.spyOn(ApiService.prototype, 'post').mockResolvedValue({
+      data: {
+        id: 'errand-id',
+        errandNumber: 'ERRAND-1',
+        stakeholders: [{ externalId: 'd09ed58d-680d-4473-9b8b-5d4b17884c9c' }],
+      },
+      message: 'success',
+    });
+    vi.spyOn(ApiService.prototype, 'get').mockResolvedValue({ data: { personNumber: '199001011234' }, message: 'success' });
+
+    const response = await request(app).post('/api/supportmanagement/errand/create').send({}).expect(502);
+
+    expect(response.body).toEqual({ message: 'Invalid person number response from Citizen API' });
+  });
+
   it('propagates a typed upstream error when creating an errand', async () => {
     vi.spyOn(ApiService.prototype, 'post').mockRejectedValue(new HttpException(500, 'SupportManagement unavailable'));
 
