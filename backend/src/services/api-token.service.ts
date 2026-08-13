@@ -14,14 +14,31 @@ export interface Token {
 // NOTE: save token in memory only for now
 let c_access_token = '';
 let c_token_expires = 0;
+let c_token_request: Promise<string> | undefined;
 
 class ApiTokenService {
   public async getToken(): Promise<string> {
-    if (Date.now() >= c_token_expires) {
-      logger.info('Getting oauth API token');
-      await this.fetchToken();
+    if (c_access_token === '' || Date.now() >= c_token_expires) {
+      return await this.fetchToken();
     }
     return c_access_token;
+  }
+
+  /**
+   * Ersätt endast den token som faktiskt avvisades. Om ett annat anrop redan
+   * har hunnit uppdatera den delade cachen återanvänds den nyare tokenen.
+   */
+  public async refreshToken(rejectedToken: string): Promise<string> {
+    if (c_access_token !== '' && c_access_token !== rejectedToken && Date.now() < c_token_expires) {
+      return c_access_token;
+    }
+
+    if (c_access_token === rejectedToken) {
+      c_access_token = '';
+      c_token_expires = 0;
+    }
+
+    return await this.getToken();
   }
 
   public setToken(token: Token): void {
@@ -34,7 +51,7 @@ class ApiTokenService {
     logger.info(`Token expires at: ${String(new Date(c_token_expires))}`);
   }
 
-  public async fetchToken(): Promise<string> {
+  private async requestToken(): Promise<string> {
     const authString = Buffer.from(`${CLIENT_KEY}:${CLIENT_SECRET}`, 'utf-8').toString('base64');
 
     try {
@@ -55,11 +72,29 @@ class ApiTokenService {
       if (!token) throw new HttpException(502, 'Bad Gateway');
       this.setToken(token);
 
-      return await this.getToken();
+      return c_access_token;
     } catch (error) {
       const status = axios.isAxiosError(error) ? error.response?.status : undefined;
       logger.error(`Failed to fetch OAuth access token${status ? ` (status ${status})` : ''}`);
       throw new HttpException(502, 'Bad Gateway');
+    }
+  }
+
+  public async fetchToken(): Promise<string> {
+    if (c_token_request) {
+      return await c_token_request;
+    }
+
+    logger.info('Getting oauth API token');
+    const tokenRequest = this.requestToken();
+    c_token_request = tokenRequest;
+
+    try {
+      return await tokenRequest;
+    } finally {
+      if (c_token_request === tokenRequest) {
+        c_token_request = undefined;
+      }
     }
   }
 }
