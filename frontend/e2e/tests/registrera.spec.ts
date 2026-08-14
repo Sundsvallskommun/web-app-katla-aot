@@ -109,11 +109,7 @@ test.describe('Register new errand page', () => {
     await page.route('**/supportmanagement/errand/create', jsonRoute(mockErrand));
     await page.route(`**/schemas/latest/${MOCK_FORM_SCHEMA_NAME}`, jsonRoute(mockFormSchemaResponse));
     await page.route(`**/schemas/${MOCK_FORM_SCHEMA_ID}`, jsonRoute(mockFormSchemaResponse));
-    // Cypress satte metadata via useMetadataStore.setState; här seedas motsvarande
-    // persistade zustand-state i localStorage innan sidan laddas
-    await page.addInitScript((metadata) => {
-      window.localStorage.setItem('metadata-storage', JSON.stringify({ state: { metadata }, version: 0 }));
-    }, mockMetadata);
+    await page.route('**/supportmanagement/metadata', jsonRoute(mockMetadata));
     await page.goto(appUrl('/arende/registrera'));
 
     // Att kontrollerna syns bevisar inte att de serverrenderade radioknapparna

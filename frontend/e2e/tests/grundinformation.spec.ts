@@ -42,10 +42,7 @@ const openErrand = async (page: Page, appUrl: (path: string) => string, status?:
     `**/supportmanagement/errand/${mockErrand.errandNumber}`,
     jsonRoute({ ...mockErrand, stakeholders: [longReporter], ...(status === undefined ? {} : { status }) })
   );
-  // Motsvarar seedningen i registrera.spec.ts: persistat zustand-state före sidladdning.
-  await page.addInitScript((metadata) => {
-    window.localStorage.setItem('metadata-storage', JSON.stringify({ state: { metadata }, version: 0 }));
-  }, mockMetadata);
+  await page.route('**/supportmanagement/metadata', jsonRoute(mockMetadata));
   await page.goto(appUrl(errandPath));
 };
 

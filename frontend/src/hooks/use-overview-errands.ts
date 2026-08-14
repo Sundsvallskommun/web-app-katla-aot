@@ -1,9 +1,9 @@
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
-import { getErrands, getMetadata } from '@services/errand-service/errand-service';
+import { getErrands } from '@services/errand-service/errand-service';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLoadMetadata } from 'src/hooks/use-load-metadata';
 import { useFilterStore } from 'src/stores/filter-store';
-import { useMetadataStore } from 'src/stores/metadata-store';
 import { useSortStore } from 'src/stores/sort-store';
 
 interface UseOverviewErrandsOptions {
@@ -19,14 +19,13 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
   const { t } = useTranslation();
   const { sortColumn, sortOrder, page, size } = useSortStore();
   const { statuses } = useFilterStore();
-  const { setMetadata } = useMetadataStore();
+  const { metadataError } = useLoadMetadata();
 
   const [rows, setRows] = useState<ErrandDTO[]>([]);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [totalElements, setTotalElements] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errandsError, setErrandsError] = useState<string | null>(null);
-  const [metadataError, setMetadataError] = useState<string | null>(null);
 
   const mobilePageRef = useRef(0);
   const requestGenerationRef = useRef(0);
@@ -54,23 +53,6 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
 
   // Desktop använder sidan från storen, mobil börjar alltid på 0
   const effectivePage = mode === 'mobile' ? 0 : page;
-
-  useEffect(() => {
-    let active = true;
-    void getMetadata()
-      .then((res) => {
-        if (!active) return;
-        setMetadata(res);
-        setMetadataError(null);
-      })
-      .catch(() => {
-        if (active) setMetadataError(t('api_errors.metadata'));
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [setMetadata, t]);
 
   // Huvudhämtningen — utlöses av ändringar i storen (sortering, filter, paginering).
   // Mobil hämtar alltid från sida 0 och nollställer ackumulerade rader.
