@@ -4,6 +4,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { PropsWithChildren } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { ErrandLayoutContent } from 'src/components/errand-layout/errand-layout-content.component';
+import { useMetadataStore } from 'src/stores/metadata-store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
@@ -42,6 +43,9 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('src/hooks/use-media-query', () => ({ useMediaQuery: () => false }));
+// Layouten renderar inte förrän metadata finns. Hämtningen hör inte till det här
+// testet, så den kortsluts och storen seedas i beforeEach.
+vi.mock('src/hooks/use-load-metadata', () => ({ useLoadMetadata: () => ({ metadataError: null }) }));
 vi.mock('src/hooks/use-auto-init-reporter', () => ({ useAutoInitReporter: vi.fn() }));
 vi.mock('src/stores/wizard-store', () => ({
   useWizardStore: (selector: (state: { reset: () => void }) => unknown) => selector({ reset: mocks.wizardReset }),
@@ -157,6 +161,7 @@ const FormIdentityProbe = () => {
 
 beforeEach(() => {
   setExistingRoute('ERRAND-A');
+  useMetadataStore.setState({ metadata: { roles: [] } });
 });
 
 afterEach(() => {

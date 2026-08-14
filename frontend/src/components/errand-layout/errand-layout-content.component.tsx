@@ -1,7 +1,7 @@
 'use client';
 
 import { jsonParametersToErrandFormData } from '@components/json/utils/schema-utils';
-import { ErrorAlert } from '@components/misc/error-alert.component';
+import { ErrorAlertList } from '@components/misc/error-alert.component';
 import { VisibleTabs } from '@components/tabs/tabs';
 import { MobileWizard } from '@components/wizard/mobile-wizard.component';
 import { FormValidationProvider } from '@contexts/form-validation-provider';
@@ -19,7 +19,9 @@ import { FormProvider, Resolver, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { MOBILE_BREAKPOINT } from 'src/constants/responsive';
 import { useAutoInitReporter } from 'src/hooks/use-auto-init-reporter';
+import { useLoadMetadata } from 'src/hooks/use-load-metadata';
 import { useMediaQuery } from 'src/hooks/use-media-query';
+import { useMetadataStore } from 'src/stores/metadata-store';
 import { useWizardStore } from 'src/stores/wizard-store';
 import * as yup from 'yup';
 
@@ -70,6 +72,8 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
   const initialFocus = useRef<HTMLBodyElement>(null);
   const isMobile = useMediaQuery(MOBILE_BREAKPOINT);
   const wizardReset = useWizardStore((s) => s.reset);
+  const { metadataError } = useLoadMetadata();
+  const metadata = useMetadataStore((state) => state.metadata);
   const [loadState, setLoadState] = useState<'error' | 'loading' | 'ready'>(
     route.kind === 'register' ? 'ready'
     : route.kind === 'invalid' ? 'error'
@@ -136,12 +140,19 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
     return `${t('errand-information:errand')} ${errandNumber}`;
   };
 
-  if (loadState !== 'ready') {
+  // Rollnamn och platsstrukturen kommer ur metadata. Renderas sidan innan den
+  // finns blir rollerna tomma och platsväljaren fastnar i sitt laddningsläge,
+  // så metadata hör till samma readiness-gräns som själva ärendet.
+  const loadErrors = [loadState === 'error' ? t('api_errors.errand') : null, metadataError].filter(
+    (message): message is string => message !== null
+  );
+
+  if (loadErrors.length > 0 || loadState !== 'ready' || !metadata) {
     return (
       <FormProvider {...methods}>
         <div className="bg-background-100 h-screen min-h-screen flex items-center justify-center p-24">
-          {loadState === 'error' ?
-            <ErrorAlert message={t('api_errors.errand')} />
+          {loadErrors.length > 0 ?
+            <ErrorAlertList messages={loadErrors} />
           : <Spinner aria-label={t('forms:loading')} />}
         </div>
       </FormProvider>
