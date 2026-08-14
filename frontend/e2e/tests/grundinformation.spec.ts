@@ -23,10 +23,7 @@ const longReporter = {
   phoneNumbers: [MOCK_COUNTRY_CODE_PHONE_NUMBER],
 };
 
-// baseURL i playwright.config innehåller basstigen, men en absolut sökväg i goto()
-// ersätter hela sökvägen och tappar den. Prefixet gör testet körbart både i CI
-// (tom basstig) och lokalt med NEXT_PUBLIC_BASE_PATH satt.
-const errandPath = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/arende/${mockErrand.errandNumber}/grundinformation`;
+const errandPath = `/arende/${mockErrand.errandNumber}/grundinformation`;
 
 // boundingBox() ger null för element som inte är synliga. Utan den här kontrollen
 // skulle ett omätbart element tysta ned jämförelserna nedan till 0 <= 0 i stället
@@ -39,7 +36,7 @@ const measure = async (locator: Locator, name: string) => {
   return { ...box, right: box.x + box.width };
 };
 
-const openReporterCard = async (page: Page) => {
+const openReporterCard = async (page: Page, appUrl: (path: string) => string) => {
   await page.route(
     `**/supportmanagement/errand/${mockErrand.errandNumber}`,
     jsonRoute({ ...mockErrand, stakeholders: [longReporter] })
@@ -48,7 +45,7 @@ const openReporterCard = async (page: Page) => {
   await page.addInitScript((metadata) => {
     window.localStorage.setItem('metadata-storage', JSON.stringify({ state: { metadata }, version: 0 }));
   }, mockMetadata);
-  await page.goto(errandPath);
+  await page.goto(appUrl(errandPath));
 
   const card = page.getByTestId('stakeholder-card').first();
   await expect(card).toBeVisible();
@@ -56,9 +53,9 @@ const openReporterCard = async (page: Page) => {
 };
 
 test.describe('Errand basic information page', () => {
-  test('Reporter card keeps long contact details inside its own bounds on mobile', async ({ page }) => {
+  test('Reporter card keeps long contact details inside its own bounds on mobile', async ({ appUrl, page }) => {
     await page.setViewportSize(MOBILE_VIEWPORT);
-    const card = await openReporterCard(page);
+    const card = await openReporterCard(page, appUrl);
 
     const cardBox = await measure(card, 'stakeholder-card');
     const emailBox = await measure(card.getByTestId('stakeholder-email'), 'stakeholder-email');
@@ -75,9 +72,9 @@ test.describe('Errand basic information page', () => {
     expect(cardBox.right).toBeLessThanOrEqual(MOBILE_VIEWPORT.width);
   });
 
-  test('Reporter card keeps its two columns side by side on desktop', async ({ page }) => {
+  test('Reporter card keeps its two columns side by side on desktop', async ({ appUrl, page }) => {
     await page.setViewportSize(DESKTOP_VIEWPORT);
-    const card = await openReporterCard(page);
+    const card = await openReporterCard(page, appUrl);
 
     const departmentBox = await measure(card.getByTestId('stakeholder-department'), 'stakeholder-department');
     const emailBox = await measure(card.getByTestId('stakeholder-email'), 'stakeholder-email');
