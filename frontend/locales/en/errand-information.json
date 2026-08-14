@@ -66,6 +66,8 @@
     "no_person_found": "No person was found",
     "missing_person_number": "Personal identity number missing",
     "missing_address": "Address missing",
+    "missing_email": "Email address missing",
+    "missing_phone": "Phone number missing",
     "email": "Email address",
     "email_placeholder": "Enter email address",
     "phone": "Phone number",

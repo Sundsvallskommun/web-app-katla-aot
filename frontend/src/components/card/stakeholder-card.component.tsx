@@ -59,8 +59,12 @@ export const StakeholderCard: React.FC<{
                 }
               </div>
               <div className="flex flex-col">
-                <div data-cy="stakeholder-email">{stakeholder.emails?.[0] ?? 'Epostadress saknas'}</div>
-                <div data-cy="stakeholder-phonenumber">{stakeholder.phoneNumbers?.[0] ?? 'Telefonnummber saknas'}</div>
+                <div data-cy="stakeholder-email">
+                  {stakeholder.emails?.[0] ?? t('errand-information:stakeholder.missing_email')}
+                </div>
+                <div data-cy="stakeholder-phonenumber">
+                  {stakeholder.phoneNumbers?.[0] ?? t('errand-information:stakeholder.missing_phone')}
+                </div>
               </div>
             </div>
           )}
