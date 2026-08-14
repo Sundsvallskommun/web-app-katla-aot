@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  applyUiSchemaTitleToSchema,
-  localeFromAcceptLanguage,
-  localizeUiSchema,
-  resolveLocaleExtensions,
-} from '@/utils/schema-localization';
+import { applyUiSchemaTitleToSchema, localeFromAcceptLanguage, localizeUiSchema, resolveLocaleExtensions } from '@/utils/schema-localization';
 
 /** Utdrag ur det verkliga ui-schemat för 2281_avvikelse-plats-handelse_1.3, med x-i18n pålagt. */
 const uiSchema = () => ({
@@ -109,7 +104,7 @@ describe('localizeUiSchema', () => {
 
   // Blocket bär alla språk. Läcker det ut växer varje svar med text ingen läser,
   // och frontend skulle kunna råka rendera fel språk från det.
-  it.each(['sv', 'en', 'de'])('never leaks the x-i18n block for locale %s', (locale) => {
+  it.each(['sv', 'en', 'de'])('never leaks the x-i18n block for locale %s', locale => {
     const serialized = JSON.stringify(localizeUiSchema(uiSchema(), locale));
 
     expect(serialized).not.toContain('x-i18n');
@@ -154,9 +149,12 @@ describe('applyUiSchemaTitleToSchema', () => {
   // Schemats rubrik namnger formuläret i felsammanfattningen. Den ligger i JSON-schemat och
   // kan bara ändras med en ny version, så den översätts via ui-schemats rot i stället.
   it('takes the localized root title from the ui-schema', () => {
-    const schema = applyUiSchemaTitleToSchema({ type: 'object', title: 'Plats och händelseförlopp' }, {
-      'ui:title': 'Location and sequence of events',
-    });
+    const schema = applyUiSchemaTitleToSchema(
+      { type: 'object', title: 'Plats och händelseförlopp' },
+      {
+        'ui:title': 'Location and sequence of events',
+      },
+    );
 
     expect(schema).toEqual({ type: 'object', title: 'Location and sequence of events' });
   });

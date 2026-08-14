@@ -164,10 +164,7 @@ describe('JSON schema adapter contracts', () => {
     it('applies the same resolution to the latest-version route', async () => {
       mockUpstream();
 
-      const response = await request(app)
-        .get('/api/schemas/latest/avvikelse-plats-handelse')
-        .set('Accept-Language', 'en-GB,en;q=0.9')
-        .expect(200);
+      const response = await request(app).get('/api/schemas/latest/avvikelse-plats-handelse').set('Accept-Language', 'en-GB,en;q=0.9').expect(200);
       const body = response.body as SchemaResponseDTO;
       const eventTime = body.uiSchema.eventTime as Record<string, unknown>;
 
