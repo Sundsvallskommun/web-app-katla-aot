@@ -21,10 +21,6 @@ export const APIS = [
     version: '3.0',
   },
   {
-    name: 'company',
-    version: '1.0',
-  },
-  {
     name: 'jsonschema',
     version: '1.0',
   },
