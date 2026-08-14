@@ -133,10 +133,6 @@ vi.mock('@services/employee-service/employee-service', () => ({
   getUserEmployments: vi.fn().mockResolvedValue([]),
 }));
 
-vi.mock('@services/organization/organization-service', () => ({
-  getOrgLeafNodes: vi.fn().mockResolvedValue([]),
-}));
-
 afterEach(() => {
   vi.clearAllMocks();
   vi.unstubAllGlobals();
