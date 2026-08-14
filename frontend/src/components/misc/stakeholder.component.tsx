@@ -15,13 +15,13 @@ import {
   Select,
 } from '@sk-web-gui/react';
 import {
+  createStakeholderSchema,
   emptyStakeholder,
   phoneNumberFormatter,
   shouldShowContactDetails,
-  stakeholderSchema,
 } from '@utils/stakeholder';
 import { Pen, Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FormProvider, Resolver, useFieldArray, useForm, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useMetadataStore } from 'src/stores/metadata-store';
@@ -50,6 +50,9 @@ export const StakeholderList: React.FC<{
     control: context.control,
     name: 'stakeholders',
   });
+
+  // Byggs om när språket ändras – yup fryser felmeddelandena vid konstruktionen.
+  const stakeholderSchema = useMemo(() => createStakeholderSchema(t), [t]);
 
   const method = useForm<StakeholderDTO>({
     defaultValues: emptyStakeholder,
@@ -148,7 +151,7 @@ export const StakeholderList: React.FC<{
                     clearStakeholderForm();
                   }}
                 >
-                  Person
+                  {t('errand-information:stakeholder.person')}
                 </RadioButton>
                 <RadioButton
                   data-cy="radiobutton-employee"
@@ -159,7 +162,7 @@ export const StakeholderList: React.FC<{
                     clearStakeholderForm();
                   }}
                 >
-                  Anställd
+                  {t('errand-information:stakeholder.employee')}
                 </RadioButton>
               </RadioButton.Group>
             )}
@@ -185,7 +188,11 @@ export const StakeholderList: React.FC<{
                 {formState.errors.personNumber?.message}
               </FormErrorMessage>
             )}
-            {emptyResult && <FormErrorMessage data-cy="empty-person-error">Ingen person hittades</FormErrorMessage>}
+            {emptyResult && (
+              <FormErrorMessage data-cy="empty-person-error">
+                {t('errand-information:stakeholder.no_person_found')}
+              </FormErrorMessage>
+            )}
           </FormControl>
         )}
 
@@ -201,14 +208,14 @@ export const StakeholderList: React.FC<{
                   {title ?
                     <span>{title}</span>
                   : <span className={cx(!personNumber && 'italic text-text-secondary')}>
-                      {(personNumber ?? '') || 'Personnummer saknas'}
+                      {(personNumber ?? '') || t('errand-information:stakeholder.missing_person_number')}
                     </span>
                   }
                   {department ?
                     <span>{department}</span>
                   : <span className={cx((!address || !city) && 'italic text-text-secondary')}>
                       {/* Bugfix: template literal var alltid truthy — visa fallback när adress eller ort saknas */}
-                      {address && city ? `${address}, ${city}` : 'Adress saknas'}
+                      {address && city ? `${address}, ${city}` : t('errand-information:stakeholder.missing_address')}
                     </span>
                   }
                 </div>
@@ -216,11 +223,11 @@ export const StakeholderList: React.FC<{
               {shouldShowContactDetails(roles) && (
                 <div className="flex flex-col sm:flex-row py-10 gap-10 w-full">
                   <FormControl className="w-full">
-                    <FormLabel>E-postadress</FormLabel>
+                    <FormLabel>{t('errand-information:stakeholder.email')}</FormLabel>
                     <Input
                       {...register('emails.0')}
                       data-cy="stakeholder-email-input"
-                      placeholder="Ange e-postadress"
+                      placeholder={t('errand-information:stakeholder.email_placeholder')}
                     />
                     {formState.errors.emails?.[0]?.message && (
                       <FormErrorMessage data-cy="email-input-error">
@@ -229,11 +236,11 @@ export const StakeholderList: React.FC<{
                     )}
                   </FormControl>
                   <FormControl className="w-full">
-                    <FormLabel>Telefonnummer</FormLabel>
+                    <FormLabel>{t('errand-information:stakeholder.phone')}</FormLabel>
                     <Input
                       {...register('phoneNumbers.0')}
                       data-cy="stakeholder-mobilephone-input"
-                      placeholder="Ange telefonnummer"
+                      placeholder={t('errand-information:stakeholder.phone_placeholder')}
                     />
                     {formState.errors.phoneNumbers?.[0]?.message && (
                       <FormErrorMessage data-cy="phone-number-input-error">
@@ -246,7 +253,7 @@ export const StakeholderList: React.FC<{
 
               {!hideRoleSelect && (
                 <FormControl required className="w-full sm:w-[calc(50%-10px)]">
-                  <FormLabel>Personens roll</FormLabel>
+                  <FormLabel>{t('errand-information:stakeholder.person_role')}</FormLabel>
                   <Select data-cy="stakeholder-role-select" className="w-full" {...register('role')}>
                     {metadata?.roles?.map(
                       (role) =>
@@ -269,7 +276,7 @@ export const StakeholderList: React.FC<{
                   }}
                   className="w-full lg:w-auto"
                 >
-                  Lägg till person
+                  {t('errand-information:stakeholder.add_person')}
                 </Button>
               </div>
             </div>
@@ -306,7 +313,7 @@ export const StakeholderList: React.FC<{
             setManualEntryOpen(true);
           }}
         >
-          Lägg till manuellt
+          {t('errand-information:stakeholder.add_manually')}
         </Button>
       )}
 

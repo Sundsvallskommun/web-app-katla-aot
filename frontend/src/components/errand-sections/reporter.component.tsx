@@ -60,7 +60,7 @@ export const ReporterContent: React.FC = () => {
             roles={['REPORTER']}
           />
           <Checkbox className="-mt-[2.4rem]" checked={otherReporter} onChange={handleOtherReporterChange}>
-            Jag rapporterar åt en annan kollega
+            {t('errand-information:stakeholder.reporting_for_colleague')}
           </Checkbox>
           {otherReporter && (
             <div className="flex flex-col gap-[2.4rem]">

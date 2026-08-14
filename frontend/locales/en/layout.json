@@ -1,0 +1,55 @@
+{
+  "header": {
+    "goto_content": "Skip to content"
+  },
+  "controls": {
+    "open_user_menu": "Open user menu",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "close": "Close",
+    "go_to_start": "Katla - {{app}}. Go to the start page.",
+    "open_errand": "Open case {{errandNumber}}",
+    "open_sidebar": "Open sidebar",
+    "close_sidebar": "Close sidebar"
+  },
+  "notifications": {
+    "open": "Open notifications",
+    "open_with_count_one": "Open notifications ({{count}} unread)",
+    "open_with_count_other": "Open notifications ({{count}} unread)",
+    "panel": "Notifications",
+    "close": "Close notifications",
+    "loading": "Loading notifications",
+    "new": "New",
+    "previous": "Earlier",
+    "none_new": "No new notifications",
+    "none_previous": "No earlier notifications"
+  },
+  "language": {
+    "label": "Language",
+    "sv": "Svenska",
+    "en": "English"
+  },
+  "color_scheme": {
+    "label": "Colour mode",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "cookies": {
+    "title": "Cookies on {{app}}",
+    "description": "We use cookies to give you an improved experience, compile statistics and to make certain necessary functionality work on the website.",
+    "read_more": "Read more about how we use cookies",
+    "necessary": {
+      "displayName": "Necessary cookies",
+      "description": "These cookies are necessary for the website to work and cannot be switched off in our systems."
+    },
+    "func": {
+      "displayName": "Functional cookies",
+      "description": "These cookies provide enhanced functionality on the website."
+    },
+    "stats": {
+      "displayName": "Statistics cookies",
+      "description": "These cookies allow us to count visits and traffic sources, so that we can measure and improve the performance of our website."
+    }
+  }
+}

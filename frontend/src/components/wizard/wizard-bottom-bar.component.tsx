@@ -1,3 +1,4 @@
+import i18nConfig from '@app/i18nConfig';
 import { CancelErrandDialog } from '@components/cancel-errand-dialog.component';
 import {
   errandFormDataContractErrorMessage,
@@ -23,7 +24,8 @@ import { validateStep } from './wizard-step-validator';
 
 export const WizardBottomBar: React.FC = () => {
   const { t } = useTranslation();
-  const { t: tForms } = useTranslation('forms');
+  const { t: tForms, i18n } = useTranslation('forms');
+  const locale = i18n.resolvedLanguage ?? i18nConfig.defaultLocale;
   const toastMessage = useSnackbar();
   const router = useRouter();
   const { getValues, reset, watch } = useFormContext<ErrandFormDTO>();
@@ -91,7 +93,7 @@ export const WizardBottomBar: React.FC = () => {
 
   const handleNext = async () => {
     const step = steps[currentStep];
-    const errors = await validateStep(step, getValues(), step.id === 'deviation' ? tForms : t);
+    const errors = await validateStep(step, getValues(), step.id === 'deviation' ? tForms : t, locale);
     setStepErrors(currentStep, errors);
 
     if (errors.length > 0) {
@@ -119,7 +121,7 @@ export const WizardBottomBar: React.FC = () => {
       reportValidationError(t('errand-information:about.event_concerns_required'));
       return;
     }
-    const formDataErrors = await validateErrandFormData(values.errandFormData, tForms);
+    const formDataErrors = await validateErrandFormData(values.errandFormData, tForms, locale);
     if (formDataErrors.length > 0) {
       reportValidationError(formDataErrors[0]);
       return;
@@ -220,7 +222,7 @@ export const WizardBottomBar: React.FC = () => {
           <CenterDiv>
             <Inbox size={32} className="mb-[1.6rem] text-vattjom-surface-primary" />
             <h3 className="text-h3-md">{t('errand-information:register')}</h3>
-            <span className="text-dark-secondary text-md">Vill du skicka in ärendet?</span>
+            <span className="text-dark-secondary text-md">{t('errand-information:submit_confirm.question')}</span>
           </CenterDiv>
         </Dialog.Content>
         <Dialog.Buttons className="justify-center flex-col sm:flex-row gap-8">
@@ -230,7 +232,7 @@ export const WizardBottomBar: React.FC = () => {
               setIsOpen(false);
             }}
           >
-            Nej
+            {t('errand-information:submit_confirm.no')}
           </Button>
           <Button
             data-cy="submit-button"
@@ -239,7 +241,7 @@ export const WizardBottomBar: React.FC = () => {
               void onRegister();
             }}
           >
-            Skicka in
+            {t('errand-information:submit_confirm.submit')}
           </Button>
           <Button
             data-cy="submit-logout-button"
@@ -249,7 +251,7 @@ export const WizardBottomBar: React.FC = () => {
               void onRegister(true);
             }}
           >
-            Skicka in och logga ut
+            {t('errand-information:submit_confirm.submit_and_logout')}
           </Button>
         </Dialog.Buttons>
       </Dialog>

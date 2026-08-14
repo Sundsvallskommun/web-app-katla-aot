@@ -27,7 +27,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
+  useTranslation: () => ({ t: (key: string) => key, i18n: { resolvedLanguage: 'sv' } }),
 }));
 
 vi.mock('src/config/appconfig', () => ({

@@ -9,6 +9,7 @@ import authMiddleware from '@/middlewares/auth.middleware';
 import { SchemaResponseDTO } from '@/responses/schema.response';
 import ApiService from '@/services/api.service';
 import { logger } from '@/utils/logger';
+import { applyUiSchemaTitleToSchema, localeFromAcceptLanguage, localizeUiSchema } from '@/utils/schema-localization';
 import { mapSchemaResponse, mapUiSchema } from '@/utils/schema-response-mapping';
 import { apiURL } from '@/utils/util';
 
@@ -17,7 +18,11 @@ export class SchemaController {
   private apiService = new ApiService();
   private apiBase = getApiBase('jsonschema');
 
-  private async fetchUiSchema(schemaId: string, req: RequestWithUser): Promise<Record<string, unknown>> {
+  /**
+   * Ui-schemat lagrar sina översättningar i x-i18n-block. De löses upp här, så att frontend
+   * får färdig text för det begärda språket och aldrig ser de andra språken.
+   */
+  private async fetchUiSchema(schemaId: string, req: RequestWithUser, locale: string): Promise<Record<string, unknown>> {
     try {
       const uiRes = await this.apiService.get<UiSchema>(
         {
@@ -26,7 +31,7 @@ export class SchemaController {
         },
         req,
       );
-      return mapUiSchema(uiRes.data);
+      return localizeUiSchema(mapUiSchema(uiRes.data), locale);
     } catch {
       logger.info(`No UI schema found for ${schemaId}, using empty object`);
       return {};
@@ -38,6 +43,7 @@ export class SchemaController {
   @UseBefore(authMiddleware)
   @ResponseSchema(SchemaResponseDTO)
   async getSchemaById(@Param('schemaId') schemaId: string, @Req() req: RequestWithUser): Promise<SchemaResponseDTO> {
+    const locale = localeFromAcceptLanguage(req.headers['accept-language']);
     const schemaRes = await this.apiService.get<JsonSchema>(
       {
         baseURL: apiURL(this.apiBase),
@@ -47,9 +53,9 @@ export class SchemaController {
     );
 
     const result = mapSchemaResponse(schemaRes.data, schemaId);
-    const uiSchema = await this.fetchUiSchema(result.schemaId, req);
+    const uiSchema = await this.fetchUiSchema(result.schemaId, req, locale);
 
-    return { schema: result.schema, schemaId: result.schemaId, uiSchema };
+    return { schema: applyUiSchemaTitleToSchema(result.schema, uiSchema), schemaId: result.schemaId, uiSchema };
   }
 
   @Get('/schemas/latest/:schemaName')
@@ -57,6 +63,7 @@ export class SchemaController {
   @UseBefore(authMiddleware)
   @ResponseSchema(SchemaResponseDTO)
   async getLatestSchema(@Param('schemaName') schemaName: string, @Req() req: RequestWithUser): Promise<SchemaResponseDTO> {
+    const locale = localeFromAcceptLanguage(req.headers['accept-language']);
     const latestRes = await this.apiService.get<JsonSchema>(
       {
         baseURL: apiURL(this.apiBase),
@@ -66,8 +73,8 @@ export class SchemaController {
     );
 
     const result = mapSchemaResponse(latestRes.data);
-    const uiSchema = await this.fetchUiSchema(result.schemaId, req);
+    const uiSchema = await this.fetchUiSchema(result.schemaId, req, locale);
 
-    return { schema: result.schema, schemaId: result.schemaId, uiSchema };
+    return { schema: applyUiSchemaTitleToSchema(result.schema, uiSchema), schemaId: result.schemaId, uiSchema };
   }
 }

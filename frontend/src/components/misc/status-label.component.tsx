@@ -1,19 +1,9 @@
 import { Label, LabelProps } from '@sk-web-gui/react';
 import { Check, CirclePause, Clock10, Pen, SquarePen } from 'lucide-react';
-
-//TODO: Ajust enum values
-enum StatusLabelEnum {
-  NEW = 'Inskickat',
-  DRAFT = 'Utkast',
-  ONGOING = 'Pågående',
-  PENDING = 'Komplettering',
-  SUSPENDED = 'Parkerat',
-  ASSIGNED = 'Tilldelat',
-  SOLVED = 'Löst',
-  AWAITING_INTERNAL_RESPONSE = 'Intern återkoppling',
-}
+import { useTranslation } from 'react-i18next';
 
 export const StatusLabel: React.FC<{ status?: string }> = ({ status }) => {
+  const { t } = useTranslation();
   let color: LabelProps['color'],
     inverted = false,
     icon: React.ReactNode = null;
@@ -88,7 +78,9 @@ export const StatusLabel: React.FC<{ status?: string }> = ({ status }) => {
 
   return (
     <Label rounded inverted={inverted} color={color} className={`max-h-full h-auto text-center whitespace-nowrap`}>
-      {icon} {StatusLabelEnum[status as keyof typeof StatusLabelEnum]}
+      {/* Statuskoden är språkneutral. Statusar utan egen text (t.ex. UPSTART) visar bara
+          färg och ikon, precis som tidigare. */}
+      {icon} {t(`common:status.${status ?? ''}`, { defaultValue: '' })}
     </Label>
   );
 };

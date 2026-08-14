@@ -1,13 +1,20 @@
 import '@styles/tailwind.scss';
 
 import AppLayout from '@layouts/app/app-layout.component';
+import { headers } from 'next/headers';
 import { ReactNode, Suspense } from 'react';
 
-import i18nConfig from './i18nConfig';
+import { localeFromPath } from './locale-path';
 
-const RootLayout = ({ children }: { children: ReactNode }) => {
+const RootLayout = async ({ children }: { children: ReactNode }) => {
+  // Rot-layouten ligger ovanför [locale] och har därför ingen locale-parameter. Proxyn
+  // sätter x-path på requesten, så språket härleds från sökvägens första segment i
+  // stället för att låsas till standardspråket – annars skulle engelska sidor felaktigt
+  // deklarera lang="sv" för skärmläsare.
+  const locale = localeFromPath((await headers()).get('x-path'));
+
   return (
-    <html lang={i18nConfig.defaultLocale}>
+    <html lang={locale}>
       <body>
         <Suspense>
           <AppLayout>{children}</AppLayout>

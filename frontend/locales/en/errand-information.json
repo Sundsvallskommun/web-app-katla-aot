@@ -1,0 +1,121 @@
+{
+  "cancel": "Cancel",
+  "cancel_confirm": {
+    "title": "Cancel report",
+    "description": "If you cancel, the report will not be saved. You need to complete all steps and submit for the report to be registered.",
+    "confirm": "Yes, cancel",
+    "back": "No, continue"
+  },
+  "save_draft": "Save draft",
+  "register": "Submit",
+  "no_errands": "There are no cases to display",
+  "errand": "Case: ",
+  "draft": "Draft: ",
+  "search": {
+    "PERSON": "Search by personal identity number",
+    "EMPLOYEE": "Search by username",
+    "AUTODETECT": "Search by personal identity number or username"
+  },
+  "save_message": {
+    "draft": "Draft saved",
+    "register": "The case was submitted",
+    "error": "Something went wrong while saving the case"
+  },
+  "about": {
+    "title": "About the case",
+    "event_type_label": "Select event type",
+    "event_type_deviation": "Deviation",
+    "event_type_misconduct": "Misconduct",
+    "misconduct_alert_title": "Misconduct",
+    "misconduct_alert_description": "The case is sent to an independent investigator. Your manager is informed about the case but does not decide the outcome.",
+    "event_concerns_label": "The event concerns",
+    "event_concerns_individual": "An individual client",
+    "event_concerns_group": "Group/the entire operation",
+    "event_concerns_other": "Other",
+    "event_concerns_describe_note": "(Describe further in the \"What happened?\" section)",
+    "event_type_required": "Select an event type",
+    "event_concerns_required": "Select what the event concerns",
+    "event_concerns_group_facility_required": "Select a location where the deviation occurred when the event concerns a group/the entire operation",
+    "facility_incomplete": "Complete the location selection by choosing a unit – the location controls who can see the case"
+  },
+  "reporter": {
+    "title": "Reporter",
+    "description": "The reporter is the person who initiated the case and our primary contact while the case is being processed. If you are reporting on behalf of another colleague, add that person under other reporter."
+  },
+  "user": {
+    "title": "Client",
+    "description": "A client is the individual affected by the case.",
+    "not_required_title": "No client is needed for this case",
+    "not_required_description": "Since the event does not concern an individual client, you do not need to specify a client. You can continue to the next step."
+  },
+  "other_reporter": {
+    "title": "Other reporter",
+    "description": "Specify the colleague you are reporting on behalf of."
+  },
+  "other_parties": {
+    "title": "Other parties",
+    "description": "A party can be a contact person, doctor or a relative whose role is important to the case. If you are reporting on behalf of a colleague, you should add that colleague as another party."
+  },
+  "deviation_information": {
+    "title": "Details about the deviation",
+    "loading_form": "Loading form..."
+  },
+  "stakeholder": {
+    "person": "Person",
+    "employee": "Employee",
+    "no_person_found": "No person was found",
+    "missing_person_number": "Personal identity number missing",
+    "missing_address": "Address missing",
+    "email": "Email address",
+    "email_placeholder": "Enter email address",
+    "phone": "Phone number",
+    "phone_placeholder": "Enter phone number",
+    "person_role": "The person's role",
+    "add_person": "Add person",
+    "add_manually": "Add manually",
+    "edit_details": "Edit details",
+    "remove": "Remove",
+    "reporting_for_colleague": "I am reporting on behalf of another colleague",
+    "modal": {
+      "edit_title": "Edit person",
+      "add_title": "Add person manually",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "address": "Address",
+      "care_of": "C/o address",
+      "zip_code": "Postcode",
+      "city": "City",
+      "role": "Role",
+      "save_edit": "Save changes",
+      "save_add": "Add",
+      "cancel": "Cancel"
+    }
+  },
+  "submit_confirm": {
+    "question": "Do you want to submit the case?",
+    "no": "No",
+    "submit": "Submit",
+    "submit_and_logout": "Submit and log out"
+  },
+  "section": {
+    "complete": "Complete",
+    "mark_complete": "Mark the section as complete"
+  },
+  "basic_information_heading": "1. Basic information",
+  "errand_details_heading": "2. Case details",
+  "wizard": {
+    "step_indicator": "Step {{current}}/{{total}}",
+    "next": "Next",
+    "back": "Back",
+    "cancel": "Cancel",
+    "save": "Save",
+    "submit": "Submit",
+    "summary": "Summary",
+    "edit": "Edit",
+    "complete": "Complete",
+    "incomplete": "Incomplete"
+  },
+  "sequence_of_events": {
+    "title": "Sequence of events"
+  }
+}

@@ -177,9 +177,9 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
                     >
                       {VisibleTabs.filter((tab) => tab.visible).map((tab) => {
                         return (
-                          <Tabs.Item key={tab.label}>
+                          <Tabs.Item key={tab.path}>
                             <Tabs.Button {...createLinkTabProps(tab.path)} className="text-base whitespace-nowrap">
-                              {tab.label}
+                              {t(tab.labelKey)}
                             </Tabs.Button>
                             <Tabs.Content>
                               <div className="pt-xl pb-64 px-16 md:px-40">{children}</div>

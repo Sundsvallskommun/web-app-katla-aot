@@ -1,6 +1,25 @@
 {
   "login": "logga in",
   "logout": "logga ut",
+  "time": {
+    "today": "Idag {{time}}",
+    "yesterday": "Igår {{time}}"
+  },
+  "notification": {
+    "to_errand": "Till ärendet",
+    "from": "Från: {{name}}",
+    "event": "Händelse: {{label}}",
+    "unknown_sender": "Okänd",
+    "subtype": {
+      "ATTACHMENT": "Ny bilaga",
+      "DECISION": "Nytt beslut",
+      "ERRAND": "Ärende uppdaterat",
+      "MESSAGE": "Nytt meddelande",
+      "NOTE": "Ny kommentar/anteckning",
+      "SYSTEM": "Fasbyte",
+      "SUSPENSION": "Parkering upphört"
+    }
+  },
   "api_errors": {
     "metadata": "Metadata kunde inte hämtas. Försök igen senare.",
     "errands": "Ärendena kunde inte hämtas. Försök igen senare.",
@@ -12,11 +31,30 @@
   "errand-table": {
     "loading": "Laddar ärenden",
     "open_errand": "Öppna ärende {{errandNumber}}",
+    "registered": "Registrerat",
+    "rows_per_page": "Rader per sida:",
+    "row_height": "Radhöjd:",
+    "row_height_normal": "Normal",
+    "row_height_dense": "Tät",
     "header": {
       "status": "Status",
       "errandNumber": "Ärendenummer",
       "classificationType": "Typ av rapport",
       "created": "Rapporterat"
     }
-  }
+  },
+  "status": {
+    "NEW": "Inskickat",
+    "DRAFT": "Utkast",
+    "ONGOING": "Pågående",
+    "PENDING": "Komplettering",
+    "SUSPENDED": "Parkerat",
+    "ASSIGNED": "Tilldelat",
+    "SOLVED": "Löst",
+    "AWAITING_INTERNAL_RESPONSE": "Intern återkoppling"
+  },
+  "tabs": {
+    "basic_information": "Grundinformation"
+  },
+  "loading_information": "Laddar information"
 }

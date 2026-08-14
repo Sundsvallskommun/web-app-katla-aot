@@ -6,6 +6,15 @@ interface NotificationRenderIconProps {
   notification: NotificationDTO;
 }
 
+/**
+ * OBS: nycklarna här är inte gränssnittstext utan matchas mot `notification.description`
+ * precis som API:t levererar den. De ska därför varken översättas eller skrivas om – görs
+ * det faller alla notiser tillbaka på standardikonen utan att något syns i typkontrollen.
+ *
+ * Kopplingen till fritext är i sig skör, och den håller bara så länge API:t svarar på
+ * svenska. Att i stället nyckla på `subtype` (språkneutral) vore mer robust, men kräver att
+ * man vet hur subtyp och beskrivning faktiskt hänger ihop i API:ts data – se separat ärende.
+ */
 const iconConfig: Record<string, { icon?: LucideIcon; avatar?: boolean; defaultColor: string }> = {
   'Meddelande mottaget': { icon: MessageCircle, defaultColor: 'gronsta' },
   'Parkering av ärendet har upphört': { icon: BellRing, defaultColor: 'juniskar' },

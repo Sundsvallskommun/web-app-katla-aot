@@ -1,0 +1,24 @@
+{
+  "required": "Required field",
+  "checkbox_required": "You must tick this box",
+  "min_length": "Enter at least {{limit}} characters",
+  "max_length": "Enter no more than {{limit}} characters",
+  "min_items": "Select at least {{limit}} options",
+  "max_items": "Select no more than {{limit}} options",
+  "minimum": "The value must be at least {{limit}}",
+  "maximum": "The value must be no more than {{limit}}",
+  "pattern": "The value does not match the expected format",
+  "email": "Enter a valid email address",
+  "url": "Enter a valid link (URL)",
+  "date": "Enter a date in a valid format (YYYY-MM-DD)",
+  "date_time": "Enter date and time in a valid format",
+  "format": "The value does not match the format \"{{format}}\"",
+  "stakeholder": {
+    "first_name_required": "First name cannot be empty",
+    "last_name_required": "Last name cannot be empty",
+    "person_number_format": "The personal identity number must be YYYYMMDDXXXX or YYYYMMDD-XXXX",
+    "person_number_invalid_date": "Invalid date in the personal identity number",
+    "email_invalid": "Invalid email address",
+    "phone_invalid": "Enter a valid mobile number, for example 0731234567, +46731234567 or 0046731234567."
+  }
+}

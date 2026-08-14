@@ -1,12 +1,15 @@
 'use client';
 
+import { pathWithLocale } from '@app/locale-path';
 import { LogoutButton } from '@components/buttons/logout-button.component';
 import { colorSchemeOptions } from '@components/misc/color-scheme-options';
+import { languageOptions } from '@components/misc/language-options';
 import { FilterOverviewSidebarStatusSelector } from '@components/sidebars/filter-overview-sidebar-status-selector.component';
 import { useUserStore } from '@services/user-service/user-service';
 import { Avatar, Button, Divider, RadioButton } from '@sk-web-gui/react';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
 import { X } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -17,9 +20,11 @@ interface MobileMenuBodyProps {
 }
 
 export const MobileMenuBody: React.FC<MobileMenuBodyProps> = ({ onClose }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const user = useUserStore(useShallow((s) => s.user));
   const { colorScheme, setColorScheme } = useLocalStorage();
+  const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <section
@@ -72,6 +77,35 @@ export const MobileMenuBody: React.FC<MobileMenuBodyProps> = ({ onClose }) => {
                 >
                   <Icon aria-hidden="true" className={colorScheme === value ? '' : 'opacity-50'} size={16} />{' '}
                   {t(labelKey)}
+                </RadioButton>
+              ))}
+            </RadioButton.Group>
+          </div>
+
+          <Divider />
+
+          <div className="flex flex-col gap-8">
+            <span id="mobile-language-label" className="text-small font-bold">
+              {t('layout:language.label')}
+            </span>
+            <RadioButton.Group
+              aria-labelledby="mobile-language-label"
+              className="flex gap-8"
+              name="mobile-language"
+              value={i18n.resolvedLanguage}
+            >
+              {languageOptions.map(({ value, labelKey }) => (
+                <RadioButton
+                  key={value}
+                  value={value}
+                  lang={value}
+                  data-cy={`mobile-language-option-${value}`}
+                  checked={i18n.resolvedLanguage === value}
+                  onChange={() => {
+                    router.push(pathWithLocale(pathname, value));
+                  }}
+                >
+                  <span lang={value}>{t(labelKey)}</span>
                 </RadioButton>
               ))}
             </RadioButton.Group>

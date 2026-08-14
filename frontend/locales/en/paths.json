@@ -1,0 +1,10 @@
+{
+  "/login": {
+    "title": "Login page",
+    "description": "Description of the login page"
+  },
+  "/example": {
+    "title": "Example page",
+    "description": "Description of the example page"
+  }
+}

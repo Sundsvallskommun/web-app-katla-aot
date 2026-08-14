@@ -1,3 +1,4 @@
+import i18nConfig from '@app/i18nConfig';
 import type { JsonParameterDTO } from '@data-contracts/backend/data-contracts';
 import type { ErrandFormDataItem } from '@interfaces/errand-form';
 import type { RJSFSchema, RJSFValidationError, UiSchema } from '@rjsf/utils';
@@ -60,11 +61,23 @@ function requireSchemaId(schemaId: unknown, schemaName: string): string {
   return schemaId;
 }
 
-// Cachea schemat för att undvika upprepade hämtningar
+// Cachea schemat för att undvika upprepade hämtningar. Nyckeln bär språket eftersom
+// samma schema kan levereras med olika fältetiketter per språk – utan det skulle det
+// först hämtade språket serveras till alla efterföljande läsare.
 const schemaCache = new Map<
   string,
   { schema: RJSFSchema; uiSchema?: UiSchema<Record<string, unknown>>; schemaId: string }
 >();
+
+const cacheKey = (locale: string, id: string): string => `${locale}:${id}`;
+
+/**
+ * Schemats fältetiketter ägs av jsonschema-API:t, inte av frontend. Språket skickas därför
+ * med i förfrågan i stället för att översättas här – en översättningstabell i frontend
+ * skulle duplicera innehåll som versioneras i ett annat system och tyst driva isär vid
+ * varje ny schemaversion. API:t svarar tills vidare på svenska oavsett begärt språk.
+ */
+const localeHeaders = (locale: string): HeadersInit => ({ 'Accept-Language': locale });
 
 export function enumTitleOf(schema: RJSFSchema | null, field: string, value: string): string {
   if (!schema || !value) return value ?? '';
@@ -88,13 +101,14 @@ export function enumTitlesOfArray(schema: RJSFSchema | null, field: string, valu
 
 export async function loadFormSchema(
   schemaName: string,
-  t?: TFunction
+  t?: TFunction,
+  locale = i18nConfig.defaultLocale
 ): Promise<{
   schema: RJSFSchema;
   uiSchema?: UiSchema<Record<string, unknown>>;
   schemaId: string;
 }> {
-  const cached = schemaCache.get(schemaName);
+  const cached = schemaCache.get(cacheKey(locale, schemaName));
   if (cached) {
     return cached;
   }
@@ -104,6 +118,7 @@ export async function loadFormSchema(
   try {
     const response = await fetch(`${apiUrl}/schemas/latest/${schemaName}`, {
       credentials: 'include',
+      headers: localeHeaders(locale),
     });
     if (!response.ok) {
       throw new Error(`Failed to load schema: ${response.statusText}`);
@@ -125,8 +140,8 @@ export async function loadFormSchema(
 
     // Spara den exakta versionen under både sitt logiska namn och sitt oföränderliga ID.
     const result = { schema, uiSchema, schemaId };
-    schemaCache.set(schemaName, result);
-    schemaCache.set(schemaId, result);
+    schemaCache.set(cacheKey(locale, schemaName), result);
+    schemaCache.set(cacheKey(locale, schemaId), result);
 
     return result;
   } catch (error) {
@@ -139,14 +154,15 @@ export async function loadFormSchema(
 
 export async function loadFormSchemaById(
   schemaId: string,
-  t?: TFunction
+  t?: TFunction,
+  locale = i18nConfig.defaultLocale
 ): Promise<{
   schema: RJSFSchema;
   uiSchema?: UiSchema<Record<string, unknown>>;
   schemaId: string;
 }> {
   const exactSchemaId = requireSchemaId(schemaId, schemaId);
-  const cached = schemaCache.get(exactSchemaId);
+  const cached = schemaCache.get(cacheKey(locale, exactSchemaId));
   if (cached) {
     return { ...cached, schemaId: exactSchemaId };
   }
@@ -156,6 +172,7 @@ export async function loadFormSchemaById(
   try {
     const response = await fetch(`${apiUrl}/schemas/${exactSchemaId}`, {
       credentials: 'include',
+      headers: localeHeaders(locale),
     });
     if (!response.ok) {
       throw new Error(`Failed to load schema: ${response.statusText}`);
@@ -179,7 +196,7 @@ export async function loadFormSchemaById(
     }
 
     const result = { schema, uiSchema, schemaId: verifiedSchemaId };
-    schemaCache.set(exactSchemaId, result);
+    schemaCache.set(cacheKey(locale, exactSchemaId), result);
 
     return result;
   } catch (error) {
@@ -193,13 +210,14 @@ export async function loadFormSchemaById(
 export function loadFormSchemaForEntry(
   schemaName: string,
   schemaId?: string,
-  t?: TFunction
+  t?: TFunction,
+  locale = i18nConfig.defaultLocale
 ): Promise<{
   schema: RJSFSchema;
   uiSchema?: UiSchema<Record<string, unknown>>;
   schemaId: string;
 }> {
-  return loadFormSchemaById(requireSchemaId(schemaId, schemaName), t);
+  return loadFormSchemaById(requireSchemaId(schemaId, schemaName), t, locale);
 }
 
 function schemaValidationError(schemaName: string, t?: TFunction): string {
@@ -245,7 +263,11 @@ function schemaFieldValidationError(
  */
 export async function validateErrandFormData(
   formDataEntries: ErrandFormDataItem[] | undefined,
-  t?: TFunction
+  t?: TFunction,
+  // Måste följa det aktiva språket. Annars valideras mot schemat i standardspråket medan
+  // formuläret renderas i ett annat, vilket ger både en onödig extra hämtning och
+  // fältrubriker på fel språk i felsammanfattningen.
+  locale = i18nConfig.defaultLocale
 ): Promise<string[]> {
   const errors: string[] = [];
   const entries = formDataEntries ?? [];
@@ -273,7 +295,7 @@ export async function validateErrandFormData(
     }
 
     try {
-      const { schema, schemaId } = await loadFormSchemaForEntry(entry.schemaName, entry.schemaId, t);
+      const { schema, schemaId } = await loadFormSchemaForEntry(entry.schemaName, entry.schemaId, t, locale);
       const validator = getJsonValueSchemaValidator(schemaId);
       const { errors: validationErrors } = validator.validateFormData(parsedData.value, schema);
 

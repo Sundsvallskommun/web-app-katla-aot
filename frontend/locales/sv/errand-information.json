@@ -57,8 +57,52 @@
     "description": "En part kan vara en kontaktperson, läkare eller en anhörig vars roll är viktig för ärendet. Om du rapporterar åt en kollega så ska du ange kollegan som övrig part."
   },
   "deviation_information": {
-    "title": "Uppgifter kring avvikelsen"
+    "title": "Uppgifter kring avvikelsen",
+    "loading_form": "Laddar formulär..."
   },
+  "stakeholder": {
+    "person": "Person",
+    "employee": "Anställd",
+    "no_person_found": "Ingen person hittades",
+    "missing_person_number": "Personnummer saknas",
+    "missing_address": "Adress saknas",
+    "email": "E-postadress",
+    "email_placeholder": "Ange e-postadress",
+    "phone": "Telefonnummer",
+    "phone_placeholder": "Ange telefonnummer",
+    "person_role": "Personens roll",
+    "add_person": "Lägg till person",
+    "add_manually": "Lägg till manuellt",
+    "edit_details": "Redigera uppgifter",
+    "remove": "Ta bort",
+    "reporting_for_colleague": "Jag rapporterar åt en annan kollega",
+    "modal": {
+      "edit_title": "Redigera person",
+      "add_title": "Lägg till person manuellt",
+      "first_name": "Förnamn",
+      "last_name": "Efternamn",
+      "address": "Adress",
+      "care_of": "C/o adress",
+      "zip_code": "Postnummer",
+      "city": "Ort",
+      "role": "Roll",
+      "save_edit": "Ändra uppgifter",
+      "save_add": "Lägg till",
+      "cancel": "Avbryt"
+    }
+  },
+  "submit_confirm": {
+    "question": "Vill du skicka in ärendet?",
+    "no": "Nej",
+    "submit": "Skicka in",
+    "submit_and_logout": "Skicka in och logga ut"
+  },
+  "section": {
+    "complete": "Komplett",
+    "mark_complete": "Markera avsnittet som komplett"
+  },
+  "basic_information_heading": "1. Grundinformation",
+  "errand_details_heading": "2. Ärendeuppgifter",
   "wizard": {
     "step_indicator": "Steg {{current}}/{{total}}",
     "next": "Nästa",

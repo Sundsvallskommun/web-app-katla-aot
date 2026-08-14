@@ -1,7 +1,9 @@
 import { Input, Pagination, Select } from '@sk-web-gui/react';
+import { useTranslation } from 'react-i18next';
 import { useSortStore } from 'src/stores/sort-store';
 
 export const ErrandTableFooter: React.FC<{ totalPages: number }> = ({ totalPages }) => {
+  const { t } = useTranslation();
   const { page, size, rowHeight, setRowHeight } = useSortStore();
   const setPage = useSortStore((s) => s.setPage);
   const setSize = useSortStore((s) => s.setSize);
@@ -10,7 +12,7 @@ export const ErrandTableFooter: React.FC<{ totalPages: number }> = ({ totalPages
     <>
       <div className="sk-table-bottom-section">
         <label className="sk-table-bottom-section-label" htmlFor="pageSize">
-          Rader per sida:
+          {t('common:errand-table.rows_per_page')}
         </label>
         <Input
           size="sm"
@@ -43,7 +45,7 @@ export const ErrandTableFooter: React.FC<{ totalPages: number }> = ({ totalPages
       </div>
       <div className="sk-table-bottom-section">
         <label className="sk-table-bottom-section-label" htmlFor="rowHeight">
-          Radhöjd:
+          {t('common:errand-table.row_height')}
         </label>
         <Select
           size="sm"
@@ -54,8 +56,8 @@ export const ErrandTableFooter: React.FC<{ totalPages: number }> = ({ totalPages
           }}
           value={rowHeight}
         >
-          <Select.Option value="normal">Normal</Select.Option>
-          <Select.Option value="dense">Tät</Select.Option>
+          <Select.Option value="normal">{t('common:errand-table.row_height_normal')}</Select.Option>
+          <Select.Option value="dense">{t('common:errand-table.row_height_dense')}</Select.Option>
         </Select>
       </div>
     </>

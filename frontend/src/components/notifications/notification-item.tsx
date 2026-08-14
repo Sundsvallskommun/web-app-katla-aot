@@ -8,21 +8,6 @@ import { useNotificationStore } from 'src/stores/notification-store';
 
 import { NotificationRenderIcon } from './notification-render-icon';
 
-const labelBySubType: Record<string, string> = {
-  ATTACHMENT: 'Ny bilaga',
-  DECISION: 'Nytt beslut',
-  ERRAND: 'Ärende uppdaterat',
-  MESSAGE: 'Nytt meddelande',
-  NOTE: 'Ny kommentar/anteckning',
-  SYSTEM: 'Fasbyte',
-  SUSPENSION: 'Parkering upphört',
-};
-
-const senderFallback = (name?: string): string => {
-  if (!name || name.toUpperCase() === 'UNKNOWN') return 'Okänd';
-  return name;
-};
-
 export const NotificationItem: React.FC<{ notification: NotificationDTO }> = ({ notification }) => {
   const toastMessage = useSnackbar();
   const { t } = useTranslation();
@@ -53,7 +38,11 @@ export const NotificationItem: React.FC<{ notification: NotificationDTO }> = ({ 
     }
   };
 
-  const subTypeLabel = labelBySubType[notification.subtype ?? ''];
+  // Subtypen är språkneutral och används som nyckel. Saknar den översättning visas ingen
+  // händelserad alls, precis som tidigare för okända subtyper.
+  const subTypeLabel = t(`notification.subtype.${notification.subtype ?? ''}`, { defaultValue: '' });
+  const sender = (notification.createdByFullName ?? '') || notification.createdBy;
+  const senderName = !sender || sender.toUpperCase() === 'UNKNOWN' ? t('notification.unknown_sender') : sender;
 
   return (
     <div className="p-16 flex gap-12 items-start justify-between text-small">
@@ -71,15 +60,15 @@ export const NotificationItem: React.FC<{ notification: NotificationDTO }> = ({ 
             }}
             className="underline whitespace-nowrap"
           >
-            {(notification.errandNumber ?? '') || 'Till ärendet'}
+            {(notification.errandNumber ?? '') || t('notification.to_errand')}
           </NextLink>
         </div>
-        <div>Från: {senderFallback((notification.createdByFullName ?? '') || notification.createdBy)}</div>
+        <div>{t('notification.from', { name: senderName })}</div>
         {subTypeLabel ?
-          <div>Händelse: {subTypeLabel}</div>
+          <div>{t('notification.event', { label: subTypeLabel })}</div>
         : null}
       </div>
-      <span className="whitespace-nowrap">{prettyTime(notification.created ?? '')}</span>
+      <span className="whitespace-nowrap">{prettyTime(notification.created ?? '', t)}</span>
       {!notification.acknowledged && (
         <div>
           <span

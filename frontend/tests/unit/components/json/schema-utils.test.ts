@@ -119,6 +119,7 @@ describe('validateErrandFormData', () => {
     ).resolves.toEqual([]);
     expect(fetchMock).toHaveBeenCalledWith('http://localhost:3001/api/schemas/schema-v1', {
       credentials: 'include',
+      headers: { 'Accept-Language': 'sv' },
     });
     expect(fetchMock).not.toHaveBeenCalledWith(expect.stringContaining('/schemas/latest/'), expect.anything());
   });
@@ -221,6 +222,7 @@ describe('validateErrandFormData', () => {
     await expect(loadFormSchemaById(requestedSchemaId)).rejects.toThrow(`Could not load schema: ${requestedSchemaId}`);
     expect(fetchMock).toHaveBeenCalledWith(`http://localhost:3001/api/schemas/${requestedSchemaId}`, {
       credentials: 'include',
+      headers: { 'Accept-Language': 'sv' },
     });
   });
 
@@ -307,5 +309,92 @@ describe('upsertErrandFormDataItem', () => {
       { schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'schema-v1', data: '{"location":"new"}' },
       entries[2],
     ]);
+  });
+});
+
+describe('schema loading per locale', () => {
+  const schemaResponse = (schemaId: string) =>
+    new Response(
+      JSON.stringify({
+        schemaId,
+        schema: { $schema: 'https://json-schema.org/draft/2020-12/schema', type: 'object' },
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
+
+  it('asks the API for the active language instead of translating the schema locally', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockImplementation(() => Promise.resolve(schemaResponse('accept-language-v1')));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await loadFormSchema('accept-language-schema', undefined, 'en');
+
+    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/schemas/latest/accept-language-schema'), {
+      credentials: 'include',
+      headers: { 'Accept-Language': 'en' },
+    });
+  });
+
+  it('caches each language separately so a language switch is not served the previous one', async () => {
+    // Ett nytt Response per anrop: kroppen kan bara läsas en gång.
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(() => Promise.resolve(schemaResponse('per-locale-v1')));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await loadFormSchema('per-locale-schema', undefined, 'sv');
+    await loadFormSchema('per-locale-schema', undefined, 'sv');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    // Samma schema på ett annat språk måste hämtas på nytt – delas cachen visas
+    // det först hämtade språkets fältetiketter för alla efterföljande läsare.
+    await loadFormSchema('per-locale-schema', undefined, 'en');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenLastCalledWith(expect.anything(), {
+      credentials: 'include',
+      headers: { 'Accept-Language': 'en' },
+    });
+  });
+
+  it('keeps the persisted schemaId pinned per language when loading an existing entry', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(() => Promise.resolve(schemaResponse('pinned-v1')));
+    vi.stubGlobal('fetch', fetchMock);
+
+    // Språket får aldrig ändra vilken schemaversion ett registrerat ärende renderas mot.
+    const svSchema = await loadFormSchemaById('pinned-v1', undefined, 'sv');
+    const enSchema = await loadFormSchemaById('pinned-v1', undefined, 'en');
+
+    expect(svSchema.schemaId).toBe('pinned-v1');
+    expect(enSchema.schemaId).toBe('pinned-v1');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('validateErrandFormData locale', () => {
+  it('validates against the schema in the active language rather than the default one', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation(() =>
+      Promise.resolve(
+        new Response(
+          JSON.stringify({
+            schemaId: 'validate-locale-v1',
+            schema: { $schema: 'https://json-schema.org/draft/2020-12/schema', type: 'object' },
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } }
+        )
+      )
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    // Renderas formuläret på engelska men valideras mot det svenska schemat, hämtas
+    // schemat två gånger och felsammanfattningen namnger fält på fel språk.
+    await validateErrandFormData(
+      [{ schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'validate-locale-v1', data: '{}' }],
+      undefined,
+      'en'
+    );
+
+    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/schemas/validate-locale-v1'), {
+      credentials: 'include',
+      headers: { 'Accept-Language': 'en' },
+    });
   });
 });

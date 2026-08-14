@@ -38,7 +38,7 @@ vi.mock('@components/json/schema/schema-form.component', () => ({
 }));
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: translateMock }),
+  useTranslation: () => ({ t: translateMock, i18n: { resolvedLanguage: 'sv' } }),
 }));
 
 function TestForm() {
@@ -85,6 +85,11 @@ describe('DeviationInformation schema stability', () => {
     expect(input).toHaveValue('ABC');
     expect(input).toHaveFocus();
     expect(loadFormSchemaForEntryMock).toHaveBeenCalledTimes(1);
-    expect(loadFormSchemaForEntryMock).toHaveBeenCalledWith('avvikelse-plats-handelse', 'schema-v1', translateMock);
+    expect(loadFormSchemaForEntryMock).toHaveBeenCalledWith(
+      'avvikelse-plats-handelse',
+      'schema-v1',
+      translateMock,
+      'sv'
+    );
   });
 });

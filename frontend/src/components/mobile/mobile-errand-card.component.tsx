@@ -25,12 +25,13 @@ export const MobileErrandCard: React.FC<MobileErrandCardProps> = ({ errand }) =>
           </div>
 
           <div className="text-xl font-bold lining-nums proportional-nums leading-[2.8rem] pt-[1.2rem] break-words">
-            {getTypeDisplayName(errand)}
+            {getTypeDisplayName(errand, t)}
           </div>
 
           <div className="flex flex-col items-start gap-1.5 pt-[2.4rem] flex-1">
             <div className="text-base lining-nums proportional-nums leading-[2.4rem]">
-              <span className="font-[700]">Registrerat</span> {dayjs(errand.created).format('YYYY-MM-DD')}
+              <span className="font-[700]">{t('common:errand-table.registered')}</span>{' '}
+              {dayjs(errand.created).format('YYYY-MM-DD')}
             </div>
           </div>
         </div>
