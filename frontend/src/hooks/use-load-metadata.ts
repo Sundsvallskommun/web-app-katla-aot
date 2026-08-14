@@ -5,29 +5,39 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMetadataStore } from 'src/stores/metadata-store';
 
+type MetadataLoadState = 'error' | 'loading' | 'ready';
+
+interface UseLoadMetadataResult {
+  metadataError: string | null;
+  metadataLoadState: MetadataLoadState;
+}
+
 /**
  * Fyller metadatastoren.
  *
  * Metadata bär rollnamn, kategorier och platsstrukturen som platsväljaren
  * bygger sitt träd av. Varje yta som behöver den måste därför hämta den
  * själv — storen är inte längre persistad, så det som inte hämtas finns inte.
+ * Statusen beskriver just den här hookinstansens request; data som redan ligger
+ * i storen gör alltså inte en ny hämtning redo i förtid.
  */
-export function useLoadMetadata(): { metadataError: string | null } {
+export function useLoadMetadata(): UseLoadMetadataResult {
   const { t } = useTranslation();
   const setMetadata = useMetadataStore((state) => state.setMetadata);
-  const [metadataError, setMetadataError] = useState<string | null>(null);
+  const [metadataLoadState, setMetadataLoadState] = useState<MetadataLoadState>('loading');
 
   useEffect(() => {
     let active = true;
+    setMetadataLoadState('loading');
 
     void getMetadata()
       .then((res) => {
         if (!active) return;
         setMetadata(res);
-        setMetadataError(null);
+        setMetadataLoadState('ready');
       })
       .catch(() => {
-        if (active) setMetadataError(t('api_errors.metadata'));
+        if (active) setMetadataLoadState('error');
       });
 
     return () => {
@@ -35,5 +45,8 @@ export function useLoadMetadata(): { metadataError: string | null } {
     };
   }, [setMetadata, t]);
 
-  return { metadataError };
+  return {
+    metadataError: metadataLoadState === 'error' ? t('api_errors.metadata') : null,
+    metadataLoadState,
+  };
 }

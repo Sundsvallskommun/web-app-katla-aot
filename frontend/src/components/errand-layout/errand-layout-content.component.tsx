@@ -72,7 +72,7 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
   const initialFocus = useRef<HTMLBodyElement>(null);
   const isMobile = useMediaQuery(MOBILE_BREAKPOINT);
   const wizardReset = useWizardStore((s) => s.reset);
-  const { metadataError } = useLoadMetadata();
+  const { metadataError, metadataLoadState } = useLoadMetadata();
   const metadata = useMetadataStore((state) => state.metadata);
   const [loadState, setLoadState] = useState<'error' | 'loading' | 'ready'>(
     route.kind === 'register' ? 'ready'
@@ -147,7 +147,7 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
     (message): message is string => message !== null
   );
 
-  if (loadErrors.length > 0 || loadState !== 'ready' || !metadata) {
+  if (loadErrors.length > 0 || loadState !== 'ready' || metadataLoadState !== 'ready' || !metadata) {
     return (
       <FormProvider {...methods}>
         <div className="bg-background-100 h-screen min-h-screen flex items-center justify-center p-24">

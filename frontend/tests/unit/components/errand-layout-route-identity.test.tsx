@@ -10,6 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   getErrandUsingErrandNumber: vi.fn(),
   jsonParametersToErrandFormData: vi.fn(() => []),
+  metadataLoadState: { value: 'ready' },
   pathname: { value: '/arende/ERRAND-A/grundinformation' },
   params: { value: { errandnumber: undefined as string | undefined } },
   register: vi.fn(),
@@ -43,9 +44,11 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('src/hooks/use-media-query', () => ({ useMediaQuery: () => false }));
-// Layouten renderar inte förrän metadata finns. Hämtningen hör inte till det här
-// testet, så den kortsluts och storen seedas i beforeEach.
-vi.mock('src/hooks/use-load-metadata', () => ({ useLoadMetadata: () => ({ metadataError: null }) }));
+// Layouten renderar inte förrän den aktuella metadatahämtningen är klar. Själva
+// hämtningen hör inte till det här testet, så dess status styrs explicit här.
+vi.mock('src/hooks/use-load-metadata', () => ({
+  useLoadMetadata: () => ({ metadataError: null, metadataLoadState: mocks.metadataLoadState.value }),
+}));
 vi.mock('src/hooks/use-auto-init-reporter', () => ({ useAutoInitReporter: vi.fn() }));
 vi.mock('src/stores/wizard-store', () => ({
   useWizardStore: (selector: (state: { reset: () => void }) => unknown) => selector({ reset: mocks.wizardReset }),
@@ -161,6 +164,7 @@ const FormIdentityProbe = () => {
 
 beforeEach(() => {
   setExistingRoute('ERRAND-A');
+  mocks.metadataLoadState.value = 'ready';
   useMetadataStore.setState({ metadata: { roles: [] } });
 });
 
@@ -169,6 +173,25 @@ afterEach(() => {
 });
 
 describe('errand layout route identity', () => {
+  it('waits for the current metadata request even when the store contains previous metadata', () => {
+    mocks.pathname.value = '/arende/registrera';
+    mocks.params.value.errandnumber = undefined;
+    mocks.metadataLoadState.value = 'loading';
+
+    const view = render(<ErrandLayoutContent>registration-content</ErrandLayoutContent>);
+
+    expect(screen.getByLabelText('forms:loading')).toBeInTheDocument();
+    expect(screen.queryByText('registration-content')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('base-header')).not.toBeInTheDocument();
+
+    mocks.metadataLoadState.value = 'ready';
+    view.rerender(<ErrandLayoutContent>registration-content</ErrandLayoutContent>);
+
+    expect(screen.queryByLabelText('forms:loading')).not.toBeInTheDocument();
+    expect(screen.getByText('registration-content')).toBeInTheDocument();
+    expect(screen.getByTestId('base-header')).toHaveTextContent('new-errand');
+  });
+
   it('removes A header, status and actions synchronously and never exposes A when B fails', async () => {
     const failedB = createDeferred<ErrandDTO>();
     getErrandMock
