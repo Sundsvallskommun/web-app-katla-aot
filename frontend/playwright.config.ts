@@ -30,7 +30,12 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // Sviten kör mot en enda dev-server som kompilerar on demand. Parallella
+  // workers får den att kompilera flera routes samtidigt, och de tyngsta
+  // registrera-scenarierna föll då ungefär var tredje körning utan att koden
+  // hade ändrats. En worker kostar ~9 sekunder och gör lokala körningar
+  // deterministiska och identiska med CI.
+  workers: 1,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : [['list'], ['html', { open: 'on-failure' }]],
   timeout: 60_000,
   use: {
