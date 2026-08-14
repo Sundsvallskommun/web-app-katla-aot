@@ -32,13 +32,15 @@ export const StakeholderCard: React.FC<{
           </strong>
         </div>
         <div className="px-[1rem]">
-          <p data-cy="stakeholder-name" className="text-[1.6rem] font-semibold">
+          <p data-cy="stakeholder-name" className="text-[1.6rem] font-semibold break-words">
             {stakeholder.firstName} {stakeholder.lastName}
           </p>
 
           {shouldShowContactDetails(roles) && (
-            <div className="flex text-md mb-10 flex-row gap-15">
-              <div className="flex flex-col">
+            // Kolumnerna staplas på smal skärm; break-words ärvs ned så att långa
+            // e-postadresser bryts i stället för att tvinga fram sidbredd.
+            <div className="flex text-md mb-10 flex-col sm:flex-row gap-y-4 gap-x-15 break-words">
+              <div className="flex flex-col min-w-0">
                 {stakeholder.title && (
                   <div data-cy="stakeholder-title" className="mr-10">
                     {stakeholder.title}
@@ -58,7 +60,7 @@ export const StakeholderCard: React.FC<{
                   </div>
                 }
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col min-w-0">
                 <div data-cy="stakeholder-email">
                   {stakeholder.emails?.[0] ?? t('errand-information:stakeholder.missing_email')}
                 </div>
