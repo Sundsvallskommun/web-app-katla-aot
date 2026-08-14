@@ -21,11 +21,9 @@ export const SUPPORTED_LOCALES = ['sv', 'en'] as const;
 
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
-const isPlainObject = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
+const isPlainObject = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
 
-const isSupportedLocale = (value: string): value is SupportedLocale =>
-  (SUPPORTED_LOCALES as readonly string[]).includes(value);
+const isSupportedLocale = (value: string): value is SupportedLocale => (SUPPORTED_LOCALES as readonly string[]).includes(value);
 
 /**
  * Plockar första begripliga språket ur en Accept-Language-header. Frontend skickar en ren
@@ -57,7 +55,7 @@ export const localeFromAcceptLanguage = (header: string | undefined): SupportedL
  */
 export const resolveLocaleExtensions = (value: unknown, locale: string): unknown => {
   if (Array.isArray(value)) {
-    return value.map((entry) => resolveLocaleExtensions(entry, locale));
+    return value.map(entry => resolveLocaleExtensions(entry, locale));
   }
 
   if (!isPlainObject(value)) {
@@ -92,10 +90,7 @@ export const localizeUiSchema = (uiSchema: Record<string, unknown>, locale: stri
  * skrivs in i schemakopian här. Utan det steget skulle felsammanfattningen i formuläret
  * namnge schemat på svenska i ett engelskt gränssnitt.
  */
-export const applyUiSchemaTitleToSchema = (
-  schema: Record<string, unknown>,
-  localizedUiSchema: Record<string, unknown>,
-): Record<string, unknown> => {
+export const applyUiSchemaTitleToSchema = (schema: Record<string, unknown>, localizedUiSchema: Record<string, unknown>): Record<string, unknown> => {
   const uiTitle = localizedUiSchema['ui:title'];
   if (typeof uiTitle !== 'string' || uiTitle.trim().length === 0) {
     return schema;
