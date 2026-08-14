@@ -18,7 +18,7 @@ export const User: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <ErrandDisclosure header={t('errand-information:user.title')} icon={<UserIcon />} initialOpen={false}>
+    <ErrandDisclosure header={t('errand-information:user.title')} icon={<UserIcon />}>
       <UserContent />
     </ErrandDisclosure>
   );

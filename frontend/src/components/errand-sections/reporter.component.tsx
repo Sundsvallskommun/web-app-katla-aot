@@ -81,7 +81,7 @@ export const Reporter: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <ErrandDisclosure header={t('errand-information:reporter.title')} icon={<UserIcon />} initialOpen={false}>
+    <ErrandDisclosure header={t('errand-information:reporter.title')} icon={<UserIcon />}>
       <ReporterContent />
     </ErrandDisclosure>
   );
