@@ -19,7 +19,7 @@ import {
   PlaceNode,
   placeParentName,
 } from '@utils/label-structure';
-import { Pen } from 'lucide-react';
+import { Check, Pen } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMetadataStore } from 'src/stores/metadata-store';
@@ -44,6 +44,7 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
   const selectablePlaceNodes = useMemo(() => placeNodes.filter((node) => !hasSubPlaces(node)), [placeNodes]);
 
   const [placeSearchValue, setPlaceSearchValue] = useState('');
+  const [suggestedNode, setSuggestedNode] = useState<PlaceNode | null>(null);
   const employmentMatchRef = useRef<{ node: PlaceNode; employment: UserEmploymentDTO } | null>(null);
   const prefillDoneRef = useRef(false);
 
@@ -97,8 +98,10 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
     [onChange]
   );
 
-  // Förpopulera från användarens anställning. Anställningen används bara för att hitta rätt nod i
-  // labelstrukturen — har noden underenheter måste användaren själv välja en av dem.
+  // Föreslå plats utifrån användarens anställning — men sätt den inte som vald. Platsvalet styr
+  // vilka som får se ärendet, och den som rapporterar åt en annan verksamhet än sin egen ska inte
+  // kunna skicka in på en plats hen aldrig tagit ställning till. Anställningen används bara för att
+  // hitta rätt nod i labelstrukturen; har noden underenheter måste användaren välja en av dem.
   useEffect(() => {
     if (!isEditable || prefillDoneRef.current || placeNodes.length === 0) return;
     if (formData?.orgName) {
@@ -108,14 +111,15 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
 
     prefillDoneRef.current = true;
 
-    const prefillFromEmployment = async () => {
+    const suggestFromEmployment = async () => {
       try {
         const employments = await getUserEmployments();
+        // Backend sorterar huvudanställningen först, så den föreslås före eventuella sidotjänster.
         for (const employment of employments) {
           const node = findPlaceNode(placeNodes, employment.orgName);
           if (node) {
             employmentMatchRef.current = { node, employment };
-            selectPlace(node);
+            setSuggestedNode(node);
             return;
           }
         }
@@ -124,8 +128,20 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
       }
     };
 
-    void prefillFromEmployment();
-  }, [isEditable, placeNodes, formData?.orgName, selectPlace]);
+    void suggestFromEmployment();
+  }, [isEditable, placeNodes, formData?.orgName]);
+
+  const suggestedPlacePresentation = useMemo(
+    () => (suggestedNode ? getPlaceSelectionPresentation(suggestedNode) : undefined),
+    [suggestedNode]
+  );
+
+  const handleAcceptSuggestion = useCallback(() => {
+    if (suggestedNode) {
+      selectPlace(suggestedNode);
+      setSuggestedNode(null);
+    }
+  }, [selectPlace, suggestedNode]);
 
   const handleSelectPlace = useCallback(
     (key: string) => {
@@ -140,6 +156,9 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
   const handleChangePlace = useCallback(() => {
     onChange(undefined);
     setPlaceSearchValue('');
+    // Förslaget kommer inte tillbaka. Har användaren aktivt rensat platsen är anställningen
+    // inte längre en rimlig gissning.
+    setSuggestedNode(null);
   }, [onChange]);
 
   const sectionTitle = <h2 className="hidden md:block text-xl font-bold mb-6">{t('facility_search.section_title')}</h2>;
@@ -234,6 +253,43 @@ export function FacilitySearchWidget(props: FieldProps<FacilityInfoDTO>) {
           </Combobox>
           <span className="text-small text-text-secondary mt-4">{t('facility_search.label_hint')}</span>
         </FormControl>
+      )}
+
+      {!selectedNode && suggestedNode && (
+        <div className="border-1 rounded-12 bg-background-content w-full mt-16" data-cy="facility-suggestion">
+          <div className="rounded-t-12 bg-juniskar-background-200 px-16 py-12">
+            <strong>{t('facility_search.suggestion_header')}</strong>
+          </div>
+          <div className="p-16 flex flex-col gap-16">
+            <div className="min-w-0">
+              <p className="text-[1.6rem] font-semibold break-words" data-cy="facility-suggestion-name">
+                {suggestedPlacePresentation?.place}
+              </p>
+              {suggestedPlacePresentation?.department && (
+                <p className="text-small text-text-secondary break-words">
+                  <span className="font-semibold">{t('facility_search.department_label')}:</span>{' '}
+                  {suggestedPlacePresentation.department}
+                </p>
+              )}
+            </div>
+
+            <p className="text-small text-text-secondary">{t('facility_search.suggestion_description')}</p>
+
+            <div className="flex flex-wrap gap-8 border-t-1 border-divider pt-12">
+              <Button
+                type="button"
+                variant="primary"
+                color="vattjom"
+                size="sm"
+                leftIcon={<Check size={16} aria-hidden="true" />}
+                onClick={handleAcceptSuggestion}
+                data-cy="facility-accept-suggestion-button"
+              >
+                {t('facility_search.suggestion_confirm')}
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
 
       {selectedNode && (
