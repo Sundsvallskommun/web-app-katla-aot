@@ -36,16 +36,21 @@ const measure = async (locator: Locator, name: string) => {
   return { ...box, right: box.x + box.width };
 };
 
-const openReporterCard = async (page: Page, appUrl: (path: string) => string) => {
+/** mockErrand har status NEW, alltså ett inlämnat ärende. */
+const openErrand = async (page: Page, appUrl: (path: string) => string, status?: string) => {
   await page.route(
     `**/supportmanagement/errand/${mockErrand.errandNumber}`,
-    jsonRoute({ ...mockErrand, stakeholders: [longReporter] })
+    jsonRoute({ ...mockErrand, stakeholders: [longReporter], ...(status === undefined ? {} : { status }) })
   );
   // Motsvarar seedningen i registrera.spec.ts: persistat zustand-state före sidladdning.
   await page.addInitScript((metadata) => {
     window.localStorage.setItem('metadata-storage', JSON.stringify({ state: { metadata }, version: 0 }));
   }, mockMetadata);
   await page.goto(appUrl(errandPath));
+};
+
+const openReporterCard = async (page: Page, appUrl: (path: string) => string) => {
+  await openErrand(page, appUrl);
 
   const card = page.getByTestId('stakeholder-card').first();
   await expect(card).toBeVisible();
@@ -83,5 +88,34 @@ test.describe('Errand basic information page', () => {
     // E-postkolumnen ska ligga till höger om avdelningskolumnen, inte under den.
     expect(emailBox.x).toBeGreaterThanOrEqual(departmentBox.right);
     expect(cardOverflow.scrollWidth).toBeLessThanOrEqual(cardOverflow.clientWidth);
+  });
+
+  test('Submitted errand omits editing actions and says why', async ({ appUrl, page }) => {
+    await page.setViewportSize(MOBILE_VIEWPORT);
+    const card = await openReporterCard(page, appUrl);
+
+    await expect(page.getByTestId('read-only-notice')).toBeVisible();
+    // En nedtonad men synlig knapp läser som att något är trasigt. Den ska utebli.
+    await expect(card.getByTestId('edit-card-button')).toHaveCount(0);
+    await expect(card.getByTestId('remove-card-button')).toHaveCount(0);
+  });
+
+  test('Draft errand resumes in the wizard on mobile', async ({ appUrl, page }) => {
+    await page.setViewportSize(MOBILE_VIEWPORT);
+    await openErrand(page, appUrl, 'DRAFT');
+
+    // Wizardens stegindikator finns bara i wizardvyn, aldrig i flikvyn.
+    await expect(page.getByText(/^Steg 1\/\d+$/)).toBeVisible();
+    await expect(page.getByTestId('read-only-notice')).toHaveCount(0);
+  });
+
+  test('Draft errand still uses the tab layout on desktop', async ({ appUrl, page }) => {
+    await page.setViewportSize(DESKTOP_VIEWPORT);
+    await openErrand(page, appUrl, 'DRAFT');
+
+    await expect(page.getByTestId('stakeholder-card').first()).toBeVisible();
+    await expect(page.getByText(/^Steg 1\/\d+$/)).toHaveCount(0);
+    // Utkast är redigerbara, så åtgärderna ska finnas kvar här.
+    await expect(page.getByTestId('edit-card-button').first()).toBeVisible();
   });
 });

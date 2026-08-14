@@ -1,4 +1,5 @@
 import { StakeholderFormModal } from '@components/misc/stakeholder-modal.component';
+import { useIsContentLocked } from '@contexts/errand-content-lock-context';
 import { StakeholderDTO } from '@data-contracts/backend/data-contracts';
 import { Button } from '@sk-web-gui/react';
 import { getStakeholderRoleDisplayName, shouldShowContactDetails } from '@utils/stakeholder';
@@ -19,6 +20,7 @@ export const StakeholderCard: React.FC<{
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { metadata } = useMetadataStore();
+  const isLocked = useIsContentLocked();
 
   return (
     <>
@@ -71,7 +73,7 @@ export const StakeholderCard: React.FC<{
             </div>
           )}
 
-          {isEditable && (
+          {isEditable && !isLocked && (
             <div className="flex flex-col sm:flex-row gap-[1rem] mb-10">
               <Button
                 data-cy="edit-card-button"
