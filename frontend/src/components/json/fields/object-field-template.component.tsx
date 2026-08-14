@@ -153,7 +153,9 @@ interface SectionDisclosureProps {
 
 function SectionDisclosure({ section, status, children }: SectionDisclosureProps) {
   const { t } = useTranslation('forms');
-  const [open, setOpen] = useState(section.defaultOpen ?? false);
+  // Öppen om inget annat sägs, samma standard som ErrandDisclosure. Sätt defaultOpen:false
+  // i ui:sections för att stänga en enskild sektion.
+  const [open, setOpen] = useState(section.defaultOpen ?? true);
   const [doneMark, setDoneMark] = useState(false);
   const SectionIcon = getSectionIcon(section.icon);
 
