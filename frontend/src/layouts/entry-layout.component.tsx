@@ -1,3 +1,4 @@
+import { LanguageSwitchButton } from '@components/misc/language-switch-button.component';
 import { cx, Logo } from '@sk-web-gui/react';
 
 import EmptyLayout from './empty-layout/empty-layout.component';
@@ -10,6 +11,12 @@ export const EntryLayout: React.FC<{
   return (
     <EmptyLayout>
       <div className="relative">
+        {/* Inloggningen ligger före allt annat i flödet, och det är här en användare som
+            inte läser svenska först möter appen. Utan språkvalet här måste hen logga in på
+            ett språk hen inte förstår för att sedan kunna byta. */}
+        <div className="absolute top-0 right-0 z-10 p-16 pt-[calc(1.6rem+env(safe-area-inset-top))] lg:p-24">
+          <LanguageSwitchButton />
+        </div>
         <div className="absolute w-full bg-vattjom-background-200">
           <div className="h-[26.4rem] max-w-[100rem] mx-auto relative overflow-hidden">
             <div className="hidden lg:block -mt-[4rem] -ml-34 absolute w-[36rem]">

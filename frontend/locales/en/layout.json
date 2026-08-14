@@ -26,6 +26,7 @@
   },
   "language": {
     "label": "Language",
+    "switch": "Change language. Selected language: {{language}}",
     "sv": "Svenska",
     "en": "English"
   },
