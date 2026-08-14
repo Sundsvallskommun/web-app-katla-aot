@@ -1,4 +1,5 @@
 import { StakeholderCard } from '@components/card/stakeholder-card.component';
+import { useIsContentLocked } from '@contexts/errand-content-lock-context';
 import { ErrandDTO, StakeholderDTO } from '@data-contracts/backend/data-contracts';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getStakeholderUsingPersonNumber } from '@services/citizen/citizen-service';
@@ -42,6 +43,7 @@ export const StakeholderList: React.FC<{
   const [manualEntryOpen, setManualEntryOpen] = useState<boolean>(false);
   const { metadata } = useMetadataStore();
   const { t } = useTranslation();
+  const isLocked = useIsContentLocked();
 
   const context = useFormContext<ErrandDTO>();
   const { stakeholders } = context.watch();
@@ -72,7 +74,11 @@ export const StakeholderList: React.FC<{
   const hasPrimaryRole = roles.includes('PRIMARY');
   const matchingCount = stakeholders?.filter((s) => roles.includes(s.role ?? '')).length ?? 0;
   const maxCountReached = maxCount !== undefined && matchingCount >= maxCount;
-  const showAddButton = !maxCountReached && (!hasPrimaryRole || (hasPrimaryRole && !hasPrimaryStakeholder));
+  // Sök- och lägg till-kontrollerna hör till redigering. På ett inlåst ärende
+  // gjorde fieldsetet dem bara oklickbara, så ett personsökfält och en
+  // Lägg till manuellt-knapp stod kvar utan att svara på något.
+  const showAddButton =
+    !isLocked && !maxCountReached && (!hasPrimaryRole || (hasPrimaryRole && !hasPrimaryStakeholder));
 
   const clearStakeholderForm = () => {
     setQuery('');

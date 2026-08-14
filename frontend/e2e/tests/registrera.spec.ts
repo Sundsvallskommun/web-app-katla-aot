@@ -104,7 +104,7 @@ const completeRequiredErrandForm = async (page: Page) => {
 };
 
 test.describe('Register new errand page', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ appUrl, page }) => {
     await page.route('**/employee/personal/*', jsonRoute(mockReporterStakeholder));
     await page.route('**/supportmanagement/errand/create', jsonRoute(mockErrand));
     await page.route(`**/schemas/latest/${MOCK_FORM_SCHEMA_NAME}`, jsonRoute(mockFormSchemaResponse));
@@ -114,7 +114,7 @@ test.describe('Register new errand page', () => {
     await page.addInitScript((metadata) => {
       window.localStorage.setItem('metadata-storage', JSON.stringify({ state: { metadata }, version: 0 }));
     }, mockMetadata);
-    await page.goto('/arende/registrera');
+    await page.goto(appUrl('/arende/registrera'));
 
     // Att kontrollerna syns bevisar inte att de serverrenderade radioknapparna
     // har hydrerats. Rapportören läggs till av en klienteffekt, så det är

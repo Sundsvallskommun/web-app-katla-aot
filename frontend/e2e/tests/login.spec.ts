@@ -1,8 +1,8 @@
 import { expect, test } from '../utils/test';
 
 test.describe('Login page', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/login');
+  test.beforeEach(async ({ appUrl, page }) => {
+    await page.goto(appUrl('/login'));
   });
 
   test('should render correct html structure', async ({ page }) => {

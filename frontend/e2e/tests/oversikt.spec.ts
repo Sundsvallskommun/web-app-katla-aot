@@ -6,7 +6,7 @@ import { jsonRoute } from '../utils/routes';
 import { expect, test } from '../utils/test';
 
 test.describe('Overview page', () => {
-  test.beforeEach(async ({ baseURL, page }) => {
+  test.beforeEach(async ({ appUrl, page }) => {
     await page.route(
       (url) => url.pathname.endsWith('/supportmanagement/errands') && url.searchParams.get('page') === '0',
       jsonRoute(mockErrands)
@@ -25,8 +25,7 @@ test.describe('Overview page', () => {
     );
     await page.route('**/supportmanagement/notifications', jsonRoute(mockNotifications));
     await page.route('**/supportmanagement/metadata', jsonRoute(mockMetadata));
-    const appBaseUrl = (baseURL ?? 'http://localhost:3000').replace(/\/$/, '');
-    await page.goto(`${appBaseUrl}/oversikt`);
+    await page.goto(appUrl('/oversikt'));
   });
 
   test('Show sidebar filter buttons with errand count', async ({ page }) => {

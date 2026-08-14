@@ -103,6 +103,9 @@
     "complete": "Komplett",
     "mark_complete": "Markera avsnittet som komplett"
   },
+  "read_only": {
+    "notice": "Ärendet är inlämnat och kan inte längre ändras."
+  },
   "basic_information_heading": "1. Grundinformation",
   "errand_details_heading": "2. Ärendeuppgifter",
   "wizard": {

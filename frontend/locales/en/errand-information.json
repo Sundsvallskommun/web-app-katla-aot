@@ -103,6 +103,9 @@
     "complete": "Complete",
     "mark_complete": "Mark the section as complete"
   },
+  "read_only": {
+    "notice": "The errand has been submitted and can no longer be changed."
+  },
   "basic_information_heading": "1. Basic information",
   "errand_details_heading": "2. Case details",
   "wizard": {

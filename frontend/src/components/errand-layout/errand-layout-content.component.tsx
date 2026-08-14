@@ -121,6 +121,10 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
   const errandStatus = methods.watch('status');
   const errandNumber = methods.watch('errandNumber');
   const isDraft = errandStatus === 'DRAFT';
+  // Ett utkast är samma oavslutade arbete oavsett om det just skapats eller
+  // återupptagits, och wizarden är det gränssnitt som är byggt för smal skärm.
+  // Utan det här villkoret bytte ett återupptaget utkast till flikvyn på mobil.
+  const showMobileWizard = isMobile && (registerNewErrand || isDraft);
 
   const getHeaderTitle = () => {
     if (registerNewErrand) {
@@ -159,7 +163,7 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
         </NextLink>
         {registerNewErrand && <ReporterInit />}
         <BaseErrandLayout registerNewErrand={registerNewErrand}>
-          {isMobile && registerNewErrand ?
+          {showMobileWizard ?
             <MobileWizard />
           : <div className="grow shrink overflow-y-auto">
               <div className="bg-transparent">

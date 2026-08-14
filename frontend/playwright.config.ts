@@ -1,11 +1,21 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+
+// Dev-servern läser .env via Next, så konfigurationen måste läsa samma fil för att
+// baseURL och funktionsflaggorna nedan ska beskriva appen som faktiskt testas.
+// dotenv skriver inte över redan satta variabler, så CI:s explicita värden vinner.
+dotenv.config({ path: '.env', quiet: true });
 
 const PORT = process.env.PORT || '3000';
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
-if (process.env.NEXT_PUBLIC_OTHER_PARTIES_DISCLOSURE === 'false') {
+// appconfig läser flaggan som strikt === 'true', så ett utelämnat värde är inte
+// neutralt — det stänger av funktionen. Att bara avvisa 'false' släppte därför
+// igenom en oansatt variabel, och de tre scenarier som använder Övriga parter
+// föll på element som aldrig renderats i stället för på ett begripligt fel.
+if (process.env.NEXT_PUBLIC_OTHER_PARTIES_DISCLOSURE !== 'true') {
   throw new Error(
-    'Playwright requires NEXT_PUBLIC_OTHER_PARTIES_DISCLOSURE=true because the registration scenarios exercise other stakeholders.'
+    'Playwright requires NEXT_PUBLIC_OTHER_PARTIES_DISCLOSURE=true because the registration scenarios exercise other stakeholders. Add it to frontend/.env (the dev server reads the same file).'
   );
 }
 
@@ -20,7 +30,12 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // Sviten kör mot en enda dev-server som kompilerar on demand. Parallella
+  // workers får den att kompilera flera routes samtidigt, och de tyngsta
+  // registrera-scenarierna föll då ungefär var tredje körning utan att koden
+  // hade ändrats. En worker kostar ~9 sekunder och gör lokala körningar
+  // deterministiska och identiska med CI.
+  workers: 1,
   reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : [['list'], ['html', { open: 'on-failure' }]],
   timeout: 60_000,
   use: {
