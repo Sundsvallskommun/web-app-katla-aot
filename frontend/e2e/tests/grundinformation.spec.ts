@@ -95,9 +95,12 @@ test.describe('Errand basic information page', () => {
     const card = await openReporterCard(page, appUrl);
 
     await expect(page.getByTestId('read-only-notice')).toBeVisible();
-    // En nedtonad men synlig knapp läser som att något är trasigt. Den ska utebli.
+    // En nedtonad men synlig kontroll läser som att något är trasigt. Alla
+    // redigeringsytor ska utebli, inte bara kortets egna knappar.
     await expect(card.getByTestId('edit-card-button')).toHaveCount(0);
     await expect(card.getByTestId('remove-card-button')).toHaveCount(0);
+    await expect(page.getByTestId('person-number-input')).toHaveCount(0);
+    await expect(page.getByTestId('add-manual-person-button')).toHaveCount(0);
   });
 
   test('Draft errand resumes in the wizard on mobile', async ({ appUrl, page }) => {
@@ -117,5 +120,6 @@ test.describe('Errand basic information page', () => {
     await expect(page.getByText(/^Steg 1\/\d+$/)).toHaveCount(0);
     // Utkast är redigerbara, så åtgärderna ska finnas kvar här.
     await expect(page.getByTestId('edit-card-button').first()).toBeVisible();
+    await expect(page.getByTestId('person-number-input').first()).toBeVisible();
   });
 });
