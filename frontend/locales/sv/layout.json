@@ -26,6 +26,7 @@
   },
   "language": {
     "label": "Språk",
+    "switch": "Byt språk. Valt språk: {{language}}",
     "sv": "Svenska",
     "en": "English"
   },

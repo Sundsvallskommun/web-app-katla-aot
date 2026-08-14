@@ -6,7 +6,15 @@ import { PopupMenu } from '@sk-web-gui/react';
 import type { TFunction } from 'i18next';
 import { ChevronRight, Languages, Monitor } from 'lucide-react';
 
-export const createUserMenuGroups = (t: TFunction): MenuItemGroup[] => [
+interface UserMenuOptions {
+  /**
+   * Språkvalet finns både här och som egen knapp i sidhuvudet. Båda navigerar, så båda
+   * måste ge sidan samma chans att rädda undan det som bara ligger i minnet.
+   */
+  onBeforeLanguageSwitch?: () => void;
+}
+
+export const createUserMenuGroups = (t: TFunction, options: UserMenuOptions = {}): MenuItemGroup[] => [
   {
     label: t('layout:controls.open_user_menu'),
     elements: [
@@ -22,7 +30,7 @@ export const createUserMenuGroups = (t: TFunction): MenuItemGroup[] => [
               </span>
             </PopupMenu.Button>
             <PopupMenu.Panel>
-              <LanguageItems />
+              <LanguageItems onBeforeSwitch={options.onBeforeLanguageSwitch} />
             </PopupMenu.Panel>
           </PopupMenu>
         ),

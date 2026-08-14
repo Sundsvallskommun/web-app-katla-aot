@@ -1,5 +1,6 @@
 'use client';
 
+import { pathWithoutLocale } from '@app/locale-path';
 import { jsonParametersToErrandFormData } from '@components/json/utils/schema-utils';
 import { ErrorAlertList } from '@components/misc/error-alert.component';
 import { VisibleTabs } from '@components/tabs/tabs';
@@ -12,6 +13,7 @@ import { ErrandButtonGroup } from '@layouts/errand-button-group.component';
 import Main from '@layouts/main/main.component';
 import { getErrandUsingErrandNumber } from '@services/errand-service/errand-service';
 import { Spinner, Tabs } from '@sk-web-gui/react';
+import { ErrandFormHandover, takeErrandFormHandover } from '@utils/errand-form-handover';
 import { default as NextLink } from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -72,6 +74,9 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
   const initialFocus = useRef<HTMLBodyElement>(null);
   const isMobile = useMediaQuery(MOBILE_BREAKPOINT);
   const wizardReset = useWizardStore((s) => s.reset);
+  const wizardGoToStep = useWizardStore((s) => s.goToStep);
+  const pathname = usePathname();
+  const handoverRef = useRef<{ handover: ErrandFormHandover | null; path: string } | null>(null);
   const { metadataError, metadataLoadState } = useLoadMetadata();
   const metadata = useMetadataStore((state) => state.metadata);
   const [loadState, setLoadState] = useState<'error' | 'loading' | 'ready'>(
@@ -94,8 +99,27 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
   const { reset } = methods;
 
   useEffect(() => {
+    // Ett språkbyte är en navigering, och Next monterar om hela trädet. Överlämningen bär
+    // det som bara låg i minnet över den navigeringen; utan den kostar ett språkbyte mitt i
+    // registreringen allt användaren fyllt i.
+    //
+    // Posten tas bort vid första läsningen, medan effekten kan köras om för samma sida –
+    // StrictMode gör det i utvecklingsläge. Svaret sparas därför per sökväg: en omkörning
+    // för samma sida återanvänder det, och ett flikbyte till en annan sökväg får sitt eget
+    // (tomma) svar i stället för att applicera om värden som hunnit bli inaktuella.
+    const handoverPath = pathWithoutLocale(pathname);
+    if (handoverRef.current?.path !== handoverPath) {
+      handoverRef.current = { path: handoverPath, handover: takeErrandFormHandover(handoverPath) };
+    }
+    const handover = handoverRef.current.handover;
+
     if (registerNewErrand) {
-      wizardReset();
+      if (handover) {
+        reset(handover.values);
+        wizardGoToStep(handover.wizardStep);
+      } else {
+        wizardReset();
+      }
       return;
     }
 
@@ -110,7 +134,14 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
         }
 
         const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
-        reset({ ...errand, errandFormData });
+        // Överlämningen innehåller osparade ändringar och är därmed nyare än svaret från
+        // API:et, som bara bär det som hunnit sparas.
+        if (handover) {
+          reset(handover.values);
+          wizardGoToStep(handover.wizardStep);
+        } else {
+          reset({ ...errand, errandFormData });
+        }
         setLoadState('ready');
       })
       .catch(() => {
@@ -120,7 +151,7 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
     return () => {
       active = false;
     };
-  }, [registerNewErrand, requestedErrandNumber, reset, wizardReset]);
+  }, [pathname, registerNewErrand, requestedErrandNumber, reset, wizardGoToStep, wizardReset]);
 
   const errandStatus = methods.watch('status');
   const errandNumber = methods.watch('errandNumber');

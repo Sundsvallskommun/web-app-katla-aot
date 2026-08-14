@@ -1,5 +1,6 @@
 import { ColorSchemeItems } from '@components/misc/color-scheme-items.component';
 import { LanguageItems } from '@components/misc/language-items.component';
+import { LanguageSwitchButton } from '@components/misc/language-switch-button.component';
 import { MobileErrandCard } from '@components/mobile/mobile-errand-card.component';
 import { NotificationsBell } from '@components/notifications/notification-bell';
 import { AppUserMenu } from '@components/user-menu/app-user-menu.component';
@@ -17,6 +18,7 @@ import layoutSv from '../../../locales/sv/layout.json';
 
 const routerPushMock = vi.hoisted(() => vi.fn());
 const pathnameMock = vi.hoisted(() => ({ value: '/oversikt' }));
+const searchParamsMock = vi.hoisted(() => ({ value: '' }));
 const colorSchemeStoreMock = vi.hoisted(() => ({
   colorScheme: 'system',
   setColorScheme: vi.fn(),
@@ -26,6 +28,7 @@ const i18n = createInstance();
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: routerPushMock }),
   usePathname: () => pathnameMock.value,
+  useSearchParams: () => new URLSearchParams(searchParamsMock.value),
 }));
 
 vi.mock('@utils/use-localstorage.hook', () => ({
@@ -53,6 +56,7 @@ describe('control semantics', () => {
   afterEach(() => {
     routerPushMock.mockReset();
     pathnameMock.value = '/oversikt';
+    searchParamsMock.value = '';
     colorSchemeStoreMock.colorScheme = 'system';
     colorSchemeStoreMock.setColorScheme.mockReset();
     useNotificationStore.setState({ activeNotifications: [], acknowledgedNotifications: [] });
@@ -209,5 +213,52 @@ describe('control semantics', () => {
 
     // Samma sida, inte en återgång till startsidan – annars tappar användaren sin plats.
     expect(routerPushMock).toHaveBeenCalledWith('/en/arende/AIA-25120019/grundinformation');
+  });
+
+  it('keeps the query string when switching language', () => {
+    pathnameMock.value = '/login';
+    searchParamsMock.value = 'path=%2Farende%2FAIA-25120019%2Fgrundinformation&failMessage=NOT_AUTHORIZED';
+
+    renderLocalized(
+      <PopupMenu open>
+        <PopupMenu.Button>Språk</PopupMenu.Button>
+        <PopupMenu.Panel>
+          <LanguageItems />
+        </PopupMenu.Panel>
+      </PopupMenu>
+    );
+
+    fireEvent.click(screen.getByRole('menuitemradio', { name: 'English' }));
+
+    // Inloggningen läser ?path för vart användaren ska tillbaka efteråt och ?failMessage
+    // för felet som ska visas. Ett språkbyte som tappar frågesträngen skickar användaren
+    // till översikten i stället för till sidan hen försökte nå.
+    expect(routerPushMock).toHaveBeenCalledWith(
+      '/en/login?path=%2Farende%2FAIA-25120019%2Fgrundinformation&failMessage=NOT_AUTHORIZED'
+    );
+  });
+
+  it('reaches the language choice from the header without opening the user menu', async () => {
+    renderLocalized(<LanguageSwitchButton />);
+
+    // Koden i knappen är en kompakt visuell form; det tillgängliga namnet skriver ut språket,
+    // eftersom "SV" inte säger något för den som inte redan känner igen koden.
+    const trigger = screen.getByRole('button', { name: 'Byt språk. Valt språk: Svenska' });
+    expect(trigger).toHaveTextContent('SV');
+
+    fireEvent.click(trigger);
+
+    expect(await screen.findByRole('menuitemradio', { name: 'Svenska' })).toBeChecked();
+    expect(screen.getByRole('menuitemradio', { name: 'English' })).toBeVisible();
+  });
+
+  it('keeps the header language list in its own radio group', async () => {
+    renderLocalized(<LanguageSwitchButton />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Byt språk. Valt språk: Svenska' }));
+
+    // Samma namn som användarmenyns grupp hade gjort de två listorna till en enda
+    // radiogrupp, där bara den ena kunde vara markerad.
+    expect(await screen.findByRole('menuitemradio', { name: 'Svenska' })).toHaveAttribute('name', 'header-language');
   });
 });

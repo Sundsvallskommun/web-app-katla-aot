@@ -1,6 +1,5 @@
 'use client';
 
-import { pathWithLocale } from '@app/locale-path';
 import { LogoutButton } from '@components/buttons/logout-button.component';
 import { colorSchemeOptions } from '@components/misc/color-scheme-options';
 import { languageOptions } from '@components/misc/language-options';
@@ -9,8 +8,8 @@ import { useUserStore } from '@services/user-service/user-service';
 import { Avatar, Button, Divider, RadioButton } from '@sk-web-gui/react';
 import { useLocalStorage } from '@utils/use-localstorage.hook';
 import { X } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
+import { useLanguageSwitch } from 'src/hooks/use-language-switch';
 import { useShallow } from 'zustand/react/shallow';
 
 import { MainPageMobileHeader } from './main-page-mobile-header.component';
@@ -20,11 +19,10 @@ interface MobileMenuBodyProps {
 }
 
 export const MobileMenuBody: React.FC<MobileMenuBodyProps> = ({ onClose }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const user = useUserStore(useShallow((s) => s.user));
   const { colorScheme, setColorScheme } = useLocalStorage();
-  const router = useRouter();
-  const pathname = usePathname();
+  const { currentLanguage, switchTo } = useLanguageSwitch();
 
   return (
     <section
@@ -92,7 +90,7 @@ export const MobileMenuBody: React.FC<MobileMenuBodyProps> = ({ onClose }) => {
               aria-labelledby="mobile-language-label"
               className="flex gap-8"
               name="mobile-language"
-              value={i18n.resolvedLanguage}
+              value={currentLanguage}
             >
               {languageOptions.map(({ value, labelKey }) => (
                 <RadioButton
@@ -100,9 +98,9 @@ export const MobileMenuBody: React.FC<MobileMenuBodyProps> = ({ onClose }) => {
                   value={value}
                   lang={value}
                   data-cy={`mobile-language-option-${value}`}
-                  checked={i18n.resolvedLanguage === value}
+                  checked={currentLanguage === value}
                   onChange={() => {
-                    router.push(pathWithLocale(pathname, value));
+                    switchTo(value);
                   }}
                 >
                   <span lang={value}>{t(labelKey)}</span>
