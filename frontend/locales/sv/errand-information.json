@@ -66,6 +66,8 @@
     "no_person_found": "Ingen person hittades",
     "missing_person_number": "Personnummer saknas",
     "missing_address": "Adress saknas",
+    "missing_email": "E-postadress saknas",
+    "missing_phone": "Telefonnummer saknas",
     "email": "E-postadress",
     "email_placeholder": "Ange e-postadress",
     "phone": "Telefonnummer",
