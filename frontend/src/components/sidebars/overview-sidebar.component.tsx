@@ -33,7 +33,7 @@ export const OverviewSidebar: React.FC = () => {
       <Logo
         className={cx(open ? '' : 'w-[2.8rem]')}
         variant={open ? 'service' : 'symbol'}
-        title={'Katla'}
+        title={'Registrering'}
         subtitle={process.env.NEXT_PUBLIC_APP_NAME}
       />
     </NextLink>
