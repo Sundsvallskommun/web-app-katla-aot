@@ -1,5 +1,7 @@
+import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
+import { format, resolveConfig } from 'prettier';
 import { generateApi } from 'swagger-typescript-api';
 import { parse as parseYaml } from 'yaml';
 
@@ -69,6 +71,26 @@ export const fetchOpenApiDocument = async (url: string, fetcher: typeof fetch = 
   throw new Error(`Kunde inte tolka api-docs för ${target} som JSON eller YAML (content-type: ${contentType ?? 'saknas'})`);
 };
 
+/**
+ * swagger-typescript-api slutade formatera sin utdata i v13, så de genererade filerna kom
+ * ut med dubbla citattecken och föll på `yarn format:check` i CI. Formateringen görs därför
+ * här i stället, mot projektets egen prettier-konfiguration.
+ */
+export const formatGeneratedFiles = async (outputDir: string): Promise<void> => {
+  const entries = await readdir(outputDir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (!entry.isFile() || !entry.name.endsWith('.ts')) {
+      continue;
+    }
+
+    const filePath = path.join(outputDir, entry.name);
+    const source = await readFile(filePath, 'utf-8');
+    const options = await resolveConfig(filePath);
+    await writeFile(filePath, await format(source, { ...options, filepath: filePath }), 'utf-8');
+  }
+};
+
 export const main = async ({ fetcher = fetch, generate = generateApi }: ContractGenerationDependencies = {}): Promise<void> => {
   if (!API_BASE_URL) {
     throw new Error('API_BASE_URL måste vara satt för att generera kontrakt');
@@ -87,6 +109,8 @@ export const main = async ({ fetcher = fetch, generate = generateApi }: Contract
       cleanOutput: true,
       extractEnums: true,
     });
+
+    await formatGeneratedFiles(outputDir);
   }
 };
 
