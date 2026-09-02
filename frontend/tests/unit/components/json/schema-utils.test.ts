@@ -13,7 +13,7 @@ import {
   validateErrandFormData,
 } from '../../../../src/components/json/utils/schema-utils';
 
-const REQUIRED_SCHEMA_NAME = 'avvikelse-plats-handelse';
+const REQUIRED_SCHEMA_NAME = 'aot-test-schema';
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -25,7 +25,9 @@ describe('validateErrandFormData', () => {
     const fetchMock = vi.fn<typeof fetch>();
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(validateErrandFormData(formDataEntries)).resolves.toHaveLength(1);
+    await expect(
+      validateErrandFormData(formDataEntries, undefined, undefined, [REQUIRED_SCHEMA_NAME])
+    ).resolves.toHaveLength(1);
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

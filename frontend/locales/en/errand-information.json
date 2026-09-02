@@ -12,9 +12,7 @@
   "errand": "Case: ",
   "draft": "Draft: ",
   "search": {
-    "PERSON": "Search by personal identity number",
-    "EMPLOYEE": "Search by username",
-    "AUTODETECT": "Search by personal identity number or username"
+    "PERSON": "Search by personal identity number"
   },
   "save_message": {
     "draft": "Draft saved",
@@ -22,47 +20,13 @@
     "error": "Something went wrong while saving the case"
   },
   "about": {
-    "title": "About the case",
-    "event_type_label": "Select event type",
-    "event_type_deviation": "Deviation",
-    "event_type_misconduct": "Misconduct",
-    "misconduct_alert_title": "Misconduct",
-    "misconduct_alert_description": "The case is sent to an independent investigator. Your manager is informed about the case but does not decide the outcome.",
-    "event_concerns_label": "The event concerns",
-    "event_concerns_individual": "An individual client",
-    "event_concerns_group": "Group/the entire operation",
-    "event_concerns_other": "Other",
-    "event_concerns_describe_note": "(Describe further in the \"What happened?\" section)",
-    "event_type_required": "Select an event type",
-    "event_concerns_required": "Select what the event concerns",
-    "event_concerns_group_facility_required": "Select a location where the deviation occurred when the event concerns a group/the entire operation",
-    "facility_incomplete": "Complete the location selection by choosing a unit – the location controls who can see the case"
-  },
-  "reporter": {
-    "title": "Reporter",
-    "description": "The reporter is the person who initiated the case and our primary contact while the case is being processed. If you are reporting on behalf of another colleague, add that person under other reporter."
-  },
-  "user": {
-    "title": "Client",
-    "description": "A client is the individual affected by the case.",
-    "not_required_title": "No client is needed for this case",
-    "not_required_description": "Since the event does not concern an individual client, you do not need to specify a client. You can continue to the next step."
-  },
-  "other_reporter": {
-    "title": "Other reporter",
-    "description": "Specify the colleague you are reporting on behalf of."
+    "title": "About the case"
   },
   "other_parties": {
     "title": "Other parties",
-    "description": "A party can be a contact person, doctor or a relative whose role is important to the case. If you are reporting on behalf of a colleague, you should add that colleague as another party."
-  },
-  "deviation_information": {
-    "title": "Details about the deviation",
-    "loading_form": "Loading form..."
+    "description": "An other party can be a person or organisation affected by the case."
   },
   "stakeholder": {
-    "person": "Person",
-    "employee": "Employee",
     "no_person_found": "No person was found",
     "missing_person_number": "Personal identity number missing",
     "missing_address": "Address missing",
@@ -77,7 +41,6 @@
     "add_manually": "Add manually",
     "edit_details": "Edit details",
     "remove": "Remove",
-    "reporting_for_colleague": "I am reporting on behalf of another colleague",
     "modal": {
       "edit_title": "Edit person",
       "add_title": "Add person manually",
@@ -120,7 +83,13 @@
     "complete": "Complete",
     "incomplete": "Incomplete"
   },
-  "sequence_of_events": {
-    "title": "Sequence of events"
-  }
+  "owner": {
+    "title": "Case owner",
+    "description": "The case owner is the company or organisation that is applying and our primary contact while the case is processed."
+  },
+  "errand_details": {
+    "title": "Case details",
+    "loading_form": "Loading form..."
+  },
+  "section_placeholder": "This section will be filled with alcohol serving fields at a later stage."
 }

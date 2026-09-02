@@ -12,9 +12,9 @@ export const MobileWizard: React.FC = () => {
   const goToStep = useWizardStore((s) => s.goToStep);
   const lastStep = steps.length - 1;
 
-  // Antalet steg krymper när eventConcerns ändras från ENSKILD_BRUKARE, och
-  // currentStep ligger kvar i sessionStorage. Utan klampningen pekar det
-  // sparade steget utanför listan och wizarden renderar ett tomt steg.
+  // Steglistan kan vara kortare än det currentStep som ligger kvar i sessionStorage,
+  // till exempel när Övriga parter-flaggan är av. Utan klampningen pekar det sparade
+  // steget utanför listan och wizarden renderar ett tomt steg.
   useEffect(() => {
     if (currentStep > lastStep) {
       goToStep(lastStep);

@@ -7,7 +7,9 @@ import type { TFunction } from 'i18next';
 import { getJsonValueSchemaValidator } from '../schema/form-schema-validator';
 import { createJsonErrorTransformer, fieldTitleFromSchema } from './schema-form-error-handling';
 
-export const ERRAND_FORM_SCHEMA_NAMES = ['avvikelse-plats-handelse'] as const;
+// Scheman som utgör Ärendeuppgifter. Listan är tom tills AoT:s scheman finns i
+// jsonschema-API:et; typen är bred så att den kan fyllas utan att bli en tuppel.
+export const ERRAND_FORM_SCHEMA_NAMES: readonly string[] = [];
 
 export type ErrandFormDataContractErrorCode = 'invalid-json' | 'missing-schema-id' | 'missing-schema-name';
 
@@ -267,11 +269,13 @@ export async function validateErrandFormData(
   // Måste följa det aktiva språket. Annars valideras mot schemat i standardspråket medan
   // formuläret renderas i ett annat, vilket ger både en onödig extra hämtning och
   // fältrubriker på fel språk i felsammanfattningen.
-  locale = i18nConfig.defaultLocale
+  locale = i18nConfig.defaultLocale,
+  // Injicerbar så att fail closed-regeln går att täcka även när den riktiga listan är tom.
+  requiredSchemaNames: readonly string[] = ERRAND_FORM_SCHEMA_NAMES
 ): Promise<string[]> {
   const errors: string[] = [];
   const entries = formDataEntries ?? [];
-  const missingSchemaNames = ERRAND_FORM_SCHEMA_NAMES.filter(
+  const missingSchemaNames = requiredSchemaNames.filter(
     (schemaName) => !entries.some((entry) => entry.schemaName === schemaName)
   );
 

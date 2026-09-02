@@ -16,26 +16,13 @@ export async function validateStep(
   locale?: string
 ): Promise<string[]> {
   switch (step.id) {
-    case 'about': {
-      const errors: string[] = [];
-      const eventType = formValues.parameters?.find((p) => p.key === 'eventType')?.values?.[0];
-      const eventConcerns = formValues.parameters?.find((p) => p.key === 'eventConcerns')?.values?.[0];
-
-      if (!eventType) {
-        errors.push(t('errand-information:about.event_type_required'));
-      }
-      if (!eventConcerns) {
-        errors.push(t('errand-information:about.event_concerns_required'));
-      }
-      return errors;
-    }
-
-    case 'deviation': {
+    case 'details': {
       return validateErrandFormData(formValues.errandFormData, t, locale);
     }
 
-    case 'reporter':
-    case 'user':
+    case 'about':
+    case 'owner':
+    case 'other-parties':
     case 'summary':
     default:
       return [];

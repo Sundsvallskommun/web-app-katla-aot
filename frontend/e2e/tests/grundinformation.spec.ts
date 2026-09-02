@@ -10,11 +10,12 @@ import { expect, test } from '../utils/test';
 const MOBILE_VIEWPORT = { width: 431, height: 932 };
 const DESKTOP_VIEWPORT = { width: 1536, height: 960 };
 
-// Långa titlar, enhetsnamn och e-postadresser är normalfallet i verksamheten.
-// En e-postadress saknar mellanslag och sätter därför kortets min-content-bredd
-// om den inte tillåts brytas.
-const longReporter = {
+// Långa namn, roller och e-postadresser är normalfallet i verksamheten. En e-postadress
+// saknar mellanslag och sätter därför kortets min-content-bredd om den inte tillåts brytas.
+// Parten ligger under Övriga parter, som är det enda avsnitt som visar kort än så länge.
+const longContact = {
   ...mockReporterStakeholder,
+  role: 'CONTACT',
   firstName: 'Ulrika',
   lastName: 'Wiklund',
   title: 'Specialistundersköterska',
@@ -40,13 +41,13 @@ const measure = async (locator: Locator, name: string) => {
 const openErrand = async (page: Page, appUrl: (path: string) => string, status?: string) => {
   await page.route(
     `**/supportmanagement/errand/${mockErrand.errandNumber}`,
-    jsonRoute({ ...mockErrand, stakeholders: [longReporter], ...(status === undefined ? {} : { status }) })
+    jsonRoute({ ...mockErrand, stakeholders: [longContact], ...(status === undefined ? {} : { status }) })
   );
   await page.route('**/supportmanagement/metadata', jsonRoute(mockMetadata));
   await page.goto(appUrl(errandPath));
 };
 
-const openReporterCard = async (page: Page, appUrl: (path: string) => string) => {
+const openStakeholderCard = async (page: Page, appUrl: (path: string) => string) => {
   await openErrand(page, appUrl);
 
   const card = page.getByTestId('stakeholder-card').first();
@@ -55,9 +56,9 @@ const openReporterCard = async (page: Page, appUrl: (path: string) => string) =>
 };
 
 test.describe('Errand basic information page', () => {
-  test('Reporter card keeps long contact details inside its own bounds on mobile', async ({ appUrl, page }) => {
+  test('Stakeholder card keeps long contact details inside its own bounds on mobile', async ({ appUrl, page }) => {
     await page.setViewportSize(MOBILE_VIEWPORT);
-    const card = await openReporterCard(page, appUrl);
+    const card = await openStakeholderCard(page, appUrl);
 
     const cardBox = await measure(card, 'stakeholder-card');
     const emailBox = await measure(card.getByTestId('stakeholder-email'), 'stakeholder-email');
@@ -74,9 +75,9 @@ test.describe('Errand basic information page', () => {
     expect(cardBox.right).toBeLessThanOrEqual(MOBILE_VIEWPORT.width);
   });
 
-  test('Reporter card keeps its two columns side by side on desktop', async ({ appUrl, page }) => {
+  test('Stakeholder card keeps its two columns side by side on desktop', async ({ appUrl, page }) => {
     await page.setViewportSize(DESKTOP_VIEWPORT);
-    const card = await openReporterCard(page, appUrl);
+    const card = await openStakeholderCard(page, appUrl);
 
     const departmentBox = await measure(card.getByTestId('stakeholder-department'), 'stakeholder-department');
     const emailBox = await measure(card.getByTestId('stakeholder-email'), 'stakeholder-email');
@@ -89,7 +90,7 @@ test.describe('Errand basic information page', () => {
 
   test('Submitted errand omits editing actions and says why', async ({ appUrl, page }) => {
     await page.setViewportSize(MOBILE_VIEWPORT);
-    const card = await openReporterCard(page, appUrl);
+    const card = await openStakeholderCard(page, appUrl);
 
     await expect(page.getByTestId('read-only-notice')).toBeVisible();
     // En nedtonad men synlig kontroll läser som att något är trasigt. Alla

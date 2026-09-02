@@ -1,4 +1,4 @@
-import { DeviationInformation } from '@components/errand-sections/deviation-information.component';
+import { ErrandDetails } from '@components/errand-sections/errand-details.component';
 import { FormValidationProvider } from '@contexts/form-validation-provider';
 import type { ErrandFormDataItem, ErrandFormDTO } from '@interfaces/errand-form';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -13,6 +13,13 @@ const { useFormSchemaMock } = vi.hoisted(() => ({
     loading: false,
     error: null,
   })),
+}));
+
+vi.mock('@components/json/utils/schema-utils', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@components/json/utils/schema-utils')>()),
+  // Den riktiga listan är tom tills AoT:s scheman finns, så testet stoppar in ett eget namn
+  // för att fortfarande kunna köra formulärvärden genom schemavärden.
+  ERRAND_FORM_SCHEMA_NAMES: ['aot-test-schema'],
 }));
 
 vi.mock('@components/json/hooks/use-form-schema', () => ({
@@ -57,14 +64,14 @@ function TestForm({ errandFormData }: { errandFormData: ErrandFormDataItem[] }) 
   return (
     <FormProvider {...methods}>
       <FormValidationProvider>
-        <DeviationInformation />
+        <ErrandDetails />
         <FormState />
       </FormValidationProvider>
     </FormProvider>
   );
 }
 
-describe('DeviationInformation', () => {
+describe('ErrandDetails', () => {
   beforeEach(() => {
     useFormSchemaMock.mockClear();
   });
@@ -76,7 +83,7 @@ describe('DeviationInformation', () => {
       data: '{"untouched":true}',
     };
     const targetEntry: ErrandFormDataItem = {
-      schemaName: 'avvikelse-plats-handelse',
+      schemaName: 'aot-test-schema',
       schemaId: 'schema-v1',
       data: '{"location":"old"}',
     };
@@ -84,7 +91,7 @@ describe('DeviationInformation', () => {
     render(<TestForm errandFormData={[otherEntry, targetEntry]} />);
 
     expect(screen.getByTestId('rendered-json')).toHaveTextContent('{"location":"old"}');
-    expect(useFormSchemaMock).toHaveBeenCalledWith('avvikelse-plats-handelse', {
+    expect(useFormSchemaMock).toHaveBeenCalledWith('aot-test-schema', {
       kind: 'persisted',
       schemaId: targetEntry.schemaId,
     });
@@ -103,7 +110,7 @@ describe('DeviationInformation', () => {
       <TestForm
         errandFormData={[
           {
-            schemaName: 'avvikelse-plats-handelse',
+            schemaName: 'aot-test-schema',
             schemaId: 'schema-v1',
             data: '{invalid-json',
           },
@@ -111,7 +118,7 @@ describe('DeviationInformation', () => {
       />
     );
 
-    expect(screen.getByRole('alert')).toHaveTextContent('Ogiltig JSON för avvikelse-plats-handelse');
+    expect(screen.getByRole('alert')).toHaveTextContent('Ogiltig JSON för aot-test-schema');
     expect(screen.queryByTestId('rendered-json')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Update schema form' })).not.toBeInTheDocument();
     expect(screen.getByTestId('form-state')).toHaveTextContent('{invalid-json');

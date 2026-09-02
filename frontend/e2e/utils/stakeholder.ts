@@ -2,7 +2,7 @@ import type { StakeholderDTO } from '@data-contracts/backend/data-contracts';
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-import { mockManualEditStakeholder, mockReporterStakeholder, mockStakeholder } from '../fixtures/mockStakeholder';
+import { mockManualEditStakeholder, mockStakeholder } from '../fixtures/mockStakeholder';
 import {
   MOCK_COUNTRY_CODE_PHONE_NUMBER,
   MOCK_EMAIL,
@@ -67,43 +67,6 @@ export const addStakeholder = async (page: Page, scope: Locator, role: string) =
   await phoneInput.fill('PHONENUMBER');
   await expect(scope.getByTestId('phone-number-input-error')).toBeVisible();
   await phoneInput.fill(MOCK_PHONE_NUMBER);
-  await syntheticClick(scope.locator('button', { hasText: 'Lägg till person' }));
-};
-
-export const addEmployeeStakeholder = async (page: Page, scope: Locator, role: string) => {
-  await page.route('**/employee/personal/ABC12DEF', jsonRoute({ ...mockReporterStakeholder, role }));
-  await page.route('**/employee/personal/ADACCOUNT', emptyRoute(204));
-
-  const personNumberInput = scope.getByTestId('person-number-input');
-  const searchButton = scope.locator('button', { hasText: 'Sök' });
-
-  // Sök på AD-konto i stället för personnummer
-  await expect(scope.getByTestId('radiobutton-person')).toBeAttached();
-  await scope.getByTestId('radiobutton-employee').check();
-
-  await personNumberInput.fill('ADACCOUNT');
-  const emptyPersonResponse = page.waitForResponse('**/employee/personal/ADACCOUNT');
-  await syntheticClick(searchButton);
-  await expect(scope.getByTestId('empty-person-error')).toBeVisible();
-  await emptyPersonResponse;
-  await syntheticClick(scope.locator('button[aria-label="Rensa"]'));
-  await expect(scope.getByTestId('empty-person-error')).toHaveCount(0);
-  await personNumberInput.fill('ABC12DEF');
-  const personResponse = page.waitForResponse('**/employee/personal/ABC12DEF');
-  await syntheticClick(searchButton);
-  await expect(scope.getByTestId('person-number-error')).toHaveCount(0);
-  await personResponse;
-
-  // E-post
-  await expect(scope.getByTestId('person-number-error')).toHaveCount(0);
-  await expect(scope.getByTestId('email-input-error')).toHaveCount(0);
-  await expect(scope.getByTestId('phone-number-input-error')).toHaveCount(0);
-  await expect(scope.getByTestId('stakeholder-email-input')).toHaveValue(mockReporterStakeholder.emails?.[0] ?? '');
-
-  // Telefon
-  await expect(scope.getByTestId('stakeholder-mobilephone-input')).toHaveValue(
-    mockReporterStakeholder.phoneNumbers?.[0] ?? ''
-  );
   await syntheticClick(scope.locator('button', { hasText: 'Lägg till person' }));
 };
 

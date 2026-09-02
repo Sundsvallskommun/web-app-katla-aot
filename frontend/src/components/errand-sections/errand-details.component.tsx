@@ -67,7 +67,7 @@ function SchemaFormField({ schemaName, compact }: SchemaFormFieldProps) {
   }
 
   if (loading) {
-    return <div className="text-gray-500">{t('errand-information:deviation_information.loading_form')}</div>;
+    return <div className="text-gray-500">{t('errand-information:errand_details.loading_form')}</div>;
   }
 
   if (error || !schema || !schemaId) {
@@ -89,11 +89,19 @@ function SchemaFormField({ schemaName, compact }: SchemaFormFieldProps) {
   );
 }
 
-interface DeviationInformationProps {
+interface ErrandDetailsProps {
   compact?: boolean;
 }
 
-export const DeviationInformation: React.FC<DeviationInformationProps> = ({ compact }) => {
+export const ErrandDetails: React.FC<ErrandDetailsProps> = ({ compact }) => {
+  const { t } = useTranslation('errand-information');
+
+  // Tills AoT har egna scheman finns ingen formulärlista att rendera. Platshållaren gör
+  // skillnad på "inga fält än" och "schemat gick inte att ladda".
+  if (ERRAND_FORM_SCHEMA_NAMES.length === 0) {
+    return <span className="text-dark-secondary">{t('section_placeholder')}</span>;
+  }
+
   return (
     <div className="flex flex-col gap-24">
       {ERRAND_FORM_SCHEMA_NAMES.map((schemaName) => (

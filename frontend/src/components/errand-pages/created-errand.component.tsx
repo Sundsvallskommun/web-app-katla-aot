@@ -1,10 +1,9 @@
 'use client';
 
 import { AboutErrand } from '@components/errand-sections/about-errand.component';
-import { DeviationInformation } from '@components/errand-sections/deviation-information.component';
+import { ErrandDetails } from '@components/errand-sections/errand-details.component';
+import { ErrandOwner } from '@components/errand-sections/errand-owner.component';
 import { OtherParties } from '@components/errand-sections/other-parties.component';
-import { Reporter } from '@components/errand-sections/reporter.component';
-import { User } from '@components/errand-sections/user.component';
 import { useErrandLockedByStatus } from '@contexts/errand-content-lock-context';
 import { Alert } from '@sk-web-gui/react';
 import { useTranslation } from 'react-i18next';
@@ -30,11 +29,10 @@ export const CreatedErrand: React.FC = () => {
       )}
       <h2 className="text-h2-md text-dark-primary">{t('errand-information:basic_information_heading')}</h2>
       <AboutErrand />
-      <Reporter />
-      <User />
+      <ErrandOwner />
       {appConfig.features.otherPartiesDisclosure && <OtherParties />}
       <h2 className="text-h2-md text-dark-primary">{t('errand-information:errand_details_heading')}</h2>
-      <DeviationInformation />
+      <ErrandDetails />
     </div>
   );
 };
