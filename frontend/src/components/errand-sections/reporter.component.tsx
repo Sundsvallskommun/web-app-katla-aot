@@ -68,7 +68,7 @@ export const ReporterContent: React.FC = () => {
                 {t('errand-information:other_reporter.title')}
               </h3>
               <span className="text-dark-secondary">{t('errand-information:other_reporter.description')}</span>
-              <StakeholderList roles={['CONTACT', 'SUBSTITUTEASSIGNMENT']} autoDetectSearch maxCount={1} />
+              <StakeholderList roles={['CONTACT', 'SUBSTITUTEASSIGNMENT']} maxCount={1} />
             </div>
           )}
         </>

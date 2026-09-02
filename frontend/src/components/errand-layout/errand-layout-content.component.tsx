@@ -20,17 +20,11 @@ import { useEffect, useRef, useState } from 'react';
 import { FormProvider, Resolver, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { MOBILE_BREAKPOINT } from 'src/constants/responsive';
-import { useAutoInitReporter } from 'src/hooks/use-auto-init-reporter';
 import { useLoadMetadata } from 'src/hooks/use-load-metadata';
 import { useMediaQuery } from 'src/hooks/use-media-query';
 import { useMetadataStore } from 'src/stores/metadata-store';
 import { useWizardStore } from 'src/stores/wizard-store';
 import * as yup from 'yup';
-
-const ReporterInit: React.FC = () => {
-  useAutoInitReporter();
-  return null;
-};
 
 const FormSchema = yup.object({}).required();
 const REGISTER_ROUTE_IDENTITY = 'new-errand';
@@ -203,7 +197,6 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
         >
           {t('layout:header.goto_content')}
         </NextLink>
-        {registerNewErrand && <ReporterInit />}
         <BaseErrandLayout registerNewErrand={registerNewErrand}>
           {showMobileWizard ?
             <MobileWizard />

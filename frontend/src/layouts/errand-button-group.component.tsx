@@ -34,7 +34,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
   const { setShowValidation, focusFirstError } = useFormValidation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isCancelOpen, setIsCancelOpen] = useState<boolean>(false);
-  const { prepareErrandForApi, getFacilityStatus } = usePrepareErrand();
+  const { prepareErrandForApi } = usePrepareErrand();
 
   const errandStatus = watch('status');
   const errandId = watch('id');
@@ -98,34 +98,11 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
     // Aktivera validering för JSON-formulär
     setShowValidation(true);
 
-    // Validera att eventType och eventConcerns är valda
     const values = getValues();
-    const eventType = values.parameters?.find((p) => p.key === 'eventType')?.values?.[0];
-    const eventConcerns = values.parameters?.find((p) => p.key === 'eventConcerns')?.values?.[0];
-    if (!eventType) {
-      reportValidationError(t('errand-information:about.event_type_required'));
-      return;
-    }
-    if (!eventConcerns) {
-      reportValidationError(t('errand-information:about.event_concerns_required'));
-      return;
-    }
-    // Validera errandFormData innan affärsregler läser värden ur JSON-strukturen.
     const formDataErrors = await validateErrandFormData(values.errandFormData, tForms, locale);
 
     if (formDataErrors.length > 0) {
       reportValidationError(formDataErrors[0]);
-      return;
-    }
-
-    const facilityStatus = getFacilityStatus(values.errandFormData);
-    if (eventConcerns === 'GRUPP_VERKSAMHET' && facilityStatus === 'NONE') {
-      reportValidationError(t('errand-information:about.event_concerns_group_facility_required'));
-      return;
-    }
-    // En plats som inte är vald hela vägen ner ger fel label, och därmed fel behörighet
-    if (facilityStatus === 'INCOMPLETE') {
-      reportValidationError(t('errand-information:about.facility_incomplete'));
       return;
     }
 

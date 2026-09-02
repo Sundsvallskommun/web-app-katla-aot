@@ -5,7 +5,6 @@ import { SubmitButtonFieldTemplate } from '@components/json/fields/submit-button
 import { CheckboxWidget } from '@components/json/widgets/checkbox-widget';
 import { ComboboxWidget } from '@components/json/widgets/combobox-widget';
 import { DateWidget } from '@components/json/widgets/date-widget';
-import { FacilitySearchWidget } from '@components/json/widgets/facility-search-widget';
 import { RadiobuttonWidget } from '@components/json/widgets/radio-widget';
 import { RADIO_WIDGET_NAMES } from '@components/json/widgets/radio-widget-names';
 import { SelectWidget } from '@components/json/widgets/select-widget';
@@ -13,7 +12,7 @@ import { TextWidget } from '@components/json/widgets/text-widget';
 import { TexteditorWidget } from '@components/json/widgets/texteditor-widget';
 import { TimeWidget } from '@components/json/widgets/time-widget';
 import Form, { IChangeEvent } from '@rjsf/core';
-import type { RegistryFieldsType, RegistryWidgetsType, RJSFSchema, UiSchema } from '@rjsf/utils';
+import type { RegistryWidgetsType, RJSFSchema, UiSchema } from '@rjsf/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -37,11 +36,6 @@ const widgets: RegistryWidgetsType = {
   combobox: ComboboxWidget,
   TexteditorWidget,
   texteditor: TexteditorWidget,
-};
-
-// Egna fält för objekttyper
-const fields: RegistryFieldsType = {
-  FacilitySearchWidget,
 };
 
 interface SchemaFormProps {
@@ -115,7 +109,6 @@ export default function SchemaForm({
       onSubmit={handleSubmit}
       validator={validator}
       widgets={widgets}
-      fields={fields}
       templates={{
         FieldTemplate,
         ObjectFieldTemplate,
