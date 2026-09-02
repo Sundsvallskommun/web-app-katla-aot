@@ -7,7 +7,7 @@
   },
   "scripts": {
     "predev": "yarn generate:middleware-envs",
-    "dev": "cross-env TEST=true next dev",
+    "dev": "dotenv -e .env.local -- next dev",
     "prebuild": "yarn generate:middleware-envs",
     "build": "next build",
     "build:webpack": "next build --webpack",
@@ -49,6 +49,7 @@
     "ajv-errors": "^3.0.0",
     "axios": "^1.19.0",
     "dayjs": "^1.11.19",
+    "dotenv-cli": "^11.0.0",
     "i18next": "^26.3.6",
     "i18next-resources-to-backend": "^1.2.1",
     "lodash": "4.18.1",

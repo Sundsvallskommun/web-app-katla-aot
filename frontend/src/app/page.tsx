@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
 
 export default function RootIndex() {
-  redirect('/login');
+  redirect('/oversikt');
 }

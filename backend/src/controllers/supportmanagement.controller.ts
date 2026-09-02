@@ -227,7 +227,6 @@ export class SupportManagementController {
   @ResponseSchema(MetadataResponseDTO)
   async getMetadata(@Req() req: RequestWithUser): Promise<MetadataResponse> {
     const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/metadata`;
-
     const res = await this.apiService.get<MetadataResponse>({ url }, req);
     if (!res.data) throw new HttpException(502, 'Invalid response when reading metadata');
 
