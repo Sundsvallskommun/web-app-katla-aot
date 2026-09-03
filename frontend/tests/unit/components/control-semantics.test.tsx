@@ -2,7 +2,6 @@ import { ColorSchemeItems } from '@components/misc/color-scheme-items.component'
 import { LanguageItems } from '@components/misc/language-items.component';
 import { LanguageSwitchButton } from '@components/misc/language-switch-button.component';
 import { MobileErrandCard } from '@components/mobile/mobile-errand-card.component';
-import { NotificationsBell } from '@components/notifications/notification-bell';
 import { AppUserMenu } from '@components/user-menu/app-user-menu.component';
 import { createUserMenuGroups } from '@layouts/userMenuGroup';
 import { ColorSchemeMode, PopupMenu, Tabs } from '@sk-web-gui/react';
@@ -10,7 +9,6 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { createInstance } from 'i18next';
 import NextLink from 'next/link';
 import { I18nextProvider } from 'react-i18next';
-import { useNotificationStore } from 'src/stores/notification-store';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import commonSv from '../../../locales/sv/common.json';
@@ -59,7 +57,6 @@ describe('control semantics', () => {
     searchParamsMock.value = '';
     colorSchemeStoreMock.colorScheme = 'system';
     colorSchemeStoreMock.setColorScheme.mockReset();
-    useNotificationStore.setState({ activeNotifications: [], acknowledgedNotifications: [] });
   });
 
   it('keeps the application menu actions keyboard-addressable', async () => {
@@ -96,21 +93,6 @@ describe('control semantics', () => {
 
     expect(screen.getByRole('menuitem', { name: 'Inställningar' })).toBeVisible();
     expect(screen.getByTestId('user-menu')).toHaveClass('sk-usermenu');
-  });
-
-  it('exposes notification count and expanded state without a false menu-item role', () => {
-    const toggleShow = vi.fn();
-    useNotificationStore.setState({ activeNotifications: [{ id: 'notification-1' }] });
-
-    renderLocalized(<NotificationsBell expanded toggleShow={toggleShow} />);
-
-    const button = screen.getByRole('button', { name: 'Öppna notifieringar (1 oläst)' });
-    expect(button).toHaveAttribute('aria-controls', 'notifications-panel');
-    expect(button).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.queryByRole('menuitem')).not.toBeInTheDocument();
-
-    fireEvent.click(button);
-    expect(toggleShow).toHaveBeenCalledOnce();
   });
 
   it('renders mobile errand navigation as one named link', () => {

@@ -6,7 +6,6 @@ import App from '@/app';
 import { SupportManagementController } from '@/controllers/supportmanagement.controller';
 import { HttpException } from '@/exceptions/HttpException';
 import ApiService from '@/services/api.service';
-import { buildOpenApiSpec } from '@/utils/openapi-spec';
 
 vi.mock('@/middlewares/auth.middleware', () => ({
   default: (req: Request, _res: Response, next: NextFunction) => {
@@ -31,41 +30,6 @@ afterEach(() => {
 });
 
 describe('SupportManagement HTTP error contracts', () => {
-  it('documents notification acknowledgement as a required array body', () => {
-    const spec: unknown = buildOpenApiSpec([SupportManagementController], '/api');
-
-    if (!spec || typeof spec !== 'object' || !('paths' in spec)) {
-      throw new Error('Expected paths in OpenAPI document');
-    }
-    const { paths } = spec;
-    if (!paths || typeof paths !== 'object' || !('/api/supportmanagement/notifications' in paths)) {
-      throw new Error('Expected notification acknowledgement path in OpenAPI document');
-    }
-    const notificationsPath = paths['/api/supportmanagement/notifications'];
-    if (!notificationsPath || typeof notificationsPath !== 'object' || !('patch' in notificationsPath)) {
-      throw new Error('Expected notification acknowledgement path in OpenAPI document');
-    }
-    const { patch: patchOperation } = notificationsPath;
-    if (!patchOperation || typeof patchOperation !== 'object' || !('requestBody' in patchOperation)) {
-      throw new Error('Expected notification acknowledgement request body in OpenAPI document');
-    }
-
-    expect(patchOperation.requestBody).toEqual(
-      expect.objectContaining({
-        required: true,
-        content: {
-          'application/json': {
-            schema: {
-              type: 'array',
-              minItems: 1,
-              items: { $ref: '#/components/schemas/NotificationDTO' },
-            },
-          },
-        },
-      }),
-    );
-  });
-
   it('preserves the successful create response contract', async () => {
     const postSpy = vi.spyOn(ApiService.prototype, 'post').mockResolvedValue({
       data: { id: 'errand-id', errandNumber: 'ERRAND-1', stakeholders: [] },
@@ -200,12 +164,7 @@ describe('SupportManagement HTTP error contracts', () => {
 
   it('propagates upstream errors from every read endpoint', async () => {
     const getSpy = vi.spyOn(ApiService.prototype, 'get').mockRejectedValue(new HttpException(503, 'Upstream unavailable'));
-    const paths = [
-      '/api/supportmanagement/errands',
-      '/api/supportmanagement/count',
-      '/api/supportmanagement/metadata',
-      '/api/supportmanagement/notifications',
-    ];
+    const paths = ['/api/supportmanagement/errands', '/api/supportmanagement/count', '/api/supportmanagement/metadata'];
 
     for (const path of paths) {
       const response = await request(app).get(path).expect(503);
@@ -229,53 +188,6 @@ describe('SupportManagement HTTP error contracts', () => {
     const response = await request(app).get('/api/supportmanagement/count').expect(502);
 
     expect(response.body).toEqual({ message: 'Invalid response when counting errands' });
-  });
-
-  it('propagates notification acknowledgement errors', async () => {
-    const patchSpy = vi.spyOn(ApiService.prototype, 'patch').mockRejectedValue(new HttpException(404, 'Notification not found'));
-
-    const response = await request(app)
-      .patch('/api/supportmanagement/notifications')
-      .send([{ id: 'notification-id', acknowledged: true }])
-      .expect(404);
-
-    expect(response.body).toEqual({ message: 'Notification not found' });
-    expect(patchSpy).toHaveBeenCalledWith(expect.objectContaining({ propagateClientError: true }), expect.anything());
-  });
-
-  it('preserves the successful notification acknowledgement response contract', async () => {
-    vi.spyOn(ApiService.prototype, 'patch').mockResolvedValue({
-      data: undefined,
-      message: 'success',
-    });
-
-    const response = await request(app)
-      .patch('/api/supportmanagement/notifications')
-      .send([{ id: 'notification-id', acknowledged: true }])
-      .expect(200);
-
-    expect(response.body).toEqual({ data: true, message: 'Success' });
-  });
-
-  it('forwards the notification acknowledgement array unchanged', async () => {
-    const patchSpy = vi.spyOn(ApiService.prototype, 'patch').mockResolvedValue({
-      data: undefined,
-      message: 'success',
-    });
-    const notifications = [{ id: 'notification-id', acknowledged: true }];
-
-    await request(app).patch('/api/supportmanagement/notifications').send(notifications).expect(200);
-
-    expect(patchSpy).toHaveBeenCalledWith(expect.objectContaining({ data: notifications }), expect.anything());
-  });
-
-  it.each([{}, []])('rejects a non-array or empty acknowledgement body', async body => {
-    const patchSpy = vi.spyOn(ApiService.prototype, 'patch');
-
-    const response = await request(app).patch('/api/supportmanagement/notifications').send(body).expect(400);
-
-    expect(response.body).toEqual({ message: 'At least one notification is required' });
-    expect(patchSpy).not.toHaveBeenCalled();
   });
 
   it('serializes sort exactly once before calling SupportManagement', async () => {

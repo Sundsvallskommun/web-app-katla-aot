@@ -29,7 +29,7 @@ describe('ApiService client-error propagation', () => {
       new ApiService().patch<undefined>(
         {
           baseURL: 'https://api.example.test',
-          url: '/notifications',
+          url: '/errands/errand-id',
         },
         { session: {} },
       ),

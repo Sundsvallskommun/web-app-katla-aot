@@ -1,7 +1,6 @@
 import { mockCountDraftErrands, mockCountNewErrands, mockCountSolvedErrands } from '../fixtures/mockCount';
 import { mockErrands } from '../fixtures/mockErrands';
 import { mockMetadata } from '../fixtures/mockMetadata';
-import { mockNotifications } from '../fixtures/mockNotifications';
 import { jsonRoute } from '../utils/routes';
 import { expect, test } from '../utils/test';
 
@@ -23,7 +22,6 @@ test.describe('Overview page', () => {
       (url) => url.pathname.endsWith('/supportmanagement/count') && url.searchParams.get('status') === 'SOLVED',
       jsonRoute(mockCountSolvedErrands)
     );
-    await page.route('**/supportmanagement/notifications', jsonRoute(mockNotifications));
     await page.route('**/supportmanagement/metadata', jsonRoute(mockMetadata));
     await page.goto(appUrl('/oversikt'));
   });
@@ -71,5 +69,4 @@ test.describe('Overview page', () => {
 
   // TODO: Add test for search field when frontend functionality is ready
   // TODO: Add test for all filters
-  // TODO: Add test for notification bell when frontend functionality is ready
 });

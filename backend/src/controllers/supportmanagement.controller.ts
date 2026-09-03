@@ -3,12 +3,10 @@ import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 import { MUNICIPALITY_ID, NAMESPACE } from '@/config';
 import { getApiBase } from '@/config/api-config';
-import { Errand, MetadataResponse, Notification, PageErrand } from '@/data-contracts/supportmanagement/data-contracts';
+import { Errand, MetadataResponse, PageErrand } from '@/data-contracts/supportmanagement/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
-import type ApiResponse from '@/interfaces/api-service.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
-import { NotificationAcknowledgementResponse, NotificationDTO } from '@/responses/notification.response';
 import { ErrandCountDTO, ErrandDTO, ErrandsQueryDTO, PageErrandDTO } from '@/responses/supportmanagement.response';
 import { MetadataResponseDTO } from '@/responses/supportmanagement-metadata.response';
 import ApiService from '@/services/api.service';
@@ -231,54 +229,5 @@ export class SupportManagementController {
     if (!res.data) throw new HttpException(502, 'Invalid response when reading metadata');
 
     return res.data;
-  }
-
-  @Get('/supportmanagement/notifications')
-  @OpenAPI({ summary: 'Get notifications for the namespace and municipality with the specified ownerId' })
-  @UseBefore(authMiddleware)
-  @ResponseSchema(NotificationDTO, { isArray: true })
-  async getNotifications(@Req() req: RequestWithUser): Promise<Notification[]> {
-    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/notifications?ownerId=${req.user.username}`;
-
-    const res = await this.apiService.get<Notification[]>({ url }, req);
-    if (!res.data) throw new HttpException(502, 'Invalid response when reading notifications');
-
-    return res.data;
-  }
-
-  @Patch('/supportmanagement/notifications')
-  @OpenAPI({
-    summary: 'Acknowledge notifications',
-    requestBody: {
-      required: true,
-      content: {
-        'application/json': {
-          schema: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/components/schemas/NotificationDTO' },
-          },
-        },
-      },
-    },
-  })
-  @UseBefore(authMiddleware)
-  @ResponseSchema(NotificationAcknowledgementResponse)
-  async acknowlegeNotifications(
-    @Req() req: RequestWithUser,
-    @Body({ required: false }) notifications: NotificationDTO[] | undefined,
-  ): Promise<ApiResponse<boolean>> {
-    if (!Array.isArray(notifications) || notifications.length === 0) {
-      throw new HttpException(400, 'At least one notification is required');
-    }
-
-    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/notifications`;
-
-    // SupportManagement acknowledges with 204 No Content. A resolved request is
-    // therefore the success signal; the gateway keeps its existing boolean body
-    // for Katla clients.
-    await this.apiService.patch<undefined>({ url, data: notifications, propagateClientError: true }, req);
-
-    return { data: true, message: 'Success' };
   }
 }
