@@ -67,48 +67,13 @@ export class SupportManagementController {
     };
   }
 
-  @Patch('/supportmanagement/errand/save')
-  @OpenAPI({ summary: 'Save an errand' })
-  @UseBefore(authMiddleware)
-  @ResponseSchema(ErrandDTO)
-  async saveErrand(@Req() req: RequestWithUser, @Body() errand: Errand): Promise<Partial<Errand>> {
-    if (!errand.id) {
-      throw new HttpException(400, 'Errand id is required when saving an errand');
-    }
-
-    const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands/${errand.id}`;
-
-    delete errand.activeNotifications;
-    delete errand.created;
-    delete errand.errandNumber;
-    delete errand.id;
-    delete errand.reporterUserId;
-    delete errand.touched;
-    delete errand.modified;
-
-    const errandInformation = {
-      ...errand,
-      stakeholders: errand.stakeholders?.map(mapStakeholderDTOToStakeholder),
-    };
-
-    const baseURL = apiURL(this.apiBase);
-
-    const res = await this.apiService.patch<Partial<Errand>>({ baseURL, url, data: errandInformation, propagateClientError: true }, req);
-    if (!res.data) throw new HttpException(502, 'Invalid response when saving errand');
-
-    const stakeholders = await Promise.all(res.data.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? []);
-
-    return {
-      ...res.data,
-      stakeholders,
-    };
-  }
-
   @Patch('/supportmanagement/errand/:id')
   @OpenAPI({ summary: 'Update errand' })
   @UseBefore(authMiddleware)
   @ResponseSchema(ErrandDTO)
   async updateErrand(@Req() req: RequestWithUser, @Param('id') id: string, @Body() errand: Partial<Errand>): Promise<Partial<Errand>> {
+    if (!id.trim()) throw new HttpException(400, 'Errand id is required when updating an errand');
+
     const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands/${id}`;
     const baseURL = apiURL(this.apiBase);
     // Strip read-only fields that the API does not accept on update
@@ -123,12 +88,22 @@ export class SupportManagementController {
       ...errandData
     } = errand;
 
-    if (!id.trim()) throw new HttpException(400, 'Errand id is required when updating an errand');
+    // Translate both ways, as on create: the DTO has emails/phoneNumbers/personNumber,
+    // upstream Stakeholder has only contactChannels.
+    const errandInformation = {
+      ...errandData,
+      stakeholders: errandData.stakeholders?.map(mapStakeholderDTOToStakeholder),
+    };
 
-    const res = await this.apiService.patch<Partial<Errand>>({ baseURL, url, data: errandData, propagateClientError: true }, req);
+    const res = await this.apiService.patch<Partial<Errand>>({ baseURL, url, data: errandInformation, propagateClientError: true }, req);
     if (!res.data) throw new HttpException(502, 'Invalid response when updating errand');
 
-    return res.data;
+    const stakeholders = await Promise.all(res.data.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? []);
+
+    return {
+      ...res.data,
+      stakeholders,
+    };
   }
 
   @Get('/supportmanagement/errand/:errandNumber')

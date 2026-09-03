@@ -99,37 +99,68 @@ describe('SupportManagement HTTP error contracts', () => {
     expect(response.body).toEqual({ message: 'No stakeholders in response when creating errand' });
   });
 
-  it.each([
-    ['save', '/api/supportmanagement/errand/save'],
-    ['update', '/api/supportmanagement/errand/errand-id'],
-  ])('propagates a typed upstream error when attempting to %s an errand', async (_operation, path) => {
+  it('propagates a typed upstream error when attempting to update an errand', async () => {
     const patchSpy = vi.spyOn(ApiService.prototype, 'patch').mockRejectedValue(new HttpException(409, 'Errand was modified elsewhere'));
 
-    const payload = path.endsWith('/save') ? { id: 'errand-id', title: 'Changed' } : { title: 'Changed' };
-    const response = await request(app).patch(path).send(payload).expect(409);
+    const response = await request(app).patch('/api/supportmanagement/errand/errand-id').send({ title: 'Changed' }).expect(409);
 
     expect(response.body).toEqual({ message: 'Errand was modified elsewhere' });
     expect(patchSpy).toHaveBeenCalledWith(expect.objectContaining({ propagateClientError: true }), expect.anything());
   });
 
-  it('fails explicitly when save is missing an errand id', async () => {
+  it('fails explicitly when update is given a blank errand id', async () => {
     const patchSpy = vi.spyOn(ApiService.prototype, 'patch');
 
-    const response = await request(app).patch('/api/supportmanagement/errand/save').send({ title: 'Changed' }).expect(400);
+    const response = await request(app).patch('/api/supportmanagement/errand/%20').send({ title: 'Changed' }).expect(400);
 
-    expect(response.body).toEqual({ message: 'Errand id is required when saving an errand' });
+    expect(response.body).toEqual({ message: 'Errand id is required when updating an errand' });
     expect(patchSpy).not.toHaveBeenCalled();
   });
 
-  it.each([
-    ['save', '/api/supportmanagement/errand/save', { id: 'errand-id', title: 'Changed' }, 'saving'],
-    ['update', '/api/supportmanagement/errand/errand-id', { title: 'Changed' }, 'updating'],
-  ])('returns 502 when %s receives an empty successful response', async (_operation, path, payload, messagePart) => {
+  it('returns 502 when update receives an empty successful response', async () => {
     vi.spyOn(ApiService.prototype, 'patch').mockResolvedValue({ data: undefined, message: 'success' });
 
-    const response = await request(app).patch(path).send(payload).expect(502);
+    const response = await request(app).patch('/api/supportmanagement/errand/errand-id').send({ title: 'Changed' }).expect(502);
 
-    expect(response.body).toEqual({ message: `Invalid response when ${messagePart} errand` });
+    expect(response.body).toEqual({ message: 'Invalid response when updating errand' });
+  });
+
+  // Upstream Stakeholder has only contactChannels. Passing StakeholderDTO through
+  // silently drops emails/phoneNumbers and leaks personNumber.
+  it('translates stakeholders to the upstream shape when updating an errand', async () => {
+    const patchSpy = vi.spyOn(ApiService.prototype, 'patch').mockResolvedValue({ data: { stakeholders: [] }, message: 'success' });
+
+    await request(app)
+      .patch('/api/supportmanagement/errand/errand-id')
+      .send({
+        stakeholders: [
+          {
+            firstName: 'Ada',
+            personNumber: '198001011234',
+            emails: ['ada@example.com'],
+            phoneNumbers: ['+46701234567'],
+          },
+        ],
+      })
+      .expect(200);
+
+    const [requestConfig] = patchSpy.mock.calls[0] ?? [];
+    if (!requestConfig) {
+      throw new Error('Expected the update to reach SupportManagement');
+    }
+    const sentStakeholders = (requestConfig as { data?: { stakeholders?: Record<string, unknown>[] } }).data?.stakeholders ?? [];
+    const [stakeholder] = sentStakeholders;
+    if (!stakeholder) {
+      throw new Error('Expected a mapped stakeholder in the update payload');
+    }
+
+    expect(stakeholder).not.toHaveProperty('personNumber');
+    expect(stakeholder).not.toHaveProperty('emails');
+    expect(stakeholder).not.toHaveProperty('phoneNumbers');
+    expect(stakeholder.contactChannels).toEqual([
+      { type: 'email', value: 'ada@example.com' },
+      { type: 'phone', value: '+46701234567' },
+    ]);
   });
 
   it('returns 404 when an errand number has no matching errand', async () => {

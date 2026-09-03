@@ -58,11 +58,3 @@ export const createErrand = async (errand: ErrandDTO): Promise<ErrandDTO> => {
 export const updateErrand = async (id: string, errand: Partial<ErrandDTO>): Promise<ErrandDTO> => {
   return apiService.patch<ErrandDTO>(`supportmanagement/errand/${id}`, errand).then((res) => res.data);
 };
-
-export const saveErrand = async (errand: ErrandDTO): Promise<ErrandDTO> => {
-  return apiService.patch<ErrandDTO>('supportmanagement/errand/save', errand).then((res) => res.data);
-};
-
-export const upsertErrand = async (errand: ErrandDTO): Promise<ErrandDTO> => {
-  return errand.id ? saveErrand(errand) : createErrand(errand);
-};
