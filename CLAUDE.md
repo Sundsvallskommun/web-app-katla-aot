@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Katla Support Management - a case/errand management web application for Sundsvalls Kommun. Monorepo with separate `frontend/` and `backend/` directories, each with their own `package.json` and `yarn install`.
+Katla Alkohol- och tobakstillstånd (AoT) - a citizen-facing web application for applying for alcohol serving permits (serveringstillstånd) for Sundsvalls Kommun. Monorepo with separate `frontend/` and `backend/` directories, each with their own `package.json` and `yarn install`.
 
 The frontend never calls Sundsvall's APIs directly. The backend is a BFF: it holds the SAML session, exchanges credentials for WSO2 tokens, and maps upstream responses to DTOs. Anything the UI needs must exist as a backend endpoint first.
 
@@ -84,11 +84,11 @@ Backend (`tsconfig.json`): `@/*` → `src/*`, plus `@config`, `@controllers/*`, 
 
 ## Code Conventions
 
-- **Prettier**: single quotes, 2-space indent, 120 print width, trailing commas (es5), `experimentalTernaries: true`
+- **Prettier**: konfigurationen skiljer sig mellan paketen — `frontend/.prettierrc` har 120 print width, `trailingComma: es5` och `experimentalTernaries: true`, medan `backend/.prettierrc` har 150 print width, `trailingComma: all` och `arrowParens: avoid`. Båda har single quotes och 2-space indent. Formatera alltid mot filen i det paket du redigerar, inte mot den här sammanfattningen.
 - **ESLint**: strict, type-aware flat config modeled on Sundsvalls Kommun's web-app-starter — `typescript-eslint` `strictTypeChecked` + `stylisticTypeChecked`, `simple-import-sort`, `unused-imports`, `no-console` (warn/error allowed), no `any`, och `noInlineConfig` (inline `eslint-disable`-kommentarer är förbjudna — åtgärda koden i stället). Kör `yarn lint:strict` och `yarn format:check` före push; båda körs i CI.
 - **Component naming**: `*.component.tsx` pattern
 - **Test selectors**: use `data-cy` attributes (Playwright is configured with `testIdAttribute: 'data-cy'`)
-- **Language**: UI text and comments are in Swedish; code identifiers in English
+- **Language**: UI text (och lokaliseringsfilerna) är på svenska. Kod, kommentarer och testnamn skrivs på engelska — engelskan är etablerad för programmeringstermer och håller kommentarerna kortare. Domänord utan bra engelsk motsvarighet (ärende, avvikelse, Ärendeuppgifter) behålls som de är.
 
 ## Testing
 

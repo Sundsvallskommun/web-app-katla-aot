@@ -6,7 +6,7 @@ export interface EnumOption {
 }
 
 /**
- * Utökade alternativ som kan skickas via ui:options i schemat
+ * Extra options that can be passed through ui:options in the schema.
  */
 export interface WidgetOptions {
   className?: string;
@@ -70,15 +70,15 @@ export function getCommonProps(props: WidgetProps, defaultClassName: string): Co
 }
 
 /**
- * Tar bort HTML-taggar ur en sträng för att få ren text.
- * Används för att validera textlängd utan att räkna med HTML-uppmärkning.
+ * Strips HTML tags from a string to get plain text, so text length can be validated without
+ * counting markup.
  */
 export function stripHtml(html: string): string {
   if (typeof DOMParser !== 'undefined') {
     const doc = new DOMParser().parseFromString(html, 'text/html');
     return (doc.body.textContent || '').trim();
   }
-  // Reserv för SSR: iterativ parser i stället för regex för att undvika ReDoS
+  // SSR fallback: an iterative parser rather than a regex, to avoid ReDoS.
   let result = '';
   let inTag = false;
   for (const char of html) {

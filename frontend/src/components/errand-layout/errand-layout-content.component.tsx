@@ -20,17 +20,11 @@ import { useEffect, useRef, useState } from 'react';
 import { FormProvider, Resolver, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { MOBILE_BREAKPOINT } from 'src/constants/responsive';
-import { useAutoInitReporter } from 'src/hooks/use-auto-init-reporter';
 import { useLoadMetadata } from 'src/hooks/use-load-metadata';
 import { useMediaQuery } from 'src/hooks/use-media-query';
 import { useMetadataStore } from 'src/stores/metadata-store';
 import { useWizardStore } from 'src/stores/wizard-store';
 import * as yup from 'yup';
-
-const ReporterInit: React.FC = () => {
-  useAutoInitReporter();
-  return null;
-};
 
 const FormSchema = yup.object({}).required();
 const REGISTER_ROUTE_IDENTITY = 'new-errand';
@@ -42,9 +36,8 @@ type ErrandRoute =
   | { errandNumber: string; identity: string; kind: 'existing' }
   | { identity: typeof INVALID_ROUTE_IDENTITY; kind: 'invalid' };
 
-// Kontrollen finns för att avvisa svar från en tidigare route, inte för att
-// kräva kanonisk skiftlägesform. Jämför normaliserat så att en giltig djuplänk
-// med annan skiftlägesform fortfarande laddar ärendet.
+// The check exists to reject responses from an earlier route, not to demand canonical casing.
+// Compare normalised so a valid deep link with different casing still loads the errand.
 const matchesRequestedErrand = (errandNumber: string | undefined, requestedErrandNumber: string): boolean =>
   errandNumber?.trim().toLocaleUpperCase('sv-SE') === requestedErrandNumber.trim().toLocaleUpperCase('sv-SE');
 
@@ -62,9 +55,9 @@ interface ErrandRouteContentProps {
   route: ErrandRoute;
 }
 
-// Tabs identifierar sitt direkta Button-barn via komponentreferens. Att skicka
-// de polymorfa länkpropsen genom ett objekt bevarar den identiteten och går
-// samtidigt runt den installerade deklarationen, som inte exponerar målets props.
+// Tabs identifies its direct Button child by component reference. Passing the polymorphic link
+// props through an object keeps that identity while working around the installed declaration,
+// which does not expose the target's props.
 const createLinkTabProps = (href: string) => ({ as: NextLink, href });
 
 const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route }) => {
@@ -99,14 +92,14 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
   const { reset } = methods;
 
   useEffect(() => {
-    // Ett språkbyte är en navigering, och Next monterar om hela trädet. Överlämningen bär
-    // det som bara låg i minnet över den navigeringen; utan den kostar ett språkbyte mitt i
-    // registreringen allt användaren fyllt i.
+    // A language switch is a navigation, and Next remounts the whole tree. The handover carries
+    // what lived only in memory across it; without it, switching language mid-registration costs
+    // the user everything they entered.
     //
-    // Posten tas bort vid första läsningen, medan effekten kan köras om för samma sida –
-    // StrictMode gör det i utvecklingsläge. Svaret sparas därför per sökväg: en omkörning
-    // för samma sida återanvänder det, och ett flikbyte till en annan sökväg får sitt eget
-    // (tomma) svar i stället för att applicera om värden som hunnit bli inaktuella.
+    // The entry is removed on first read, while the effect may re-run for the same page —
+    // StrictMode does exactly that in development. The result is therefore cached per path: a
+    // re-run for the same page reuses it, and a move to another path gets its own (empty) result
+    // instead of reapplying values that have gone stale.
     const handoverPath = pathWithoutLocale(pathname);
     if (handoverRef.current?.path !== handoverPath) {
       handoverRef.current = { path: handoverPath, handover: takeErrandFormHandover(handoverPath) };
@@ -134,8 +127,8 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
         }
 
         const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
-        // Överlämningen innehåller osparade ändringar och är därmed nyare än svaret från
-        // API:et, som bara bär det som hunnit sparas.
+        // The handover holds unsaved edits and is therefore newer than the API response, which
+        // carries only what has been saved.
         if (handover) {
           reset(handover.values);
           wizardGoToStep(handover.wizardStep);
@@ -156,9 +149,9 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
   const errandStatus = methods.watch('status');
   const errandNumber = methods.watch('errandNumber');
   const isDraft = errandStatus === 'DRAFT';
-  // Ett utkast är samma oavslutade arbete oavsett om det just skapats eller
-  // återupptagits, och wizarden är det gränssnitt som är byggt för smal skärm.
-  // Utan det här villkoret bytte ett återupptaget utkast till flikvyn på mobil.
+  // A draft is the same unfinished work whether just created or resumed, and the wizard is the
+  // interface built for narrow screens. Without this condition a resumed draft switched to the
+  // tab view on mobile.
   const showMobileWizard = isMobile && (registerNewErrand || isDraft);
 
   const getHeaderTitle = () => {
@@ -171,9 +164,8 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
     return `${t('errand-information:errand')} ${errandNumber}`;
   };
 
-  // Rollnamn och platsstrukturen kommer ur metadata. Renderas sidan innan den
-  // finns blir rollerna tomma och platsväljaren fastnar i sitt laddningsläge,
-  // så metadata hör till samma readiness-gräns som själva ärendet.
+  // Role names come from metadata. Rendering the page before it exists leaves the roles empty,
+  // so metadata belongs to the same readiness boundary as the errand itself.
   const loadErrors = [loadState === 'error' ? t('api_errors.errand') : null, metadataError].filter(
     (message): message is string => message !== null
   );
@@ -203,7 +195,6 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
         >
           {t('layout:header.goto_content')}
         </NextLink>
-        {registerNewErrand && <ReporterInit />}
         <BaseErrandLayout registerNewErrand={registerNewErrand}>
           {showMobileWizard ?
             <MobileWizard />
@@ -258,9 +249,9 @@ export const ErrandLayoutContent: React.FC<{ children: React.ReactNode }> = ({ c
     route = { identity: INVALID_ROUTE_IDENTITY, kind: 'invalid' };
   }
 
-  // En routeidentitet äger exakt en RHF-instans. Nyckeln river ned föregående
-  // formulär synkront vid A→B-navigation, innan B hinner rendera header eller
-  // åtgärder, medan requestupprensningen avvisar varje sent A-svar.
+  // One route identity owns exactly one RHF instance. The key tears the previous form down
+  // synchronously on an A→B navigation, before B renders its header or actions, while the
+  // request cleanup rejects any late A response.
   return (
     <ErrandRouteContent key={route.identity} route={route}>
       {children}

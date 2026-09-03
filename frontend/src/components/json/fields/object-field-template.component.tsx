@@ -102,8 +102,8 @@ function getSectionDefinitions(uiSchema: UiSchema | undefined): SectionDefinitio
 }
 
 /**
- * UI-schemat använder Lucides stabila kebab-case-namn medan lucide-reacts
- * ikonregister använder PascalCase som objektnycklar.
+ * The ui schema uses Lucide's stable kebab-case names, while lucide-react's icon registry keys
+ * on PascalCase.
  */
 function getSectionIcon(iconName: string | undefined) {
   if (!iconName) return undefined;
@@ -119,7 +119,7 @@ function getSectionIcon(iconName: string | undefined) {
 }
 
 /**
- * Fältet kan ha fel både på sig självt och i underliggande objekt, så hela grenen gås igenom.
+ * A field can carry errors both on itself and in nested objects, so the whole branch is walked.
  */
 function containsErrors(node: unknown): boolean {
   if (typeof node !== 'object' || node === null) return false;
@@ -137,8 +137,8 @@ function sectionHasErrors(fieldNames: string[], errorSchema: ErrorSchema | undef
 }
 
 /**
- * Avsnitten får sin status först när valideringen är igång. Innan dess vet formuläret inte
- * om ett tomt fält är ett fel eller bara något användaren inte hunnit fram till.
+ * Sections only get a status once validation is running. Before that the form cannot tell an
+ * empty field that is an error from one the user has simply not reached yet.
  */
 type SectionStatus = 'error' | 'complete';
 
@@ -153,8 +153,8 @@ interface SectionDisclosureProps {
 
 function SectionDisclosure({ section, status, children }: SectionDisclosureProps) {
   const { t } = useTranslation('forms');
-  // Öppen om inget annat sägs, samma standard som ErrandDisclosure. Sätt defaultOpen:false
-  // i ui:sections för att stänga en enskild sektion.
+  // Open unless stated otherwise, matching ErrandDisclosure. Set defaultOpen:false in
+  // ui:sections to close an individual section.
   const [open, setOpen] = useState(section.defaultOpen ?? true);
   const [doneMark, setDoneMark] = useState(false);
   const SectionIcon = getSectionIcon(section.icon);
@@ -172,7 +172,7 @@ function SectionDisclosure({ section, status, children }: SectionDisclosureProps
     <Disclosure variant="alt" className="w-full" open={open} onToggleOpen={setOpen}>
       <Disclosure.Header>
         {SectionIcon && <Disclosure.Icon icon={React.createElement(SectionIcon)} />}
-        {/* min-w-0 låter rubriken krympa i stället för att trycka ut statusetiketten över kanten */}
+        {/* min-w-0 lets the heading shrink instead of pushing the status label off the edge */}
         <Disclosure.Title className="min-w-0">{section.title}</Disclosure.Title>
         {status && (
           <Label

@@ -44,8 +44,8 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('src/hooks/use-media-query', () => ({ useMediaQuery: () => false }));
-// Layouten renderar inte förrän den aktuella metadatahämtningen är klar. Själva
-// hämtningen hör inte till det här testet, så dess status styrs explicit här.
+// The layout does not render until the current metadata fetch finishes. The fetch itself is not
+// what this test covers, so its status is driven explicitly here.
 vi.mock('src/hooks/use-load-metadata', () => ({
   useLoadMetadata: () => ({ metadataError: null, metadataLoadState: mocks.metadataLoadState.value }),
 }));

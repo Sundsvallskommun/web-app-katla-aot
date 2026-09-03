@@ -12,9 +12,7 @@
   "errand": "Ärende: ",
   "draft": "Utkast: ",
   "search": {
-    "PERSON": "Sök på personnummer",
-    "EMPLOYEE": "Sök på användarnamn",
-    "AUTODETECT": "Sök på personnummer eller användarnamn"
+    "PERSON": "Sök på personnummer"
   },
   "save_message": {
     "draft": "Utkast sparades",
@@ -22,47 +20,13 @@
     "error": "Något gick fel när ärendet sparades"
   },
   "about": {
-    "title": "Om ärendet",
-    "event_type_label": "Välj händelsetyp",
-    "event_type_deviation": "Avvikelse",
-    "event_type_misconduct": "Missförhållande",
-    "misconduct_alert_title": "Missförhållande",
-    "misconduct_alert_description": "Ärendet skickas till en oberoende utredare. Din chef får veta om ärendet men beslutar inte om resultatet.",
-    "event_concerns_label": "Händelsen berör",
-    "event_concerns_individual": "Enskild brukare",
-    "event_concerns_group": "Grupp/hela verksamheten",
-    "event_concerns_other": "Annat",
-    "event_concerns_describe_note": "(Beskriv mer i avsnittet \"Vad har hänt?\")",
-    "event_type_required": "Välj en händelsetyp",
-    "event_concerns_required": "Välj vad händelsen berör",
-    "event_concerns_group_facility_required": "Välj en plats där avvikelsen inträffat när händelsen berör grupp/hela verksamheten",
-    "facility_incomplete": "Slutför platsvalet genom att välja enhet – platsen styr vilka som får se ärendet"
-  },
-  "reporter": {
-    "title": "Rapportör",
-    "description": "Rapportören är den person som initierat ärendet och vår primära kontakt när ärendet handläggs. Om du rapporterar åt en annan kollega, lägger du den personen under annan rapportör."
-  },
-  "user": {
-    "title": "Brukare",
-    "description": "En brukare är den individ som berörs av ärendet.",
-    "not_required_title": "Brukare behövs inte för detta ärende",
-    "not_required_description": "Eftersom händelsen inte berör en enskild brukare behöver du inte ange en brukare. Du kan gå vidare till nästa steg."
-  },
-  "other_reporter": {
-    "title": "Annan rapportör",
-    "description": "Ange den kollega som du rapporterar åt."
+    "title": "Om ärendet"
   },
   "other_parties": {
     "title": "Övriga parter",
-    "description": "En part kan vara en kontaktperson, läkare eller en anhörig vars roll är viktig för ärendet. Om du rapporterar åt en kollega så ska du ange kollegan som övrig part."
-  },
-  "deviation_information": {
-    "title": "Uppgifter kring avvikelsen",
-    "loading_form": "Laddar formulär..."
+    "description": "En övrig part kan vara en person eller organisation som berörs av ärendet."
   },
   "stakeholder": {
-    "person": "Person",
-    "employee": "Anställd",
     "no_person_found": "Ingen person hittades",
     "missing_person_number": "Personnummer saknas",
     "missing_address": "Adress saknas",
@@ -77,7 +41,6 @@
     "add_manually": "Lägg till manuellt",
     "edit_details": "Redigera uppgifter",
     "remove": "Ta bort",
-    "reporting_for_colleague": "Jag rapporterar åt en annan kollega",
     "modal": {
       "edit_title": "Redigera person",
       "add_title": "Lägg till person manuellt",
@@ -120,7 +83,13 @@
     "complete": "Komplett",
     "incomplete": "Ej komplett"
   },
-  "sequence_of_events": {
-    "title": "Händelseförlopp"
-  }
+  "owner": {
+    "title": "Ärendeägare",
+    "description": "Ärendeägaren är det företag eller den organisation som ansöker och är vår primära kontakt när ärendet handläggs."
+  },
+  "errand_details": {
+    "title": "Ärendeuppgifter",
+    "loading_form": "Laddar formulär..."
+  },
+  "section_placeholder": "Det här avsnittet fylls med fält för alkoholservering i ett senare steg."
 }

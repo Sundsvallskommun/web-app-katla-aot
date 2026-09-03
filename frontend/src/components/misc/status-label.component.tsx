@@ -78,8 +78,8 @@ export const StatusLabel: React.FC<{ status?: string }> = ({ status }) => {
 
   return (
     <Label rounded inverted={inverted} color={color} className={`max-h-full h-auto text-center whitespace-nowrap`}>
-      {/* Statuskoden är språkneutral. Statusar utan egen text (t.ex. UPSTART) visar bara
-          färg och ikon, precis som tidigare. */}
+      {/* The status code is language-neutral. Statuses without their own text (UPSTART, say)
+          show only colour and icon. */}
       {icon} {t(`common:status.${status ?? ''}`, { defaultValue: '' })}
     </Label>
   );

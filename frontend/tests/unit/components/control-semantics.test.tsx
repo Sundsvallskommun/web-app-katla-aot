@@ -2,7 +2,6 @@ import { ColorSchemeItems } from '@components/misc/color-scheme-items.component'
 import { LanguageItems } from '@components/misc/language-items.component';
 import { LanguageSwitchButton } from '@components/misc/language-switch-button.component';
 import { MobileErrandCard } from '@components/mobile/mobile-errand-card.component';
-import { NotificationsBell } from '@components/notifications/notification-bell';
 import { AppUserMenu } from '@components/user-menu/app-user-menu.component';
 import { createUserMenuGroups } from '@layouts/userMenuGroup';
 import { ColorSchemeMode, PopupMenu, Tabs } from '@sk-web-gui/react';
@@ -10,7 +9,6 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { createInstance } from 'i18next';
 import NextLink from 'next/link';
 import { I18nextProvider } from 'react-i18next';
-import { useNotificationStore } from 'src/stores/notification-store';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import commonSv from '../../../locales/sv/common.json';
@@ -59,7 +57,6 @@ describe('control semantics', () => {
     searchParamsMock.value = '';
     colorSchemeStoreMock.colorScheme = 'system';
     colorSchemeStoreMock.setColorScheme.mockReset();
-    useNotificationStore.setState({ activeNotifications: [], acknowledgedNotifications: [] });
   });
 
   it('keeps the application menu actions keyboard-addressable', async () => {
@@ -96,21 +93,6 @@ describe('control semantics', () => {
 
     expect(screen.getByRole('menuitem', { name: 'Inställningar' })).toBeVisible();
     expect(screen.getByTestId('user-menu')).toHaveClass('sk-usermenu');
-  });
-
-  it('exposes notification count and expanded state without a false menu-item role', () => {
-    const toggleShow = vi.fn();
-    useNotificationStore.setState({ activeNotifications: [{ id: 'notification-1' }] });
-
-    renderLocalized(<NotificationsBell expanded toggleShow={toggleShow} />);
-
-    const button = screen.getByRole('button', { name: 'Öppna notifieringar (1 oläst)' });
-    expect(button).toHaveAttribute('aria-controls', 'notifications-panel');
-    expect(button).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.queryByRole('menuitem')).not.toBeInTheDocument();
-
-    fireEvent.click(button);
-    expect(toggleShow).toHaveBeenCalledOnce();
   });
 
   it('renders mobile errand navigation as one named link', () => {
@@ -184,8 +166,8 @@ describe('control semantics', () => {
       </PopupMenu>
     );
 
-    // Namnen står på språket självt så att en användare som inte läser svenska
-    // känner igen sitt eget språk i menyn.
+    // Names are written in the language itself so a user who does not read Swedish still
+    // recognises their own language in the menu.
     const swedish = screen.getByRole('menuitemradio', { name: 'Svenska' });
     const english = screen.getByRole('menuitemradio', { name: 'English' });
 
@@ -211,7 +193,7 @@ describe('control semantics', () => {
 
     fireEvent.click(screen.getByRole('menuitemradio', { name: 'English' }));
 
-    // Samma sida, inte en återgång till startsidan – annars tappar användaren sin plats.
+    // The same page, not a return to the start page, or the user loses their place.
     expect(routerPushMock).toHaveBeenCalledWith('/en/arende/AIA-25120019/grundinformation');
   });
 
@@ -230,9 +212,9 @@ describe('control semantics', () => {
 
     fireEvent.click(screen.getByRole('menuitemradio', { name: 'English' }));
 
-    // Inloggningen läser ?path för vart användaren ska tillbaka efteråt och ?failMessage
-    // för felet som ska visas. Ett språkbyte som tappar frågesträngen skickar användaren
-    // till översikten i stället för till sidan hen försökte nå.
+    // Login reads ?path for where to return afterwards and ?failMessage for the error to show.
+    // A language switch that drops the query string sends the user to the overview instead of
+    // the page they were trying to reach.
     expect(routerPushMock).toHaveBeenCalledWith(
       '/en/login?path=%2Farende%2FAIA-25120019%2Fgrundinformation&failMessage=NOT_AUTHORIZED'
     );
@@ -241,8 +223,8 @@ describe('control semantics', () => {
   it('reaches the language choice from the header without opening the user menu', async () => {
     renderLocalized(<LanguageSwitchButton />);
 
-    // Koden i knappen är en kompakt visuell form; det tillgängliga namnet skriver ut språket,
-    // eftersom "SV" inte säger något för den som inte redan känner igen koden.
+    // The code on the button is a compact visual form; the accessible name spells the language
+    // out, since "SV" means nothing to someone who does not already recognise it.
     const trigger = screen.getByRole('button', { name: 'Byt språk. Valt språk: Svenska' });
     expect(trigger).toHaveTextContent('SV');
 
@@ -257,8 +239,8 @@ describe('control semantics', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Byt språk. Valt språk: Svenska' }));
 
-    // Samma namn som användarmenyns grupp hade gjort de två listorna till en enda
-    // radiogrupp, där bara den ena kunde vara markerad.
+    // Sharing a name with the user menu's group would fuse the two lists into one radio group,
+    // where only one could be selected.
     expect(await screen.findByRole('menuitemradio', { name: 'Svenska' })).toHaveAttribute('name', 'header-language');
   });
 });

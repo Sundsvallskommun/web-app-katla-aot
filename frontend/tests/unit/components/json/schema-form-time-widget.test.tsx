@@ -29,7 +29,7 @@ function renderTimeField(schema: RJSFSchema, uiSchema: UiSchema<Record<string, u
 }
 
 describe('SchemaForm time widget', () => {
-  it('renderar ett tidsfält från designsystemet för format time', () => {
+  it('renders a design system time field for format time', () => {
     const { input } = renderTimeField({
       type: 'object',
       properties: {
@@ -41,7 +41,7 @@ describe('SchemaForm time widget', () => {
     expect(input).toHaveClass('sk-form-input');
   });
 
-  it('renderar samma fält när UI-schemat väljer widgeten', () => {
+  it('renders the same field when the UI schema picks the widget', () => {
     const { input } = renderTimeField(
       {
         type: 'object',
@@ -56,7 +56,7 @@ describe('SchemaForm time widget', () => {
     expect(input).toHaveClass('sk-form-input');
   });
 
-  it('kompletterar med sekunder bara när schemat kräver time-format', () => {
+  it('pads with seconds only when the schema requires the time format', () => {
     const { input: timeFormatInput, onChange: onTimeFormatChange } = renderTimeField({
       type: 'object',
       properties: {
@@ -68,7 +68,7 @@ describe('SchemaForm time widget', () => {
     expect(onTimeFormatChange).toHaveBeenLastCalledWith({ discoveredTime: '12:11:00' }, expect.anything());
   });
 
-  it('behåller HH:mm för fält utan time-format', () => {
+  it('keeps HH:mm for fields without the time format', () => {
     const { input, onChange } = renderTimeField(
       {
         type: 'object',
@@ -83,9 +83,9 @@ describe('SchemaForm time widget', () => {
     expect(onChange).toHaveBeenLastCalledWith({ discoveredTime: '12:11' }, expect.anything());
   });
 
-  // Publicerat schema avvikelse-plats-handelse 1.3 deklarerar eventTime och occurredTime
-  // som format: "time", och det formatet kräver sekunder. Utan påfyllnaden underkänns värdet.
-  it('lämnar ett värde som validerar mot format time', () => {
+  // A published schema declares eventTime and occurredTime as format: "time", and that format
+  // requires seconds. Without padding them the value fails validation.
+  it('yields a value that validates against format time', () => {
     const schema: RJSFSchema = {
       $schema: 'https://json-schema.org/draft/2020-12/schema',
       type: 'object',
@@ -100,7 +100,7 @@ describe('SchemaForm time widget', () => {
     expect(validator.validateFormData({}, schema).errors).toEqual([]);
   });
 
-  it('tömmer värdet i stället för att spara en tom sträng', () => {
+  it('clears the value instead of storing an empty string', () => {
     const { input, onChange } = renderTimeField(
       {
         type: 'object',

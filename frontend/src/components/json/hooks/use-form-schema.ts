@@ -38,8 +38,8 @@ export function useFormSchema(schemaName: string, source: FormSchemaSource = { k
       persistedSchemaId !== undefined &&
       loadedSchemaRef.current?.schemaName === schemaName &&
       loadedSchemaRef.current.schemaId === persistedSchemaId &&
-      // Utan språket i jämförelsen skulle ett språkbyte avbryta här och behålla
-      // det tidigare språkets schema.
+      // Without the language in the comparison, a language switch would bail out here and keep
+      // the previous language's schema.
       loadedSchemaRef.current.locale === locale
     ) {
       return;
@@ -50,8 +50,8 @@ export function useFormSchema(schemaName: string, source: FormSchemaSource = { k
     setLoading(true);
     setError(null);
 
-    // Skjut upp anropet till laddaren så att ett saknat persisterat ID hanteras
-    // som ett avvisat kontraktslöfte i stället för att kastas synkront ur effekten.
+    // Defer the loader call so a missing persisted ID becomes a rejected contract promise rather
+    // than throwing synchronously out of the effect.
     const schemaPromise = Promise.resolve().then(() =>
       sourceKind === 'new' ?
         loadFormSchema(schemaName, t, locale)

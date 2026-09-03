@@ -33,7 +33,7 @@ const roleADMapping: RoleADMapping = {
   sg_appl_app_read: 'app_read',
   sg_appl_app_admin: 'app_admin',
 };
-// Uppslag med okänd nyckel (t.ex. en grupp utanför mappningen) ska ge undefined, därav den vidare typen.
+// An unknown key (a group outside the mapping) must yield undefined, hence the wider type.
 const roleADMappingLookup: Partial<Record<string, InternalRole>> = roleADMapping;
 
 /**

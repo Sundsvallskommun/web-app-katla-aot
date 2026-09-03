@@ -141,8 +141,8 @@ describe('JSON schema adapter contracts', () => {
         'ui:title': 'Location and sequence of events',
         eventTime: { 'ui:widget': 'time', 'ui:title': 'Time' },
       });
-      // Rubriken namnger formuläret i felsammanfattningen och ligger i JSON-schemat,
-      // som bara kan ändras med en ny version — den hämtas därför ur ui-schemats rot.
+      // The title names the form in the error summary. It lives in the JSON schema, which only
+      // changes with a new version, so it is read from the ui schema root instead.
       expect(body.schema).toEqual({ type: 'object', title: 'Location and sequence of events' });
       expect(JSON.stringify(body)).not.toContain('x-i18n');
     });

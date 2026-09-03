@@ -19,8 +19,8 @@ export class SchemaController {
   private apiBase = getApiBase('jsonschema');
 
   /**
-   * Ui-schemat lagrar sina översättningar i x-i18n-block. De löses upp här, så att frontend
-   * får färdig text för det begärda språket och aldrig ser de andra språken.
+   * The ui schema stores its translations in x-i18n blocks. They are resolved here so the
+   * frontend gets finished text for the requested locale and never sees the other languages.
    */
   private async fetchUiSchema(schemaId: string, req: RequestWithUser, locale: string): Promise<Record<string, unknown>> {
     try {

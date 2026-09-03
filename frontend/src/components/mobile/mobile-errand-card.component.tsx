@@ -25,7 +25,7 @@ export const MobileErrandCard: React.FC<MobileErrandCardProps> = ({ errand }) =>
           </div>
 
           <div className="text-xl font-bold lining-nums proportional-nums leading-[2.8rem] pt-[1.2rem] break-words">
-            {getTypeDisplayName(errand, t)}
+            {getTypeDisplayName(errand)}
           </div>
 
           <div className="flex flex-col items-start gap-1.5 pt-[2.4rem] flex-1">

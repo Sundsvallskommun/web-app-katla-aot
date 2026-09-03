@@ -62,19 +62,18 @@ const sessionStore: session.Store = SESSION_MEMORY
   ? new (createMemoryStore(session))({ checkPeriod: sessionTTL * 1000 })
   : new (createFileStore(session))({ sessionTTL, path: './data/sessions' });
 
-// Tom sträng ska, precis som ett saknat värde, falla tillbaka på nästa alternativ.
+// An empty string falls through to the next candidate, like a missing one.
 const firstNonEmpty = (...values: (string | undefined)[]): string | undefined => values.find(value => value !== undefined && value !== '');
 
 export const DEFAULT_SESSION_COOKIE_NAME = 'connect.sid';
 
 export const getSessionCookieName = (): string => firstNonEmpty(SESSION_COOKIE_NAME) ?? DEFAULT_SESSION_COOKIE_NAME;
 
-// Sessionskakans path måste täcka HELA appen, inte bara API-prefixet: Next-middlewaren
-// (frontend/src/proxy.ts) läser kakan på UI-vägar som /oversikt, och en kaka med
-// path=/api skickas aldrig dit av webbläsaren (RFC 6265 §5.1.4) — resultatet blir en
-// oändlig loop tillbaka till /login trots giltig session. Sätt SESSION_COOKIE_PATH till
-// appens monteringsrot (t.ex. /registrering/avvikelse_iaf, eller / lokalt där frontend
-// saknar basePath). Faller tillbaka på BASE_URL_PREFIX för bakåtkompatibilitet.
+// The cookie path must cover the WHOLE app, not just the API prefix: the Next middleware
+// (frontend/src/proxy.ts) reads it on UI paths like /oversikt, and the browser never sends
+// a path=/api cookie there (RFC 6265 §5.1.4) — an endless loop back to /login despite a
+// valid session. Set SESSION_COOKIE_PATH to the app's mount root (e.g. /registrering/aot,
+// or / locally where the frontend has no basePath).
 export const getSessionCookiePath = (): string => firstNonEmpty(SESSION_COOKIE_PATH, BASE_URL_PREFIX) ?? '/';
 
 export const getSessionCookieOptions = (
@@ -82,17 +81,17 @@ export const getSessionCookieOptions = (
   deployEnvironment: string | undefined = ENVIRONMENT,
 ): session.CookieOptions => ({
   httpOnly: true,
-  // ENVIRONMENT=LOCAL stänger av Secure-flaggan så att lokala prod-byggen fungerar över http
-  // (Dockerfile och `yarn start` tvingar NODE_ENV=production, och webbläsaren vägrar spara en
-  // Secure-kaka över http://localhost — resultatet blir en inloggningsloop). Använd TEST i
-  // testmiljön och lämna den tom/osatt i produktion, då är Secure alltid på.
+  // ENVIRONMENT=LOCAL drops the Secure flag so local production builds work over http (the
+  // Dockerfile and `yarn start` force NODE_ENV=production, and browsers refuse a Secure cookie
+  // over http://localhost — a login loop). Use TEST in the test environment and leave it unset
+  // in production, where Secure is always on.
   secure: environment === 'production' && deployEnvironment !== 'LOCAL',
   sameSite: 'lax',
   maxAge: sessionTTL * 1000,
   path: getSessionCookiePath(),
 });
 
-// Plockar ut ett name-fält ur ett okänt felobjekt (SAML-verifieringen skickar { name, message }).
+// Pulls a name out of an unknown error object (SAML verification sends { name, message }).
 const getErrorName = (err: unknown): string | undefined => {
   if (typeof err === 'object' && err !== null && 'name' in err) {
     const { name } = err as { name?: unknown };
@@ -220,7 +219,7 @@ class App {
 
   constructor(Controllers: ControllerClass[]) {
     this.app = express();
-    // Tom sträng ska precis som tidigare falla tillbaka på respektive standardvärde.
+    // An empty string falls back to the default, like a missing value.
     this.env = NODE_ENV !== undefined && NODE_ENV !== '' ? NODE_ENV : 'development';
     this.port = PORT !== undefined && PORT !== '' ? PORT : 3000;
     this.swaggerEnabled = SWAGGER_ENABLED || false;
@@ -251,8 +250,8 @@ class App {
   private initializeMiddlewares() {
     this.app.set('trust proxy', 1);
     this.app.use(morgan(LOG_FORMAT ?? 'default', { stream }));
-    // Grundläggande rate limiting för alla rutter (inloggningsflöden, swagger, proxade API:er).
-    // Justera per driftmiljö; miljöer bakom en gateway kan även rate-limita i kanten.
+    // Basic rate limiting for every route (login flows, swagger, proxied APIs). Tune per
+    // deployment; environments behind a gateway may also limit at the edge.
     this.app.use(rateLimit({ windowMs: 15 * 60 * 1000, limit: 1000, standardHeaders: true, legacyHeaders: false }));
     this.app.use(hpp());
     this.app.use(helmet());
@@ -263,8 +262,8 @@ class App {
 
     this.app.use(
       session({
-        // Egennamn per app gör att flera appar på samma värdnamn (draken-test.sundsvall.se)
-        // aldrig kan skriva över eller förväxlas med varandras sessionskakor.
+        // A per-app name stops several apps on one host (draken-test.sundsvall.se) from
+        // overwriting or being mistaken for each other's session cookies.
         name: getSessionCookieName(),
         secret: SECRET_KEY ?? '',
         resave: false,
@@ -287,11 +286,11 @@ class App {
           } else if (NODE_ENV == 'development') {
             callback(null, true);
           } else {
-            // Neka genom att utelämna Access-Control-Allow-Origin, inte genom att kasta.
-            // CORS upprätthålls av webbläsaren; ett kastat fel blir i stället 500 här och
-            // sänker legitima cross-site-POST:ar som aldrig omfattas av CORS — framför allt
-            // SAML-callbacken, som IdP:n postar med sin egen Origin. Se draken, vars cors
-            // använder en sträng-origin och därför aldrig kastar (därav att MEX fungerar).
+            // Deny by omitting Access-Control-Allow-Origin, not by throwing. CORS is enforced
+            // by the browser; throwing turns this into a 500 and kills legitimate cross-site
+            // POSTs that CORS never covers — above all the SAML callback, which the IdP posts
+            // with its own Origin. Draken's cors uses a string origin and never throws, which
+            // is why MEX works there.
             callback(null, false);
           }
         },

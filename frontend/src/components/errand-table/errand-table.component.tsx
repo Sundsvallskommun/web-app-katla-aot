@@ -56,7 +56,7 @@ export const ErrandTable: React.FC = () => {
                     {errand.errandNumber}
                   </Link>
                 </Table.Column>
-                <Table.Column>{getTypeDisplayName(errand, t)}</Table.Column>
+                <Table.Column>{getTypeDisplayName(errand)}</Table.Column>
                 <Table.Column>{dayjs(errand.touched).format('YYYY-MM-DD HH:mm')}</Table.Column>
               </Table.Row>
             ))}

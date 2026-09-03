@@ -1,4 +1,4 @@
-import { DeviationInformation } from '@components/errand-sections/deviation-information.component';
+import { ErrandDetails } from '@components/errand-sections/errand-details.component';
 import { FormValidationProvider } from '@contexts/form-validation-provider';
 import type { ErrandFormDTO } from '@interfaces/errand-form';
 import { render, screen } from '@testing-library/react';
@@ -15,6 +15,9 @@ vi.mock('@components/json/utils/schema-utils', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@components/json/utils/schema-utils')>();
   return {
     ...actual,
+    // The real list is empty until AoT's schemas exist, so the test injects a name of its own
+    // to still render the schema form.
+    ERRAND_FORM_SCHEMA_NAMES: ['aot-test-schema'],
     loadFormSchemaForEntry: loadFormSchemaForEntryMock,
   };
 });
@@ -47,7 +50,7 @@ function TestForm() {
       status: 'DRAFT',
       errandFormData: [
         {
-          schemaName: 'avvikelse-plats-handelse',
+          schemaName: 'aot-test-schema',
           schemaId: 'schema-v1',
           data: '{"location":""}',
         },
@@ -58,13 +61,13 @@ function TestForm() {
   return (
     <FormProvider {...methods}>
       <FormValidationProvider>
-        <DeviationInformation />
+        <ErrandDetails />
       </FormValidationProvider>
     </FormProvider>
   );
 }
 
-describe('DeviationInformation schema stability', () => {
+describe('ErrandDetails schema stability', () => {
   beforeEach(() => {
     loadFormSchemaForEntryMock.mockReset().mockResolvedValue({
       schema: { type: 'object' },
@@ -85,11 +88,6 @@ describe('DeviationInformation schema stability', () => {
     expect(input).toHaveValue('ABC');
     expect(input).toHaveFocus();
     expect(loadFormSchemaForEntryMock).toHaveBeenCalledTimes(1);
-    expect(loadFormSchemaForEntryMock).toHaveBeenCalledWith(
-      'avvikelse-plats-handelse',
-      'schema-v1',
-      translateMock,
-      'sv'
-    );
+    expect(loadFormSchemaForEntryMock).toHaveBeenCalledWith('aot-test-schema', 'schema-v1', translateMock, 'sv');
   });
 });

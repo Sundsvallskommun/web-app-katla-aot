@@ -7,9 +7,9 @@ import { envs } from '../middleware-envs';
 
 export async function proxy(req: NextRequest) {
   const { pathname, origin } = req.nextUrl;
-  // Skyddade rutter och admin-omdirigeringen listas utan språkprefix. Jämför därför mot
-  // den språkskalade sökvägen – annars slutar /en/... matcha listan och kontrollen hoppas
-  // över helt på andra språk än standardspråket.
+  // Protected routes and the admin redirect are listed without a language prefix, so compare
+  // against the stripped path — otherwise /en/... stops matching and the check is skipped
+  // entirely outside the default locale.
   const unprefixedPathname = pathWithoutLocale(pathname);
 
   if (unprefixedPathname === '/admin') {

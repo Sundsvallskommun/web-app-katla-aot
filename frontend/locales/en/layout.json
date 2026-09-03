@@ -12,18 +12,6 @@
     "open_sidebar": "Open sidebar",
     "close_sidebar": "Close sidebar"
   },
-  "notifications": {
-    "open": "Open notifications",
-    "open_with_count_one": "Open notifications ({{count}} unread)",
-    "open_with_count_other": "Open notifications ({{count}} unread)",
-    "panel": "Notifications",
-    "close": "Close notifications",
-    "loading": "Loading notifications",
-    "new": "New",
-    "previous": "Earlier",
-    "none_new": "No new notifications",
-    "none_previous": "No earlier notifications"
-  },
   "language": {
     "label": "Language",
     "switch": "Change language. Selected language: {{language}}",

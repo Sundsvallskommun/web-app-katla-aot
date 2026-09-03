@@ -3,18 +3,7 @@ import { useIsContentLocked } from '@contexts/errand-content-lock-context';
 import { ErrandDTO, StakeholderDTO } from '@data-contracts/backend/data-contracts';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getStakeholderUsingPersonNumber } from '@services/citizen/citizen-service';
-import { getEmployeeByPersonNumber, getEmployeeStakeholderFromApi } from '@services/employee-service/employee-service';
-import {
-  Button,
-  cx,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  RadioButton,
-  SearchField,
-  Select,
-} from '@sk-web-gui/react';
+import { Button, cx, FormControl, FormErrorMessage, FormLabel, Input, SearchField, Select } from '@sk-web-gui/react';
 import {
   createStakeholderSchema,
   emptyStakeholder,
@@ -31,12 +20,9 @@ import { StakeholderFormModal } from './stakeholder-modal.component';
 
 export const StakeholderList: React.FC<{
   roles: string[];
-  employeeSearch?: boolean;
-  autoDetectSearch?: boolean;
   maxCount?: number;
   hideRoleSelect?: boolean;
-}> = ({ roles, employeeSearch = false, autoDetectSearch = false, maxCount, hideRoleSelect = false }) => {
-  const [searchMode, setSearchMode] = useState<string>('PERSON');
+}> = ({ roles, maxCount, hideRoleSelect = false }) => {
   const [query, setQuery] = useState<string>('');
   const [searchResult, setSearchResult] = useState<boolean>(false);
   const [emptyResult, setEmptyResult] = useState<boolean>(false);
@@ -53,7 +39,7 @@ export const StakeholderList: React.FC<{
     name: 'stakeholders',
   });
 
-  // Byggs om när språket ändras – yup fryser felmeddelandena vid konstruktionen.
+  // Rebuilt when the language changes: yup freezes the error messages at construction.
   const stakeholderSchema = useMemo(() => createStakeholderSchema(t), [t]);
 
   const method = useForm<StakeholderDTO>({
@@ -74,9 +60,8 @@ export const StakeholderList: React.FC<{
   const hasPrimaryRole = roles.includes('PRIMARY');
   const matchingCount = stakeholders?.filter((s) => roles.includes(s.role ?? '')).length ?? 0;
   const maxCountReached = maxCount !== undefined && matchingCount >= maxCount;
-  // Sök- och lägg till-kontrollerna hör till redigering. På ett inlåst ärende
-  // gjorde fieldsetet dem bara oklickbara, så ett personsökfält och en
-  // Lägg till manuellt-knapp stod kvar utan att svara på något.
+  // The search and add controls belong to editing. On a locked errand the fieldset only made
+  // them unclickable, leaving a person search field and an add button that responded to nothing.
   const showAddButton =
     !isLocked && !maxCountReached && (!hasPrimaryRole || (hasPrimaryRole && !hasPrimaryStakeholder));
 
@@ -88,49 +73,24 @@ export const StakeholderList: React.FC<{
   };
 
   const onSearchHandler = async (query: string) => {
-    const effectiveMode =
-      autoDetectSearch ?
-        /^\d{8}-?\d{4}$/.test(query) ?
-          'PERSON'
-        : 'EMPLOYEE'
-      : searchMode;
-
-    if (effectiveMode === 'PERSON') {
-      setValue('personNumber', query);
-      const isValid = await trigger('personNumber');
-      if (!isValid) {
-        return;
-      }
-      const searchFn = autoDetectSearch ? getEmployeeByPersonNumber : getStakeholderUsingPersonNumber;
-      searchFn(query)
-        .then((res) => {
-          if (res.status === 200) {
-            reset(res.data);
-            setEmptyResult(false);
-            setSearchResult(true);
-          } else {
-            setEmptyResult(true);
-          }
-        })
-        .catch(() => {
-          setEmptyResult(true);
-        });
+    setValue('personNumber', query);
+    const isValid = await trigger('personNumber');
+    if (!isValid) {
+      return;
     }
-    if (effectiveMode === 'EMPLOYEE') {
-      getEmployeeStakeholderFromApi(query)
-        .then((res) => {
-          if (res.status === 200) {
-            reset(res.data);
-            setEmptyResult(false);
-            setSearchResult(true);
-          } else {
-            setEmptyResult(true);
-          }
-        })
-        .catch(() => {
+    getStakeholderUsingPersonNumber(query)
+      .then((res) => {
+        if (res.status === 200) {
+          reset(res.data);
+          setEmptyResult(false);
+          setSearchResult(true);
+        } else {
           setEmptyResult(true);
-        });
-    }
+        }
+      })
+      .catch(() => {
+        setEmptyResult(true);
+      });
   };
 
   const addStakeholderToErrand = (stakeholder: StakeholderDTO) => {
@@ -146,33 +106,7 @@ export const StakeholderList: React.FC<{
       <FormProvider {...method}>
         {showAddButton && (
           <FormControl className="w-full">
-            {employeeSearch && !autoDetectSearch && (
-              <RadioButton.Group className="mb-18" inline>
-                <RadioButton
-                  data-cy="radiobutton-person"
-                  checked={searchMode === 'PERSON'}
-                  value={'PERSON'}
-                  onChange={(e) => {
-                    setSearchMode(e.target.value);
-                    clearStakeholderForm();
-                  }}
-                >
-                  {t('errand-information:stakeholder.person')}
-                </RadioButton>
-                <RadioButton
-                  data-cy="radiobutton-employee"
-                  checked={searchMode === 'EMPLOYEE'}
-                  value={'EMPLOYEE'}
-                  onChange={(e) => {
-                    setSearchMode(e.target.value);
-                    clearStakeholderForm();
-                  }}
-                >
-                  {t('errand-information:stakeholder.employee')}
-                </RadioButton>
-              </RadioButton.Group>
-            )}
-            <FormLabel>{t(`errand-information:search.${autoDetectSearch ? 'AUTODETECT' : searchMode}`)}</FormLabel>
+            <FormLabel>{t('errand-information:search.PERSON')}</FormLabel>
             <SearchField
               data-cy="person-number-input"
               size="md"
@@ -220,7 +154,7 @@ export const StakeholderList: React.FC<{
                   {department ?
                     <span>{department}</span>
                   : <span className={cx((!address || !city) && 'italic text-text-secondary')}>
-                      {/* Bugfix: template literal var alltid truthy — visa fallback när adress eller ort saknas */}
+                      {/* A template literal is always truthy; show the fallback when address or city is missing */}
                       {address && city ? `${address}, ${city}` : t('errand-information:stakeholder.missing_address')}
                     </span>
                   }
@@ -330,7 +264,7 @@ export const StakeholderList: React.FC<{
           setManualEntryOpen(false);
         }}
         editableFields={
-          roles.includes('EMPLOYEE') || roles.includes('SUBSTITUTEASSIGNMENT') ?
+          roles.includes('SUBSTITUTEASSIGNMENT') ?
             ['personNumber', 'firstName', 'lastName', 'emails', 'phoneNumbers', 'role']
           : ['personNumber', 'firstName', 'lastName', 'emails', 'phoneNumbers']
         }

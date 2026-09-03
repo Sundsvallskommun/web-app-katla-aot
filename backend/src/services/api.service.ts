@@ -12,7 +12,7 @@ import { apiURL } from '@/utils/util';
 import ApiTokenService from './api-token.service';
 
 export interface ApiRequestConfig extends AxiosRequestConfig {
-  /** Bevara en uppströms 4xx-status utan att exponera dess obetrodda svarsbody. */
+  /** Keep an upstream 4xx status without exposing its untrusted response body. */
   propagateClientError?: boolean;
 }
 
@@ -51,9 +51,9 @@ const isWithinUrlBoundary = (candidate: URL, boundary: URL): boolean =>
 const assertDecodedPathWithinBoundary = (candidateUrl: URL, boundaryUrl: URL): void => {
   let decodedPath = candidateUrl.pathname;
 
-  // Express och uppströmsgateways kan avkoda ett vägsegment i olika lager.
-  // Validera varje effektiv representation så att kodade separatorer inte kan
-  // dölja en annars uppenbar punktsegmentsflykt från konfigurerad servicebas.
+  // Express and upstream gateways may decode a path segment at different layers. Check every
+  // effective representation so encoded separators cannot hide an otherwise obvious dot-segment
+  // escape from the configured service base.
   for (let decodingPass = 0; decodingPass < 3; decodingPass += 1) {
     let nextDecodedPath: string;
     try {
@@ -70,8 +70,8 @@ const assertDecodedPathWithinBoundary = (candidateUrl: URL, boundaryUrl: URL): v
     decodedPath = nextDecodedPath;
   }
 
-  // Djupt nästlade kodningar är tvetydiga mellan infrastrukturlager och har
-  // ingen giltig användning i de gatewayägda API-sökvägarna.
+  // Deeply nested encodings are ambiguous between infrastructure layers and have no valid use
+  // in the gateway-owned API paths.
   let furtherDecodedPath: string;
   try {
     furtherDecodedPath = decodeURIComponent(decodedPath);
@@ -94,9 +94,8 @@ const resolveRequestUrl = (config: Pick<AxiosRequestConfig, 'baseURL' | 'url'>):
   const requestUrl = new URL(requestPath.replace(/^\/+/, ''), asDirectoryUrl(boundaryUrl));
   assertDecodedPathWithinBoundary(requestUrl, boundaryUrl);
 
-  // WHATWG-URL-resolution normaliserar punktsegment. Kontrollera den effektiva
-  // URL:en efter normaliseringen så att en relativ `../`-sökväg inte kan lämna
-  // servicebasen.
+  // WHATWG URL resolution normalises dot segments, so check the effective URL afterwards: a
+  // relative `../` path must not escape the service base.
   if (!isWithinUrlBoundary(requestUrl, boundaryUrl)) {
     throw new HttpException(500, 'Invalid upstream request URL');
   }
@@ -111,11 +110,10 @@ const logAxiosErrorResponse = (response: AxiosResponse<unknown>): void => {
 };
 
 const getBoundedLocation = (location: string, requestUrl: URL, boundaryUrl: URL): string => {
-  // Uppströmstjänsterna svarar med en Location relativ till sin egen servicerot,
-  // exempelvis `/{municipalityId}/{namespace}/errands/{id}`. Tidigare uppföljning
-  // lämnade baseURL till axios, som fogar in en inledande snedstreckssökväg under
-  // basens path. Behåll den semantiken: en origin-relativ resolution skulle peka
-  // utanför servicegränsen och avvisa varje giltig Location från gatewayen.
+  // Upstream answers with a Location relative to its own service root, e.g.
+  // `/{municipalityId}/{namespace}/errands/{id}`. Resolve it under the base path, not against
+  // the origin: origin-relative resolution would land outside the service boundary and reject
+  // every valid Location the gateway sends.
   const responseUrl = ABSOLUTE_URL_PATTERN.test(location)
     ? new URL(location, requestUrl)
     : new URL(location.replace(/^\/+/, ''), asDirectoryUrl(boundaryUrl));
@@ -140,9 +138,9 @@ class ApiService {
   private apiTokenService = new ApiTokenService();
 
   /**
-   * Ett 401 från API-gatewayen betyder att den processcachade OAuth-tokenen
-   * inte längre accepteras. Uppdatera den delade tokenen och prova samma
-   * HTTP-anrop exakt en gång till. Anroparen hanterar ett eventuellt andra fel.
+   * A 401 from the API gateway means the process-cached OAuth token is no longer accepted.
+   * Refresh the shared token and retry the same call exactly once; a second failure is the
+   * caller's to handle.
    */
   private async executeAuthenticatedRequest<T>(config: AuthenticatedRequestConfig, token: string): Promise<AuthenticatedResponse<T>> {
     try {
@@ -179,7 +177,7 @@ class ApiService {
     const requestId = uuidv4();
     const defaultParams = {};
 
-    // Anropare skickar alltid vanliga header-objekt; typen breddas för att kunna spridas säkert.
+    // Callers always pass plain header objects; the type is widened so it can be spread safely.
     const configHeaders: RawAxiosRequestHeaders | undefined = axiosConfig.headers;
 
     const preparedConfig: AuthenticatedRequestConfig = {

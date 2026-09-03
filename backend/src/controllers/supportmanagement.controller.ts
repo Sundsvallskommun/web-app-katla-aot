@@ -3,29 +3,26 @@ import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 import { MUNICIPALITY_ID, NAMESPACE } from '@/config';
 import { getApiBase } from '@/config/api-config';
-import { Errand, MetadataResponse, Notification, PageErrand } from '@/data-contracts/supportmanagement/data-contracts';
+import { Errand, MetadataResponse, PageErrand } from '@/data-contracts/supportmanagement/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
-import type ApiResponse from '@/interfaces/api-service.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
-import { NotificationAcknowledgementResponse, NotificationDTO } from '@/responses/notification.response';
 import { ErrandCountDTO, ErrandDTO, ErrandsQueryDTO, PageErrandDTO } from '@/responses/supportmanagement.response';
 import { MetadataResponseDTO } from '@/responses/supportmanagement-metadata.response';
 import ApiService from '@/services/api.service';
 import { mapStakeholderDTOToStakeholder, mapStakeholderToStakeholderDTO } from '@/utils/stakeholder-mapping';
 import { apiURL } from '@/utils/util';
 
-// Bygger filtervärdet på samma sätt som tidigare stränginterpolering; okända värdetyper hoppas över.
+// Builds the filter value; unknown value types are skipped.
 const toFilterValue = (value: unknown): string | undefined => {
   if (typeof value === 'string') return value !== '' ? value : undefined;
   if (typeof value === 'number' || typeof value === 'boolean') return String(value);
   return undefined;
 };
 
-// Uppströms filtergrammatik omger varje värde med enkelfnuttar. Värdena kommer
-// från klienten, så tecken som kan avsluta literalen eller lägga till ett eget
-// villkor avvisas i stället för att escapas: escapedialekten ägs av upstream och
-// får inte gissas här.
+// The upstream filter grammar wraps each value in single quotes. Values come from the client,
+// so characters that could end the literal or add a condition are rejected rather than escaped —
+// the escaping dialect belongs to upstream and must not be guessed here.
 const SAFE_FILTER_VALUE_PATTERN = /^[\p{L}\p{N}][\p{L}\p{N} ._-]*$/u;
 
 const toFilterTerm = (key: string, value: string): string => {
@@ -69,48 +66,13 @@ export class SupportManagementController {
     };
   }
 
-  @Patch('/supportmanagement/errand/save')
-  @OpenAPI({ summary: 'Save an errand' })
-  @UseBefore(authMiddleware)
-  @ResponseSchema(ErrandDTO)
-  async saveErrand(@Req() req: RequestWithUser, @Body() errand: Errand): Promise<Partial<Errand>> {
-    if (!errand.id) {
-      throw new HttpException(400, 'Errand id is required when saving an errand');
-    }
-
-    const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands/${errand.id}`;
-
-    delete errand.activeNotifications;
-    delete errand.created;
-    delete errand.errandNumber;
-    delete errand.id;
-    delete errand.reporterUserId;
-    delete errand.touched;
-    delete errand.modified;
-
-    const errandInformation = {
-      ...errand,
-      stakeholders: errand.stakeholders?.map(mapStakeholderDTOToStakeholder),
-    };
-
-    const baseURL = apiURL(this.apiBase);
-
-    const res = await this.apiService.patch<Partial<Errand>>({ baseURL, url, data: errandInformation, propagateClientError: true }, req);
-    if (!res.data) throw new HttpException(502, 'Invalid response when saving errand');
-
-    const stakeholders = await Promise.all(res.data.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? []);
-
-    return {
-      ...res.data,
-      stakeholders,
-    };
-  }
-
   @Patch('/supportmanagement/errand/:id')
   @OpenAPI({ summary: 'Update errand' })
   @UseBefore(authMiddleware)
   @ResponseSchema(ErrandDTO)
   async updateErrand(@Req() req: RequestWithUser, @Param('id') id: string, @Body() errand: Partial<Errand>): Promise<Partial<Errand>> {
+    if (!id.trim()) throw new HttpException(400, 'Errand id is required when updating an errand');
+
     const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands/${id}`;
     const baseURL = apiURL(this.apiBase);
     // Strip read-only fields that the API does not accept on update
@@ -125,12 +87,22 @@ export class SupportManagementController {
       ...errandData
     } = errand;
 
-    if (!id.trim()) throw new HttpException(400, 'Errand id is required when updating an errand');
+    // Translate both ways, as on create: the DTO has emails/phoneNumbers/personNumber,
+    // upstream Stakeholder has only contactChannels.
+    const errandInformation = {
+      ...errandData,
+      stakeholders: errandData.stakeholders?.map(mapStakeholderDTOToStakeholder),
+    };
 
-    const res = await this.apiService.patch<Partial<Errand>>({ baseURL, url, data: errandData, propagateClientError: true }, req);
+    const res = await this.apiService.patch<Partial<Errand>>({ baseURL, url, data: errandInformation, propagateClientError: true }, req);
     if (!res.data) throw new HttpException(502, 'Invalid response when updating errand');
 
-    return res.data;
+    const stakeholders = await Promise.all(res.data.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? []);
+
+    return {
+      ...res.data,
+      stakeholders,
+    };
   }
 
   @Get('/supportmanagement/errand/:errandNumber')
@@ -231,54 +203,5 @@ export class SupportManagementController {
     if (!res.data) throw new HttpException(502, 'Invalid response when reading metadata');
 
     return res.data;
-  }
-
-  @Get('/supportmanagement/notifications')
-  @OpenAPI({ summary: 'Get notifications for the namespace and municipality with the specified ownerId' })
-  @UseBefore(authMiddleware)
-  @ResponseSchema(NotificationDTO, { isArray: true })
-  async getNotifications(@Req() req: RequestWithUser): Promise<Notification[]> {
-    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/notifications?ownerId=${req.user.username}`;
-
-    const res = await this.apiService.get<Notification[]>({ url }, req);
-    if (!res.data) throw new HttpException(502, 'Invalid response when reading notifications');
-
-    return res.data;
-  }
-
-  @Patch('/supportmanagement/notifications')
-  @OpenAPI({
-    summary: 'Acknowledge notifications',
-    requestBody: {
-      required: true,
-      content: {
-        'application/json': {
-          schema: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/components/schemas/NotificationDTO' },
-          },
-        },
-      },
-    },
-  })
-  @UseBefore(authMiddleware)
-  @ResponseSchema(NotificationAcknowledgementResponse)
-  async acknowlegeNotifications(
-    @Req() req: RequestWithUser,
-    @Body({ required: false }) notifications: NotificationDTO[] | undefined,
-  ): Promise<ApiResponse<boolean>> {
-    if (!Array.isArray(notifications) || notifications.length === 0) {
-      throw new HttpException(400, 'At least one notification is required');
-    }
-
-    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/notifications`;
-
-    // SupportManagement acknowledges with 204 No Content. A resolved request is
-    // therefore the success signal; the gateway keeps its existing boolean body
-    // for Katla clients.
-    await this.apiService.patch<undefined>({ url, data: notifications, propagateClientError: true }, req);
-
-    return { data: true, message: 'Success' };
   }
 }

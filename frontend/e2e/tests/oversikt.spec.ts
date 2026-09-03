@@ -1,7 +1,6 @@
 import { mockCountDraftErrands, mockCountNewErrands, mockCountSolvedErrands } from '../fixtures/mockCount';
 import { mockErrands } from '../fixtures/mockErrands';
 import { mockMetadata } from '../fixtures/mockMetadata';
-import { mockNotifications } from '../fixtures/mockNotifications';
 import { jsonRoute } from '../utils/routes';
 import { expect, test } from '../utils/test';
 
@@ -23,7 +22,6 @@ test.describe('Overview page', () => {
       (url) => url.pathname.endsWith('/supportmanagement/count') && url.searchParams.get('status') === 'SOLVED',
       jsonRoute(mockCountSolvedErrands)
     );
-    await page.route('**/supportmanagement/notifications', jsonRoute(mockNotifications));
     await page.route('**/supportmanagement/metadata', jsonRoute(mockMetadata));
     await page.goto(appUrl('/oversikt'));
   });
@@ -53,7 +51,7 @@ test.describe('Overview page', () => {
     const headerCells = table.locator('.sk-table-thead-tr').first().locator('th');
     await expect(headerCells.nth(0).locator('span').first()).toHaveText('Status');
     await expect(headerCells.nth(1).locator('span').first()).toHaveText('Ärendenummer');
-    await expect(headerCells.nth(2).locator('span').first()).toHaveText('Typ av rapport');
+    await expect(headerCells.nth(2).locator('span').first()).toHaveText('Ärendetyp');
     await expect(headerCells.nth(3).locator('span').first()).toHaveText('Rapporterat');
 
     await expect(table.locator('.sk-table-tbody-tr')).toHaveCount(mockErrands?.content?.length ?? 0);
@@ -71,5 +69,4 @@ test.describe('Overview page', () => {
 
   // TODO: Add test for search field when frontend functionality is ready
   // TODO: Add test for all filters
-  // TODO: Add test for notification bell when frontend functionality is ready
 });

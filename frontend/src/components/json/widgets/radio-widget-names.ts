@@ -1,8 +1,8 @@
 /**
- * De namn i widgetregistret som renderar radiogruppen. FieldTemplate måste veta
- * vilka fält som är grupper för att ge dem fieldset/legend i stället för en
- * label som pekar på ett enskilt id, och registret är enda sanningen om vilka
- * namn som faktiskt leder dit. Nya alias läggs till här och i registret.
+ * The widget registry names that render the radio group. FieldTemplate needs to know which
+ * fields are groups so it can give them fieldset/legend rather than a label pointing at a single
+ * id, and the registry is the only truth about which names lead there. Add new aliases here and
+ * in the registry.
  */
 export const RADIO_WIDGET_NAMES = ['radio', 'RadioWidget'] as const;
 

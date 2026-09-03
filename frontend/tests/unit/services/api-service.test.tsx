@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('Api service', () => {
   beforeEach(() => {
-    // jsdom tillåter inte att window.location skrivs över, men pathname kan styras via history
+    // jsdom does not allow window.location to be replaced, but pathname can be set via history.
     window.history.replaceState({}, '', '/dashboard');
   });
 

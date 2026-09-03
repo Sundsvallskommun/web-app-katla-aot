@@ -1,15 +1,19 @@
-# Sundsvalls Kommun Katla supportmanagement
+# Sundsvalls Kommun Katla alkohol- och tobakstillstånd
 
 ## APIer som används
 
 Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumerera på dessa.
 
-| API               | Version |
-| ----------------- | ------: |
-| SupportManagement |    10.7 |
-| Citizen           |     3.0 |
-| Employee          |     2.0 |
-| SimulatorServer   |     2.0 |
+Källan är `backend/src/config/api-config.ts` — tabellen nedan speglar den.
+
+| API                           | Version |
+| ----------------------------- | ------: |
+| SimulatorServer               |     2.0 |
+| SupportManagement             |    15.2 |
+| support-management-alkt-sprint |    15.3 |
+| Citizen                       |     3.0 |
+| LegalEntity                   |     2.0 |
+| JsonSchema                    |     1.0 |
 
 
 ## Utveckling
@@ -24,7 +28,7 @@ Dessa APIer används i projektet, applikationsanvändaren i WSO2 måste prenumer
 1. Klona ner repot.
 
 ```
-git clone git@github.com:Sundsvallskommun/web-app-katla-sm.git
+git clone git@github.com:Sundsvallskommun/web-app-katla-aot.git
 ```
 
 2. Installera dependencies för både `backend` och `frontend`

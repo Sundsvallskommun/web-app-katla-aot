@@ -1,4 +1,4 @@
-import { DeviationInformation } from '@components/errand-sections/deviation-information.component';
+import { ErrandDetails } from '@components/errand-sections/errand-details.component';
 import { FormValidationProvider } from '@contexts/form-validation-provider';
 import type { ErrandFormDTO } from '@interfaces/errand-form';
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
@@ -17,6 +17,9 @@ vi.mock('@components/json/utils/schema-utils', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@components/json/utils/schema-utils')>();
   return {
     ...actual,
+    // The real list is empty until AoT's schemas exist, so the test injects a name of its own
+    // to still render the schema form.
+    ERRAND_FORM_SCHEMA_NAMES: ['aot-test-schema'],
     loadFormSchema: loadFormSchemaMock,
     loadFormSchemaForEntry: loadFormSchemaForEntryMock,
   };
@@ -62,14 +65,14 @@ function TestForm() {
   return (
     <FormProvider {...methods}>
       <FormValidationProvider>
-        <DeviationInformation />
+        <ErrandDetails />
         <FormState />
       </FormValidationProvider>
     </FormProvider>
   );
 }
 
-describe('DeviationInformation new entry schema stability', () => {
+describe('ErrandDetails new entry schema stability', () => {
   beforeEach(() => {
     loadFormSchemaMock.mockReset().mockResolvedValue({ schema, uiSchema, schemaId: 'schema-v1' });
     loadFormSchemaForEntryMock.mockReset().mockResolvedValue({ schema, uiSchema, schemaId: 'schema-v1' });
@@ -87,7 +90,7 @@ describe('DeviationInformation new entry schema stability', () => {
       expect(screen.getByTestId('form-state')).toHaveTextContent(
         JSON.stringify([
           {
-            schemaName: 'avvikelse-plats-handelse',
+            schemaName: 'aot-test-schema',
             schemaId: 'schema-v1',
             data: '{"locationType":"FACILITY"}',
           },

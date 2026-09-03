@@ -1,5 +1,5 @@
-import { ErrandDTO, MetadataResponseDTO, NotificationDTO, PageErrandDTO } from '@data-contracts/backend/data-contracts';
-import { type ApiResponse, apiService } from '@services/api-service';
+import { ErrandDTO, MetadataResponseDTO, PageErrandDTO } from '@data-contracts/backend/data-contracts';
+import { apiService } from '@services/api-service';
 
 export interface ErrandQuery {
   page?: number;
@@ -57,30 +57,4 @@ export const createErrand = async (errand: ErrandDTO): Promise<ErrandDTO> => {
 
 export const updateErrand = async (id: string, errand: Partial<ErrandDTO>): Promise<ErrandDTO> => {
   return apiService.patch<ErrandDTO>(`supportmanagement/errand/${id}`, errand).then((res) => res.data);
-};
-
-export const saveErrand = async (errand: ErrandDTO): Promise<ErrandDTO> => {
-  return apiService.patch<ErrandDTO>('supportmanagement/errand/save', errand).then((res) => res.data);
-};
-
-export const getNotifications = async (): Promise<NotificationDTO[]> => {
-  return apiService.get<NotificationDTO[]>('supportmanagement/notifications').then((res) => res.data);
-};
-
-export const acknowledgeNotification = async (notification: NotificationDTO): Promise<boolean> => {
-  if (!notification.id) {
-    throw new Error('Missing id on notification');
-  }
-  const data = [{ ...notification, acknowledged: true }];
-  const response = await apiService.patch<ApiResponse<boolean>>(`supportmanagement/notifications`, data);
-
-  if (!response.data.data) {
-    throw new Error('Notification was not acknowledged');
-  }
-
-  return true;
-};
-
-export const upsertErrand = async (errand: ErrandDTO): Promise<ErrandDTO> => {
-  return errand.id ? saveErrand(errand) : createErrand(errand);
 };

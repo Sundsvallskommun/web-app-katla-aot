@@ -22,7 +22,7 @@ export const MainPageMobileHeader: React.FC<MainPageMobileHeaderProps> = ({ icon
     </NextLink>
   );
 
-  // Bugfix (static-components): JSX-variabel i stället för komponent skapad under rendering
+  // A JSX variable rather than a component created during render (static-components).
   const title = (
     <div className="flex items-center gap-12 py-8">
       {headerIcon}
