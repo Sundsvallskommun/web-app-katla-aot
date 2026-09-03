@@ -24,7 +24,9 @@ import {
   SESSION_MEMORY,
   SWAGGER_ENABLED,
 } from '@config';
+import { createDefaultAuthGuard } from '@middlewares/default-auth.middleware';
 import errorMiddleware from '@middlewares/error.middleware';
+import { buildPublicPathSet, PublicRouteInfo } from '@middlewares/public.decorator';
 import { Strategy, VerifiedCallback } from '@node-saml/passport-saml';
 import { logger, stream } from '@utils/logger';
 import bodyParser from 'body-parser';
@@ -56,7 +58,7 @@ type ControllerClass = new () => object;
 
 const corsWhitelist = (ORIGIN ?? '').split(',');
 
-const sessionTTL = 4 * 24 * 60 * 60;
+const sessionTTL = 12 * 60 * 60;
 // NOTE: memory uses ms while file uses seconds
 const sessionStore: session.Store = SESSION_MEMORY
   ? new (createMemoryStore(session))({ checkPeriod: sessionTTL * 1000 })
@@ -128,16 +130,17 @@ const samlStrategy = new Strategy(
     // Identity Provider's public key
     idpCert: SAML_IDP_PUBLIC_CERT ?? '',
     issuer: SAML_ISSUER ?? '',
-    wantAssertionsSigned: false,
+    wantAssertionsSigned: true,
     signatureAlgorithm: 'sha256',
     digestAlgorithm: 'sha256',
     // maxAssertionAgeMs: 2592000000,
     // authnRequestBinding: 'HTTP-POST',
     //logoutUrl: 'http://194.71.24.30/sso',
     logoutCallbackUrl: SAML_LOGOUT_CALLBACK_URL ?? '',
-    acceptedClockSkewMs: -1,
+    // -1 would disable the assertion time check entirely.
+    acceptedClockSkewMs: 5000,
     wantAuthnResponseSigned: false,
-    audience: false,
+    audience: SAML_ISSUER ?? '',
   },
   function (profile: Profile | null, done: VerifiedCallback) {
     if (!profile) {
@@ -194,7 +197,9 @@ const samlStrategy = new Strategy(
         // permissions: getPermissions(appGroups),
       };
 
-      logger.info(`Found user: ${JSON.stringify(findUser)}`);
+      // The full profile is PII — debug only.
+      logger.info(`Authenticated user ${findUser.username} (role: ${findUser.role ?? 'none'})`);
+      logger.debug(`Found user: ${JSON.stringify(findUser)}`);
 
       done(null, findUser);
     } catch (err) {
@@ -226,7 +231,8 @@ class App {
 
     this.initializeDataFolders();
 
-    this.initializeMiddlewares();
+    const { paths: publicPaths, routes: publicRoutes } = buildPublicPathSet(Controllers);
+    this.initializeMiddlewares(publicPaths, publicRoutes);
     this.initializeRoutes(Controllers);
     if (this.swaggerEnabled) {
       this.initializeSwagger(Controllers);
@@ -247,7 +253,7 @@ class App {
     return this.app;
   }
 
-  private initializeMiddlewares() {
+  private initializeMiddlewares(publicPaths: Set<string>, publicRoutes: PublicRouteInfo[]) {
     this.app.set('trust proxy', 1);
     this.app.use(morgan(LOG_FORMAT ?? 'default', { stream }));
     // Basic rate limiting for every route (login flows, swagger, proxied APIs). Tune per
@@ -376,6 +382,7 @@ class App {
       const authenticate = passport.authenticate('saml', (err: unknown, user?: Express.User | false | null) => {
         if (err) {
           const errorName = getErrorName(err);
+          logger.warn(`SAML login callback failed: ${errorName ?? 'SAML_UNKNOWN_ERROR'}`);
           failureRedirect.searchParams.set('failMessage', errorName ?? 'SAML_UNKNOWN_ERROR');
           res.redirect(failureRedirect.toString());
           return;
@@ -396,6 +403,17 @@ class App {
       }) as express.RequestHandler;
       authenticate(req, res, next);
     });
+
+    // Default-deny authentication. Mounted last so the SAML endpoints above stay reachable, and
+    // before initializeRoutes() so every routing-controllers route sits behind it unless its
+    // handler carries @Public().
+    for (const route of publicRoutes) {
+      logger.warn(
+        `Auth guard: PUBLIC ${route.httpMethod} ${route.path} (${route.controller}.${route.action})` +
+          (route.reason !== undefined && route.reason !== '' ? ` - ${route.reason}` : ' - no reason given'),
+      );
+    }
+    this.app.use(BASE_URL_PREFIX ?? '', createDefaultAuthGuard(publicPaths));
   }
 
   private initializeRoutes(controllers: ControllerClass[]) {

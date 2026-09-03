@@ -3,6 +3,7 @@ import { Controller, Get } from 'routing-controllers';
 import { OpenAPI } from 'routing-controllers-openapi';
 
 import { HttpException } from '@/exceptions/HttpException';
+import { Public } from '@/middlewares/public.decorator';
 import ApiService from '@/services/api.service';
 import { logger } from '@/utils/logger';
 
@@ -13,6 +14,7 @@ export class HealthController {
 
   @Get('/health/up')
   @OpenAPI({ summary: 'Return health check' })
+  @Public('Liveness probe - polled by infrastructure without a session')
   async up(): Promise<{ status: string } | undefined> {
     if (!this.api) {
       throw new HttpException(500, 'Health check API is not configured');

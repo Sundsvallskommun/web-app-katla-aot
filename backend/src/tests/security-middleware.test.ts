@@ -27,12 +27,15 @@ describe('security middleware', () => {
 
   it('sets hardened attributes on a persisted session cookie', async () => {
     const app = new App([IndexController]).getServer();
-    app.get('/api/session-test', (req, res) => {
+    // Outside BASE_URL_PREFIX on purpose: the default-deny guard covers everything under the
+    // prefix, including routes appended after construction. The session cookie path is '/' in
+    // tests, so the cookie is still set here.
+    app.get('/session-test', (req, res) => {
       req.session.returnTo = '/';
       res.sendStatus(204);
     });
 
-    const response = await request(app).get('/api/session-test').expect(204);
+    const response = await request(app).get('/session-test').expect(204);
     const cookies = response.headers['set-cookie'];
     if (!Array.isArray(cookies)) {
       throw new Error('Expected one persisted session cookie');

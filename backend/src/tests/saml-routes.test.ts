@@ -84,12 +84,14 @@ describe('SAML callback redirects', () => {
 
     expect(successResponse.headers.location).toBe('http://localhost:3000/success');
 
-    app.get('/api/seed-saml-error', (req, res) => {
+    // Outside BASE_URL_PREFIX on purpose: the default-deny guard covers everything under the
+    // prefix, including routes appended after construction.
+    app.get('/seed-saml-error', (req, res) => {
       req.session.messages = ['SAML_LOGOUT_FAILED'];
       res.sendStatus(204);
     });
     const agent = request.agent(app);
-    await agent.get('/api/seed-saml-error').expect(204);
+    await agent.get('/seed-saml-error').expect(204);
 
     const failureResponse = await agent
       .get('/api/saml/logout/callback')

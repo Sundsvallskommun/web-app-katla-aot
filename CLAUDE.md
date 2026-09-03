@@ -11,6 +11,7 @@ The frontend never calls Sundsvall's APIs directly. The backend is a BFF: it hol
 ## Build & Development Commands
 
 ### Frontend (`cd frontend`)
+
 ```bash
 yarn dev                    # Dev server (Next.js, körs med TEST=true)
 yarn build                  # Production build (standalone output)
@@ -29,6 +30,7 @@ yarn generate:contracts     # Regenerate API data contracts from backend swagger
 `dev`, `build`, `lint*` och `type-check` har pre-script som kör `generate:middleware-envs`, vilket skriver den gitignorerade `frontend/middleware-envs.js` från `.env`/`.env.local`. `src/proxy.ts` (Next-middlewaren) importerar den — env-variabler kan inte läsas där. Ändrar du `.env` måste ett av dessa kommandon köras om innan middleware-beteendet ändras.
 
 ### Backend (`cd backend`)
+
 ```bash
 yarn dev                    # Dev server (nodemon + ts-node)
 yarn build                  # Compile TypeScript (tsc + tsc-alias)
@@ -41,6 +43,7 @@ yarn generate:contracts     # Regenerate API data contracts from WSO2 swagger
 ```
 
 ### Köra enskilda tester
+
 ```bash
 yarn test path/to/file.test.ts          # Vitest: filter på sökväg
 yarn test -t "namn på testet"           # Vitest: filter på testnamn
@@ -51,6 +54,7 @@ yarn e2e -g "namn på scenariot"         # Playwright: filter på testnamn
 ## Architecture
 
 ### Frontend
+
 - **Next.js 16** with App Router, React 19, TypeScript
 - **Routing**: `src/app/[locale]/` — locale-based dynamic routing (`sv` default, `en` finns)
 - **Auth**: `src/proxy.ts` är Next-middlewaren. Den slår upp skyddade rutter (utan språkprefix, via `pathWithoutLocale`), anropar backendens `/me` med sessionskakan och redirectar till `/login?path=…` vid 401. Klientsidans motsvarighet ligger i `handleError` i `src/services/api-service.ts`.
@@ -62,15 +66,19 @@ yarn e2e -g "namn på scenariot"         # Playwright: filter på testnamn
 - **Feature flags**: `src/config/appconfig.tsx` läser `NEXT_PUBLIC_*` strikt som `=== 'true'` — en osatt flagga är alltså av, inte neutral.
 
 ### Backend
+
 - **Express.js** with `routing-controllers` (decorator-based controllers in `src/controllers/`), bootstrappad i `src/app.ts`
 - **Auth**: Passport.js med SAML 2.0 (`@node-saml/passport-saml`), sessionsbaserad. Roller/behörighet i `src/services/authorization.service.ts`.
+- **Default deny**: `createDefaultAuthGuard` (`src/middlewares/default-auth.middleware.ts`) mountas framför hela `BASE_URL_PREFIX` innan controllers registreras — allt utan session ger 401. En ny route är alltså skyddad så fort den finns, även om den saknar dekorator. Nya skyddade routes dekoreras ändå med `@UseBefore(authMiddleware)` för att deklarera avsikten; publika routes med `@Public('motivering')`. Motiveringen loggas vid uppstart och är fastnaglad i `src/tests/default-auth.metadata.test.ts`. Nya controllers läggs till i `src/controllers.ts` — det är listan både appen och auth-testerna utgår från. Testhjälproutes som mountas efter `new App(...)` hamnar bakom guarden; lägg dem utanför `BASE_URL_PREFIX`.
 - **Sessionskaka**: `SESSION_COOKIE_PATH` måste täcka hela appens monteringsrot, inte bara API-prefixet — Next-middlewaren läser samma kaka på UI-vägar. Fel path ger en oändlig loop tillbaka till `/login` trots giltig session (se kommentaren i `src/app.ts`).
 - **Utgående anrop**: `src/services/api.service.ts` är enda vägen ut. Den hämtar WSO2-token via `api-token.service.ts` och validerar att den slutliga URL:en ligger innanför den konfigurerade servicebasen (skydd mot punktsegmentsflykt, inklusive flerlagers-URL-avkodning). Uppströms 4xx propageras bara med `propagateClientError` och aldrig med upstream-bodyn.
 - **Externa APIer**: listade med version i `src/config/api-config.ts` — det är källan, inte README. Innehåller även en tillfällig alias-routing `supportmanagement` → `supportmanagement-sprint` som ska tas bort när sprint-API:et pensioneras.
 - **Response mapping**: DTOs in `src/responses/` transform external API data. JSON Schema-texter lokaliseras serverside (`x-i18n` i ui-schemat löses upp i `schema.controller.ts` utifrån `Accept-Language`) så att frontend aldrig ser övriga språk.
 
 ### Data Contracts
+
 Two generated layers, båda i `src/data-contracts/`:
+
 - **Backend** genererar från WSO2: `${API_BASE_URL}/{api}/{version}/api-docs`, en katalog per API i `api-config.ts`.
 - **Frontend** genererar från backendens egen `${NEXT_PUBLIC_API_URL}/swagger.json` — backend måste alltså vara igång med `SWAGGER_ENABLED=true` när `yarn generate:contracts` körs i frontend.
 
@@ -88,7 +96,7 @@ Backend (`tsconfig.json`): `@/*` → `src/*`, plus `@config`, `@controllers/*`, 
 - **ESLint**: strict, type-aware flat config modeled on Sundsvalls Kommun's web-app-starter — `typescript-eslint` `strictTypeChecked` + `stylisticTypeChecked`, `simple-import-sort`, `unused-imports`, `no-console` (warn/error allowed), no `any`, och `noInlineConfig` (inline `eslint-disable`-kommentarer är förbjudna — åtgärda koden i stället). Kör `yarn lint:strict` och `yarn format:check` före push; båda körs i CI.
 - **Component naming**: `*.component.tsx` pattern
 - **Test selectors**: use `data-cy` attributes (Playwright is configured with `testIdAttribute: 'data-cy'`)
-- **Language**: UI text (och lokaliseringsfilerna) är på svenska. Kod, kommentarer och testnamn skrivs på engelska — engelskan är etablerad för programmeringstermer och håller kommentarerna kortare. Domänord utan bra engelsk motsvarighet (ärende, avvikelse, Ärendeuppgifter) behålls som de är.
+- **Language**: UI text (och lokaliseringsfilerna) är på svenska. Kod, kommentarer och testnamn skrivs på engelska — engelskan är etablerad för programmeringstermer och håller kommentarerna kortare. Domänord utan bra engelsk motsvarighet (ärende, avvikelse, Ärendeuppgifter) behålls som de är. Kommentarer ska endast användas för att göra förvaltning enklare, inte för att förklara varför än ändring gjorts. Keep comments as terse as possible!
 
 ## Testing
 

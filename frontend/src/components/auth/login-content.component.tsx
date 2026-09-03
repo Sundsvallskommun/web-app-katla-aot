@@ -48,8 +48,8 @@ export const LoginContent: React.FC = () => {
       failureRedirect: `${appURL()}/login`,
     });
     url.search = queries.toString();
-    // NOTE: send user to login with SSO
-    router.push(url.toString());
+    // Top-level navigation, not router.push: the SameSite=Lax session cookie must ride along.
+    window.location.assign(url.toString());
   };
 
   useEffect(() => {
