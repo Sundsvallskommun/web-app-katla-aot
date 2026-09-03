@@ -19,7 +19,6 @@ const namespaces = [
   'paths',
   'layout',
   'login',
-  'example',
   'filtering',
   'errand-information',
   'session',

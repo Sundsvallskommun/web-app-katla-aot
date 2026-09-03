@@ -53,7 +53,7 @@ test.describe('Overview page', () => {
     const headerCells = table.locator('.sk-table-thead-tr').first().locator('th');
     await expect(headerCells.nth(0).locator('span').first()).toHaveText('Status');
     await expect(headerCells.nth(1).locator('span').first()).toHaveText('Ärendenummer');
-    await expect(headerCells.nth(2).locator('span').first()).toHaveText('Typ av rapport');
+    await expect(headerCells.nth(2).locator('span').first()).toHaveText('Ärendetyp');
     await expect(headerCells.nth(3).locator('span').first()).toHaveText('Rapporterat');
 
     await expect(table.locator('.sk-table-tbody-tr')).toHaveCount(mockErrands?.content?.length ?? 0);

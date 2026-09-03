@@ -14,6 +14,7 @@ import { usePathname } from 'next/navigation';
 import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { appConfig } from 'src/config/appconfig';
 import { useWizardStore } from 'src/stores/wizard-store';
 
 interface BaseErrandLayoutProps {
@@ -57,7 +58,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
       }
       <span className="text-large">
         {registerNewErrand ?
-          <strong className="text-large ml-8 font-bold">{t('filtering:new_errand')}</strong>
+          <strong className="text-large ml-8 font-bold">{appConfig.applicationName}</strong>
         : <>
             <StatusLabel status={status} />
             <span className="ml-8 text-small">{errandNumber}</span>

@@ -39,7 +39,7 @@
     "header": {
       "status": "Status",
       "errandNumber": "Case number",
-      "classificationType": "Report type",
+      "classificationType": "Case type",
       "created": "Reported"
     }
   },

@@ -39,7 +39,7 @@
     "header": {
       "status": "Status",
       "errandNumber": "Ärendenummer",
-      "classificationType": "Typ av rapport",
+      "classificationType": "Ärendetyp",
       "created": "Rapporterat"
     }
   },
