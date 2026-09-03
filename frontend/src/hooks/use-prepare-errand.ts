@@ -4,9 +4,8 @@ import { ErrandFormDTO } from '@interfaces/errand-form';
 import { useMetadataStore } from 'src/stores/metadata-store';
 
 /**
- * Etiketten som alla ärenden får tills AoT har en egen kategorisering. Den tidigare
- * platskedjan styrde behörigheten till ärendet; motsvarigheten för AoT (sannolikt utifrån
- * kategori/ärendetyp) är inte bestämd än, så här skickas bara den neutrala grundetiketten.
+ * The label every errand gets until AoT has its own categorisation. What it will be based on
+ * (category or errand type, most likely) is not decided, so only the neutral base label is sent.
  */
 const DEFAULT_LABEL = 'UNCATEGORIZED';
 

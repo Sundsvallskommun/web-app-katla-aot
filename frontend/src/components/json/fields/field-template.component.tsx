@@ -24,7 +24,7 @@ export function FieldTemplate(props: FieldTemplateProps) {
   const hasError = Boolean(rawErrors?.length);
   const formControlClassName = className ? `form-row ${className}` : 'form-row w-full';
   const isRadioGroup = isRadioWidgetName(uiSchema?.['ui:widget']);
-  // Märker fältet så att felnavigeringen hittar det, oavsett var i formuläret det ligger.
+  // Flags the field so error navigation finds it, wherever it sits in the form.
   const invalidFieldProps = hasError ? { [INVALID_FIELD_ATTRIBUTE]: id } : {};
 
   const uiDescription = uiSchema?.['ui:description'];

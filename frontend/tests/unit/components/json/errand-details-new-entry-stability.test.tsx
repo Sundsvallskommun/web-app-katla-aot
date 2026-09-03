@@ -17,8 +17,8 @@ vi.mock('@components/json/utils/schema-utils', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@components/json/utils/schema-utils')>();
   return {
     ...actual,
-    // Den riktiga listan är tom tills AoT:s scheman finns, så testet stoppar in ett eget
-    // namn för att fortfarande kunna rendera schemaformuläret.
+    // The real list is empty until AoT's schemas exist, so the test injects a name of its own
+    // to still render the schema form.
     ERRAND_FORM_SCHEMA_NAMES: ['aot-test-schema'],
     loadFormSchema: loadFormSchemaMock,
     loadFormSchemaForEntry: loadFormSchemaForEntryMock,

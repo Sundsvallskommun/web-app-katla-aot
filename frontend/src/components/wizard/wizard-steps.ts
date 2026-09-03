@@ -12,8 +12,8 @@ export const ALL_WIZARD_STEPS: WizardStep[] = [
 ];
 
 /**
- * Övriga parter ligger bakom en funktionsflagga och renderas som ett eget avsnitt även på
- * desktop, så steget utgår helt när flaggan är av i stället för att visa ett tomt steg.
+ * Other parties sits behind a feature flag and renders as its own section on desktop too, so
+ * the step is dropped entirely when the flag is off rather than showing an empty step.
  */
 export function getActiveWizardSteps(otherPartiesEnabled: boolean): WizardStep[] {
   if (otherPartiesEnabled) {

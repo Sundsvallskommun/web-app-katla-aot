@@ -17,8 +17,8 @@ const { useFormSchemaMock } = vi.hoisted(() => ({
 
 vi.mock('@components/json/utils/schema-utils', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@components/json/utils/schema-utils')>()),
-  // Den riktiga listan är tom tills AoT:s scheman finns, så testet stoppar in ett eget namn
-  // för att fortfarande kunna köra formulärvärden genom schemavärden.
+  // The real list is empty until AoT's schemas exist, so the test injects a name of its own to
+  // still run form values through schema values.
   ERRAND_FORM_SCHEMA_NAMES: ['aot-test-schema'],
 }));
 

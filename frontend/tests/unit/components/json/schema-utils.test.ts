@@ -339,7 +339,7 @@ describe('schema loading per locale', () => {
   });
 
   it('caches each language separately so a language switch is not served the previous one', async () => {
-    // Ett nytt Response per anrop: kroppen kan bara läsas en gång.
+    // A fresh Response per call: the body can only be read once.
     const fetchMock = vi.fn<typeof fetch>().mockImplementation(() => Promise.resolve(schemaResponse('per-locale-v1')));
     vi.stubGlobal('fetch', fetchMock);
 
@@ -347,8 +347,8 @@ describe('schema loading per locale', () => {
     await loadFormSchema('per-locale-schema', undefined, 'sv');
     expect(fetchMock).toHaveBeenCalledTimes(1);
 
-    // Samma schema på ett annat språk måste hämtas på nytt – delas cachen visas
-    // det först hämtade språkets fältetiketter för alla efterföljande läsare.
+    // The same schema in another language must be fetched again: sharing the cache would show
+    // the first fetched language's field labels to every later reader.
     await loadFormSchema('per-locale-schema', undefined, 'en');
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(fetchMock).toHaveBeenLastCalledWith(expect.anything(), {
@@ -361,7 +361,7 @@ describe('schema loading per locale', () => {
     const fetchMock = vi.fn<typeof fetch>().mockImplementation(() => Promise.resolve(schemaResponse('pinned-v1')));
     vi.stubGlobal('fetch', fetchMock);
 
-    // Språket får aldrig ändra vilken schemaversion ett registrerat ärende renderas mot.
+    // Language must never change which schema version a registered errand renders against.
     const svSchema = await loadFormSchemaById('pinned-v1', undefined, 'sv');
     const enSchema = await loadFormSchemaById('pinned-v1', undefined, 'en');
 
@@ -386,8 +386,8 @@ describe('validateErrandFormData locale', () => {
     );
     vi.stubGlobal('fetch', fetchMock);
 
-    // Renderas formuläret på engelska men valideras mot det svenska schemat, hämtas
-    // schemat två gånger och felsammanfattningen namnger fält på fel språk.
+    // Rendering the form in English but validating against the Swedish schema fetches the schema
+    // twice and names fields in the wrong language in the error summary.
     await validateErrandFormData(
       [{ schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'validate-locale-v1', data: '{}' }],
       undefined,

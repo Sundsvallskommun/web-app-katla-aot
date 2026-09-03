@@ -21,8 +21,8 @@ export interface ContractGenerationDependencies {
 const isSpecObject = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
 
 /**
- * Returnerar undefined för generiska typer som text/plain och application/octet-stream —
- * de säger inget om formatet och ska falla tillbaka på sniffning av kroppen.
+ * Returns undefined for generic types like text/plain and application/octet-stream: they say
+ * nothing about the format, so the body is sniffed instead.
  */
 const detectSpecFormat = (contentType: string | null): SpecFormat | undefined => {
   const mediaType = contentType?.split(';')[0]?.trim().toLowerCase();
@@ -56,7 +56,8 @@ export const fetchOpenApiDocument = async (url: string, fetcher: typeof fetch = 
   const contentType = response.headers.get('content-type');
   const body = await response.text();
 
-  // JSON är en delmängd av YAML, så båda parsrarna provas oavsett header — headern avgör bara ordningen.
+  // JSON is a subset of YAML, so both parsers are tried regardless of header; the header only
+  // decides the order.
   const declaredFormat = detectSpecFormat(contentType);
   const attempts: SpecFormat[] = declaredFormat === 'yaml' ? ['yaml', 'json'] : ['json', 'yaml'];
 
@@ -72,9 +73,9 @@ export const fetchOpenApiDocument = async (url: string, fetcher: typeof fetch = 
 };
 
 /**
- * swagger-typescript-api slutade formatera sin utdata i v13, så de genererade filerna kom
- * ut med dubbla citattecken och föll på `yarn format:check` i CI. Formateringen görs därför
- * här i stället, mot projektets egen prettier-konfiguration.
+ * swagger-typescript-api stopped formatting its output in v13, so generated files came out with
+ * double quotes and failed `yarn format:check` in CI. Format them here against the project's own
+ * prettier config instead.
  */
 export const formatGeneratedFiles = async (outputDir: string): Promise<void> => {
   const entries = await readdir(outputDir, { withFileTypes: true });

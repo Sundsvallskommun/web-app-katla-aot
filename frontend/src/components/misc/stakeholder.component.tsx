@@ -39,7 +39,7 @@ export const StakeholderList: React.FC<{
     name: 'stakeholders',
   });
 
-  // Byggs om när språket ändras – yup fryser felmeddelandena vid konstruktionen.
+  // Rebuilt when the language changes: yup freezes the error messages at construction.
   const stakeholderSchema = useMemo(() => createStakeholderSchema(t), [t]);
 
   const method = useForm<StakeholderDTO>({
@@ -60,9 +60,8 @@ export const StakeholderList: React.FC<{
   const hasPrimaryRole = roles.includes('PRIMARY');
   const matchingCount = stakeholders?.filter((s) => roles.includes(s.role ?? '')).length ?? 0;
   const maxCountReached = maxCount !== undefined && matchingCount >= maxCount;
-  // Sök- och lägg till-kontrollerna hör till redigering. På ett inlåst ärende
-  // gjorde fieldsetet dem bara oklickbara, så ett personsökfält och en
-  // Lägg till manuellt-knapp stod kvar utan att svara på något.
+  // The search and add controls belong to editing. On a locked errand the fieldset only made
+  // them unclickable, leaving a person search field and an add button that responded to nothing.
   const showAddButton =
     !isLocked && !maxCountReached && (!hasPrimaryRole || (hasPrimaryRole && !hasPrimaryStakeholder));
 
@@ -155,7 +154,7 @@ export const StakeholderList: React.FC<{
                   {department ?
                     <span>{department}</span>
                   : <span className={cx((!address || !city) && 'italic text-text-secondary')}>
-                      {/* Bugfix: template literal var alltid truthy — visa fallback när adress eller ort saknas */}
+                      {/* A template literal is always truthy; show the fallback when address or city is missing */}
                       {address && city ? `${address}, ${city}` : t('errand-information:stakeholder.missing_address')}
                     </span>
                   }

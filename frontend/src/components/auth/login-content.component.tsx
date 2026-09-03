@@ -36,7 +36,7 @@ export const LoginContent: React.FC = () => {
     const searchPath = searchParams.get('path');
     const nonLoginPath = !/\/login/.exec(pathName) && pathName; // Contains path as long as it's not /login
     const nonLoginSearch = (!searchPath?.match(/\/login|\/logout/) && searchPath) ?? false; // Contains redirect path as long as it's not /login or /logout
-    // Falsklogik bevarad: falla vidare vid false/tom sträng, inte enbart vid null/undefined
+    // Falsy semantics kept: fall through on false or an empty string, not only null/undefined.
     const path =
       nonLoginPath ? nonLoginPath
       : nonLoginSearch ? nonLoginSearch

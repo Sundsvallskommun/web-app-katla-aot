@@ -5,9 +5,9 @@ import type { TFunction } from 'i18next';
 import { WizardStep } from './wizard-steps';
 
 /**
- * `t` är obligatorisk. Med en valfri parameter och svensk reservtext skulle en glömd
- * inkoppling ge svenska valideringsfel i ett engelskt gränssnitt, utan att vare sig
- * typkontroll eller test reagerar.
+ * `t` is required. With an optional parameter and a Swedish fallback, a forgotten wire-up would
+ * give Swedish validation errors in an English interface without the type checker or a test
+ * reacting.
  */
 export async function validateStep(
   step: WizardStep,

@@ -23,7 +23,7 @@ const errand = (errandFormData: ErrandFormDataItem[] = []): ErrandFormDTO => ({ 
 const renderPrepareErrand = () => renderHook(() => usePrepareErrand()).result.current;
 
 describe('usePrepareErrand', () => {
-  it('sätter grundetiketten på ärendet', () => {
+  it('sets the base label on the errand', () => {
     setLabelStructure([uncategorized]);
     const { prepareErrandForApi } = renderPrepareErrand();
 
@@ -32,14 +32,14 @@ describe('usePrepareErrand', () => {
     expect(prepared.labels?.map((l) => l.resourceName)).toEqual(['UNCATEGORIZED']);
   });
 
-  it('skickar inga etiketter när metadatat saknar grundetiketten', () => {
+  it('sends no labels when the metadata lacks the base label', () => {
     setLabelStructure([]);
     const { prepareErrandForApi } = renderPrepareErrand();
 
     expect(prepareErrandForApi(errand(), 'NEW').labels).toEqual([]);
   });
 
-  it('serialiserar formulärdatat till jsonParameters och lämnar inte kvar errandFormData', () => {
+  it('serialises the form data to jsonParameters and leaves no errandFormData behind', () => {
     setLabelStructure([uncategorized]);
     const { prepareErrandForApi } = renderPrepareErrand();
 
@@ -52,7 +52,7 @@ describe('usePrepareErrand', () => {
     expect(prepared).not.toHaveProperty('errandFormData');
   });
 
-  it('behåller intressenterna och sätter angiven status', () => {
+  it('keeps the stakeholders and sets the given status', () => {
     setLabelStructure([uncategorized]);
     const { prepareErrandForApi } = renderPrepareErrand();
 
@@ -63,7 +63,7 @@ describe('usePrepareErrand', () => {
     expect(prepared.status).toBe('DRAFT');
   });
 
-  it('ger en tom intressentlista när ärendet saknar intressenter', () => {
+  it('gives an empty stakeholder list when the errand has none', () => {
     setLabelStructure([uncategorized]);
     const { prepareErrandForApi } = renderPrepareErrand();
 

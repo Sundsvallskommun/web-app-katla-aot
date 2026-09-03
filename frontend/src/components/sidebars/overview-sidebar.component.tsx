@@ -20,7 +20,7 @@ export const OverviewSidebar: React.FC = () => {
 
   const user = useUserStore(useShallow((s) => s.user));
 
-  // Bugfix (static-components): JSX-variabel i stället för komponent skapad under rendering
+  // A JSX variable rather than a component created during render (static-components).
   const sidebarLogo = (
     <NextLink
       href="/"
@@ -48,8 +48,8 @@ export const OverviewSidebar: React.FC = () => {
           <div className={cx('mb-24', open ? '' : 'flex flex-col items-center justify-center pt-[1rem]')}>
             {sidebarLogo}
           </div>
-          {/* Hela raden hörde ihop med notisklockan; utan den finns inget att visa
-              i den hopfällda sidomenyn, så raden utgår helt då. */}
+          {/* The row holds only the user block, which is hidden when collapsed, so the row is
+              dropped entirely rather than left as an empty spacer. */}
           {open && (
             <div className="h-fit pb-24 flex gap-12 items-center">
               <AppUserMenu

@@ -7,9 +7,9 @@ import { getCommonProps } from './types';
 const DEFAULT_CLASS = 'w-full';
 
 /**
- * Ett nativt tidsfält lämnar HH:mm, men JSON Schemas `time`-format kräver sekunder.
- * Sekunder läggs därför bara till när schemat faktiskt kräver dem, så att fält utan
- * format behåller exakt det värde användaren valde.
+ * A native time field gives HH:mm, but JSON Schema's `time` format requires seconds. Seconds
+ * are therefore only added when the schema actually demands them, so fields without a format
+ * keep exactly the value the user picked.
  */
 function toSchemaValue(value: string, requiresSeconds: boolean): string | undefined {
   if (value === '') return undefined;

@@ -96,8 +96,8 @@ interface ErrandDetailsProps {
 export const ErrandDetails: React.FC<ErrandDetailsProps> = ({ compact }) => {
   const { t } = useTranslation('errand-information');
 
-  // Tills AoT har egna scheman finns ingen formulärlista att rendera. Platshållaren gör
-  // skillnad på "inga fält än" och "schemat gick inte att ladda".
+  // Until AoT has its own schemas there is no form list to render. The placeholder distinguishes
+  // "no fields yet" from "the schema failed to load".
   if (ERRAND_FORM_SCHEMA_NAMES.length === 0) {
     return <span className="text-dark-secondary">{t('section_placeholder')}</span>;
   }

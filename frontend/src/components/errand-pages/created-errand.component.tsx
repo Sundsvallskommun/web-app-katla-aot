@@ -15,8 +15,8 @@ export const CreatedErrand: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-32">
-      {/* Avsnitten nedan är inaktiverade när ärendet är inlämnat. Utan en
-          förklaring syns bara att ingenting går att ändra, inte varför. */}
+      {/* The sections below are disabled once the errand is submitted. Without an explanation
+          all the user sees is that nothing can be changed, not why. */}
       {isLocked && (
         <div data-cy="read-only-notice" role="status">
           <Alert type="info">

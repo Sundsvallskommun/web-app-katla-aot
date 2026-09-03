@@ -13,17 +13,16 @@ import ApiService from '@/services/api.service';
 import { mapStakeholderDTOToStakeholder, mapStakeholderToStakeholderDTO } from '@/utils/stakeholder-mapping';
 import { apiURL } from '@/utils/util';
 
-// Bygger filtervärdet på samma sätt som tidigare stränginterpolering; okända värdetyper hoppas över.
+// Builds the filter value; unknown value types are skipped.
 const toFilterValue = (value: unknown): string | undefined => {
   if (typeof value === 'string') return value !== '' ? value : undefined;
   if (typeof value === 'number' || typeof value === 'boolean') return String(value);
   return undefined;
 };
 
-// Uppströms filtergrammatik omger varje värde med enkelfnuttar. Värdena kommer
-// från klienten, så tecken som kan avsluta literalen eller lägga till ett eget
-// villkor avvisas i stället för att escapas: escapedialekten ägs av upstream och
-// får inte gissas här.
+// The upstream filter grammar wraps each value in single quotes. Values come from the client,
+// so characters that could end the literal or add a condition are rejected rather than escaped —
+// the escaping dialect belongs to upstream and must not be guessed here.
 const SAFE_FILTER_VALUE_PATTERN = /^[\p{L}\p{N}][\p{L}\p{N} ._-]*$/u;
 
 const toFilterTerm = (key: string, value: string): string => {

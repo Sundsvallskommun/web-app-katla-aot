@@ -88,7 +88,7 @@ Backend (`tsconfig.json`): `@/*` → `src/*`, plus `@config`, `@controllers/*`, 
 - **ESLint**: strict, type-aware flat config modeled on Sundsvalls Kommun's web-app-starter — `typescript-eslint` `strictTypeChecked` + `stylisticTypeChecked`, `simple-import-sort`, `unused-imports`, `no-console` (warn/error allowed), no `any`, och `noInlineConfig` (inline `eslint-disable`-kommentarer är förbjudna — åtgärda koden i stället). Kör `yarn lint:strict` och `yarn format:check` före push; båda körs i CI.
 - **Component naming**: `*.component.tsx` pattern
 - **Test selectors**: use `data-cy` attributes (Playwright is configured with `testIdAttribute: 'data-cy'`)
-- **Language**: UI text and comments are in Swedish; code identifiers in English
+- **Language**: UI text (och lokaliseringsfilerna) är på svenska. Kod, kommentarer och testnamn skrivs på engelska — engelskan är etablerad för programmeringstermer och håller kommentarerna kortare. Domänord utan bra engelsk motsvarighet (ärende, avvikelse, Ärendeuppgifter) behålls som de är.
 
 ## Testing
 

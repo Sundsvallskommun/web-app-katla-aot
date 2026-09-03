@@ -41,8 +41,8 @@ describe('errand form handover', () => {
   it('ignores a handover written on another page', () => {
     storeErrandFormHandover({ path: '/arende/registrera', values, wizardStep: 1 });
 
-    // Nyckeln är sökvägen utan språkprefix. Ett annat ärende är en annan sida, och dess
-    // värden hör inte hemma här.
+    // The key is the path without language prefix. Another errand is another page, and its
+    // values do not belong here.
     expect(takeErrandFormHandover('/arende/AIA-25120019/grundinformation')).toBeNull();
   });
 

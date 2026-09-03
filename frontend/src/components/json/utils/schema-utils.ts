@@ -7,8 +7,8 @@ import type { TFunction } from 'i18next';
 import { getJsonValueSchemaValidator } from '../schema/form-schema-validator';
 import { createJsonErrorTransformer, fieldTitleFromSchema } from './schema-form-error-handling';
 
-// Scheman som utgör Ärendeuppgifter. Listan är tom tills AoT:s scheman finns i
-// jsonschema-API:et; typen är bred så att den kan fyllas utan att bli en tuppel.
+// The schemas making up Ärendeuppgifter. Empty until AoT's schemas exist in the jsonschema API;
+// the type is wide so it can be filled without becoming a tuple.
 export const ERRAND_FORM_SCHEMA_NAMES: readonly string[] = [];
 
 export type ErrandFormDataContractErrorCode = 'invalid-json' | 'missing-schema-id' | 'missing-schema-name';
@@ -63,9 +63,9 @@ function requireSchemaId(schemaId: unknown, schemaName: string): string {
   return schemaId;
 }
 
-// Cachea schemat för att undvika upprepade hämtningar. Nyckeln bär språket eftersom
-// samma schema kan levereras med olika fältetiketter per språk – utan det skulle det
-// först hämtade språket serveras till alla efterföljande läsare.
+// Cache the schema to avoid repeated fetches. The key carries the language because the same
+// schema can be delivered with different field labels per language — without it the first
+// language fetched would be served to every later reader.
 const schemaCache = new Map<
   string,
   { schema: RJSFSchema; uiSchema?: UiSchema<Record<string, unknown>>; schemaId: string }
@@ -74,10 +74,10 @@ const schemaCache = new Map<
 const cacheKey = (locale: string, id: string): string => `${locale}:${id}`;
 
 /**
- * Schemats fältetiketter ägs av jsonschema-API:t, inte av frontend. Språket skickas därför
- * med i förfrågan i stället för att översättas här – en översättningstabell i frontend
- * skulle duplicera innehåll som versioneras i ett annat system och tyst driva isär vid
- * varje ny schemaversion. API:t svarar tills vidare på svenska oavsett begärt språk.
+ * The jsonschema API owns the schema's field labels, not the frontend. The language is sent
+ * with the request rather than translated here: a translation table in the frontend would
+ * duplicate content versioned in another system and drift silently at every new schema version.
+ * For now the API answers in Swedish whatever language is asked for.
  */
 const localeHeaders = (locale: string): HeadersInit => ({ 'Accept-Language': locale });
 
@@ -140,7 +140,7 @@ export async function loadFormSchema(
     }
     const schemaId = requireSchemaId(responseSchemaId, schemaName);
 
-    // Spara den exakta versionen under både sitt logiska namn och sitt oföränderliga ID.
+    // Store the exact version under both its logical name and its immutable ID.
     const result = { schema, uiSchema, schemaId };
     schemaCache.set(cacheKey(locale, schemaName), result);
     schemaCache.set(cacheKey(locale, schemaId), result);
@@ -226,16 +226,16 @@ function schemaValidationError(schemaName: string, t?: TFunction): string {
   return t ? t('schema_validation_error', { schemaName }) : `Could not validate ${schemaName}`;
 }
 
-// En post saknas tills användaren rört formuläret. Det är inte ett systemfel
-// utan ett ifyllnadskrav, och meddelandet måste säga det för att vara handlingsbart.
+// An entry is missing until the user touches the form. That is not a system error but something
+// left to fill in, and the message has to say so to be actionable.
 function requiredFormDataError(schemaName: string, t?: TFunction): string {
   return t ? t('required_form_data', { schemaName }) : `Fill in ${schemaName} before continuing`;
 }
 
 /**
- * AJV formulerar sina fel på engelska och namnger fältet med nyckeln ur schemat. Sammanfattningen
- * som visas för användaren återanvänder därför formulärets översatta meddelanden och fältrubriker,
- * så att felet går att koppla till fältet på skärmen.
+ * AJV phrases its errors in English and names the field by its schema key. The summary shown to
+ * the user therefore reuses the form's translated messages and field titles, so the error can be
+ * tied to the field on screen.
  */
 function schemaFieldValidationError(
   schema: RJSFSchema,
@@ -258,19 +258,19 @@ function schemaFieldValidationError(
 }
 
 /**
- * Validerar all ärendeformulärdata mot sina scheman.
- * Returnerar en lista med felmeddelanden, tom om allt är giltigt.
- * @param formDataEntries - Posterna som ska valideras
- * @param t - Valfri översättningsfunktion för felmeddelanden
+ * Validates all errand form data against its schemas. Returns a list of error messages, empty
+ * when everything is valid.
+ * @param formDataEntries - The entries to validate
+ * @param t - Optional translation function for error messages
  */
 export async function validateErrandFormData(
   formDataEntries: ErrandFormDataItem[] | undefined,
   t?: TFunction,
-  // Måste följa det aktiva språket. Annars valideras mot schemat i standardspråket medan
-  // formuläret renderas i ett annat, vilket ger både en onödig extra hämtning och
-  // fältrubriker på fel språk i felsammanfattningen.
+  // Must follow the active language. Otherwise validation runs against the default-language
+  // schema while the form renders in another, giving both an extra fetch and field titles in the
+  // wrong language in the error summary.
   locale = i18nConfig.defaultLocale,
-  // Injicerbar så att fail closed-regeln går att täcka även när den riktiga listan är tom.
+  // Injectable so the fail-closed rule can be covered even while the real list is empty.
   requiredSchemaNames: readonly string[] = ERRAND_FORM_SCHEMA_NAMES
 ): Promise<string[]> {
   const errors: string[] = [];

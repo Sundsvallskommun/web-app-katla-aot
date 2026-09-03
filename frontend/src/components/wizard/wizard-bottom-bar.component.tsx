@@ -84,8 +84,8 @@ export const WizardBottomBar: React.FC = () => {
     }
   };
 
-  // Felmeddelandet berättar vad som saknas och fokus flyttas till fältet, så att det går att
-  // åtgärda direkt även när fältet ligger långt ner i steget.
+  // The message says what is missing and focus moves to the field, so it can be fixed at once
+  // even when the field is far down the step.
   const reportValidationError = (message: string) => {
     toastMessage({ position: 'bottom', status: 'error', message });
     focusFirstError();

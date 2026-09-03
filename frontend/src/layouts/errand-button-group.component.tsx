@@ -87,15 +87,15 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
     }
   };
 
-  // Felmeddelandet berättar vad som saknas och fokus flyttas till fältet, så att det går att
-  // åtgärda direkt även när fältet ligger långt ner eller i ett hopfällt avsnitt.
+  // The message says what is missing and focus moves to the field, so it can be fixed at once
+  // even when the field is far down or inside a collapsed section.
   const reportValidationError = (message: string) => {
     toastMessage({ position: 'bottom', status: 'error', message });
     focusFirstError();
   };
 
   const onValidateBeforeRegister = async () => {
-    // Aktivera validering för JSON-formulär
+    // Turn on validation for the JSON forms.
     setShowValidation(true);
 
     const values = getValues();

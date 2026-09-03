@@ -4,7 +4,7 @@ import { APIS } from './api-config';
 
 export { APIS };
 
-// Tom sträng ska precis som tidigare falla tillbaka på development, därav den explicita kontrollen.
+// An empty string must fall back to development, hence the explicit check.
 const nodeEnv = process.env.NODE_ENV;
 config({ path: `.env.${nodeEnv !== undefined && nodeEnv !== '' ? nodeEnv : 'development'}.local`, quiet: true });
 

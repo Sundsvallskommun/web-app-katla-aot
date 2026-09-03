@@ -1,7 +1,7 @@
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
 
 /**
- * Ärendetypen visas i översikten. Den låg tidigare i ABUSE-etiketten; för AoT är det
- * klassificeringens typ som gäller, och den sätts först när ärendetypsvalet finns.
+ * The errand type shown in the overview. It comes from the classification, which is only set
+ * once the errand type selection exists.
  */
 export const getTypeDisplayName = (errand: ErrandDTO) => errand.classification?.type ?? '—';

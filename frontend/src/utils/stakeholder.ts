@@ -44,9 +44,9 @@ export function phoneNumberFormatter(phoneNumber: string | undefined | null): st
 }
 
 /**
- * Fabrik i stället för ett färdigt schema: yup binder felmeddelandena när schemat byggs,
- * så ett schema på modulnivå skulle låsa fast språket vid det som råkade gälla när modulen
- * lästes in. Anropas via useMemo på det aktiva språket.
+ * A factory rather than a ready-made schema: yup binds the error messages when the schema is
+ * built, so a module-level schema would pin the language to whatever applied at import time.
+ * Called through useMemo on the active language.
  */
 export const createStakeholderSchema = (t: TFunction) =>
   yup.object({

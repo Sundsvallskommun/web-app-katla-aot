@@ -28,7 +28,7 @@ export const StakeholderFormModal: React.FC<{
   });
 
   const schema = useMemo(() => {
-    // Byggs om när språket ändras – yup fryser felmeddelandena vid konstruktionen.
+    // Rebuilt when the language changes: yup freezes the error messages at construction.
     const stakeholderSchema = createStakeholderSchema(t);
     if (!editableFields) return stakeholderSchema;
     const fields: Record<string, yup.Schema> = {};

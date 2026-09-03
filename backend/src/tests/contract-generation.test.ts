@@ -101,7 +101,7 @@ describe('contract generation', () => {
   });
 
   it('feeds a YAML spec to the generator', async () => {
-    // main() itererar över samtliga APIS, så varje anrop behöver ett eget Response med oläst body.
+    // main() iterates over every API, so each call needs its own Response with an unread body.
     const fetcher = vi.fn<typeof fetch>().mockImplementation(() => Promise.resolve(respondWith(yamlSpec, 'application/yaml')));
     const generate = vi.fn<ContractGenerator>().mockResolvedValue(undefined);
 

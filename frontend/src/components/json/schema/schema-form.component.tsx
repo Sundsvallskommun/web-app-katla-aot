@@ -29,7 +29,7 @@ const widgets: RegistryWidgetsType = {
   checkbox: CheckboxWidget,
   DateWidget,
   date: DateWidget,
-  // Namnet TimeWidget ersätter även RJSF:s standardwidget för `format: "time"`
+  // The name TimeWidget also replaces RJSF's default widget for `format: "time"`.
   TimeWidget,
   time: TimeWidget,
   ComboboxWidget,
@@ -93,7 +93,8 @@ export default function SchemaForm({
 
   const errorTransformer = useMemo(() => createJsonErrorTransformer(schema, t), [schema, t]);
 
-  // Skickar originalschemat via formContext så att ObjectFieldTemplate kan läsa villkoren
+  // Passes the original schema through formContext so ObjectFieldTemplate can read the
+  // conditionals.
   const formContext = useMemo(
     () => ({ originalSchema: schema, compact, validationActive: shouldValidate }),
     [schema, compact, shouldValidate]

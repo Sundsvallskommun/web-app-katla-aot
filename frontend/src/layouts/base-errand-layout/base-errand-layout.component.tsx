@@ -28,9 +28,9 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
   const { t } = useTranslation();
   const pathname = usePathname();
 
-  // Sidhuvudet är det enda stället som både äger språkvalen och ser formuläret, så det är
-  // här överlämningen måste skrivas. Nyckeln är sökvägen utan språkprefix – samma sida på
-  // ett annat språk ger samma nyckel, vilket är precis den navigering som ska överleva.
+  // The header is the only place that both owns the language choice and sees the form, so the
+  // handover has to be written here. The key is the path without language prefix: the same page
+  // in another language gives the same key, which is exactly the navigation that must survive.
   const saveFormBeforeLanguageSwitch = useCallback(() => {
     storeErrandFormHandover({
       path: pathWithoutLocale(pathname),
@@ -44,7 +44,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
   const errandNumber = watch('errandNumber');
   const status = watch('status');
 
-  // Bugfix (static-components): JSX-variabel i stället för komponent skapad under rendering
+  // A JSX variable rather than a component created during render (static-components).
   const singleErrandTitle = (
     <div className="flex items-center gap-12 md:gap-24 py-8 md:py-10">
       {registerNewErrand ?
@@ -101,15 +101,15 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
               </div>
             }
             mobileMenu={
-              // Språkvalet ligger utanför menyn, inte i den. Registreringen saknar meny
-              // med flit – den ska inte erbjuda vägar bort från formuläret – men språket
-              // är inget man ska behöva lämna sidan för att byta.
+              // The language control sits outside the menu, not in it. Registration deliberately
+              // has no menu — it should not offer ways away from the form — but changing language
+              // must not require leaving the page.
               <div className="flex items-center gap-8">
                 <LanguageSwitchButton onBeforeSwitch={saveFormBeforeLanguageSwitch} />
                 {!registerNewErrand && (
-                  // Eget block, av samma skäl som i LanguageSwitchButton: panelen placeras
-                  // utifrån sin statiska position, och raden runt omkring är en flex-container
-                  // som annars centrerar den över knappen.
+                  // Its own block, for the same reason as in LanguageSwitchButton: the panel is
+                  // placed from its static position, and the surrounding row is a flex container
+                  // that would otherwise centre it over the button.
                   <div className="relative">
                     <PopupMenu align="end">
                       <PopupMenu.Button iconButton aria-label={t('layout:controls.open_menu')}>

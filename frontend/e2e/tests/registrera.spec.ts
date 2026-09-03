@@ -20,8 +20,8 @@ interface CreateErrandRequestBody {
 }
 
 /**
- * Öppnar bekräftelsedialogen och returnerar submit-knappen. Delas av lyckade och
- * misslyckade registreringar så att båda vägarna passerar samma kontroller.
+ * Opens the confirmation dialog and returns the submit button. Shared by successful and failed
+ * registrations so both paths go through the same checks.
  */
 const openRegistrationConfirmation = async (page: Page) => {
   const registerButton = page.getByTestId('register-errand');
@@ -43,8 +43,8 @@ const registerErrandAndExpectDraft = async (page: Page, expectedStakeholderCount
   const response = await request.response();
   expect(response?.status()).toBe(200);
   const body = request.postDataJSON() as CreateErrandRequestBody;
-  // Formuläret är tömt på fält i väntan på AoT-schemana, så ärendet ska gå iväg utan
-  // parametrar och utan schemasvar — bara intressenterna bär information än så länge.
+  // The form has no fields until the AoT schemas exist, so the errand should go out with no
+  // parameters and no schema answers — only the stakeholders carry information so far.
   expect(body.parameters ?? []).toEqual([]);
   expect(body.jsonParameters).toEqual([]);
   expect(body.stakeholders?.length).toBe(expectedStakeholderCount);
@@ -56,8 +56,8 @@ test.describe('Register new errand page', () => {
     await page.route('**/supportmanagement/metadata', jsonRoute(mockMetadata));
     await page.goto(appUrl('/arende/registrera'));
 
-    // Att avsnitten syns bevisar inte att den serverrenderade sidan har hydrerats.
-    // Registreringsknappen aktiveras först av klienten, så den är flödets readiness-gräns.
+    // Visible sections do not prove the server-rendered page has hydrated.
+    // The client enables the register button, so it is the flow's readiness boundary.
     await expect(page.getByTestId('register-errand')).toBeEnabled();
   });
 
@@ -68,7 +68,7 @@ test.describe('Register new errand page', () => {
       await expect(disclosureByTitle(page, title)).toBeVisible();
     }
 
-    // Brukare och Rapportör hörde till avvikelserapporteringen och ska inte finnas kvar.
+    // These sections belong to the app this one was cloned from and must not remain.
     await expect(disclosureByTitle(page, 'Brukare')).toHaveCount(0);
     await expect(disclosureByTitle(page, 'Rapportör')).toHaveCount(0);
 

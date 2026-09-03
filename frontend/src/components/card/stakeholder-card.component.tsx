@@ -39,8 +39,8 @@ export const StakeholderCard: React.FC<{
           </p>
 
           {shouldShowContactDetails(roles) && (
-            // Kolumnerna staplas på smal skärm; break-words ärvs ned så att långa
-            // e-postadresser bryts i stället för att tvinga fram sidbredd.
+            // The columns stack on narrow screens; break-words is inherited so long email
+            // addresses wrap instead of forcing page width.
             <div className="flex text-md mb-10 flex-col sm:flex-row gap-y-4 gap-x-15 break-words">
               <div className="flex flex-col min-w-0">
                 {stakeholder.title && (

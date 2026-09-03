@@ -10,9 +10,8 @@ import { apiURL } from './util';
 const getCitizenPersonNumber = (value: unknown): string => {
   if (typeof value === 'string') return value;
 
-  // Citizen dokumenterar svaret som en sträng, men gatewayen kan JSON-parsa
-  // det tolvsiffriga värdet som ett tal. Acceptera bara heltal som kan
-  // konverteras utan precisionsförlust.
+  // Citizen documents the response as a string, but the gateway may JSON-parse the
+  // twelve-digit value as a number. Accept only integers that convert losslessly.
   if (typeof value === 'number' && Number.isSafeInteger(value)) return String(value);
 
   throw new HttpException(502, 'Invalid person number response from Citizen API');
