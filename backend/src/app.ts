@@ -24,7 +24,9 @@ import {
   SESSION_MEMORY,
   SWAGGER_ENABLED,
 } from '@config';
+import { createDefaultAuthGuard } from '@middlewares/default-auth.middleware';
 import errorMiddleware from '@middlewares/error.middleware';
+import { buildPublicPathSet, PublicRouteInfo } from '@middlewares/public.decorator';
 import { Strategy, VerifiedCallback } from '@node-saml/passport-saml';
 import { logger, stream } from '@utils/logger';
 import bodyParser from 'body-parser';
@@ -229,7 +231,8 @@ class App {
 
     this.initializeDataFolders();
 
-    this.initializeMiddlewares();
+    const { paths: publicPaths, routes: publicRoutes } = buildPublicPathSet(Controllers);
+    this.initializeMiddlewares(publicPaths, publicRoutes);
     this.initializeRoutes(Controllers);
     if (this.swaggerEnabled) {
       this.initializeSwagger(Controllers);
@@ -250,7 +253,7 @@ class App {
     return this.app;
   }
 
-  private initializeMiddlewares() {
+  private initializeMiddlewares(publicPaths: Set<string>, publicRoutes: PublicRouteInfo[]) {
     this.app.set('trust proxy', 1);
     this.app.use(morgan(LOG_FORMAT ?? 'default', { stream }));
     // Basic rate limiting for every route (login flows, swagger, proxied APIs). Tune per
@@ -400,6 +403,17 @@ class App {
       }) as express.RequestHandler;
       authenticate(req, res, next);
     });
+
+    // Default-deny authentication. Mounted last so the SAML endpoints above stay reachable, and
+    // before initializeRoutes() so every routing-controllers route sits behind it unless its
+    // handler carries @Public().
+    for (const route of publicRoutes) {
+      logger.warn(
+        `Auth guard: PUBLIC ${route.httpMethod} ${route.path} (${route.controller}.${route.action})` +
+          (route.reason !== undefined && route.reason !== '' ? ` - ${route.reason}` : ' - no reason given'),
+      );
+    }
+    this.app.use(BASE_URL_PREFIX ?? '', createDefaultAuthGuard(publicPaths));
   }
 
   private initializeRoutes(controllers: ControllerClass[]) {
