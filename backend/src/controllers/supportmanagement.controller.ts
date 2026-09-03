@@ -3,7 +3,7 @@ import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 import { MUNICIPALITY_ID, NAMESPACE } from '@/config';
 import { getApiBase } from '@/config/api-config';
-import { Errand, MetadataResponse, PageErrand } from '@/data-contracts/supportmanagement/data-contracts';
+import { Errand, MetadataResponse, PageErrand, Stakeholder } from '@/data-contracts/supportmanagement/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
@@ -25,7 +25,55 @@ const toFilterValue = (value: unknown): string | undefined => {
 // the escaping dialect belongs to upstream and must not be guessed here.
 const SAFE_FILTER_VALUE_PATTERN = /^[\p{L}\p{N}][\p{L}\p{N} ._-]*$/u;
 
+// routing-controllers does not whitelist query params: keys the DTO never declared still reach
+// the handler, so the key needs the same distrust as the value. A field name cannot contain a
+// quote or comma, which is what it would take to close the literal and add a condition.
+const SAFE_FILTER_KEY_PATTERN = /^[A-Za-z][A-Za-z0-9_.]*$/;
+
+// A stakeholder's externalId holds the organisation's party id.
+const ORGANIZATION_FILTER_KEY = 'stakeholders.externalId';
+
+const PRIMARY_STAKEHOLDER_ROLE = 'PRIMARY';
+
+/**
+ * Party ids of the organisations the logged-in user may see errands for.
+ *
+ * Read from the session only — never from the request — so a client cannot widen its own scope.
+ * Fails closed: no organisations in the session means no errand query at all.
+ *
+ * FIXME(katla-aot): nothing populates this yet. External login, and the list of organisations
+ * belonging to the user, are still to be built; until then every errand query returns 403. That
+ * is deliberate — there must be no unscoped errand fetch.
+ */
+const requireOrganizationPartyIds = (req: RequestWithUser): string[] => {
+  const partyIds = req.session.organizationPartyIds ?? [];
+
+  if (partyIds.length === 0) {
+    throw new HttpException(403, 'No organization in session to scope the errand query to');
+  }
+
+  return partyIds;
+};
+
+const isPrimaryStakeholder = (stakeholder: Stakeholder): boolean => stakeholder.role === PRIMARY_STAKEHOLDER_ROLE;
+
+/**
+ * Whether the errand's primary stakeholder is one of the session's organisations.
+ *
+ * The upstream filter is the belt and this is the braces: a filter that is wrong, dropped or
+ * loosened upstream would otherwise hand back another organisation's errand silently.
+ */
+const belongsToOrganizations = (errand: Errand, organizationPartyIds: string[]): boolean => {
+  const primaryExternalId = errand.stakeholders?.find(isPrimaryStakeholder)?.externalId;
+
+  return primaryExternalId !== undefined && organizationPartyIds.includes(primaryExternalId);
+};
+
 const toFilterTerm = (key: string, value: string): string => {
+  if (!SAFE_FILTER_KEY_PATTERN.test(key)) {
+    throw new HttpException(400, 'Invalid filter key');
+  }
+
   if (!SAFE_FILTER_VALUE_PATTERN.test(value)) {
     throw new HttpException(400, 'Invalid filter value');
   }
@@ -33,10 +81,39 @@ const toFilterTerm = (key: string, value: string): string => {
   return `${key}:'${value}'`;
 };
 
+// SupportManagement uses the Spring filter grammar: terms are joined with `and`, alternatives are
+// an `or` group in parentheses. Commas are not an operator — joining with one silently produces a
+// filter that does not mean what it reads like.
+const FILTER_AND = ' and ';
+
+const toFilterOrGroup = (key: string, values: string[]): string => `(${values.map(value => toFilterTerm(key, value)).join(' or ')})`;
+
 @Controller()
 export class SupportManagementController {
   private apiService = new ApiService();
   private apiBase = getApiBase('supportmanagement');
+
+  /**
+   * Upstream accepts any errand id in the namespace, and every authenticated user can list the
+   * whole namespace — so the id of someone else's errand is readily available. Ownership is
+   * enforced here: only the user who registered the errand may change it.
+   *
+   * An errand with no reporterUserId (not registered through this app) is owned by nobody and
+   * cannot be edited here.
+   */
+  private async assertErrandOwnedByUser(id: string, req: RequestWithUser): Promise<void> {
+    const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands/${id}`;
+    const baseURL = apiURL(this.apiBase);
+
+    const res = await this.apiService.get<Partial<Errand>>({ baseURL, url, propagateClientError: true }, req);
+    const reporterUserId = res.data?.reporterUserId;
+
+    // AD account names are case-insensitive; a casing difference between sessions must not lock
+    // a user out of their own errand.
+    if (reporterUserId?.toLowerCase() !== req.user.username.toLowerCase()) {
+      throw new HttpException(403, 'Errand belongs to another user');
+    }
+  }
 
   @Post('/supportmanagement/errand/create')
   @OpenAPI({ summary: 'Create new errand' })
@@ -46,10 +123,14 @@ export class SupportManagementController {
     const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands`;
     const baseURL = apiURL(this.apiBase);
 
+    // routing-controllers binds body fields the DTO declares even when the client should never
+    // send them. id and errandNumber are assigned upstream and must not exist on a new errand.
+    const { id: _id, errandNumber: _errandNumber, ...newErrand } = errand;
+
     const errandInformation = {
-      ...(errand as Errand),
+      ...(newErrand as Errand),
       reporterUserId: req.user.username,
-      stakeholders: errand.stakeholders?.map(mapStakeholderDTOToStakeholder),
+      stakeholders: newErrand.stakeholders?.map(mapStakeholderDTOToStakeholder),
     };
 
     const res = await this.apiService.post<Partial<Errand>>({ baseURL, url, data: errandInformation, propagateClientError: true }, req);
@@ -58,7 +139,7 @@ export class SupportManagementController {
     const resStakeholders = res.data.stakeholders;
     if (!resStakeholders) throw new HttpException(502, 'No stakeholders in response when creating errand');
 
-    const stakeholders = await Promise.all(resStakeholders.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)));
+    const stakeholders = resStakeholders.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req));
 
     return {
       ...res.data,
@@ -72,6 +153,8 @@ export class SupportManagementController {
   @ResponseSchema(ErrandDTO)
   async updateErrand(@Req() req: RequestWithUser, @Param('id') id: string, @Body() errand: Partial<Errand>): Promise<Partial<Errand>> {
     if (!id.trim()) throw new HttpException(400, 'Errand id is required when updating an errand');
+
+    await this.assertErrandOwnedByUser(id, req);
 
     const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands/${id}`;
     const baseURL = apiURL(this.apiBase);
@@ -97,7 +180,7 @@ export class SupportManagementController {
     const res = await this.apiService.patch<Partial<Errand>>({ baseURL, url, data: errandInformation, propagateClientError: true }, req);
     if (!res.data) throw new HttpException(502, 'Invalid response when updating errand');
 
-    const stakeholders = await Promise.all(res.data.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? []);
+    const stakeholders = res.data.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? [];
 
     return {
       ...res.data,
@@ -106,19 +189,28 @@ export class SupportManagementController {
   }
 
   @Get('/supportmanagement/errand/:errandNumber')
-  @OpenAPI({ summary: 'Read maching errands' })
+  @OpenAPI({ summary: 'Read one errand belonging to the session organisations' })
   @UseBefore(authMiddleware)
   @ResponseSchema(ErrandDTO)
   async getErrand(@Req() req: RequestWithUser, @Param('errandNumber') errandNumber: string): Promise<ErrandDTO> {
-    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands?filter=${toFilterTerm('errandNumber', errandNumber)}`;
+    const organizationPartyIds = requireOrganizationPartyIds(req);
+
+    const filter = [toFilterTerm('errandNumber', errandNumber), toFilterOrGroup(ORGANIZATION_FILTER_KEY, organizationPartyIds)].join(FILTER_AND);
+    const params = new URLSearchParams({ filter });
+    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands?${params.toString()}`;
 
     const res = await this.apiService.get<PageErrand>({ url }, req);
     if (!res.data) throw new HttpException(502, 'Invalid response when reading errand');
 
     const matchedErrand = res.data.content?.[0];
-    if (!matchedErrand) throw new HttpException(404, 'Errand not found');
 
-    const stakeholders = await Promise.all(matchedErrand.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? []);
+    // 404, not 403: errand numbers are enumerable, so another organisation's errand must be
+    // indistinguishable from one that does not exist.
+    if (!matchedErrand || !belongsToOrganizations(matchedErrand, organizationPartyIds)) {
+      throw new HttpException(404, 'Errand not found');
+    }
+
+    const stakeholders = matchedErrand.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? [];
 
     return {
       ...matchedErrand,
@@ -131,6 +223,7 @@ export class SupportManagementController {
   @UseBefore(authMiddleware)
   @ResponseSchema(PageErrandDTO)
   async getErrands(@Req() req: RequestWithUser, @QueryParams() query: ErrandsQueryDTO): Promise<PageErrand> {
+    const organizationPartyIds = requireOrganizationPartyIds(req);
     const baseUrl = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands`;
     const params = new URLSearchParams();
 
@@ -138,11 +231,12 @@ export class SupportManagementController {
     if (query.size !== undefined) params.append('size', String(query.size));
     if (query.sort !== undefined) params.append('sort', query.sort);
 
-    const filterParts: string[] = [];
+    const filterParts = [toFilterOrGroup(ORGANIZATION_FILTER_KEY, organizationPartyIds)];
     const queryEntries = query as unknown as Record<string, unknown>;
 
     for (const key of Object.keys(queryEntries)) {
       if (['page', 'size', 'sort'].includes(key)) continue;
+      if (key === ORGANIZATION_FILTER_KEY) throw new HttpException(400, 'Organization scope is set by the server');
       const value = toFilterValue(queryEntries[key]);
 
       if (value !== undefined) {
@@ -150,9 +244,7 @@ export class SupportManagementController {
       }
     }
 
-    if (filterParts.length > 0) {
-      params.append('filter', filterParts.join(','));
-    }
+    params.append('filter', filterParts.join(FILTER_AND));
 
     const finalUrl = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
 
@@ -167,13 +259,15 @@ export class SupportManagementController {
   @UseBefore(authMiddleware)
   @ResponseSchema(ErrandCountDTO)
   async getNumberOfErrands(@Req() req: RequestWithUser, @QueryParams() query: ErrandsQueryDTO): Promise<{ count: number }> {
+    const organizationPartyIds = requireOrganizationPartyIds(req);
     const baseUrl = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands/count`;
     const params = new URLSearchParams();
 
-    const filterParts: string[] = [];
+    const filterParts = [toFilterOrGroup(ORGANIZATION_FILTER_KEY, organizationPartyIds)];
     const queryEntries = query as unknown as Record<string, unknown>;
 
     for (const key of Object.keys(queryEntries)) {
+      if (key === ORGANIZATION_FILTER_KEY) throw new HttpException(400, 'Organization scope is set by the server');
       const value = toFilterValue(queryEntries[key]);
 
       if (value !== undefined) {
@@ -181,9 +275,7 @@ export class SupportManagementController {
       }
     }
 
-    if (filterParts.length > 0) {
-      params.append('filter', filterParts.join(','));
-    }
+    params.append('filter', filterParts.join(FILTER_AND));
 
     const finalUrl = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
 
