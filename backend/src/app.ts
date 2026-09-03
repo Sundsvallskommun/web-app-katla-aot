@@ -56,7 +56,7 @@ type ControllerClass = new () => object;
 
 const corsWhitelist = (ORIGIN ?? '').split(',');
 
-const sessionTTL = 4 * 24 * 60 * 60;
+const sessionTTL = 12 * 60 * 60;
 // NOTE: memory uses ms while file uses seconds
 const sessionStore: session.Store = SESSION_MEMORY
   ? new (createMemoryStore(session))({ checkPeriod: sessionTTL * 1000 })
@@ -128,16 +128,17 @@ const samlStrategy = new Strategy(
     // Identity Provider's public key
     idpCert: SAML_IDP_PUBLIC_CERT ?? '',
     issuer: SAML_ISSUER ?? '',
-    wantAssertionsSigned: false,
+    wantAssertionsSigned: true,
     signatureAlgorithm: 'sha256',
     digestAlgorithm: 'sha256',
     // maxAssertionAgeMs: 2592000000,
     // authnRequestBinding: 'HTTP-POST',
     //logoutUrl: 'http://194.71.24.30/sso',
     logoutCallbackUrl: SAML_LOGOUT_CALLBACK_URL ?? '',
-    acceptedClockSkewMs: -1,
+    // -1 would disable the assertion time check entirely.
+    acceptedClockSkewMs: 5000,
     wantAuthnResponseSigned: false,
-    audience: false,
+    audience: SAML_ISSUER ?? '',
   },
   function (profile: Profile | null, done: VerifiedCallback) {
     if (!profile) {
@@ -194,7 +195,9 @@ const samlStrategy = new Strategy(
         // permissions: getPermissions(appGroups),
       };
 
-      logger.info(`Found user: ${JSON.stringify(findUser)}`);
+      // The full profile is PII — debug only.
+      logger.info(`Authenticated user ${findUser.username} (role: ${findUser.role ?? 'none'})`);
+      logger.debug(`Found user: ${JSON.stringify(findUser)}`);
 
       done(null, findUser);
     } catch (err) {
@@ -376,6 +379,7 @@ class App {
       const authenticate = passport.authenticate('saml', (err: unknown, user?: Express.User | false | null) => {
         if (err) {
           const errorName = getErrorName(err);
+          logger.warn(`SAML login callback failed: ${errorName ?? 'SAML_UNKNOWN_ERROR'}`);
           failureRedirect.searchParams.set('failMessage', errorName ?? 'SAML_UNKNOWN_ERROR');
           res.redirect(failureRedirect.toString());
           return;
