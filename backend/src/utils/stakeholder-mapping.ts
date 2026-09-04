@@ -34,6 +34,9 @@ import { StakeholderDTO } from '@/responses/supportmanagement.response';
 //   const citizenResponse = await apiService.get<unknown>({ url: citizenUrl, baseURL }, _req);
 //   personNumber = getCitizenPersonNumber(citizenResponse.data);
 // }
+/** Parameter key for the serving location. */
+const SERVERINGSSTALLE_PARAMETER = 'serveringsstalle';
+
 export function mapStakeholderToStakeholderDTO(stakeholder: Stakeholder, _req: RequestWithUser): StakeholderDTO {
   const { contactChannels, parameters, ...rest } = stakeholder;
 
@@ -58,6 +61,8 @@ export function mapStakeholderToStakeholderDTO(stakeholder: Stakeholder, _req: R
     personNumber: undefined,
     title: parameters?.find(p => p.key === 'title')?.displayName ?? undefined,
     department: parameters?.find(p => p.key === 'department')?.displayName ?? undefined,
+    // values, not displayName: this one carries data the citizen entered, not a label.
+    serveringsstalle: parameters?.find(p => p.key === SERVERINGSSTALLE_PARAMETER)?.values?.[0] ?? undefined,
     emails: emails.length ? emails : undefined,
     phoneNumbers: phoneNumbers.length ? phoneNumbers : undefined,
   };
@@ -65,7 +70,7 @@ export function mapStakeholderToStakeholderDTO(stakeholder: Stakeholder, _req: R
 
 export function mapStakeholderDTOToStakeholder(stakeholder: StakeholderDTO): Stakeholder {
   delete stakeholder.personNumber;
-  const { emails, phoneNumbers, title, department, ...rest } = stakeholder;
+  const { emails, phoneNumbers, title, department, serveringsstalle, ...rest } = stakeholder;
 
   const contactChannels: ContactChannel[] = [
     ...(emails?.map(email => ({
@@ -90,6 +95,12 @@ export function mapStakeholderDTOToStakeholder(stakeholder: StakeholderDTO): Sta
     parameters.push({
       key: 'department',
       displayName: department,
+    });
+  }
+  if (serveringsstalle) {
+    parameters.push({
+      key: SERVERINGSSTALLE_PARAMETER,
+      values: [serveringsstalle],
     });
   }
 

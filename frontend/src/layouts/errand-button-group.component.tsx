@@ -9,6 +9,7 @@ import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandFormDTO } from '@interfaces/errand-form';
 import { createErrand, updateErrand } from '@services/errand-service/errand-service';
 import { Button, Dialog, useSnackbar } from '@sk-web-gui/react';
+import { getPrimaryStakeholder } from '@utils/stakeholder';
 import { Inbox } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -99,6 +100,14 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
     setShowValidation(true);
 
     const values = getValues();
+
+    // Without an owner the errand falls outside every organisation the session scopes by, so the
+    // citizen who filed it could not read it back.
+    if (!getPrimaryStakeholder(values.stakeholders)) {
+      reportValidationError(t('validation:owner.required'));
+      return;
+    }
+
     const formDataErrors = await validateErrandFormData(values.errandFormData, tForms, locale);
 
     if (formDataErrors.length > 0) {
