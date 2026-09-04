@@ -1,9 +1,11 @@
 import type { Page } from '@playwright/test';
 
+import { mockOrganization, mockSecondOrganization } from '../fixtures/getMyOrganizations';
 import { mockErrand } from '../fixtures/mockErrand';
 import { mockMetadata } from '../fixtures/mockMetadata';
 import { mockManualEditStakeholder, mockStakeholder } from '../fixtures/mockStakeholder';
 import { MOCK_COUNTRY_CODE_PHONE_NUMBER, MOCK_EMAIL, MOCK_HYPHEN_PERSON_NUMBER } from '../utils/constants';
+import { errandOwnerSection, selectErrandOwner } from '../utils/errand-owner';
 import { jsonRoute } from '../utils/routes';
 import {
   addStakeholder,
@@ -13,10 +15,12 @@ import {
 } from '../utils/stakeholder';
 import { expect, test } from '../utils/test';
 
+const OWNER_REQUIRED_MESSAGE = 'Välj vilket företag eller vilken organisation ärendet gäller.';
+
 interface CreateErrandRequestBody {
   jsonParameters?: { key: string; value: unknown; schemaId: string }[];
   parameters?: { key: string; values: string[] }[];
-  stakeholders?: unknown[];
+  stakeholders?: Record<string, unknown>[];
 }
 
 /**
@@ -33,6 +37,7 @@ const openRegistrationConfirmation = async (page: Page) => {
   return submitButton;
 };
 
+// The owner counts as a stakeholder: it is the errand's PRIMARY one.
 const registerErrandAndExpectDraft = async (page: Page, expectedStakeholderCount: number) => {
   const submitButton = await openRegistrationConfirmation(page);
   const createRequest = page.waitForRequest(
@@ -75,10 +80,152 @@ test.describe('Register new errand page', () => {
     await expect(page.getByRole('heading', { name: '2. Ärendeuppgifter' })).toBeVisible();
   });
 
+  test('Lists the organizations the citizen has engagements in as errand owner', async ({ page }) => {
+    const select = errandOwnerSection(page).getByTestId('errand-owner-select');
+
+    // The placeholder option, so nothing is chosen while there is a choice to make.
+    await expect(select).toHaveValue('');
+    await expect(select.locator('option')).toHaveText([
+      'Välj företag eller organisation',
+      mockOrganization.organizationName,
+      mockSecondOrganization.organizationName,
+    ]);
+
+    // Nothing is chosen yet, so there is no owner card.
+    await expect(errandOwnerSection(page).getByTestId('stakeholder-card')).toHaveCount(0);
+  });
+
+  test('Shows the chosen organization as a card, and swaps it rather than adding a second', async ({ page }) => {
+    const owner = errandOwnerSection(page);
+
+    await selectErrandOwner(page, mockOrganization);
+    await expect(owner.getByTestId('stakeholder-role')).toHaveText('Ärendeägare');
+    await expect(owner.getByTestId('stakeholder-organizationNumber')).toHaveText(mockOrganization.organizationNumber);
+
+    await selectErrandOwner(page, mockSecondOrganization);
+    await expect(owner.getByTestId('stakeholder-card')).toHaveCount(1);
+    await expect(owner.getByTestId('stakeholder-organizationNumber')).toHaveText(
+      mockSecondOrganization.organizationNumber
+    );
+  });
+
+  test('Clearing the choice removes the owner card', async ({ page }) => {
+    const owner = errandOwnerSection(page);
+    await selectErrandOwner(page, mockOrganization);
+
+    await owner.getByTestId('errand-owner-select').selectOption('');
+
+    await expect(owner.getByTestId('stakeholder-card')).toHaveCount(0);
+  });
+
+  test('Removes the owner from the card action', async ({ page }) => {
+    const owner = errandOwnerSection(page);
+    await selectErrandOwner(page, mockOrganization);
+
+    await owner.getByTestId('remove-owner-button').click();
+
+    await expect(owner.getByTestId('stakeholder-card')).toHaveCount(0);
+    await expect(owner.getByTestId('errand-owner-select')).toHaveValue('');
+  });
+
+  test('Edits the owner contact details and files them with the errand', async ({ page }) => {
+    const owner = errandOwnerSection(page);
+    await selectErrandOwner(page, mockOrganization);
+
+    await owner.getByTestId('edit-owner-button').click();
+    await expect(page.getByTestId('errand-owner-modal')).toBeVisible();
+
+    // Identity comes from the citizen's engagement and is not theirs to change.
+    await expect(page.getByTestId('owner-organizationNumber')).toHaveValue(mockOrganization.organizationNumber);
+    await expect(page.getByTestId('owner-organizationNumber')).toHaveAttribute('readonly', '');
+
+    await page.getByTestId('owner-serveringsstalle-input').fill('Acme Krogen');
+    await page.getByTestId('owner-address-input').fill('Storgatan 1');
+    await page.getByTestId('owner-zipCode-input').fill('852 31');
+    await page.getByTestId('owner-city-input').fill('Sundsvall');
+
+    // Validated on add, so a bad address never reaches the errand.
+    await page.getByTestId('owner-email-input').fill('inte-en-adress');
+    await page.getByTestId('owner-email-add').click();
+    await expect(page.getByTestId('owner-email-error')).toBeVisible();
+    await expect(page.getByTestId('owner-email-value')).toHaveCount(0);
+
+    await page.getByTestId('owner-email-input').fill('post@acme.se');
+    await page.getByTestId('owner-email-add').click();
+    await expect(page.getByTestId('owner-email-value')).toHaveText('post@acme.se');
+    await page.getByTestId('owner-modal-save').click();
+
+    await expect(owner.getByTestId('stakeholder-serveringsstalle')).toContainText('Acme Krogen');
+    await expect(owner.getByTestId('stakeholder-address')).toContainText('Storgatan 1 852 31 Sundsvall');
+    await expect(owner.getByTestId('stakeholder-email')).toHaveText('post@acme.se');
+
+    const submitButton = await openRegistrationConfirmation(page);
+    const createRequest = page.waitForRequest(
+      (request) => request.url().includes('/supportmanagement/errand/create') && request.method() === 'POST'
+    );
+    await submitButton.click();
+    const body = (await createRequest).postDataJSON() as CreateErrandRequestBody;
+
+    expect(body.stakeholders?.[0]).toMatchObject({
+      role: 'PRIMARY',
+      externalId: mockOrganization.partyId,
+      serveringsstalle: 'Acme Krogen',
+      address: 'Storgatan 1',
+      emails: ['post@acme.se'],
+    });
+  });
+
+  test('Discards owner edits that were cancelled', async ({ page }) => {
+    const owner = errandOwnerSection(page);
+    await selectErrandOwner(page, mockOrganization);
+
+    await owner.getByTestId('edit-owner-button').click();
+    await page.getByTestId('owner-serveringsstalle-input').fill('Ska inte sparas');
+    await page.getByTestId('owner-modal-cancel').click();
+
+    await expect(owner.getByTestId('stakeholder-serveringsstalle')).toHaveCount(0);
+
+    // Reopening shows what was filed, not the abandoned edit.
+    await owner.getByTestId('edit-owner-button').click();
+    await expect(page.getByTestId('owner-serveringsstalle-input')).toHaveValue('');
+  });
+
+  test('Refuses to register an errand before an owner has been chosen', async ({ page }) => {
+    await page.getByTestId('register-errand').click();
+
+    // The message is deliberately in two places: the toast reports the failed attempt, the
+    // inline error marks the field to fix. Assert each rather than an unscoped text match.
+    await expect(page.getByTestId('errand-owner-error')).toContainText(OWNER_REQUIRED_MESSAGE);
+    await expect(page.locator('#react-toast').getByText(OWNER_REQUIRED_MESSAGE)).toBeVisible();
+    await expect(page.getByTestId('submit-button')).toHaveCount(0);
+  });
+
   test('Registers an errand without any form fields filled in', async ({ page }) => {
     await expect(page.locator('main').first()).toBeVisible();
 
-    await registerErrandAndExpectDraft(page, 0);
+    await selectErrandOwner(page);
+
+    await registerErrandAndExpectDraft(page, 1);
+  });
+
+  test('Files the chosen organization as the errand owner', async ({ page }) => {
+    await selectErrandOwner(page, mockSecondOrganization);
+
+    const submitButton = await openRegistrationConfirmation(page);
+    const createRequest = page.waitForRequest(
+      (request) => request.url().includes('/supportmanagement/errand/create') && request.method() === 'POST'
+    );
+    await submitButton.click();
+    const body = (await createRequest).postDataJSON() as CreateErrandRequestBody;
+
+    expect(body.stakeholders).toEqual([
+      {
+        role: 'PRIMARY',
+        externalId: mockSecondOrganization.partyId,
+        externalIdType: 'COMPANY',
+        organizationName: mockSecondOrganization.organizationName,
+      },
+    ]);
   });
 
   test('Adds a stakeholder using personnumber and registers the errand', async ({ page }) => {
@@ -90,7 +237,8 @@ test.describe('Register new errand page', () => {
     await expect(ovrigaParter.getByTestId('remove-card-button').first()).toBeVisible();
     await expect(ovrigaParter.getByTestId('add-manual-person-button')).toBeVisible();
 
-    await registerErrandAndExpectDraft(page, 1);
+    await selectErrandOwner(page);
+    await registerErrandAndExpectDraft(page, 2);
   });
 
   test('Preserves entered data and stays on the form when registration fails', async ({ page }) => {
@@ -99,6 +247,7 @@ test.describe('Register new errand page', () => {
     const ovrigaParter = disclosureByTitle(page, 'Övriga parter');
     await addStakeholder(page, ovrigaParter, 'CONTACT');
     await expect(ovrigaParter.getByTestId('stakeholder-card')).toHaveCount(1);
+    await selectErrandOwner(page);
 
     const submitButton = await openRegistrationConfirmation(page);
     const failedResponse = page.waitForResponse(
@@ -135,7 +284,8 @@ test.describe('Register new errand page', () => {
     await expect(ovrigaParter.getByTestId('remove-card-button')).toBeVisible();
     await expect(ovrigaParter.getByTestId('add-manual-person-button')).toBeVisible();
 
-    await registerErrandAndExpectDraft(page, 1);
+    await selectErrandOwner(page);
+    await registerErrandAndExpectDraft(page, 2);
   });
 
   test('Manually edits and removes a stakeholder', async ({ page }) => {
@@ -174,6 +324,7 @@ test.describe('Register new errand page', () => {
       `${mockManualEditStakeholder.address ?? ''} ${mockManualEditStakeholder.city ?? ''}`
     );
 
-    await registerErrandAndExpectDraft(page, 1);
+    await selectErrandOwner(page);
+    await registerErrandAndExpectDraft(page, 2);
   });
 });

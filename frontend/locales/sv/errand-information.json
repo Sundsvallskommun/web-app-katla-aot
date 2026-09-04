@@ -85,7 +85,20 @@
   },
   "owner": {
     "title": "Ärendeägare",
-    "description": "Ärendeägaren är det företag eller den organisation som ansöker och är vår primära kontakt när ärendet handläggs."
+    "description": "Ärendeägaren är det företag eller den organisation som ansöker och är vår primära kontakt när ärendet handläggs.",
+    "select_label": "Välj ärendeägare",
+    "no_organizations": "Du har inga företag eller organisationer att registrera ärendet för.",
+    "select_placeholder": "Välj företag eller organisation",
+    "serveringsstalle": "Serveringsställe",
+    "modal": {
+      "title": "Redigera ärendeägare",
+      "organization_number": "Organisationsnummer",
+      "organization_name": "Organisationsnamn",
+      "add": "Lägg till",
+      "already_added": "Uppgiften är redan tillagd.",
+      "remove_value": "Ta bort {{value}}",
+      "save": "Ändra uppgifter"
+    }
   },
   "errand_details": {
     "title": "Ärendeuppgifter",

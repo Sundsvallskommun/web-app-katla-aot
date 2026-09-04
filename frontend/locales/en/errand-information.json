@@ -85,7 +85,20 @@
   },
   "owner": {
     "title": "Case owner",
-    "description": "The case owner is the company or organisation that is applying and our primary contact while the case is processed."
+    "description": "The case owner is the company or organisation that is applying and our primary contact while the case is processed.",
+    "select_label": "Select case owner",
+    "no_organizations": "You have no companies or organisations to register the case for.",
+    "select_placeholder": "Select a company or organisation",
+    "serveringsstalle": "Serving location",
+    "modal": {
+      "title": "Edit case owner",
+      "organization_number": "Organisation number",
+      "organization_name": "Organisation name",
+      "add": "Add",
+      "already_added": "That detail has already been added.",
+      "remove_value": "Remove {{value}}",
+      "save": "Save changes"
+    }
   },
   "errand_details": {
     "title": "Case details",
