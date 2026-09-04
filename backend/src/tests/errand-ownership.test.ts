@@ -1,11 +1,13 @@
-// Knowing an errand's guid must not be enough to patch it. Every authenticated user can list the
-// whole namespace, so guids are not secret — updateErrand has to check the reporter itself.
+// Knowing an errand's guid must not be enough to patch it — updateErrand has to check the
+// reporter itself. The reporter is the citizen's party id, since citizens have no account name.
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SupportManagementController } from '@/controllers/supportmanagement.controller';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
+
+import { mockCitizenPartyId, mockErrandId, mockOtherCitizenPartyId } from './helpers/mock-data';
 
 const { get, patch } = vi.hoisted(() => ({ get: vi.fn(), patch: vi.fn() }));
 
@@ -19,66 +21,66 @@ vi.mock('@/services/api.service', () => ({
   },
 }));
 
-const ERRAND_ID = '3f1b0c9e-0000-4000-8000-000000000001';
-
-const requestAs = (username: string): RequestWithUser => ({ user: { username } }) as RequestWithUser;
+const requestAs = (partyId: string): RequestWithUser => ({ user: { partyId } }) as RequestWithUser;
 
 const upstreamReturnsReporter = (reporterUserId: string | undefined) => {
-  get.mockResolvedValue({ data: { id: ERRAND_ID, reporterUserId } });
+  get.mockResolvedValue({ data: { id: mockErrandId, reporterUserId } });
 };
 
 describe('errand update ownership', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    patch.mockResolvedValue({ data: { id: ERRAND_ID, stakeholders: [] } });
+    patch.mockResolvedValue({ data: { id: mockErrandId, stakeholders: [] } });
   });
 
   it('updates an errand the user registered', async () => {
-    upstreamReturnsReporter('user1');
+    upstreamReturnsReporter(mockCitizenPartyId);
 
-    await new SupportManagementController().updateErrand(requestAs('user1'), ERRAND_ID, { title: 'ny titel' });
+    await new SupportManagementController().updateErrand(requestAs(mockCitizenPartyId), mockErrandId, { title: 'ny titel' });
 
     expect(patch).toHaveBeenCalledTimes(1);
   });
 
   it('refuses to patch an errand registered by another user', async () => {
-    upstreamReturnsReporter('user2');
+    upstreamReturnsReporter(mockOtherCitizenPartyId);
 
-    await expect(new SupportManagementController().updateErrand(requestAs('user1'), ERRAND_ID, { title: 'kapad' })).rejects.toMatchObject({
+    await expect(
+      new SupportManagementController().updateErrand(requestAs(mockCitizenPartyId), mockErrandId, { title: 'kapad' }),
+    ).rejects.toMatchObject({
       status: 403,
     });
   });
 
   it('does not reach upstream with the update when ownership fails', async () => {
-    upstreamReturnsReporter('user2');
+    upstreamReturnsReporter(mockOtherCitizenPartyId);
 
-    await expect(new SupportManagementController().updateErrand(requestAs('user1'), ERRAND_ID, { title: 'kapad' })).rejects.toBeInstanceOf(
-      HttpException,
-    );
+    await expect(
+      new SupportManagementController().updateErrand(requestAs(mockCitizenPartyId), mockErrandId, { title: 'kapad' }),
+    ).rejects.toBeInstanceOf(HttpException);
     expect(patch).not.toHaveBeenCalled();
   });
 
   it('refuses an errand that carries no reporter, rather than treating it as unowned', async () => {
     upstreamReturnsReporter(undefined);
 
-    await expect(new SupportManagementController().updateErrand(requestAs('user1'), ERRAND_ID, { title: 'x' })).rejects.toMatchObject({
+    await expect(new SupportManagementController().updateErrand(requestAs(mockCitizenPartyId), mockErrandId, { title: 'x' })).rejects.toMatchObject({
       status: 403,
     });
     expect(patch).not.toHaveBeenCalled();
   });
 
-  it('accepts a casing difference in the AD account name', async () => {
-    upstreamReturnsReporter('User1');
+  it('accepts a casing difference in the party id', async () => {
+    upstreamReturnsReporter(mockCitizenPartyId.toUpperCase());
 
-    await new SupportManagementController().updateErrand(requestAs('user1'), ERRAND_ID, { title: 'ny titel' });
+    await new SupportManagementController().updateErrand(requestAs(mockCitizenPartyId), mockErrandId, { title: 'ny titel' });
 
     expect(patch).toHaveBeenCalledTimes(1);
   });
 
   it('checks ownership before spending a request on the update', async () => {
-    upstreamReturnsReporter('user1');
+    upstreamReturnsReporter(mockCitizenPartyId);
 
-    await new SupportManagementController().updateErrand(requestAs('user1'), ERRAND_ID, { title: 'ny titel' });
+    await new SupportManagementController().updateErrand(requestAs(mockCitizenPartyId), mockErrandId, { title: 'ny titel' });
 
     expect(get.mock.invocationCallOrder[0]).toBeLessThan(patch.mock.invocationCallOrder[0] ?? Infinity);
   });

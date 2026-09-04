@@ -16,9 +16,39 @@ export interface ApiRequestConfig extends AxiosRequestConfig {
   propagateClientError?: boolean;
 }
 
-interface ApiRequest extends Omit<Partial<RequestWithUser>, 'session'> {
-  session: Omit<Partial<Request['session']>, 'user'> & { user?: Pick<User, 'username'> };
+/**
+ * Everything ApiService needs from its caller: who to attribute the upstream request to. Narrow
+ * enough that the SAML callback, which has no request yet, can name a sender too.
+ */
+export interface ApiRequest extends Omit<Partial<RequestWithUser>, 'session' | 'user'> {
+  user?: Pick<User, 'partyId'>;
+  session?: Omit<Partial<Request['session']>, 'user'> & { user?: Pick<User, 'partyId'> };
 }
+
+/**
+ * The only calls that legitimately have no citizen behind them: the liveness probe, and the
+ * Citizen exchange during SAML login that resolves the party id in the first place. Anything else
+ * must pass a request whose user carries a party id.
+ */
+export const NO_SESSION_SENDER = Symbol('no session sender');
+
+export type Sender = ApiRequest | typeof NO_SESSION_SENDER;
+
+const SENT_BY_NO_SESSION = 'type=partyId; no-session';
+
+const buildSentBy = (sender: Sender): string => {
+  if (sender === NO_SESSION_SENDER) return SENT_BY_NO_SESSION;
+
+  const partyId = sender.user?.partyId;
+  if (partyId === undefined || partyId === '') {
+    // Fail loudly: a session-backed call that cannot name its citizen would otherwise reach
+    // upstream anonymously, and the audit trail there would be wrong rather than missing.
+    logger.error('Refusing to call upstream: the request has no party id to send as X-Sent-By');
+    throw new HttpException(500, 'No party id to identify the caller upstream');
+  }
+
+  return `type=partyId; ${partyId}`;
+};
 
 const API_REQUEST_TIMEOUT_MS = 30_000;
 const ABSOLUTE_URL_PATTERN = /^([a-z][a-z\d+.-]*:)?\/\//i;
@@ -169,7 +199,7 @@ class ApiService {
     }
   }
 
-  private async request<T>(config: ApiRequestConfig, req?: ApiRequest): Promise<ApiResponse<T>> {
+  private async request<T>(config: ApiRequestConfig, sender: Sender): Promise<ApiResponse<T>> {
     const { propagateClientError = false, ...axiosConfig } = config;
     const { requestUrl, boundaryUrl } = resolveRequestUrl(axiosConfig);
     const token = await this.apiTokenService.getToken();
@@ -187,7 +217,8 @@ class ApiService {
         ...configHeaders,
         Authorization: `Bearer ${token}`,
         'X-Request-Id': requestId,
-        'X-Sent-By': `type=adAccount; ${req?.user?.username}`,
+        // Citizens, not employees: upstream identifies the sender by party id, never an AD account.
+        'X-Sent-By': buildSentBy(sender),
       },
       maxRedirects: 0,
       params: { ...defaultParams, ...(axiosConfig.params as Record<string, unknown> | undefined) },
@@ -247,24 +278,24 @@ class ApiService {
     }
   }
 
-  public async get<T>(config: ApiRequestConfig, req: ApiRequest): Promise<ApiResponse<T>> {
-    return this.request<T>({ ...config, method: 'GET' }, req);
+  public async get<T>(config: ApiRequestConfig, sender: Sender): Promise<ApiResponse<T>> {
+    return this.request<T>({ ...config, method: 'GET' }, sender);
   }
 
-  public async post<T>(config: ApiRequestConfig, req?: ApiRequest): Promise<ApiResponse<T>> {
-    return this.request<T>({ ...config, method: 'POST' }, req);
+  public async post<T>(config: ApiRequestConfig, sender: Sender): Promise<ApiResponse<T>> {
+    return this.request<T>({ ...config, method: 'POST' }, sender);
   }
 
-  public async put<T>(config: ApiRequestConfig, req: ApiRequest): Promise<ApiResponse<T>> {
-    return this.request<T>({ ...config, method: 'PUT' }, req);
+  public async put<T>(config: ApiRequestConfig, sender: Sender): Promise<ApiResponse<T>> {
+    return this.request<T>({ ...config, method: 'PUT' }, sender);
   }
 
-  public async patch<T>(config: ApiRequestConfig, req: ApiRequest): Promise<ApiResponse<T>> {
-    return this.request<T>({ ...config, method: 'PATCH' }, req);
+  public async patch<T>(config: ApiRequestConfig, sender: Sender): Promise<ApiResponse<T>> {
+    return this.request<T>({ ...config, method: 'PATCH' }, sender);
   }
 
-  public async delete<T>(config: ApiRequestConfig, req: ApiRequest): Promise<ApiResponse<T>> {
-    return this.request<T>({ ...config, method: 'DELETE' }, req);
+  public async delete<T>(config: ApiRequestConfig, sender: Sender): Promise<ApiResponse<T>> {
+    return this.request<T>({ ...config, method: 'DELETE' }, sender);
   }
 }
 

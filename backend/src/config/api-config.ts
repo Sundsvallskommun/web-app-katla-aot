@@ -24,6 +24,10 @@ export const APIS = [
     name: 'jsonschema',
     version: '1.0',
   },
+  {
+    name: 'myrepresentatives',
+    version: '4.4',
+  },
 ] as const;
 
 // Temporary routing for the Support Management development sprint.

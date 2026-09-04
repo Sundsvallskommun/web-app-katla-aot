@@ -48,9 +48,9 @@ import { routingControllersToSpec } from 'routing-controllers-openapi';
 import createFileStore from 'session-file-store';
 import swaggerUi from 'swagger-ui-express';
 
-import { HttpException } from './exceptions/HttpException';
+import { loadRepresentingOrganizations } from './auth/login-session';
+import { citizenVerify } from './auth/verify.citizen';
 import { Profile } from './interfaces/profile.interface';
-import { authorizeGroups, getRole } from './services/authorization.service';
 import { getSafeRedirect, getSamlRedirects } from './utils/isValidOrigin';
 import { buildOpenApiSchemas } from './utils/openapi-spec';
 
@@ -142,74 +142,8 @@ const samlStrategy = new Strategy(
     wantAuthnResponseSigned: false,
     audience: SAML_ISSUER ?? '',
   },
-  function (profile: Profile | null, done: VerifiedCallback) {
-    if (!profile) {
-      done({
-        name: 'SAML_MISSING_PROFILE',
-        message: 'Missing SAML profile',
-      });
-      return;
-    }
-    // Depending on using Onegate or ADFS for federation the profile data looks a bit different
-    // Here we use the null coalescing operator (??) to handle both cases.
-    // (A switch from Onegate to ADFS was done on august 6 2023 due to problems in MobilityGuard.)
-    //
-    // const { givenName, sn, email, groups } = profile;
-    const givenName = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] ?? profile.givenName;
-    const sn = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname'] ?? profile.sn;
-    const email = profile['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] ?? profile.email;
-    const groups = profile['http://schemas.xmlsoap.org/claims/Group']?.join(',') ?? profile.groups;
-    const username = profile['urn:oid:0.9.2342.19200300.100.1.1'];
-
-    if (!givenName || !sn || !email || !groups || !username) {
-      logger.error(
-        'Could not extract necessary profile data fields from the IDP profile. Does the Profile interface match the IDP profile response? The profile response may differ, for example Onegate vs ADFS.',
-      );
-      done(null, undefined, {
-        name: 'SAML_MISSING_ATTRIBUTES',
-        message: 'Missing profile attributes',
-      });
-      return;
-    }
-
-    if (!authorizeGroups(groups)) {
-      logger.error('Group authorization failed. Is the user a member of the authorized groups?');
-      done(null, undefined, {
-        name: 'SAML_MISSING_GROUP',
-        message: 'SAML_MISSING_GROUP',
-      });
-      return;
-    }
-
-    const groupList: string[] = groups !== undefined ? groups.split(',').map(x => x.toLowerCase()) : [];
-
-    const appGroups: string[] = groupList.length > 0 ? groupList : [];
-
-    try {
-      const findUser = {
-        name: `${givenName} ${sn}`,
-        firstName: givenName,
-        lastName: sn,
-        username: username,
-        email: email,
-        groups: appGroups,
-        role: getRole(appGroups),
-        // permissions: getPermissions(appGroups),
-      };
-
-      // The full profile is PII — debug only.
-      logger.info(`Authenticated user ${findUser.username} (role: ${findUser.role ?? 'none'})`);
-      logger.debug(`Found user: ${JSON.stringify(findUser)}`);
-
-      done(null, findUser);
-    } catch (err) {
-      if (err instanceof HttpException && err?.status === 404) {
-        // TODO: Handle missing person form Citizen?
-        logger.error('Error when calling Citizen:');
-        logger.error(err);
-      }
-      done(err instanceof Error ? err : null);
-    }
+  (profile: Profile | null, done: VerifiedCallback) => {
+    void citizenVerify(profile, done);
   },
   function (profile: Profile | null, done: VerifiedCallback) {
     done(null, {});
@@ -397,7 +331,10 @@ class App {
               res.redirect(failureRedirect.toString());
               return;
             }
-            res.redirect(successRedirect.toString());
+            // Runs after req.login so it lands on the authenticated, persisted session.
+            void loadRepresentingOrganizations(req).then(() => {
+              res.redirect(successRedirect.toString());
+            });
           });
         }
       }) as express.RequestHandler;

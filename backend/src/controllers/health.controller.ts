@@ -4,7 +4,7 @@ import { OpenAPI } from 'routing-controllers-openapi';
 
 import { HttpException } from '@/exceptions/HttpException';
 import { Public } from '@/middlewares/public.decorator';
-import ApiService from '@/services/api.service';
+import ApiService, { NO_SESSION_SENDER } from '@/services/api.service';
 import { logger } from '@/utils/logger';
 
 @Controller()
@@ -24,7 +24,7 @@ export class HealthController {
       status: 'OK',
     };
     try {
-      const res = await this.apiService.post<{ status: string }>({ url, data });
+      const res = await this.apiService.post<{ status: string }>({ url, data }, NO_SESSION_SENDER);
       return res.data;
     } catch (e) {
       logger.error('Error when doing health check:', e);

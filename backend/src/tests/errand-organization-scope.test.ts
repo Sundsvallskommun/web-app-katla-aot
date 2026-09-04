@@ -6,6 +6,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SupportManagementController } from '@/controllers/supportmanagement.controller';
 import { ErrandsQueryDTO } from '@/responses/supportmanagement.response';
 
+import {
+  mockCitizenPartyId,
+  mockErrandNumber,
+  mockForeignOrganizationPartyId,
+  mockMissingErrandNumber,
+  mockOrganizationPartyId,
+  mockSecondaryOrganizationPartyId,
+} from './helpers/mock-data';
+
 const { get } = vi.hoisted(() => ({ get: vi.fn<(config: { url: string }) => Promise<{ data: unknown }>>() }));
 
 vi.mock('@/services/api.service', () => ({
@@ -18,7 +27,10 @@ vi.mock('@/services/api.service', () => ({
   },
 }));
 
-const requestWithOrganizations = (organizationPartyIds?: string[]) => ({ user: { username: 'user1' }, session: { organizationPartyIds } }) as never;
+const representing = (partyId: string) => ({ partyId, organizationNumber: `nr-${partyId}`, organizationName: `Org ${partyId}` });
+
+const requestWithOrganizations = (organizationPartyIds?: string[]) =>
+  ({ user: { partyId: mockCitizenPartyId }, session: { representingBusinessChoices: organizationPartyIds?.map(representing) } }) as never;
 
 const asQuery = (query: Record<string, unknown>): ErrandsQueryDTO => query;
 // Read the param back rather than decoding the raw URL: URLSearchParams encodes the spaces in
@@ -32,31 +44,41 @@ describe('errand organization scope', () => {
   });
 
   it('scopes the listing to the organisation in the session', async () => {
-    await new SupportManagementController().getErrands(requestWithOrganizations(['org-1']), asQuery({}));
+    await new SupportManagementController().getErrands(requestWithOrganizations([mockOrganizationPartyId]), asQuery({}));
 
-    expect(requestedFilter()).toContain("stakeholders.externalId:'org-1'");
+    expect(requestedFilter()).toContain(`stakeholders.externalId:'${mockOrganizationPartyId}'`);
   });
 
   it('keeps the organisation scope alongside a client filter', async () => {
-    await new SupportManagementController().getErrands(requestWithOrganizations(['org-1']), asQuery({ status: 'NEW' }));
+    await new SupportManagementController().getErrands(requestWithOrganizations([mockOrganizationPartyId]), asQuery({ status: 'NEW' }));
 
     const filter = requestedFilter();
-    expect(filter).toContain("stakeholders.externalId:'org-1'");
+    expect(filter).toContain(`stakeholders.externalId:'${mockOrganizationPartyId}'`);
     expect(filter).toContain("status:'NEW'");
   });
 
   // Spring filter grammar: alternatives are an `or` group, terms are joined with `and`. A comma
   // is not an operator, so joining with one would not mean what it reads like.
   it('ORs the organisations together into one group', async () => {
-    await new SupportManagementController().getErrands(requestWithOrganizations(['org-1', 'org-2']), asQuery({}));
+    await new SupportManagementController().getErrands(
+      requestWithOrganizations([mockOrganizationPartyId, mockSecondaryOrganizationPartyId]),
+      asQuery({}),
+    );
 
-    expect(requestedFilter()).toContain("(stakeholders.externalId:'org-1' or stakeholders.externalId:'org-2')");
+    expect(requestedFilter()).toContain(
+      `(stakeholders.externalId:'${mockOrganizationPartyId}' or stakeholders.externalId:'${mockSecondaryOrganizationPartyId}')`,
+    );
   });
 
   it('ANDs a client filter onto the organisation group rather than widening it', async () => {
-    await new SupportManagementController().getErrands(requestWithOrganizations(['org-1', 'org-2']), asQuery({ status: 'NEW' }));
+    await new SupportManagementController().getErrands(
+      requestWithOrganizations([mockOrganizationPartyId, mockSecondaryOrganizationPartyId]),
+      asQuery({ status: 'NEW' }),
+    );
 
-    expect(requestedFilter()).toBe("(stakeholders.externalId:'org-1' or stakeholders.externalId:'org-2') and status:'NEW'");
+    expect(requestedFilter()).toBe(
+      `(stakeholders.externalId:'${mockOrganizationPartyId}' or stakeholders.externalId:'${mockSecondaryOrganizationPartyId}') and status:'NEW'`,
+    );
   });
 
   it('refuses to fetch errands when the session carries no organisation', async () => {
@@ -74,47 +96,55 @@ describe('errand organization scope', () => {
   });
 
   it('rejects a client attempt to set the organisation scope itself', async () => {
-    const query = asQuery({ 'stakeholders.externalId': 'someone-elses-org' });
+    const query = asQuery({ 'stakeholders.externalId': mockForeignOrganizationPartyId });
 
-    await expect(new SupportManagementController().getErrands(requestWithOrganizations(['org-1']), query)).rejects.toMatchObject({ status: 400 });
+    await expect(new SupportManagementController().getErrands(requestWithOrganizations([mockOrganizationPartyId]), query)).rejects.toMatchObject({
+      status: 400,
+    });
 
     expect(get).not.toHaveBeenCalled();
   });
 
   describe('reading one errand by errand number', () => {
     const errandOwnedBy = (partyId: string) => ({
-      data: { content: [{ errandNumber: 'AIA-25120019', stakeholders: [{ role: 'PRIMARY', externalId: partyId }] }] },
+      data: { content: [{ errandNumber: mockErrandNumber, stakeholders: [{ role: 'PRIMARY', externalId: partyId }] }] },
     });
 
     it('returns a draft whose primary stakeholder is one of the session organisations', async () => {
-      get.mockResolvedValue(errandOwnedBy('org-1'));
+      get.mockResolvedValue(errandOwnedBy(mockOrganizationPartyId));
 
-      const errand = await new SupportManagementController().getErrand(requestWithOrganizations(['org-1']), 'AIA-25120019');
+      const errand = await new SupportManagementController().getErrand(requestWithOrganizations([mockOrganizationPartyId]), mockErrandNumber);
 
-      expect(errand.errandNumber).toBe('AIA-25120019');
+      expect(errand.errandNumber).toBe(mockErrandNumber);
     });
 
     it('ANDs the errand number with the organisation group', async () => {
-      get.mockResolvedValue(errandOwnedBy('org-1'));
+      get.mockResolvedValue(errandOwnedBy(mockOrganizationPartyId));
 
-      await new SupportManagementController().getErrand(requestWithOrganizations(['org-1']), 'AIA-25120019');
+      await new SupportManagementController().getErrand(requestWithOrganizations([mockOrganizationPartyId]), mockErrandNumber);
 
-      expect(requestedFilter()).toContain("errandNumber:'AIA-25120019' and (stakeholders.externalId:'org-1')");
+      expect(requestedFilter()).toContain(`errandNumber:'${mockErrandNumber}' and (stakeholders.externalId:'${mockOrganizationPartyId}')`);
     });
 
     // The upstream filter should already exclude this. The check must not depend on that.
     it('hides an errand whose primary stakeholder is another organisation, even if upstream returns it', async () => {
-      get.mockResolvedValue(errandOwnedBy('someone-elses-org'));
+      get.mockResolvedValue(errandOwnedBy(mockForeignOrganizationPartyId));
 
-      await expect(new SupportManagementController().getErrand(requestWithOrganizations(['org-1']), 'AIA-25120019')).rejects.toMatchObject({
+      await expect(
+        new SupportManagementController().getErrand(requestWithOrganizations([mockOrganizationPartyId]), mockErrandNumber),
+      ).rejects.toMatchObject({
         status: 404,
       });
     });
 
     it('hides an errand that has no primary stakeholder at all', async () => {
-      get.mockResolvedValue({ data: { content: [{ errandNumber: 'AIA-25120019', stakeholders: [{ role: 'CONTACT', externalId: 'org-1' }] }] } });
+      get.mockResolvedValue({
+        data: { content: [{ errandNumber: mockErrandNumber, stakeholders: [{ role: 'CONTACT', externalId: mockOrganizationPartyId }] }] },
+      });
 
-      await expect(new SupportManagementController().getErrand(requestWithOrganizations(['org-1']), 'AIA-25120019')).rejects.toMatchObject({
+      await expect(
+        new SupportManagementController().getErrand(requestWithOrganizations([mockOrganizationPartyId]), mockErrandNumber),
+      ).rejects.toMatchObject({
         status: 404,
       });
     });
@@ -122,13 +152,15 @@ describe('errand organization scope', () => {
     it('reports a missing errand the same way as one belonging to another organisation', async () => {
       get.mockResolvedValue({ data: { content: [] } });
 
-      await expect(new SupportManagementController().getErrand(requestWithOrganizations(['org-1']), 'AIA-25999999')).rejects.toMatchObject({
+      await expect(
+        new SupportManagementController().getErrand(requestWithOrganizations([mockOrganizationPartyId]), mockMissingErrandNumber),
+      ).rejects.toMatchObject({
         status: 404,
       });
     });
 
     it('refuses to read an errand when the session carries no organisation', async () => {
-      await expect(new SupportManagementController().getErrand(requestWithOrganizations(undefined), 'AIA-25120019')).rejects.toMatchObject({
+      await expect(new SupportManagementController().getErrand(requestWithOrganizations(undefined), mockErrandNumber)).rejects.toMatchObject({
         status: 403,
       });
 
@@ -136,7 +168,9 @@ describe('errand organization scope', () => {
     });
 
     it('rejects an errand number that would break out of the upstream filter literal', async () => {
-      await expect(new SupportManagementController().getErrand(requestWithOrganizations(['org-1']), "ABC' or status:'NEW")).rejects.toMatchObject({
+      await expect(
+        new SupportManagementController().getErrand(requestWithOrganizations([mockOrganizationPartyId]), "ABC' or status:'NEW"),
+      ).rejects.toMatchObject({
         status: 400,
       });
 
@@ -150,8 +184,8 @@ describe('errand organization scope', () => {
     });
 
     get.mockResolvedValue({ data: { count: 2 } });
-    await new SupportManagementController().getNumberOfErrands(requestWithOrganizations(['org-1']), asQuery({}));
+    await new SupportManagementController().getNumberOfErrands(requestWithOrganizations([mockOrganizationPartyId]), asQuery({}));
 
-    expect(requestedFilter()).toContain("stakeholders.externalId:'org-1'");
+    expect(requestedFilter()).toContain(`stakeholders.externalId:'${mockOrganizationPartyId}'`);
   });
 });

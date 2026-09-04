@@ -2,8 +2,9 @@
   "description": "Description of the app",
   "errors": {
     "NOT_AUTHORIZED": "Not logged in",
-    "SAML_MISSING_GROUP": "The user is missing the required groups",
     "SAML_MISSING_ATTRIBUTES": "The user is missing the required attributes",
+    "SAML_INVALID_CITIZEN_IDENTIFIER": "The person number from the login could not be read",
+    "SAML_CITIZEN_FAILED": "The user could not be fetched from the population register",
     "MISSING_PERMISSIONS": "The user is missing permissions",
     "NO_USER": "Failed to configure user"
   },
