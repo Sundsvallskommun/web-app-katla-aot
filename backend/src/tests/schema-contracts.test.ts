@@ -13,7 +13,6 @@ vi.mock('@/middlewares/auth.middleware', () => ({
     Object.defineProperty(req, 'user', {
       configurable: true,
       value: {
-        username: 'test-user',
         name: 'Test User',
         givenName: 'Test',
         surname: 'User',

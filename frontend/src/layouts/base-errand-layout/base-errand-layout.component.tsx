@@ -81,7 +81,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
                 <div data-cy="usermenu">
                   <AppUserMenu
                     initials={user.initials}
-                    menuTitle={`${user.name} (${user.username})`}
+                    menuTitle={user.name}
                     menuSubTitle=""
                     menuGroups={userMenuGroups}
                     buttonRounded={false}
@@ -117,7 +117,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
                       </PopupMenu.Button>
                       <PopupMenu.Panel>
                         <PopupMenu.Group>
-                          <div className="font-bold">{`${user.name} (${user.username})`}</div>
+                          <div className="font-bold">{user.name}</div>
                         </PopupMenu.Group>
                         <PopupMenu.Items>
                           <PopupMenu.Group>

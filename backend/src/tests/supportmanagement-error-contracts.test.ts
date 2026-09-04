@@ -7,12 +7,24 @@ import { SupportManagementController } from '@/controllers/supportmanagement.con
 import { HttpException } from '@/exceptions/HttpException';
 import ApiService from '@/services/api.service';
 
+import {
+  mockCitizenPartyId,
+  mockEmail,
+  mockErrandNumber,
+  mockOrganizationName,
+  mockOrganizationNumber,
+  mockOrganizationPartyId,
+  mockPersonNumber,
+  mockPersonNumberHyphenated,
+  mockPhoneNumber,
+} from './helpers/mock-data';
+
 vi.mock('@/middlewares/auth.middleware', () => ({
   default: (req: Request, _res: Response, next: NextFunction) => {
     Object.defineProperty(req, 'user', {
       configurable: true,
       value: {
-        username: 'test-user',
+        partyId: mockCitizenPartyId,
         name: 'Test User',
         givenName: 'Test',
         surname: 'User',
@@ -20,7 +32,9 @@ vi.mock('@/middlewares/auth.middleware', () => ({
     });
     // Errand queries are scoped to the session's organisations and 403 without them.
     // errand-organization-scope.test.ts covers that rule; here it just has to be satisfied.
-    req.session.organizationPartyIds = ['test-org'];
+    req.session.representingBusinessChoices = [
+      { partyId: mockOrganizationPartyId, organizationNumber: mockOrganizationNumber, organizationName: mockOrganizationName },
+    ];
     next();
   },
 }));
@@ -31,7 +45,7 @@ const app = createApp();
 // updateErrand reads the errand first to check the reporter against the session user. These
 // tests are about the update itself, so they hand it an errand the mocked user owns.
 const stubOwnershipLookup = () =>
-  vi.spyOn(ApiService.prototype, 'get').mockResolvedValue({ data: { reporterUserId: 'test-user' }, message: 'success' });
+  vi.spyOn(ApiService.prototype, 'get').mockResolvedValue({ data: { reporterUserId: mockCitizenPartyId }, message: 'success' });
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -61,7 +75,7 @@ describe('SupportManagement HTTP error contracts', () => {
       },
       message: 'success',
     });
-    vi.spyOn(ApiService.prototype, 'get').mockResolvedValue({ data: 199001011234, message: 'success' });
+    vi.spyOn(ApiService.prototype, 'get').mockResolvedValue({ data: Number(mockPersonNumber), message: 'success' });
 
     const response = await request(app).post('/api/supportmanagement/errand/create').send({}).expect(200);
 
@@ -71,7 +85,7 @@ describe('SupportManagement HTTP error contracts', () => {
       stakeholders: [
         {
           externalId: 'd09ed58d-680d-4473-9b8b-5d4b17884c9c',
-          personNumber: '19900101-1234',
+          personNumber: mockPersonNumberHyphenated,
         },
       ],
     });
@@ -86,7 +100,7 @@ describe('SupportManagement HTTP error contracts', () => {
       },
       message: 'success',
     });
-    vi.spyOn(ApiService.prototype, 'get').mockResolvedValue({ data: { personNumber: '199001011234' }, message: 'success' });
+    vi.spyOn(ApiService.prototype, 'get').mockResolvedValue({ data: { personNumber: mockPersonNumber }, message: 'success' });
 
     const response = await request(app).post('/api/supportmanagement/errand/create').send({}).expect(502);
 
@@ -149,9 +163,9 @@ describe('SupportManagement HTTP error contracts', () => {
         stakeholders: [
           {
             firstName: 'Ada',
-            personNumber: '198001011234',
-            emails: ['ada@example.com'],
-            phoneNumbers: ['+46701234567'],
+            personNumber: mockPersonNumber,
+            emails: [mockEmail],
+            phoneNumbers: [mockPhoneNumber],
           },
         ],
       })
@@ -171,8 +185,8 @@ describe('SupportManagement HTTP error contracts', () => {
     expect(stakeholder).not.toHaveProperty('emails');
     expect(stakeholder).not.toHaveProperty('phoneNumbers');
     expect(stakeholder.contactChannels).toEqual([
-      { type: 'email', value: 'ada@example.com' },
-      { type: 'phone', value: '+46701234567' },
+      { type: 'email', value: mockEmail },
+      { type: 'phone', value: mockPhoneNumber },
     ]);
   });
 
@@ -183,7 +197,7 @@ describe('SupportManagement HTTP error contracts', () => {
 
     await request(app)
       .post('/api/supportmanagement/errand/create')
-      .send({ id: 'attacker-chosen', errandNumber: 'AIA-25120019', title: 'Nytt ärende' })
+      .send({ id: 'attacker-chosen', errandNumber: mockErrandNumber, title: 'Nytt ärende' })
       .expect(200);
 
     const [requestConfig] = postSpy.mock.calls[0] ?? [];
@@ -191,7 +205,7 @@ describe('SupportManagement HTTP error contracts', () => {
 
     expect(sent).not.toHaveProperty('id');
     expect(sent).not.toHaveProperty('errandNumber');
-    expect(sent).toMatchObject({ title: 'Nytt ärende', reporterUserId: 'test-user' });
+    expect(sent).toMatchObject({ title: 'Nytt ärende', reporterUserId: mockCitizenPartyId });
   });
 
   it('propagates upstream errors from every read endpoint', async () => {

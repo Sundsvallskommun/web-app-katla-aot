@@ -36,17 +36,13 @@ const ORGANIZATION_FILTER_KEY = 'stakeholders.externalId';
 const PRIMARY_STAKEHOLDER_ROLE = 'PRIMARY';
 
 /**
- * Party ids of the organisations the logged-in user may see errands for.
+ * Party ids of the organisations the logged-in citizen may see errands for.
  *
  * Read from the session only — never from the request — so a client cannot widen its own scope.
  * Fails closed: no organisations in the session means no errand query at all.
- *
- * FIXME(katla-aot): nothing populates this yet. External login, and the list of organisations
- * belonging to the user, are still to be built; until then every errand query returns 403. That
- * is deliberate — there must be no unscoped errand fetch.
  */
 const requireOrganizationPartyIds = (req: RequestWithUser): string[] => {
-  const partyIds = req.session.organizationPartyIds ?? [];
+  const partyIds = (req.session.representingBusinessChoices ?? []).map(organization => organization.partyId);
 
   if (partyIds.length === 0) {
     throw new HttpException(403, 'No organization in session to scope the errand query to');
@@ -94,9 +90,9 @@ export class SupportManagementController {
   private apiBase = getApiBase('supportmanagement');
 
   /**
-   * Upstream accepts any errand id in the namespace, and every authenticated user can list the
-   * whole namespace — so the id of someone else's errand is readily available. Ownership is
-   * enforced here: only the user who registered the errand may change it.
+   * Upstream accepts any errand id in the namespace, so knowing an id is enough to patch someone
+   * else's errand. Ownership is enforced here: only the citizen who registered the errand, named
+   * by their party id in reporterUserId, may change it.
    *
    * An errand with no reporterUserId (not registered through this app) is owned by nobody and
    * cannot be edited here.
@@ -108,9 +104,9 @@ export class SupportManagementController {
     const res = await this.apiService.get<Partial<Errand>>({ baseURL, url, propagateClientError: true }, req);
     const reporterUserId = res.data?.reporterUserId;
 
-    // AD account names are case-insensitive; a casing difference between sessions must not lock
-    // a user out of their own errand.
-    if (reporterUserId?.toLowerCase() !== req.user.username.toLowerCase()) {
+    // Party ids are guids; a casing difference between sources must not lock a citizen out of
+    // their own errand.
+    if (reporterUserId?.toLowerCase() !== req.user.partyId.toLowerCase()) {
       throw new HttpException(403, 'Errand belongs to another user');
     }
   }
@@ -129,7 +125,7 @@ export class SupportManagementController {
 
     const errandInformation = {
       ...(newErrand as Errand),
-      reporterUserId: req.user.username,
+      reporterUserId: req.user.partyId,
       stakeholders: newErrand.stakeholders?.map(mapStakeholderDTOToStakeholder),
     };
 
@@ -219,7 +215,7 @@ export class SupportManagementController {
   }
 
   @Get('/supportmanagement/errands')
-  @OpenAPI({ summary: 'Read maching errands' })
+  @OpenAPI({ summary: 'Read matching errands' })
   @UseBefore(authMiddleware)
   @ResponseSchema(PageErrandDTO)
   async getErrands(@Req() req: RequestWithUser, @QueryParams() query: ErrandsQueryDTO): Promise<PageErrand> {

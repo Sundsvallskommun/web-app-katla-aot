@@ -55,7 +55,7 @@ export const OverviewSidebar: React.FC = () => {
               <AppUserMenu
                 data-cy="avatar-aside"
                 initials={user.initials}
-                menuTitle={`${user.name} (${user.username})`}
+                menuTitle={user.name}
                 menuGroups={userMenuGroups}
                 buttonSize="md"
                 className="flex-shrink-0"
