@@ -1,10 +1,42 @@
-import { RoleDTO, StakeholderDTO } from '@data-contracts/backend/data-contracts';
+import { OrganizationDTO, RoleDTO, StakeholderDTO } from '@data-contracts/backend/data-contracts';
 import type { TFunction } from 'i18next';
 import { appConfig } from 'src/config/appconfig';
 import * as yup from 'yup';
 
+export const PRIMARY_STAKEHOLDER_ROLE = 'PRIMARY';
+
+/** SupportManagement's externalIdType for an organisation, as opposed to a private person. */
+export const ORGANIZATION_EXTERNAL_ID_TYPE = 'COMPANY';
+
+export const isOrganizationStakeholder = (stakeholder: StakeholderDTO): boolean =>
+  stakeholder.externalIdType === ORGANIZATION_EXTERNAL_ID_TYPE;
+
 export const shouldShowContactDetails = (roles?: string[]) =>
-  !(roles?.includes('PRIMARY') && appConfig.features.reducedStakeholderInfo);
+  !(roles?.includes(PRIMARY_STAKEHOLDER_ROLE) && appConfig.features.reducedStakeholderInfo);
+
+/** The errand owner: the organisation the errand is registered for. */
+export const getPrimaryStakeholder: (stakeholders: StakeholderDTO[] | undefined) => StakeholderDTO | undefined = (
+  stakeholders
+) => stakeholders?.find((s) => s.role === PRIMARY_STAKEHOLDER_ROLE);
+
+// externalId must carry the LegalEntity party id: it is the field the backend scopes errands by,
+// so an owner written any other way makes the errand unreadable to the citizen who filed it.
+export const organizationAsPrimaryStakeholder = (organization: OrganizationDTO): StakeholderDTO => ({
+  role: PRIMARY_STAKEHOLDER_ROLE,
+  externalId: organization.partyId,
+  externalIdType: ORGANIZATION_EXTERNAL_ID_TYPE,
+  organizationName: organization.organizationName,
+});
+
+/** Drops the errand owner, leaving the other stakeholders untouched. */
+export const withoutPrimaryStakeholder = (stakeholders: StakeholderDTO[] | undefined): StakeholderDTO[] =>
+  (stakeholders ?? []).filter((s) => s.role !== PRIMARY_STAKEHOLDER_ROLE);
+
+/** Sets the errand owner, leaving the other stakeholders untouched. An errand has one owner. */
+export const withPrimaryStakeholder = (
+  stakeholders: StakeholderDTO[] | undefined,
+  organization: OrganizationDTO
+): StakeholderDTO[] => [...withoutPrimaryStakeholder(stakeholders), organizationAsPrimaryStakeholder(organization)];
 
 export const emptyStakeholder: StakeholderDTO = {
   externalIdType: 'PERSON',

@@ -2,9 +2,9 @@ import { StakeholderFormModal } from '@components/misc/stakeholder-modal.compone
 import { useIsContentLocked } from '@contexts/errand-content-lock-context';
 import { StakeholderDTO } from '@data-contracts/backend/data-contracts';
 import { Button } from '@sk-web-gui/react';
-import { getStakeholderRoleDisplayName, shouldShowContactDetails } from '@utils/stakeholder';
+import { getStakeholderRoleDisplayName, isOrganizationStakeholder, shouldShowContactDetails } from '@utils/stakeholder';
 import { Pen, X } from 'lucide-react';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMetadataStore } from 'src/stores/metadata-store';
 
@@ -16,11 +16,29 @@ export const StakeholderCard: React.FC<{
   onRemove?: () => void;
   index?: number;
   roles?: string[];
-}> = ({ stakeholder, isEditable, hideRemove, editableFields, onRemove, index, roles }) => {
+  /** Not carried by the stakeholder — SupportManagement stores only the organisation name. */
+  organizationNumber?: string;
+  /** Overrides the metadata lookup, which is empty for roles the namespace does not name. */
+  roleLabel?: string;
+  /** Actions rendered in the header bar, as the errand owner's are. */
+  headerActions?: ReactNode;
+}> = ({
+  stakeholder,
+  isEditable,
+  hideRemove,
+  editableFields,
+  onRemove,
+  index,
+  roles,
+  organizationNumber,
+  roleLabel,
+  headerActions,
+}) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { metadata } = useMetadataStore();
   const isLocked = useIsContentLocked();
+  const isOrganization = isOrganizationStakeholder(stakeholder);
 
   return (
     <>
@@ -28,17 +46,54 @@ export const StakeholderCard: React.FC<{
         data-cy="stakeholder-card"
         className="border-1 rounded-12 bg-background-content w-full max-w-[52.5rem] my-15"
       >
-        <div className="rounded-t-12 bg-vattjom-background-200 h-[4rem] flex items-center mb-[1.5rem]">
-          <strong data-cy="stakeholder-role" className="px-[1rem]">
-            {getStakeholderRoleDisplayName(stakeholder, metadata?.roles)}
+        <div className="rounded-t-12 bg-vattjom-background-200 min-h-[4rem] flex items-center justify-between gap-12 px-[1rem] mb-[1.5rem]">
+          <strong data-cy="stakeholder-role">
+            {roleLabel ?? getStakeholderRoleDisplayName(stakeholder, metadata?.roles)}
           </strong>
+          {!isLocked && headerActions && <div className="flex flex-wrap gap-16 text-small">{headerActions}</div>}
         </div>
         <div className="px-[1rem]">
           <p data-cy="stakeholder-name" className="text-[1.6rem] font-semibold break-words">
-            {stakeholder.firstName} {stakeholder.lastName}
+            {isOrganization ?
+              stakeholder.organizationName
+            : `${stakeholder.firstName ?? ''} ${stakeholder.lastName ?? ''}`}
           </p>
 
-          {shouldShowContactDetails(roles) && (
+          {/* An organisation carries none of the person fields below, so it gets its own columns:
+              what identifies it on the left, how to reach it on the right. */}
+          {isOrganization && (
+            <div className="flex text-md mb-10 flex-col sm:flex-row gap-y-4 gap-x-15 break-words">
+              <div className="flex flex-col min-w-0">
+                {organizationNumber && <div data-cy="stakeholder-organizationNumber">{organizationNumber}</div>}
+                {stakeholder.serveringsstalle && (
+                  <div data-cy="stakeholder-serveringsstalle">
+                    <strong>{t('errand-information:owner.serveringsstalle')}:</strong> {stakeholder.serveringsstalle}
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col min-w-0">
+                {(stakeholder.address ?? stakeholder.city) && (
+                  <div data-cy="stakeholder-address">
+                    {[stakeholder.address, stakeholder.careOf, stakeholder.zipCode, stakeholder.city]
+                      .filter(Boolean)
+                      .join(' ')}
+                  </div>
+                )}
+                {stakeholder.phoneNumbers?.map((phoneNumber) => (
+                  <div key={phoneNumber} data-cy="stakeholder-phonenumber">
+                    {phoneNumber}
+                  </div>
+                ))}
+                {stakeholder.emails?.map((email) => (
+                  <div key={email} data-cy="stakeholder-email">
+                    {email}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!isOrganization && shouldShowContactDetails(roles) && (
             // The columns stack on narrow screens; break-words is inherited so long email
             // addresses wrap instead of forcing page width.
             <div className="flex text-md mb-10 flex-col sm:flex-row gap-y-4 gap-x-15 break-words">

@@ -10,6 +10,7 @@ import { ErrandFormDTO } from '@interfaces/errand-form';
 import { CenterDiv } from '@layouts/center-div.component';
 import { createErrand, updateErrand } from '@services/errand-service/errand-service';
 import { Button, Dialog, useSnackbar } from '@sk-web-gui/react';
+import { getPrimaryStakeholder } from '@utils/stakeholder';
 import { ChevronLeft, ChevronRight, Inbox } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -110,6 +111,14 @@ export const WizardBottomBar: React.FC = () => {
     setShowValidation(true);
 
     const values = getValues();
+
+    // Same rule as the desktop button group: an errand with no owner is outside every
+    // organisation the session scopes by, so its filer could not read it back.
+    if (!getPrimaryStakeholder(values.stakeholders)) {
+      reportValidationError(t('validation:owner.required'));
+      return;
+    }
+
     const formDataErrors = await validateErrandFormData(values.errandFormData, tForms, locale);
     if (formDataErrors.length > 0) {
       reportValidationError(formDataErrors[0]);

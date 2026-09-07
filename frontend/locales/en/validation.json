@@ -20,5 +20,8 @@
     "person_number_invalid_date": "Invalid date in the personal identity number",
     "email_invalid": "Invalid email address",
     "phone_invalid": "Enter a valid mobile number, for example 0731234567, +46731234567 or 0046731234567."
+  },
+  "owner": {
+    "required": "Select the company or organisation the case concerns."
   }
 }

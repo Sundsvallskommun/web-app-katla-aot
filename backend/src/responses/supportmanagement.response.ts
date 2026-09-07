@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsEnum, IsInt, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { Allow, IsArray, IsBoolean, IsEnum, IsInt, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 import {
   Classification,
@@ -92,6 +92,13 @@ export class StakeholderDTO implements Partial<Stakeholder> {
   @IsString()
   @IsOptional()
   department?: string;
+  /**
+   * The serving location the errand concerns. Carried in the stakeholder's parameters upstream;
+   * a free-text name for now, to become an id once the serveringsställe service exists.
+   */
+  @IsString()
+  @IsOptional()
+  serveringsstalle?: string;
   // /** Parameters for the stakeholder */
   // parameters?: Parameter[];
 }
@@ -133,6 +140,9 @@ export class ExternalTagDTO implements ExternalTag {
 export class JsonParameterDTO implements JsonParameter {
   @IsString()
   key!: string;
+  // Arbitrary JSON, so no validator constrains it — but without a decorator the property is
+  // absent from the generated schema and the frontend contract loses the field entirely.
+  @Allow()
   value!: JsonNode;
   @IsString()
   schemaId!: string;

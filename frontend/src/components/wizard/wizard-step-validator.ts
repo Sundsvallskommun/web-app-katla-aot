@@ -1,5 +1,6 @@
 import { validateErrandFormData } from '@components/json/utils/schema-utils';
 import { ErrandFormDTO } from '@interfaces/errand-form';
+import { getPrimaryStakeholder } from '@utils/stakeholder';
 import type { TFunction } from 'i18next';
 
 import { WizardStep } from './wizard-steps';
@@ -20,8 +21,11 @@ export async function validateStep(
       return validateErrandFormData(formValues.errandFormData, t, locale);
     }
 
+    case 'owner': {
+      return getPrimaryStakeholder(formValues.stakeholders) ? [] : [t('validation:owner.required')];
+    }
+
     case 'about':
-    case 'owner':
     case 'other-parties':
     case 'summary':
     default:

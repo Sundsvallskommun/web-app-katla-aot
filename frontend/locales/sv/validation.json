@@ -20,5 +20,8 @@
     "person_number_invalid_date": "Ogiltigt datum i personnummer",
     "email_invalid": "Ogiltig e-postadress",
     "phone_invalid": "Fyll i ett giltigt mobilnummer, till exempel 0731234567, +46731234567 eller 0046731234567."
+  },
+  "owner": {
+    "required": "Välj vilket företag eller vilken organisation ärendet gäller."
   }
 }

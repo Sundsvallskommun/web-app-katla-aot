@@ -5,23 +5,28 @@ import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
 import { MyOrganizationsDTO } from '@/responses/legal-entity.response';
-import { getMyOrganizations } from '@/services/legal-entity.service';
 
 @Controller()
 export class LegalEntityController {
+  /**
+   * Served from the session rather than read again from LegalEntity, so the organisations the
+   * citizen is offered are the same ones the errand endpoints scope by. Re-reading could hand
+   * back an organisation the session does not carry, and an errand filed for it would come back
+   * 404 on the very next read.
+   */
   @Get('/my-organizations')
   @OpenAPI({ summary: 'Organizations the logged in citizen may act for' })
   @UseBefore(authMiddleware)
   @ResponseSchema(MyOrganizationsDTO)
-  async myOrganizations(@Req() req: RequestWithUser): Promise<MyOrganizationsDTO> {
-    const { personNumber, partyId } = req.user;
+  myOrganizations(@Req() req: RequestWithUser): MyOrganizationsDTO {
+    const organizations = req.session.representingBusinessChoices;
 
-    // Both are resolved at login. Without them the citizen's organisations cannot be established,
-    // and guessing an empty list would read as "belongs to nothing" rather than as a failure.
-    if (personNumber === undefined || partyId === undefined) {
-      throw new HttpException(403, 'No citizen identity in session');
+    // Resolved at login. Absent means the lookup failed, which must read as a failure rather than
+    // as "belongs to nothing" — the same fail-closed rule the errand endpoints apply.
+    if (organizations === undefined) {
+      throw new HttpException(403, 'No organizations in session');
     }
 
-    return { organizations: await getMyOrganizations(personNumber, partyId, req) };
+    return { organizations };
   }
 }
