@@ -43,6 +43,9 @@ export const citizenVerify = async (profile: Profile | null, done: VerifiedCallb
       name: `${givenName} ${surname}`,
       firstName: givenName,
       lastName: surname,
+      nameID: profile.nameID,
+      nameIDFormat: profile.nameIDFormat,
+      sessionIndex: profile.sessionIndex ?? '',
     };
 
     // The profile and the person number are PII — never above debug.

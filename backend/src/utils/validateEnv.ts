@@ -38,6 +38,7 @@ const validateEnv = () => {
     SAML_FAILURE_REDIRECT: url(),
     SAML_SUCCESS_REDIRECT: url(),
     SAML_ENTRY_SSO: url(),
+    SAML_LOGOUT_URL: url(),
     SAML_ISSUER: str(),
     SAML_IDP_PUBLIC_CERT: str(),
     SAML_PRIVATE_KEY: str(),

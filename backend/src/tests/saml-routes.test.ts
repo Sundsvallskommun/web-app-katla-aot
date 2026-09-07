@@ -1,3 +1,4 @@
+import { Strategy } from '@node-saml/passport-saml';
 import express from 'express';
 import passport from 'passport';
 import request from 'supertest';
@@ -29,6 +30,26 @@ const mockSamlAuthentication = (error: unknown, user?: Express.User | false | nu
       callback(error, user);
     };
   }) as typeof passport.authenticate);
+};
+
+// The real logout url is signed with a private key the test env does not have.
+const mockSamlLogout = (url: string | null, error: Error | null = null): void => {
+  vi.spyOn(Strategy.prototype, 'logout').mockImplementation((_req, callback) => {
+    callback(error, url);
+  });
+};
+
+// Outside BASE_URL_PREFIX on purpose: the default-deny guard covers everything under it.
+const seedLoggedInCitizen = async (app: express.Application): Promise<ReturnType<typeof request.agent>> => {
+  app.get('/seed-user', (req, res) => {
+    req.login({ nameID: 'citizen@idp', nameIDFormat: 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified', sessionIndex: 'session-1' }, err => {
+      res.sendStatus(err ? 500 : 204);
+    });
+  });
+
+  const agent = request.agent(app);
+  await agent.get('/seed-user').expect(204);
+  return agent;
 };
 
 afterEach(() => {
@@ -100,5 +121,51 @@ describe('SAML callback redirects', () => {
       .expect(302);
 
     expect(failureResponse.headers.location).toBe('http://localhost:3000/failure?failMessage=SAML_LOGOUT_FAILED');
+  });
+});
+
+describe('SAML single logout', () => {
+  it('sends the browser to the IdP so the session ends there too, and comes back to the app', async () => {
+    mockSamlLogout('http://localhost:4000/logout?SAMLRequest=encoded-request');
+    const app = new App([IndexController]).getServer();
+    const agent = await seedLoggedInCitizen(app);
+
+    const response = await agent.get('/api/saml/logout').query({ successRedirect: 'http://localhost:3000/login?loggedout' }).expect(302);
+
+    const location = new URL(response.headers.location ?? '');
+    expect(`${location.origin}${location.pathname}`).toBe('http://localhost:4000/logout');
+    expect(location.searchParams.get('SAMLRequest')).toBe('encoded-request');
+    expect(location.searchParams.get('RelayState')).toBe('http://localhost:3000/login?loggedout');
+  });
+
+  it('ends the local session anyway when the IdP logout url cannot be built', async () => {
+    mockSamlLogout(null, new Error('missing nameID'));
+    const app = new App([IndexController]).getServer();
+    const agent = await seedLoggedInCitizen(app);
+
+    const response = await agent.get('/api/saml/logout').query({ successRedirect: 'http://localhost:3000/login?loggedout' }).expect(302);
+
+    expect(response.headers.location).toBe('http://localhost:3000/login?loggedout');
+  });
+
+  it('skips the IdP round trip when there is no logged in user to log out', async () => {
+    const logoutSpy = vi.spyOn(Strategy.prototype, 'logout');
+    const app = new App([IndexController]).getServer();
+
+    const response = await request(app).get('/api/saml/logout').query({ successRedirect: 'http://localhost:3000/login?loggedout' }).expect(302);
+
+    expect(logoutSpy).not.toHaveBeenCalled();
+    expect(response.headers.location).toBe('http://localhost:3000/login?loggedout');
+  });
+
+  it('reads the RelayState the IdP returns on the redirect binding', async () => {
+    const app = new App([IndexController]).getServer();
+
+    const response = await request(app)
+      .get('/api/saml/logout/callback')
+      .query({ RelayState: 'http://localhost:3000/success,http://localhost:3000/failure' })
+      .expect(302);
+
+    expect(response.headers.location).toBe('http://localhost:3000/success');
   });
 });
