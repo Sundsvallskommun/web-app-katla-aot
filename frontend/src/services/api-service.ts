@@ -1,7 +1,7 @@
 'use client';
 
 import { apiURL } from '@utils/api-url';
-import { protectedRoutes } from '@utils/protected-routes';
+import { isProtectedRoute, routePath } from '@utils/protected-routes';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
 export interface ApiResponse<T = unknown> {
@@ -9,16 +9,21 @@ export interface ApiResponse<T = unknown> {
   message: string;
 }
 
-export const handleError = (error: AxiosError<ApiResponse>) => {
-  if (!protectedRoutes.includes(window?.location.pathname)) throw error;
-
+/** The login page to send a rejected request to, or undefined when the error should just surface. */
+export const loginRedirectUrl = (error: AxiosError<ApiResponse>, pathname: string, origin: string): URL | undefined => {
+  const path = routePath(pathname);
   //TODO: Refactor to be more compliant with NextJS routing standards
-  if (error?.response?.status === 401 && !window?.location.pathname.includes('login')) {
-    const loginUrl = new URL(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/login`, window.location.origin);
-    loginUrl.searchParams.set('path', window.location.pathname);
-    loginUrl.searchParams.set('failMessage', error.response.data.message);
-    window.location.assign(loginUrl);
-  }
+  if (!isProtectedRoute(path) || error?.response?.status !== 401 || path.includes('login')) return undefined;
+
+  const loginUrl = new URL(`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/login`, origin);
+  loginUrl.searchParams.set('path', pathname);
+  loginUrl.searchParams.set('failMessage', error.response.data.message);
+  return loginUrl;
+};
+
+export const handleError = (error: AxiosError<ApiResponse>) => {
+  const loginUrl = loginRedirectUrl(error, window?.location.pathname ?? '', window.location.origin);
+  if (loginUrl) window.location.assign(loginUrl);
 
   throw error;
 };

@@ -1,5 +1,6 @@
 import i18nConfig from '@app/i18nConfig';
 import { pathWithoutLocale } from '@app/locale-path';
+import { isProtectedRoute, parseProtectedRoutes } from '@utils/protected-routes';
 import { NextRequest, NextResponse } from 'next/server';
 import { i18nRouter } from 'next-i18n-router';
 
@@ -16,7 +17,7 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL(envs.adminUrl));
   }
 
-  if (envs.protectedRoutes.includes(unprefixedPathname)) {
+  if (isProtectedRoute(unprefixedPathname, parseProtectedRoutes(envs.protectedRoutes))) {
     const cookieName = envs.sessionCookieName;
     const token = req.cookies.get(cookieName)?.value ?? '';
 
@@ -31,7 +32,8 @@ export async function proxy(req: NextRequest) {
 
     if (response.status === 401) {
       const loginUrl = new URL(`${envs.basePath}/login`, origin);
-      loginUrl.searchParams.set('path', pathname);
+      // The login page feeds this to appURL(), which only prepends the origin.
+      loginUrl.searchParams.set('path', `${envs.basePath}${pathname}`);
       return NextResponse.redirect(loginUrl);
     }
   }
