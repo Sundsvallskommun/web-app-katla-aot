@@ -1,3 +1,10 @@
+/** What a LogoutRequest needs to name a session at the IdP. */
+export interface SamlIdentity extends Record<string, unknown> {
+  nameID: string;
+  nameIDFormat: string;
+  sessionIndex: string;
+}
+
 // Indexable because passport's VerifiedCallback hands the user on as a plain record.
 export interface User extends Record<string, unknown> {
   /** Party id from Citizen. The identity everything upstream keys the citizen on. */

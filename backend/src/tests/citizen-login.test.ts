@@ -94,8 +94,16 @@ describe('citizen SAML verification', () => {
     expect(getCitizenPartyId).not.toHaveBeenCalled();
   });
 
-  it('refuses a profile without a citizen identifier', async () => {
+  it('tells a profile without a citizen identifier apart from one missing its name attributes', async () => {
     const { user, info } = await verify(citizenProfile({ citizenIdentifier: undefined }));
+
+    expect(user).toBeUndefined();
+    expect(info?.name).toBe('SAML_MISSING_CITIZEN_IDENTIFIER');
+    expect(getCitizenPartyId).not.toHaveBeenCalled();
+  });
+
+  it('refuses a profile missing its name attributes', async () => {
+    const { user, info } = await verify(citizenProfile({ Surname: undefined }));
 
     expect(user).toBeUndefined();
     expect(info?.name).toBe('SAML_MISSING_ATTRIBUTES');

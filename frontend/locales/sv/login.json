@@ -3,6 +3,7 @@
   "errors": {
     "NOT_AUTHORIZED": "Inte inloggad",
     "SAML_MISSING_ATTRIBUTES": "Användaren saknar rätt attribut",
+    "SAML_MISSING_CITIZEN_IDENTIFIER": "Inloggningen saknar personnummer. Tjänsten är till för privatpersoner — ett medarbetarkonto kan inte användas här.",
     "SAML_INVALID_CITIZEN_IDENTIFIER": "Personnumret från inloggningen kunde inte tolkas",
     "SAML_CITIZEN_FAILED": "Användaren kunde inte hämtas från folkbokföringen",
     "MISSING_PERMISSIONS": "Användaren saknar rättigheter",
@@ -10,6 +11,7 @@
   },
   "login_problem": "Har du problem med inloggning, kontakta loerem ipsum",
   "choose_login_method": "Välj hur du vill logga in",
+  "test_environment_logout_help": "Testmiljö: logga ut från inloggningstjänsten för att byta testanvändare.",
   "logged_out_title": "Du är nu utloggad",
   "login_again_button": "Logga in igen"
 }

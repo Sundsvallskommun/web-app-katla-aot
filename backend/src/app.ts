@@ -52,6 +52,7 @@ import swaggerUi from 'swagger-ui-express';
 import { loadRepresentingOrganizations } from './auth/login-session';
 import { citizenVerify } from './auth/verify.citizen';
 import { Profile } from './interfaces/profile.interface';
+import { SamlIdentity } from './interfaces/users.interface';
 import { getSafeRedirect, getSamlRedirects } from './utils/isValidOrigin';
 import { buildOpenApiSchemas } from './utils/openapi-spec';
 
@@ -101,6 +102,18 @@ const getErrorName = (err: unknown): string | undefined => {
     if (typeof name === 'string' && name !== '') return name;
   }
   return undefined;
+};
+
+const getSamlIdentity = (source: unknown): SamlIdentity | undefined => {
+  if (typeof source !== 'object' || source === null) return undefined;
+  const { nameID, nameIDFormat, sessionIndex } = source as Partial<SamlIdentity>;
+  if (typeof nameID !== 'string' || nameID === '') return undefined;
+
+  return {
+    nameID,
+    nameIDFormat: typeof nameIDFormat === 'string' ? nameIDFormat : '',
+    sessionIndex: typeof sessionIndex === 'string' ? sessionIndex : '',
+  };
 };
 
 const getRelayState = (body: unknown): unknown =>
@@ -266,46 +279,46 @@ class App {
       res.status(200).send(metadata);
     });
 
-    this.app.get(
-      `${BASE_URL_PREFIX}/saml/logout`,
-      (req, res, next) => {
-        const successRedirect = getSafeRedirect(req.query.successRedirect, SAML_SUCCESS_REDIRECT ?? '');
+    this.app.get(`${BASE_URL_PREFIX}/saml/logout`, (req, res, next) => {
+      const successRedirect = getSafeRedirect(req.query.successRedirect, SAML_SUCCESS_REDIRECT ?? '');
 
-        const endLocalSession = (redirect: string): void => {
-          req.logout(err => {
-            if (err) {
-              next(err);
-              return;
-            }
-            res.redirect(redirect);
-          });
-        };
+      const endLocalSession = (redirect: string): void => {
+        req.logout(err => {
+          if (err) {
+            next(err);
+            return;
+          }
+          res.redirect(redirect);
+        });
+      };
 
-        // Single Logout. The nameID it needs is gone once req.logout runs, so build the url first.
-        if (!SAML_LOGOUT_URL || !req.user?.nameID) {
-          logger.warn('Ending the local session only: SAML_LOGOUT_URL or the SAML nameID is missing');
+      // Single Logout. The nameID it needs is gone once req.logout runs, so build the url first.
+      // A refused login leaves no req.user but still has a live IdP session — hence the fallback.
+      const identity = getSamlIdentity(req.user) ?? req.session.samlIdentity;
+      if (!SAML_LOGOUT_URL || !identity) {
+        logger.warn('Ending the local session only: SAML_LOGOUT_URL or the SAML nameID is missing');
+        endLocalSession(successRedirect);
+        return;
+      }
+      req.user = identity;
+
+      samlStrategy.logout(req as unknown as Parameters<typeof samlStrategy.logout>[0], (err, url) => {
+        if (err || !url) {
+          logger.error(`Could not build the SAML logout url, ending the local session only: ${String(err)}`);
           endLocalSession(successRedirect);
           return;
         }
 
-        samlStrategy.logout(req as unknown as Parameters<typeof samlStrategy.logout>[0], (err, url) => {
-          if (err || !url) {
-            logger.error(`Could not build the SAML logout url, ending the local session only: ${String(err)}`);
-            endLocalSession(successRedirect);
-            return;
-          }
-
-          try {
-            const idpLogout = new URL(url);
-            idpLogout.searchParams.set('RelayState', successRedirect);
-            endLocalSession(idpLogout.toString());
-          } catch {
-            logger.error(`The SAML logout url is not a valid url, ending the local session only: ${url}`);
-            endLocalSession(successRedirect);
-          }
-        });
-      },
-    );
+        try {
+          const idpLogout = new URL(url);
+          idpLogout.searchParams.set('RelayState', successRedirect);
+          endLocalSession(idpLogout.toString());
+        } catch {
+          logger.error(`The SAML logout url is not a valid url, ending the local session only: ${url}`);
+          endLocalSession(successRedirect);
+        }
+      });
+    });
 
     this.app.get(`${BASE_URL_PREFIX}/saml/logout/callback`, bodyParser.urlencoded({ extended: false }), (req, res, next) => {
       // Passport may clear session-scoped SAML messages during logout, so preserve the result first.
@@ -332,7 +345,7 @@ class App {
     this.app.post(`${BASE_URL_PREFIX}/saml/login/callback`, bodyParser.urlencoded({ extended: false }), (req, res, next) => {
       const { successRedirect, failureRedirect } = getSamlRedirects(getRelayState(req.body), SAML_SUCCESS_REDIRECT ?? '');
 
-      const authenticate = passport.authenticate('saml', (err: unknown, user?: Express.User | false | null) => {
+      const authenticate = passport.authenticate('saml', (err: unknown, user?: Express.User | false | null, info?: unknown) => {
         if (err) {
           const errorName = getErrorName(err);
           logger.warn(`SAML login callback failed: ${errorName ?? 'SAML_UNKNOWN_ERROR'}`);
@@ -340,7 +353,11 @@ class App {
           res.redirect(failureRedirect.toString());
           return;
         } else if (!user) {
-          failureRedirect.searchParams.set('failMessage', 'NO_USER');
+          // The IdP session outlives our refusal, so keep what a LogoutRequest needs — otherwise
+          // the refused user is stuck: the IdP re-asserts the same identity on every retry.
+          req.session.samlIdentity = getSamlIdentity((info as { samlIdentity?: unknown } | undefined)?.samlIdentity);
+          // Verification rejects through info rather than err, so without it every refusal reads as NO_USER.
+          failureRedirect.searchParams.set('failMessage', getErrorName(info) ?? 'NO_USER');
           res.redirect(failureRedirect.toString());
           return;
         } else {
