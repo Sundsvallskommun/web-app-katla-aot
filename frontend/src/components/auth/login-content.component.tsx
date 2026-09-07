@@ -10,6 +10,7 @@ import { capitalize } from 'lodash';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isProduction } from 'src/config/appconfig';
 
 // Turn on/off automatic login
 const autoLogin = false;
@@ -109,6 +110,21 @@ export const LoginContent: React.FC = () => {
             </Button>
           </div>
           {errorMessage && <FormErrorMessage className="text-error mt-lg">{errorMessage}</FormErrorMessage>}
+          {!isProduction() && (
+            <div className="flex flex-col items-center gap-16 mt-lg">
+              <span className="text-small">{t('login:test_environment_logout_help')}</span>
+              <Button
+                data-cy="login-logout-button"
+                variant="tertiary"
+                size="md"
+                onClick={() => {
+                  router.push('/logout');
+                }}
+              >
+                {capitalize(t('common:logout'))}
+              </Button>
+            </div>
+          )}
         </>
       }
     </>
