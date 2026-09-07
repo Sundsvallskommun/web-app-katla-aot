@@ -7,6 +7,10 @@ export interface User extends Record<string, unknown> {
   name: string;
   firstName: string;
   lastName: string;
+  /** From the assertion. Identifies the IdP session to end at logout. */
+  nameID: string;
+  nameIDFormat: string;
+  sessionIndex: string;
 }
 
 /** What /me hands the browser. The party id stays server side. */

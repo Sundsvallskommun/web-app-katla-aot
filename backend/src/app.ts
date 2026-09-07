@@ -15,6 +15,7 @@ import {
   SAML_IDP_PUBLIC_CERT,
   SAML_ISSUER,
   SAML_LOGOUT_CALLBACK_URL,
+  SAML_LOGOUT_URL,
   SAML_PRIVATE_KEY,
   SAML_PUBLIC_KEY,
   SAML_SUCCESS_REDIRECT,
@@ -135,7 +136,7 @@ const samlStrategy = new Strategy(
     digestAlgorithm: 'sha256',
     // maxAssertionAgeMs: 2592000000,
     // authnRequestBinding: 'HTTP-POST',
-    //logoutUrl: 'http://194.71.24.30/sso',
+    logoutUrl: SAML_LOGOUT_URL ?? '',
     logoutCallbackUrl: SAML_LOGOUT_CALLBACK_URL ?? '',
     // -1 would disable the assertion time check entirely.
     acceptedClockSkewMs: 5000,
@@ -268,24 +269,40 @@ class App {
     this.app.get(
       `${BASE_URL_PREFIX}/saml/logout`,
       (req, res, next) => {
-        if (req.session.returnTo) {
-          req.query.RelayState = req.session.returnTo;
-        } else if (typeof req.query.successRedirect === 'string' && req.query.successRedirect !== '') {
-          req.query.RelayState = req.query.successRedirect;
-        }
-        next();
-      },
-      (req, res, next) => {
         const successRedirect = getSafeRedirect(req.query.successRedirect, SAML_SUCCESS_REDIRECT ?? '');
 
-        samlStrategy.logout(req as unknown as Parameters<typeof samlStrategy.logout>[0], () => {
+        const endLocalSession = (redirect: string): void => {
           req.logout(err => {
             if (err) {
               next(err);
               return;
             }
-            res.redirect(successRedirect);
+            res.redirect(redirect);
           });
+        };
+
+        // Single Logout. The nameID it needs is gone once req.logout runs, so build the url first.
+        if (!SAML_LOGOUT_URL || !req.user?.nameID) {
+          logger.warn('Ending the local session only: SAML_LOGOUT_URL or the SAML nameID is missing');
+          endLocalSession(successRedirect);
+          return;
+        }
+
+        samlStrategy.logout(req as unknown as Parameters<typeof samlStrategy.logout>[0], (err, url) => {
+          if (err || !url) {
+            logger.error(`Could not build the SAML logout url, ending the local session only: ${String(err)}`);
+            endLocalSession(successRedirect);
+            return;
+          }
+
+          try {
+            const idpLogout = new URL(url);
+            idpLogout.searchParams.set('RelayState', successRedirect);
+            endLocalSession(idpLogout.toString());
+          } catch {
+            logger.error(`The SAML logout url is not a valid url, ending the local session only: ${url}`);
+            endLocalSession(successRedirect);
+          }
         });
       },
     );
@@ -299,7 +316,9 @@ class App {
           return;
         }
 
-        const { successRedirect, failureRedirect } = getSamlRedirects(getRelayState(req.body), SAML_SUCCESS_REDIRECT ?? '');
+        // The LogoutResponse comes over the redirect binding, so RelayState is a query param here.
+        const relayState = getRelayState(req.query) ?? getRelayState(req.body);
+        const { successRedirect, failureRedirect } = getSamlRedirects(relayState, SAML_SUCCESS_REDIRECT ?? '');
         if (failMessage) {
           failureRedirect.searchParams.set('failMessage', failMessage);
           res.redirect(failureRedirect.toString());

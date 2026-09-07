@@ -15,6 +15,7 @@ Object.assign(process.env, {
   SAML_FAILURE_REDIRECT: 'http://localhost:3000/login',
   SAML_SUCCESS_REDIRECT: 'http://localhost:3000',
   SAML_ENTRY_SSO: 'http://localhost:4000/sso',
+  SAML_LOGOUT_URL: 'http://localhost:4000/logout',
   SAML_IDP_PUBLIC_CERT: 'test-certificate',
   SAML_ISSUER: 'test-issuer',
   SAML_PRIVATE_KEY: 'test-private-key',

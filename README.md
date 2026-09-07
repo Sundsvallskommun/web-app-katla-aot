@@ -61,6 +61,7 @@ redigera `.env.development.local` för behov. URLer, nycklar och cert behöver f
 
 - `CLIENT_KEY` och `CLIENT_SECRET` måste fyllas i för att APIerna ska fungera, du måste ha en applikation från WSO2-portalen som abonnerar på de microtjänster du anropar
 - `SAML_ENTRY_SSO` behöver pekas till en SAML IDP
+- `SAML_LOGOUT_URL` behöver pekas till IDPens Single Logout-endpoint, annars loggar "Logga ut" bara ut från appen och IDPen loggar in användaren igen direkt
 - `SAML_IDP_PUBLIC_CERT` ska stämma överens med IDPens cert
 - `SAML_PRIVATE_KEY` och `SAML_PUBLIC_KEY` behöver bara fyllas i korrekt om man kör mot en riktig IDP
 
