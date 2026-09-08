@@ -171,4 +171,25 @@ describe('JSON schema adapter contracts', () => {
       expect(body.schemaId).toBe('schema-v1');
     });
   });
+  describe('mocked AoT schema', () => {
+    it('serves the AoT schema from disk without calling the jsonschema API', async () => {
+      const getSpy = vi.spyOn(ApiService.prototype, 'get');
+
+      const response = await request(app).get('/api/schemas/latest/aot_opene_test').expect(200);
+      const body = response.body as SchemaResponseDTO;
+
+      expect(getSpy).not.toHaveBeenCalled();
+      expect(body.schemaId).toBe('2281_aot_opene_test_1.0');
+      expect(Object.keys(body.schema.properties as Record<string, unknown>)).toEqual(['kontaktuppgifter_6115', 'ansokan_6116']);
+    });
+
+    it('serves the same schema by its immutable ID', async () => {
+      const getSpy = vi.spyOn(ApiService.prototype, 'get');
+
+      const response = await request(app).get('/api/schemas/2281_aot_opene_test_1.0').expect(200);
+
+      expect(getSpy).not.toHaveBeenCalled();
+      expect((response.body as SchemaResponseDTO).schemaId).toBe('2281_aot_opene_test_1.0');
+    });
+  });
 });

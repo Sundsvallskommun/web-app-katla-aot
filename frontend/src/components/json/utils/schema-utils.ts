@@ -9,7 +9,7 @@ import { createJsonErrorTransformer, fieldTitleFromSchema } from './schema-form-
 
 // The schemas making up Ärendeuppgifter. Empty until AoT's schemas exist in the jsonschema API;
 // the type is wide so it can be filled without becoming a tuple.
-export const ERRAND_FORM_SCHEMA_NAMES: readonly string[] = [];
+export const ERRAND_FORM_SCHEMA_NAMES: readonly string[] = ['aot_opene_test'];
 
 export type ErrandFormDataContractErrorCode = 'invalid-json' | 'missing-schema-id' | 'missing-schema-name';
 

@@ -6,6 +6,7 @@ import { getApiBase } from '@/config/api-config';
 import { JsonSchema, UiSchema } from '@/data-contracts/jsonschema/data-contracts';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
+import { mockedSchemaById, mockedSchemaByName, mockedUiSchemaById } from '@/mocks/aot-schema.mock';
 import { SchemaResponseDTO } from '@/responses/schema.response';
 import ApiService from '@/services/api.service';
 import { logger } from '@/utils/logger';
@@ -23,6 +24,11 @@ export class SchemaController {
    * frontend gets finished text for the requested locale and never sees the other languages.
    */
   private async fetchUiSchema(schemaId: string, req: RequestWithUser, locale: string): Promise<Record<string, unknown>> {
+    const mockedUiSchema = mockedUiSchemaById(schemaId);
+    if (mockedUiSchema) {
+      return localizeUiSchema(mockedUiSchema, locale);
+    }
+
     try {
       const uiRes = await this.apiService.get<UiSchema>(
         {
@@ -44,15 +50,19 @@ export class SchemaController {
   @ResponseSchema(SchemaResponseDTO)
   async getSchemaById(@Param('schemaId') schemaId: string, @Req() req: RequestWithUser): Promise<SchemaResponseDTO> {
     const locale = localeFromAcceptLanguage(req.headers['accept-language']);
-    const schemaRes = await this.apiService.get<JsonSchema>(
-      {
-        baseURL: apiURL(this.apiBase),
-        url: `${MUNICIPALITY_ID}/schemas/${schemaId}`,
-      },
-      req,
-    );
+    const schema =
+      mockedSchemaById(schemaId) ??
+      (
+        await this.apiService.get<JsonSchema>(
+          {
+            baseURL: apiURL(this.apiBase),
+            url: `${MUNICIPALITY_ID}/schemas/${schemaId}`,
+          },
+          req,
+        )
+      ).data;
 
-    const result = mapSchemaResponse(schemaRes.data, schemaId);
+    const result = mapSchemaResponse(schema, schemaId);
     const uiSchema = await this.fetchUiSchema(result.schemaId, req, locale);
 
     return { schema: applyUiSchemaTitleToSchema(result.schema, uiSchema), schemaId: result.schemaId, uiSchema };
@@ -64,15 +74,19 @@ export class SchemaController {
   @ResponseSchema(SchemaResponseDTO)
   async getLatestSchema(@Param('schemaName') schemaName: string, @Req() req: RequestWithUser): Promise<SchemaResponseDTO> {
     const locale = localeFromAcceptLanguage(req.headers['accept-language']);
-    const latestRes = await this.apiService.get<JsonSchema>(
-      {
-        baseURL: apiURL(this.apiBase),
-        url: `${MUNICIPALITY_ID}/schemas/${schemaName}/versions/latest`,
-      },
-      req,
-    );
+    const latest =
+      mockedSchemaByName(schemaName) ??
+      (
+        await this.apiService.get<JsonSchema>(
+          {
+            baseURL: apiURL(this.apiBase),
+            url: `${MUNICIPALITY_ID}/schemas/${schemaName}/versions/latest`,
+          },
+          req,
+        )
+      ).data;
 
-    const result = mapSchemaResponse(latestRes.data);
+    const result = mapSchemaResponse(latest);
     const uiSchema = await this.fetchUiSchema(result.schemaId, req, locale);
 
     return { schema: applyUiSchemaTitleToSchema(result.schema, uiSchema), schemaId: result.schemaId, uiSchema };
