@@ -1,5 +1,6 @@
 import { validateErrandFormData } from '@components/json/utils/schema-utils';
 import { ErrandFormDTO } from '@interfaces/errand-form';
+import { getSelectedLabels } from '@utils/label-tree';
 import { getPrimaryStakeholder } from '@utils/stakeholder';
 import type { TFunction } from 'i18next';
 
@@ -25,7 +26,12 @@ export async function validateStep(
       return getPrimaryStakeholder(formValues.stakeholders) ? [] : [t('validation:owner.required')];
     }
 
-    case 'about':
+    case 'about': {
+      const { CATEGORY, TYPE } = getSelectedLabels(formValues.labels);
+      if (!CATEGORY) return [t('validation:categorization.category_required')];
+      return TYPE ? [] : [t('validation:categorization.type_required')];
+    }
+
     case 'other-parties':
     case 'summary':
     default:

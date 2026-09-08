@@ -40,6 +40,8 @@ if (process.env.NEXT_PUBLIC_REDUCED_STAKEHOLDER_INFO === 'true') {
 
 export default defineConfig({
   testDir: './e2e/tests',
+  // Checks that the target is actually usable before any spec runs; see the file for why.
+  globalSetup: './e2e/global-setup.ts',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,

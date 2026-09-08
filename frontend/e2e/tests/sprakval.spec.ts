@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 
 import { mockErrand } from '../fixtures/mockErrand';
 import { mockMetadata } from '../fixtures/mockMetadata';
+import { selectCategorization } from '../utils/categorization';
 import { jsonRoute } from '../utils/routes';
 import { addStakeholder, disclosureByTitle } from '../utils/stakeholder';
 import { expect, test } from '../utils/test';
@@ -48,6 +49,8 @@ test.describe('Language switching', () => {
     test.use({ viewport: { width: 390, height: 844 } });
 
     test('changes language from the registration header without leaving the wizard', async ({ page }) => {
+      // Step 1 is "Om ärendet", which the wizard will not leave uncategorized.
+      await selectCategorization(page);
       await page.getByRole('button', { name: 'Nästa' }).click();
       await expect(page.getByText('Steg 2/5')).toBeVisible();
 

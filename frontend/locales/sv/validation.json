@@ -23,5 +23,9 @@
   },
   "owner": {
     "required": "Välj vilket företag eller vilken organisation ärendet gäller."
+  },
+  "categorization": {
+    "category_required": "Välj vilken kategori ärendet gäller.",
+    "type_required": "Välj vilken ärendetyp ärendet gäller."
   }
 }

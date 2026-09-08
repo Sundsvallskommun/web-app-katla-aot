@@ -1,9 +1,17 @@
+import type { LabelDTO } from '@data-contracts/backend/data-contracts';
 import type { Page } from '@playwright/test';
 
 import { mockOrganization, mockSecondOrganization } from '../fixtures/getMyOrganizations';
 import { mockErrand } from '../fixtures/mockErrand';
-import { mockMetadata } from '../fixtures/mockMetadata';
+import {
+  mockCategoryAlkohol,
+  mockMetadata,
+  mockSubTypeStadigvarande,
+  mockTypeFolkol,
+  mockTypeServering,
+} from '../fixtures/mockMetadata';
 import { mockManualEditStakeholder, mockStakeholder } from '../fixtures/mockStakeholder';
+import { aboutErrandSection, selectCategorization } from '../utils/categorization';
 import { MOCK_COUNTRY_CODE_PHONE_NUMBER, MOCK_EMAIL, MOCK_HYPHEN_PERSON_NUMBER } from '../utils/constants';
 import { errandOwnerSection, selectErrandOwner } from '../utils/errand-owner';
 import { jsonRoute } from '../utils/routes';
@@ -16,9 +24,20 @@ import {
 import { expect, test } from '../utils/test';
 
 const OWNER_REQUIRED_MESSAGE = 'Välj vilket företag eller vilken organisation ärendet gäller.';
+const CATEGORY_REQUIRED_MESSAGE = 'Välj vilken kategori ärendet gäller.';
+
+/** A metadata label as the errand stores it, without the subtree. */
+const asErrandLabel = ({ classification, displayName, id, resourceName, resourcePath }: LabelDTO) => ({
+  classification,
+  displayName,
+  id,
+  resourceName,
+  resourcePath,
+});
 
 interface CreateErrandRequestBody {
   jsonParameters?: { key: string; value: unknown; schemaId: string }[];
+  labels?: Record<string, unknown>[];
   parameters?: { key: string; values: string[] }[];
   stakeholders?: Record<string, unknown>[];
 }
@@ -53,6 +72,7 @@ const registerErrandAndExpectDraft = async (page: Page, expectedStakeholderCount
   expect(body.parameters ?? []).toEqual([]);
   expect(body.jsonParameters).toEqual([]);
   expect(body.stakeholders?.length).toBe(expectedStakeholderCount);
+  expect(body.labels).toEqual([mockCategoryAlkohol, mockTypeServering, mockSubTypeStadigvarande].map(asErrandLabel));
 };
 
 test.describe('Register new errand page', () => {
@@ -64,6 +84,44 @@ test.describe('Register new errand page', () => {
     // Visible sections do not prove the server-rendered page has hydrated.
     // The client enables the register button, so it is the flow's readiness boundary.
     await expect(page.getByTestId('register-errand')).toBeEnabled();
+  });
+
+  test('Offers the categories the metadata allows, and keeps the type behind that choice', async ({ page }) => {
+    const section = aboutErrandSection(page);
+
+    // "Utgången kategori" is deprecated in the metadata and must not be offered.
+    await expect(section.getByTestId('errand-category-select').locator('option')).toHaveText([
+      'Välj kategori…',
+      'Alkohol',
+      'Tobak och nikotin',
+    ]);
+    await expect(section.getByTestId('errand-type-input')).toBeDisabled();
+
+    await section.getByTestId('errand-category-select').selectOption(mockCategoryAlkohol.id ?? '');
+    await expect(section.getByTestId('errand-type-input')).toBeEnabled();
+    await section.getByTestId('errand-type-input').click();
+
+    // Group headings and options both render as labels, leaf options before the groups.
+    await expect(section.getByTestId('errand-type-list').locator('label')).toHaveText([
+      'Folköl klass 2',
+      'Serveringstillstånd',
+      'Stadigvarande servering',
+      'Tillfällig servering',
+    ]);
+  });
+
+  test('Files a type without subtypes as two labels', async ({ page }) => {
+    await selectCategorization(page, mockCategoryAlkohol, mockTypeFolkol);
+    await selectErrandOwner(page);
+
+    const submitButton = await openRegistrationConfirmation(page);
+    const createRequest = page.waitForRequest(
+      (request) => request.url().includes('/supportmanagement/errand/create') && request.method() === 'POST'
+    );
+    await submitButton.click();
+    const body = (await createRequest).postDataJSON() as CreateErrandRequestBody;
+
+    expect(body.labels).toEqual([mockCategoryAlkohol, mockTypeFolkol].map(asErrandLabel));
   });
 
   test('Shows the section scaffolding while the AoT fields are not built yet', async ({ page }) => {
@@ -130,6 +188,7 @@ test.describe('Register new errand page', () => {
 
   test('Edits the owner contact details and files them with the errand', async ({ page }) => {
     const owner = errandOwnerSection(page);
+    await selectCategorization(page);
     await selectErrandOwner(page, mockOrganization);
 
     await owner.getByTestId('edit-owner-button').click();
@@ -190,7 +249,16 @@ test.describe('Register new errand page', () => {
     await expect(page.getByTestId('owner-serveringsstalle-input')).toHaveValue('');
   });
 
+  test('Refuses to register an errand before it has been categorized', async ({ page }) => {
+    await page.getByTestId('register-errand').click();
+
+    await expect(page.getByTestId('errand-category-error')).toContainText(CATEGORY_REQUIRED_MESSAGE);
+    await expect(page.locator('#react-toast').getByText(CATEGORY_REQUIRED_MESSAGE)).toBeVisible();
+    await expect(page.getByTestId('submit-button')).toHaveCount(0);
+  });
+
   test('Refuses to register an errand before an owner has been chosen', async ({ page }) => {
+    await selectCategorization(page);
     await page.getByTestId('register-errand').click();
 
     // The message is deliberately in two places: the toast reports the failed attempt, the
@@ -203,12 +271,14 @@ test.describe('Register new errand page', () => {
   test('Registers an errand without any form fields filled in', async ({ page }) => {
     await expect(page.locator('main').first()).toBeVisible();
 
+    await selectCategorization(page);
     await selectErrandOwner(page);
 
     await registerErrandAndExpectDraft(page, 1);
   });
 
   test('Files the chosen organization as the errand owner', async ({ page }) => {
+    await selectCategorization(page);
     await selectErrandOwner(page, mockSecondOrganization);
 
     const submitButton = await openRegistrationConfirmation(page);
@@ -237,6 +307,7 @@ test.describe('Register new errand page', () => {
     await expect(ovrigaParter.getByTestId('remove-card-button').first()).toBeVisible();
     await expect(ovrigaParter.getByTestId('add-manual-person-button')).toBeVisible();
 
+    await selectCategorization(page);
     await selectErrandOwner(page);
     await registerErrandAndExpectDraft(page, 2);
   });
@@ -247,6 +318,7 @@ test.describe('Register new errand page', () => {
     const ovrigaParter = disclosureByTitle(page, 'Övriga parter');
     await addStakeholder(page, ovrigaParter, 'CONTACT');
     await expect(ovrigaParter.getByTestId('stakeholder-card')).toHaveCount(1);
+    await selectCategorization(page);
     await selectErrandOwner(page);
 
     const submitButton = await openRegistrationConfirmation(page);
@@ -284,6 +356,7 @@ test.describe('Register new errand page', () => {
     await expect(ovrigaParter.getByTestId('remove-card-button')).toBeVisible();
     await expect(ovrigaParter.getByTestId('add-manual-person-button')).toBeVisible();
 
+    await selectCategorization(page);
     await selectErrandOwner(page);
     await registerErrandAndExpectDraft(page, 2);
   });
@@ -324,6 +397,7 @@ test.describe('Register new errand page', () => {
       `${mockManualEditStakeholder.address ?? ''} ${mockManualEditStakeholder.city ?? ''}`
     );
 
+    await selectCategorization(page);
     await selectErrandOwner(page);
     await registerErrandAndExpectDraft(page, 2);
   });

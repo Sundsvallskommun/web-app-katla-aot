@@ -60,9 +60,14 @@ const OWNER: ErrandFormDTO['stakeholders'] = [
   { role: 'PRIMARY', externalId: 'f1e2d3c4-0000-4000-8000-000000000001', organizationName: 'Acme Restaurang AB' },
 ];
 
-const renderButtons = (stakeholders?: ErrandFormDTO['stakeholders']) => {
+const CLASSIFICATION: ErrandFormDTO['labels'] = [
+  { id: 'alkohol', classification: 'CATEGORY' },
+  { id: 'folkol', classification: 'TYPE' },
+];
+
+const renderButtons = (defaultValues: Partial<ErrandFormDTO> = {}) => {
   const TestForm: React.FC = () => {
-    const methods = useForm<ErrandFormDTO>({ defaultValues: { status: 'DRAFT', stakeholders } });
+    const methods = useForm<ErrandFormDTO>({ defaultValues: { status: 'DRAFT', ...defaultValues } });
 
     return (
       <FormProvider {...methods}>
@@ -76,7 +81,7 @@ const renderButtons = (stakeholders?: ErrandFormDTO['stakeholders']) => {
   return render(<TestForm />);
 };
 
-describe('Errand owner is required to register', () => {
+describe('What registration requires before it will submit', () => {
   beforeEach(() => {
     createErrandMock.mockReset();
     routerPushMock.mockReset();
@@ -84,23 +89,45 @@ describe('Errand owner is required to register', () => {
     updateErrandMock.mockReset();
   });
 
-  it('refuses to register an errand with no owner', async () => {
-    renderButtons();
-
+  const clickRegister = () => {
     fireEvent.click(screen.getByRole('button', { name: 'errand-information:register' }));
+  };
 
+  const expectReported = async (message: string) => {
     await waitFor(() => {
-      expect(snackbarMock).toHaveBeenCalledWith(
-        expect.objectContaining({ status: 'error', message: 'validation:owner.required' })
-      );
+      expect(snackbarMock).toHaveBeenCalledWith(expect.objectContaining({ status: 'error', message }));
     });
     expect(screen.queryByRole('button', { name: 'errand-information:submit_confirm.submit' })).not.toBeInTheDocument();
+  };
+
+  it('refuses to register an errand that has not been categorized', async () => {
+    renderButtons({ stakeholders: OWNER });
+
+    clickRegister();
+
+    await expectReported('validation:categorization.category_required');
   });
 
-  it('opens the confirmation once an owner has been chosen', async () => {
-    renderButtons(OWNER);
+  it('asks for the type once the category is chosen', async () => {
+    renderButtons({ labels: [{ id: 'alkohol', classification: 'CATEGORY' }], stakeholders: OWNER });
 
-    fireEvent.click(screen.getByRole('button', { name: 'errand-information:register' }));
+    clickRegister();
+
+    await expectReported('validation:categorization.type_required');
+  });
+
+  it('refuses to register an errand with no owner', async () => {
+    renderButtons({ labels: CLASSIFICATION });
+
+    clickRegister();
+
+    await expectReported('validation:owner.required');
+  });
+
+  it('opens the confirmation once the errand is categorized and has an owner', async () => {
+    renderButtons({ labels: CLASSIFICATION, stakeholders: OWNER });
+
+    clickRegister();
 
     expect(await screen.findByRole('button', { name: 'errand-information:submit_confirm.submit' })).toBeInTheDocument();
     expect(snackbarMock).not.toHaveBeenCalled();

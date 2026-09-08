@@ -20,7 +20,13 @@
     "error": "Något gick fel när ärendet sparades"
   },
   "about": {
-    "title": "Om ärendet"
+    "title": "Om ärendet",
+    "category_label": "Kategori",
+    "category_placeholder": "Välj kategori…",
+    "type_label": "Ärendetyp",
+    "type_placeholder": "Välj ärendetyp…",
+    "type_placeholder_no_category": "Välj kategori först",
+    "type_search_placeholder": "Sök ärendetyp"
   },
   "other_parties": {
     "title": "Övriga parter",

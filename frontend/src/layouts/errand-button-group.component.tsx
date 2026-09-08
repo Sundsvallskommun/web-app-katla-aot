@@ -9,6 +9,8 @@ import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandFormDTO } from '@interfaces/errand-form';
 import { createErrand, updateErrand } from '@services/errand-service/errand-service';
 import { Button, Dialog, useSnackbar } from '@sk-web-gui/react';
+import { getSelectedLabels } from '@utils/label-tree';
+import { prepareErrandForApi } from '@utils/prepare-errand';
 import { getPrimaryStakeholder } from '@utils/stakeholder';
 import { Inbox } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -16,7 +18,6 @@ import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
-import { usePrepareErrand } from 'src/hooks/use-prepare-errand';
 
 import { CenterDiv } from './center-div.component';
 
@@ -35,7 +36,6 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
   const { setShowValidation, focusFirstError } = useFormValidation();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isCancelOpen, setIsCancelOpen] = useState<boolean>(false);
-  const { prepareErrandForApi } = usePrepareErrand();
 
   const errandStatus = watch('status');
   const errandId = watch('id');
@@ -100,6 +100,16 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
     setShowValidation(true);
 
     const values = getValues();
+
+    const { CATEGORY, TYPE } = getSelectedLabels(values.labels);
+    if (!CATEGORY) {
+      reportValidationError(t('validation:categorization.category_required'));
+      return;
+    }
+    if (!TYPE) {
+      reportValidationError(t('validation:categorization.type_required'));
+      return;
+    }
 
     // Without an owner the errand falls outside every organisation the session scopes by, so the
     // citizen who filed it could not read it back.
