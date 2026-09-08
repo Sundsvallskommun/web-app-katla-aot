@@ -7,9 +7,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import App from '@/app';
 import { IndexController } from '@/controllers/index.controller';
 
-type SamlAuthenticationCallback = (error: unknown, user?: Express.User | false | null) => void;
+type SamlAuthenticationCallback = (error: unknown, user?: Express.User | false | null, info?: unknown) => void;
 
-const mockSamlAuthentication = (error: unknown, user?: Express.User | false | null, loginError?: Error): void => {
+const mockSamlAuthentication = (error: unknown, user?: Express.User | false | null, loginError?: Error, info?: unknown): void => {
   vi.spyOn(passport, 'authenticate').mockImplementation(((_strategy: string, optionsOrCallback?: unknown) => {
     if (typeof optionsOrCallback !== 'function') {
       return (_req: express.Request, _res: express.Response, next: express.NextFunction) => {
@@ -27,7 +27,7 @@ const mockSamlAuthentication = (error: unknown, user?: Express.User | false | nu
           },
         });
       }
-      callback(error, user);
+      callback(error, user, info);
     };
   }) as typeof passport.authenticate);
 };
@@ -77,6 +77,15 @@ describe('SAML callback redirects', () => {
       .expect(302);
 
     expect(response.headers.location).toBe('http://localhost:3000/failure?failMessage=NO_USER');
+  });
+
+  it('reports why the verification refused the user instead of a bare NO_USER', async () => {
+    mockSamlAuthentication(undefined, false, undefined, { name: 'SAML_MISSING_CITIZEN_IDENTIFIER', message: 'Missing citizen identifier' });
+    const app = new App([IndexController]).getServer();
+
+    const response = await request(app).post('/api/saml/login/callback').type('form').send({}).expect(302);
+
+    expect(response.headers.location).toBe('http://localhost:3000/?failMessage=SAML_MISSING_CITIZEN_IDENTIFIER');
   });
 
   it('redirects exactly once when req.login fails', async () => {
@@ -146,6 +155,22 @@ describe('SAML single logout', () => {
     const response = await agent.get('/api/saml/logout').query({ successRedirect: 'http://localhost:3000/login?loggedout' }).expect(302);
 
     expect(response.headers.location).toBe('http://localhost:3000/login?loggedout');
+  });
+
+  it('logs a refused login out of the IdP, which still holds a session for it', async () => {
+    mockSamlLogout('http://localhost:4000/logout?SAMLRequest=encoded-request');
+    mockSamlAuthentication(undefined, false, undefined, {
+      name: 'SAML_MISSING_CITIZEN_IDENTIFIER',
+      message: 'Missing citizen identifier',
+      samlIdentity: { nameID: 'employee@idp', nameIDFormat: 'urn:unspecified', sessionIndex: 'session-1' },
+    });
+    const app = new App([IndexController]).getServer();
+    const agent = request.agent(app);
+
+    await agent.post('/api/saml/login/callback').type('form').send({}).expect(302);
+    const response = await agent.get('/api/saml/logout').query({ successRedirect: 'http://localhost:3000/login?loggedout' }).expect(302);
+
+    expect(response.headers.location).toContain('http://localhost:4000/logout');
   });
 
   it('skips the IdP round trip when there is no logged in user to log out', async () => {

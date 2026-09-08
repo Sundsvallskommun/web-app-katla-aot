@@ -80,7 +80,9 @@ describe('Api service route guard', () => {
   it('guards a page reached with a language prefix too', async () => {
     const loginRedirectUrl = await loadLoginRedirectUrl();
 
-    expect(loginRedirectUrl(unauthorized, '/registrering/aot/en/oversikt', origin)?.pathname).toBe('/registrering/aot/login');
+    expect(loginRedirectUrl(unauthorized, '/registrering/aot/en/oversikt', origin)?.pathname).toBe(
+      '/registrering/aot/login'
+    );
   });
 
   it('leaves a public page alone', async () => {
@@ -92,7 +94,10 @@ describe('Api service route guard', () => {
 
   it('leaves anything that is not a 401 to the caller', async () => {
     const loginRedirectUrl = await loadLoginRedirectUrl();
-    const serverError = { response: { status: 500, data: { message: 'Server Error' } }, config: {} } as AxiosError<ApiResponse>;
+    const serverError = {
+      response: { status: 500, data: { message: 'Server Error' } },
+      config: {},
+    } as AxiosError<ApiResponse>;
 
     expect(loginRedirectUrl(serverError, '/registrering/aot/oversikt', origin)).toBeUndefined();
   });
