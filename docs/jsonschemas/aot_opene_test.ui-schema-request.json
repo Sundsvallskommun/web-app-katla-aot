@@ -1,0 +1,2446 @@
+{
+  "value": {
+    "ui:order": [
+      "kontaktuppgifter_6115",
+      "ansokan_6116"
+    ],
+    "kontaktuppgifter_6115": {
+      "ui:order": [
+        "foretrader_du_ett_foretag_81698",
+        "kontaktuppgifter_81699",
+        "kontaktuppgifter_81700",
+        "hamtning_av_foretagsuppgifter_81701",
+        "valj_foretag_81702",
+        "ar_du_firmatecknare_81703",
+        "ladda_upp_fullmakt_81704",
+        "ditt_foretag_81705",
+        "foretagsform_81706",
+        "ar_fakturaadressen_samma_som_foretagets_81707",
+        "fakturamottagare_81708",
+        "fakturareferens_81709",
+        "bifoga_aktuellt_registreringsbevis_fran_81710",
+        "bifoga_uppgifter_om_agarforhallanden_81711",
+        "bifoga_registerutdrag_fran_skatteverket_81712",
+        "verksamhetsbeskrivning_81713",
+        "verksamhetsbeskrivning_81714",
+        "bifoga_verksamhetsbeskrivning_81715"
+      ],
+      "ui:sections": [
+        {
+          "id": "kontaktuppgifter",
+          "title": "Kontaktuppgifter och företag",
+          "icon": "building-2",
+          "defaultOpen": true,
+          "fields": [
+            "foretrader_du_ett_foretag_81698",
+            "kontaktuppgifter_81699",
+            "kontaktuppgifter_81700",
+            "hamtning_av_foretagsuppgifter_81701",
+            "valj_foretag_81702",
+            "ar_du_firmatecknare_81703",
+            "ladda_upp_fullmakt_81704",
+            "ditt_foretag_81705",
+            "foretagsform_81706",
+            "ar_fakturaadressen_samma_som_foretagets_81707",
+            "fakturamottagare_81708",
+            "fakturareferens_81709",
+            "bifoga_aktuellt_registreringsbevis_fran_81710",
+            "bifoga_uppgifter_om_agarforhallanden_81711",
+            "bifoga_registerutdrag_fran_skatteverket_81712",
+            "verksamhetsbeskrivning_81713",
+            "verksamhetsbeskrivning_81714",
+            "bifoga_verksamhetsbeskrivning_81715"
+          ]
+        }
+      ],
+      "foretrader_du_ett_foretag_81698": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "kontaktuppgifter_81699": {
+        "ui:order": [
+          "citizenID",
+          "firstname",
+          "lastname",
+          "address",
+          "postalCode",
+          "postalAddress",
+          "phone",
+          "mobilePhone",
+          "email"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "citizenID": {
+          "ui:widget": "TextWidget"
+        },
+        "firstname": {
+          "ui:widget": "TextWidget"
+        },
+        "lastname": {
+          "ui:widget": "TextWidget"
+        },
+        "address": {
+          "ui:widget": "TextWidget"
+        },
+        "postalCode": {
+          "ui:widget": "TextWidget"
+        },
+        "postalAddress": {
+          "ui:widget": "TextWidget"
+        },
+        "phone": {
+          "ui:widget": "TextWidget"
+        },
+        "mobilePhone": {
+          "ui:widget": "TextWidget"
+        },
+        "email": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "kontaktuppgifter_81700": {
+        "ui:order": [
+          "citizenID",
+          "firstname",
+          "lastname",
+          "mobilePhone",
+          "email"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "citizenID": {
+          "ui:widget": "TextWidget"
+        },
+        "firstname": {
+          "ui:widget": "TextWidget"
+        },
+        "lastname": {
+          "ui:widget": "TextWidget"
+        },
+        "mobilePhone": {
+          "ui:widget": "TextWidget"
+        },
+        "email": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "hamtning_av_foretagsuppgifter_81701": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "valj_foretag_81702": {
+        "ui:order": [
+          "organizationNumber",
+          "name",
+          "companyType",
+          "address",
+          "postalCode",
+          "postalAddress",
+          "phone",
+          "email"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "organizationNumber": {
+          "ui:widget": "TextWidget",
+          "ui:readonly": true
+        },
+        "name": {
+          "ui:widget": "TextWidget",
+          "ui:readonly": true
+        },
+        "companyType": {
+          "ui:widget": "TextWidget",
+          "ui:readonly": true
+        },
+        "address": {
+          "ui:widget": "TextWidget",
+          "ui:readonly": true
+        },
+        "postalCode": {
+          "ui:widget": "TextWidget",
+          "ui:readonly": true
+        },
+        "postalAddress": {
+          "ui:widget": "TextWidget",
+          "ui:readonly": true
+        },
+        "phone": {
+          "ui:widget": "TextWidget",
+          "ui:readonly": true
+        },
+        "email": {
+          "ui:widget": "TextWidget",
+          "ui:readonly": true
+        }
+      },
+      "ar_du_firmatecknare_81703": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "ladda_upp_fullmakt_81704": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ""
+        }
+      },
+      "ditt_foretag_81705": {
+        "ui:order": [
+          "foretagets_namn_50389",
+          "organisationsnummer_50390",
+          "utdelningsadress_50391",
+          "postnummer_50392",
+          "postort_50393",
+          "foretagets_telefonnummer_50394",
+          "foretagets_e_postadress_50395"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "foretagets_namn_50389": {
+          "ui:widget": "TextWidget"
+        },
+        "organisationsnummer_50390": {
+          "ui:widget": "TextWidget"
+        },
+        "utdelningsadress_50391": {
+          "ui:widget": "TextWidget"
+        },
+        "postnummer_50392": {
+          "ui:widget": "TextWidget"
+        },
+        "postort_50393": {
+          "ui:widget": "TextWidget"
+        },
+        "foretagets_telefonnummer_50394": {
+          "ui:widget": "TextWidget"
+        },
+        "foretagets_e_postadress_50395": {
+          "ui:widget": "TextWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "postnummer_50392",
+              "postort_50393"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "foretagsform_81706": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "ar_fakturaadressen_samma_som_foretagets_81707": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "fakturamottagare_81708": {
+        "ui:order": [
+          "c_o_50396",
+          "utdelningsadress_50397",
+          "postnummer_50398",
+          "postort_50399"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "c_o_50396": {
+          "ui:widget": "TextWidget"
+        },
+        "utdelningsadress_50397": {
+          "ui:widget": "TextWidget"
+        },
+        "postnummer_50398": {
+          "ui:widget": "TextWidget"
+        },
+        "postort_50399": {
+          "ui:widget": "TextWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "postnummer_50398",
+              "postort_50399"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "fakturareferens_81709": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "bifoga_aktuellt_registreringsbevis_fran_81710": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "bifoga_uppgifter_om_agarforhallanden_81711": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "bifoga_registerutdrag_fran_skatteverket_81712": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "verksamhetsbeskrivning_81713": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "verksamhetsbeskrivning_81714": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "bifoga_verksamhetsbeskrivning_81715": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      }
+    },
+    "ansokan_6116": {
+      "ui:order": [
+        "vad_vill_du_ansoka_om_eller_anmala_81716",
+        "kunskap_om_alkohollagen_81718",
+        "personnummer_81719",
+        "organisationsnummer_81720",
+        "vill_du_anmala_personer_i_foretaget_till_81721",
+        "harmed_anmaler_jag_foljande_person_perso_81723",
+        "verksamhetens_inriktning_81726",
+        "har_ni_81727",
+        "beskriv_verksamhetens_inriktning_81728",
+        "ska_servering_av_alkohol_ske_till_allman_81729",
+        "serveringsperiod_for_allmanheten_81730",
+        "ange_period_for_servering_till_allmanhet_81731",
+        "serveringstider_inomhus_allmanheten_81732",
+        "serveringstider_utomhus_allmanheten_81733",
+        "serveringsperiod_for_slutet_sallskap_81734",
+        "ange_period_for_servering_till_slutet_sa_81735",
+        "serveringstider_inomhus_slutet_sallskap_81736",
+        "serveringstider_utomhus_slutet_sallskap_81737",
+        "vilka_alkoholdrycker_ska_serveras_81738",
+        "beskriv_utbudet_av_mat_81739",
+        "bifoga_meny_81740",
+        "meny_81741",
+        "finansiering_81743",
+        "egna_medel_81744",
+        "bifoga_kontoutdrag_81745",
+        "banklan_81746",
+        "bifoga_lanebevis_for_banklan_81747",
+        "privatlan_81748",
+        "bifoga_lanebevis_for_privatlan_81749",
+        "annan_finansiering_81750",
+        "bifoga_lanebevis_for_annan_finansiering_81751",
+        "ovriga_upplysningar_angaende_finansierin_81752",
+        "serveringsstallets_namn_81754",
+        "ar_serveringsstallets_besoksadress_samma_81755",
+        "serveringsstallets_besoksadress_81756",
+        "kontaktuppgifter_till_serveringsstallet_81757",
+        "serveringsansvarig_personal_81758",
+        "sittplatser_i_lokalen_81759",
+        "maximalt_antal_personer_som_kommer_att_v_81760",
+        "bifoga_planritning_81761",
+        "bifoga_avtal_gallande_lokal_och_mark_81762",
+        "bifoga_avtal_gallande_verksamheten_81763",
+        "bifoga_brandskyddsdokumentation_81764",
+        "ange_mellan_vilka_datum_det_tillfalliga_81766",
+        "ovriga_uppgifter_gallande_datum_81767",
+        "klockslag_for_serveringen_81768",
+        "vilka_alkoholdrycker_ska_serveras_81769",
+        "meny_81770",
+        "gaster_81771",
+        "gastlista_eller_medlemslista_81772",
+        "beraknat_antal_gaster_81773",
+        "hur_har_gasterna_bjudits_in_81774",
+        "vad_ar_det_for_typ_av_tillstallning_81775",
+        "serveringsstalle_81776",
+        "serveringsansvarig_personal_81777",
+        "sittplatser_i_lokalen_81778",
+        "maximalt_antal_personer_som_kommer_att_v_81779",
+        "finns_polistillstand_81780",
+        "ladda_upp_polistillstand_81781",
+        "jag_vill_81784",
+        "kommer_ni_att_servera_mat_81785",
+        "beskriv_utbudet_av_mat_81786",
+        "bifoga_meny_81787",
+        "meny_81788",
+        "egenkontrollprogram_vid_servering_av_fol_81789",
+        "bifoga_egenkontrollprogram_for_servering_81790",
+        "serveringsstallets_namn_81791",
+        "ar_serveringsstallets_besoksadress_samma_81792",
+        "serveringsstallets_besoksadress_81793",
+        "kontaktuppgifter_till_serveringsstallet_81794",
+        "sittplatser_i_lokalen_81795",
+        "maximalt_antal_personer_som_kommer_att_v_81796",
+        "bifoga_livsmedelsregistrering_fran_miljo_81797",
+        "forsaljningsstalle_81799",
+        "alkoholdrycker_81800",
+        "forsaljningsperiod_81801",
+        "ange_period_for_forsaljning_81802",
+        "forsaljningstider_81803",
+        "besoksarrangemang_81804",
+        "beskriv_besoksarrangemanget_81805",
+        "ladda_upp_beskrivning_pa_besoksarrangema_81806",
+        "ladda_upp_egenkontrollprogram_81807",
+        "ritning_for_forsaljningslokal_81808",
+        "hyresavtal_eller_agarbevis_81809",
+        "gardsforsaljningstillstand_81810",
+        "beskriv_forsaljningsplats_81811",
+        "kunskap_om_alkohollagen_81813",
+        "personnummer_81814",
+        "organisationsnummer_81815",
+        "vill_du_anmala_personer_i_foretaget_till_81816",
+        "harmed_anmaler_jag_foljande_person_perso_81818",
+        "vilka_alkoholdrycker_ska_serveras_81819",
+        "finansiering_81820",
+        "egna_medel_81821",
+        "bifoga_kontoutdrag_81822",
+        "banklan_81823",
+        "bifoga_lanebevis_for_banklan_81824",
+        "privatlan_81825",
+        "bifoga_lanebevis_for_privatlan_81826",
+        "annan_finansiering_81827",
+        "bifoga_lanebevis_for_annan_finansiering_81828",
+        "ovriga_upplysningar_angaende_finansierin_81829",
+        "har_ni_anmalt_koket_som_livsmedelsanlagg_81830",
+        "kapacitet_81832",
+        "koksinformation_81833",
+        "planritning_kok_81834",
+        "brandskydd_kok_81835",
+        "hyresavtal_eller_upplatelseavtal_kok_81836",
+        "godkanna_cateringtillfalle_81837",
+        "kunskap_om_alkohollagen_81839",
+        "personnummer_81840",
+        "organisationsnummer_81841",
+        "vill_du_anmala_personer_i_foretaget_till_81842",
+        "harmed_anmaler_jag_foljande_person_perso_81844",
+        "verksamhetens_inriktning_81846",
+        "har_ni_81847",
+        "beskriv_verksamhetens_inriktning_81848",
+        "finansiering_81849",
+        "egna_medel_81850",
+        "bifoga_kontoutdrag_81851",
+        "banklan_81852",
+        "bifoga_lanebevis_for_banklan_81853",
+        "privatlan_81854",
+        "bifoga_lanebevis_for_privatlan_81855",
+        "annan_finansiering_81856",
+        "bifoga_lanebevis_for_annan_finansiering_81857",
+        "ovriga_upplysningar_angaende_finansierin_81858",
+        "sittplatser_i_lokalen_81859",
+        "maximalt_antal_personer_som_kommer_att_v_81860",
+        "bifoga_planritning_81861",
+        "bifoga_avtal_gallande_lokal_och_mark_81862",
+        "bifoga_brandskyddsdokumentation_81863",
+        "regler_for_serveringstillstand_till_priv_81865",
+        "forsaljning_av_alkoholdrycker_81866",
+        "ar_tillstallningen_i_ovrigt_kostnadsfri_81867",
+        "var_kommer_tillstallningen_att_aga_rum_81868",
+        "du_behover_inte_ansoka_om_serveringstill_81869",
+        "bifoga_hyreskontrakt_81870",
+        "datum_for_serveringen_81871",
+        "klockslag_for_serveringen_81872",
+        "vilka_alkoholdrycker_ska_serveras_81873",
+        "meny_81874",
+        "beraknat_antal_gaster_81875",
+        "vad_ar_det_for_typ_av_tillstallning_81876",
+        "vad_ar_det_for_typ_av_slutet_sallskap_81877",
+        "adress_81878",
+        "sittplatser_i_lokalen_81879",
+        "maximalt_antal_personer_som_kommer_att_v_81880",
+        "ladda_upp_ritning_pa_lokalen_med_serveri_81881",
+        "har_du_kassaregister_81883",
+        "ange_registreringskod_81884"
+      ],
+      "ui:sections": [
+        {
+          "id": "gemensamt",
+          "title": "Om ansökan",
+          "icon": "file-text",
+          "defaultOpen": true,
+          "fields": [
+            "vad_vill_du_ansoka_om_eller_anmala_81716",
+            "har_du_kassaregister_81883",
+            "ange_registreringskod_81884"
+          ]
+        },
+        {
+          "id": "privatperson",
+          "title": "Ansökan som privatperson",
+          "icon": "user",
+          "defaultOpen": false,
+          "fields": [
+            "regler_for_serveringstillstand_till_priv_81865",
+            "forsaljning_av_alkoholdrycker_81866",
+            "ar_tillstallningen_i_ovrigt_kostnadsfri_81867",
+            "var_kommer_tillstallningen_att_aga_rum_81868",
+            "du_behover_inte_ansoka_om_serveringstill_81869",
+            "bifoga_hyreskontrakt_81870",
+            "datum_for_serveringen_81871",
+            "klockslag_for_serveringen_81872",
+            "vilka_alkoholdrycker_ska_serveras_81873",
+            "meny_81874",
+            "beraknat_antal_gaster_81875",
+            "vad_ar_det_for_typ_av_tillstallning_81876",
+            "vad_ar_det_for_typ_av_slutet_sallskap_81877",
+            "adress_81878",
+            "sittplatser_i_lokalen_81879",
+            "maximalt_antal_personer_som_kommer_att_v_81880",
+            "ladda_upp_ritning_pa_lokalen_med_serveri_81881"
+          ]
+        },
+        {
+          "id": "stadigvarande-servering",
+          "title": "Stadigvarande serveringstillstånd",
+          "icon": "wine",
+          "defaultOpen": false,
+          "fields": [
+            "kunskap_om_alkohollagen_81718",
+            "personnummer_81719",
+            "organisationsnummer_81720",
+            "vill_du_anmala_personer_i_foretaget_till_81721",
+            "harmed_anmaler_jag_foljande_person_perso_81723",
+            "verksamhetens_inriktning_81726",
+            "har_ni_81727",
+            "beskriv_verksamhetens_inriktning_81728",
+            "ska_servering_av_alkohol_ske_till_allman_81729",
+            "serveringsperiod_for_allmanheten_81730",
+            "ange_period_for_servering_till_allmanhet_81731",
+            "serveringstider_inomhus_allmanheten_81732",
+            "serveringstider_utomhus_allmanheten_81733",
+            "serveringsperiod_for_slutet_sallskap_81734",
+            "ange_period_for_servering_till_slutet_sa_81735",
+            "serveringstider_inomhus_slutet_sallskap_81736",
+            "serveringstider_utomhus_slutet_sallskap_81737",
+            "vilka_alkoholdrycker_ska_serveras_81738",
+            "beskriv_utbudet_av_mat_81739",
+            "bifoga_meny_81740",
+            "meny_81741",
+            "finansiering_81743",
+            "egna_medel_81744",
+            "bifoga_kontoutdrag_81745",
+            "banklan_81746",
+            "bifoga_lanebevis_for_banklan_81747",
+            "privatlan_81748",
+            "bifoga_lanebevis_for_privatlan_81749",
+            "annan_finansiering_81750",
+            "bifoga_lanebevis_for_annan_finansiering_81751",
+            "ovriga_upplysningar_angaende_finansierin_81752",
+            "serveringsstallets_namn_81754",
+            "ar_serveringsstallets_besoksadress_samma_81755",
+            "serveringsstallets_besoksadress_81756",
+            "kontaktuppgifter_till_serveringsstallet_81757",
+            "serveringsansvarig_personal_81758",
+            "sittplatser_i_lokalen_81759",
+            "maximalt_antal_personer_som_kommer_att_v_81760",
+            "bifoga_planritning_81761",
+            "bifoga_avtal_gallande_lokal_och_mark_81762",
+            "bifoga_avtal_gallande_verksamheten_81763",
+            "bifoga_brandskyddsdokumentation_81764"
+          ]
+        },
+        {
+          "id": "tillfalligt-allmanheten",
+          "title": "Tillfälligt tillstånd (allmänheten och slutet sällskap)",
+          "icon": "calendar-days",
+          "defaultOpen": false,
+          "fields": [
+            "ange_mellan_vilka_datum_det_tillfalliga_81766",
+            "ovriga_uppgifter_gallande_datum_81767",
+            "klockslag_for_serveringen_81768",
+            "vilka_alkoholdrycker_ska_serveras_81769",
+            "meny_81770",
+            "beraknat_antal_gaster_81773",
+            "vad_ar_det_for_typ_av_tillstallning_81775",
+            "serveringsstalle_81776",
+            "serveringsansvarig_personal_81777",
+            "sittplatser_i_lokalen_81778",
+            "maximalt_antal_personer_som_kommer_att_v_81779",
+            "finns_polistillstand_81780",
+            "ladda_upp_polistillstand_81781"
+          ]
+        },
+        {
+          "id": "tillfalligt-slutet-sallskap",
+          "title": "Tillfälligt tillstånd, endast slutet sällskap",
+          "icon": "users",
+          "defaultOpen": false,
+          "fields": [
+            "gaster_81771",
+            "gastlista_eller_medlemslista_81772",
+            "hur_har_gasterna_bjudits_in_81774"
+          ]
+        },
+        {
+          "id": "folkol",
+          "title": "Servering av folköl (klass 2)",
+          "icon": "beer",
+          "defaultOpen": false,
+          "fields": [
+            "kommer_ni_att_servera_mat_81785",
+            "beskriv_utbudet_av_mat_81786",
+            "bifoga_meny_81787",
+            "meny_81788",
+            "egenkontrollprogram_vid_servering_av_fol_81789",
+            "bifoga_egenkontrollprogram_for_servering_81790",
+            "serveringsstallets_namn_81791",
+            "ar_serveringsstallets_besoksadress_samma_81792",
+            "serveringsstallets_besoksadress_81793",
+            "kontaktuppgifter_till_serveringsstallet_81794",
+            "sittplatser_i_lokalen_81795",
+            "maximalt_antal_personer_som_kommer_att_v_81796"
+          ]
+        },
+        {
+          "id": "gardsforsaljning",
+          "title": "Gårdsförsäljning",
+          "icon": "store",
+          "defaultOpen": false,
+          "fields": [
+            "forsaljningsstalle_81799",
+            "alkoholdrycker_81800",
+            "forsaljningsperiod_81801",
+            "ange_period_for_forsaljning_81802",
+            "forsaljningstider_81803",
+            "besoksarrangemang_81804",
+            "beskriv_besoksarrangemanget_81805",
+            "ladda_upp_beskrivning_pa_besoksarrangema_81806",
+            "ladda_upp_egenkontrollprogram_81807",
+            "ritning_for_forsaljningslokal_81808",
+            "hyresavtal_eller_agarbevis_81809",
+            "gardsforsaljningstillstand_81810",
+            "beskriv_forsaljningsplats_81811"
+          ]
+        },
+        {
+          "id": "catering",
+          "title": "Catering till slutna sällskap",
+          "icon": "utensils-crossed",
+          "defaultOpen": false,
+          "fields": [
+            "kunskap_om_alkohollagen_81813",
+            "personnummer_81814",
+            "organisationsnummer_81815",
+            "vill_du_anmala_personer_i_foretaget_till_81816",
+            "harmed_anmaler_jag_foljande_person_perso_81818",
+            "vilka_alkoholdrycker_ska_serveras_81819",
+            "finansiering_81820",
+            "egna_medel_81821",
+            "bifoga_kontoutdrag_81822",
+            "banklan_81823",
+            "bifoga_lanebevis_for_banklan_81824",
+            "privatlan_81825",
+            "bifoga_lanebevis_for_privatlan_81826",
+            "annan_finansiering_81827",
+            "bifoga_lanebevis_for_annan_finansiering_81828",
+            "ovriga_upplysningar_angaende_finansierin_81829",
+            "godkanna_cateringtillfalle_81837"
+          ]
+        },
+        {
+          "id": "provsmakning",
+          "title": "Provsmakning",
+          "icon": "flask-conical",
+          "defaultOpen": false,
+          "fields": [
+            "kunskap_om_alkohollagen_81839",
+            "personnummer_81840",
+            "organisationsnummer_81841",
+            "vill_du_anmala_personer_i_foretaget_till_81842",
+            "harmed_anmaler_jag_foljande_person_perso_81844",
+            "verksamhetens_inriktning_81846",
+            "har_ni_81847",
+            "beskriv_verksamhetens_inriktning_81848",
+            "finansiering_81849",
+            "egna_medel_81850",
+            "bifoga_kontoutdrag_81851",
+            "banklan_81852",
+            "bifoga_lanebevis_for_banklan_81853",
+            "privatlan_81854",
+            "bifoga_lanebevis_for_privatlan_81855",
+            "annan_finansiering_81856",
+            "bifoga_lanebevis_for_annan_finansiering_81857",
+            "ovriga_upplysningar_angaende_finansierin_81858",
+            "sittplatser_i_lokalen_81859",
+            "maximalt_antal_personer_som_kommer_att_v_81860",
+            "bifoga_planritning_81861",
+            "bifoga_avtal_gallande_lokal_och_mark_81862",
+            "bifoga_brandskyddsdokumentation_81863"
+          ]
+        },
+        {
+          "id": "ej-nabar",
+          "title": "Frågor utan synlighetsregel",
+          "icon": "triangle-alert",
+          "defaultOpen": false,
+          "fields": [
+            "jag_vill_81784",
+            "bifoga_livsmedelsregistrering_fran_miljo_81797",
+            "har_ni_anmalt_koket_som_livsmedelsanlagg_81830",
+            "kapacitet_81832",
+            "koksinformation_81833",
+            "planritning_kok_81834",
+            "brandskydd_kok_81835",
+            "hyresavtal_eller_upplatelseavtal_kok_81836"
+          ]
+        }
+      ],
+      "vad_vill_du_ansoka_om_eller_anmala_81716": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "kunskap_om_alkohollagen_81718": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "personnummer_81719": {
+        "ui:order": [
+          "personnummer_50400"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "personnummer_50400": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "organisationsnummer_81720": {
+        "ui:order": [
+          "organisationsnummer_50401"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "organisationsnummer_50401": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "vill_du_anmala_personer_i_foretaget_till_81721": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "harmed_anmaler_jag_foljande_person_perso_81723": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "fornamn_5744",
+            "efternamn_5745",
+            "personnummer_5746",
+            "telefonnummer_5747",
+            "e_postadress_5748"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "fornamn_5744": {
+            "ui:widget": "TextWidget"
+          },
+          "efternamn_5745": {
+            "ui:widget": "TextWidget"
+          },
+          "personnummer_5746": {
+            "ui:widget": "TextWidget"
+          },
+          "telefonnummer_5747": {
+            "ui:widget": "TextWidget"
+          },
+          "e_postadress_5748": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "verksamhetens_inriktning_81726": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "har_ni_81727": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "beskriv_verksamhetens_inriktning_81728": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "ska_servering_av_alkohol_ske_till_allman_81729": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "serveringsperiod_for_allmanheten_81730": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "ange_period_for_servering_till_allmanhet_81731": {
+        "ui:order": [
+          "startDate",
+          "endDate"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "startDate": {
+          "ui:widget": "DateWidget"
+        },
+        "endDate": {
+          "ui:widget": "DateWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "startDate",
+              "endDate"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "serveringstider_inomhus_allmanheten_81732": {
+        "ui:order": [
+          "startTime",
+          "endTime"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "startTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "endTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "startTime",
+              "endTime"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "serveringstider_utomhus_allmanheten_81733": {
+        "ui:order": [
+          "startTime",
+          "endTime"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "startTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "endTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "startTime",
+              "endTime"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "serveringsperiod_for_slutet_sallskap_81734": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "ange_period_for_servering_till_slutet_sa_81735": {
+        "ui:order": [
+          "startDate",
+          "endDate"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "startDate": {
+          "ui:widget": "DateWidget"
+        },
+        "endDate": {
+          "ui:widget": "DateWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "startDate",
+              "endDate"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "serveringstider_inomhus_slutet_sallskap_81736": {
+        "ui:order": [
+          "startTime",
+          "endTime"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "startTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "endTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "startTime",
+              "endTime"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "serveringstider_utomhus_slutet_sallskap_81737": {
+        "ui:order": [
+          "startTime",
+          "endTime"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "startTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "endTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "startTime",
+              "endTime"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "vilka_alkoholdrycker_ska_serveras_81738": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "beskriv_utbudet_av_mat_81739": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "bifoga_meny_81740": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "meny_81741": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "finansiering_81743": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "egna_medel_81744": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "bank_5749",
+            "kontonummer_5750",
+            "belopp_kronor_5751"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "bank_5749": {
+            "ui:widget": "TextWidget"
+          },
+          "kontonummer_5750": {
+            "ui:widget": "TextWidget"
+          },
+          "belopp_kronor_5751": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "bifoga_kontoutdrag_81745": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "banklan_81746": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "langivare_5752",
+            "belopp_kronor_5753"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "langivare_5752": {
+            "ui:widget": "TextWidget"
+          },
+          "belopp_kronor_5753": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "bifoga_lanebevis_for_banklan_81747": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "privatlan_81748": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "langivare_5754",
+            "belopp_kronor_5755"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "langivare_5754": {
+            "ui:widget": "TextWidget"
+          },
+          "belopp_kronor_5755": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "bifoga_lanebevis_for_privatlan_81749": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "annan_finansiering_81750": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "lanetyp_5756",
+            "langivare_5757",
+            "belopp_kronor_5758"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "lanetyp_5756": {
+            "ui:widget": "TextWidget"
+          },
+          "langivare_5757": {
+            "ui:widget": "TextWidget"
+          },
+          "belopp_kronor_5758": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "bifoga_lanebevis_for_annan_finansiering_81751": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "ovriga_upplysningar_angaende_finansierin_81752": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "serveringsstallets_namn_81754": {
+        "ui:order": [
+          "namn_50402"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "namn_50402": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "ar_serveringsstallets_besoksadress_samma_81755": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "serveringsstallets_besoksadress_81756": {
+        "ui:order": [
+          "gatuadress_50403",
+          "postnummer_50404",
+          "postort_50405"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "gatuadress_50403": {
+          "ui:widget": "TextWidget"
+        },
+        "postnummer_50404": {
+          "ui:widget": "TextWidget"
+        },
+        "postort_50405": {
+          "ui:widget": "TextWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "postnummer_50404",
+              "postort_50405"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "kontaktuppgifter_till_serveringsstallet_81757": {
+        "ui:order": [
+          "telefonnummer_50406",
+          "e_postadress_50407",
+          "hemsida_50408"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "telefonnummer_50406": {
+          "ui:widget": "TextWidget"
+        },
+        "e_postadress_50407": {
+          "ui:widget": "TextWidget"
+        },
+        "hemsida_50408": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "serveringsansvarig_personal_81758": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "fornamn_5759",
+            "efternamn_5760",
+            "personnummer_5761"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "fornamn_5759": {
+            "ui:widget": "TextWidget"
+          },
+          "efternamn_5760": {
+            "ui:widget": "TextWidget"
+          },
+          "personnummer_5761": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "sittplatser_i_lokalen_81759": {
+        "ui:order": [
+          "antal_sittplatser_inomhus_50409",
+          "antal_sittplatser_pa_eventuell_uteserver_50410"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "antal_sittplatser_inomhus_50409": {
+          "ui:widget": "TextWidget"
+        },
+        "antal_sittplatser_pa_eventuell_uteserver_50410": {
+          "ui:widget": "TextWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "antal_sittplatser_inomhus_50409",
+              "antal_sittplatser_pa_eventuell_uteserver_50410"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "maximalt_antal_personer_som_kommer_att_v_81760": {
+        "ui:order": [
+          "antal_personer_50411"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "antal_personer_50411": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "bifoga_planritning_81761": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "bifoga_avtal_gallande_lokal_och_mark_81762": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "bifoga_avtal_gallande_verksamheten_81763": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "bifoga_brandskyddsdokumentation_81764": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "ange_mellan_vilka_datum_det_tillfalliga_81766": {
+        "ui:order": [
+          "startDate",
+          "endDate"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "startDate": {
+          "ui:widget": "DateWidget"
+        },
+        "endDate": {
+          "ui:widget": "DateWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "startDate",
+              "endDate"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "ovriga_uppgifter_gallande_datum_81767": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "klockslag_for_serveringen_81768": {
+        "ui:order": [
+          "startTime",
+          "endTime"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "startTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "endTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "startTime",
+              "endTime"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "vilka_alkoholdrycker_ska_serveras_81769": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "meny_81770": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "gaster_81771": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "gastlista_eller_medlemslista_81772": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "beraknat_antal_gaster_81773": {
+        "ui:order": [
+          "antal_50412"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "antal_50412": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "hur_har_gasterna_bjudits_in_81774": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "vad_ar_det_for_typ_av_tillstallning_81775": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "serveringsstalle_81776": {
+        "ui:order": [
+          "serveringsstallets_namn_50413",
+          "gatuadress_50414",
+          "postnummer_50415",
+          "postort_50416",
+          "telefonnummer_50417"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "serveringsstallets_namn_50413": {
+          "ui:widget": "TextWidget"
+        },
+        "gatuadress_50414": {
+          "ui:widget": "TextWidget"
+        },
+        "postnummer_50415": {
+          "ui:widget": "TextWidget"
+        },
+        "postort_50416": {
+          "ui:widget": "TextWidget"
+        },
+        "telefonnummer_50417": {
+          "ui:widget": "TextWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "postnummer_50415",
+              "postort_50416"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "serveringsansvarig_personal_81777": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "fornamn_5762",
+            "efternamn_5763",
+            "personnummer_5764"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "fornamn_5762": {
+            "ui:widget": "TextWidget"
+          },
+          "efternamn_5763": {
+            "ui:widget": "TextWidget"
+          },
+          "personnummer_5764": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "sittplatser_i_lokalen_81778": {
+        "ui:order": [
+          "antal_sittplatser_i_bordsavdelning_matsa_50418"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "antal_sittplatser_i_bordsavdelning_matsa_50418": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "maximalt_antal_personer_som_kommer_att_v_81779": {
+        "ui:order": [
+          "antal_personer_50419"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "antal_personer_50419": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "finns_polistillstand_81780": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "ladda_upp_polistillstand_81781": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ""
+        }
+      },
+      "jag_vill_81784": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "kommer_ni_att_servera_mat_81785": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "beskriv_utbudet_av_mat_81786": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "bifoga_meny_81787": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "meny_81788": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "egenkontrollprogram_vid_servering_av_fol_81789": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "bifoga_egenkontrollprogram_for_servering_81790": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "serveringsstallets_namn_81791": {
+        "ui:order": [
+          "namn_50420"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "namn_50420": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "ar_serveringsstallets_besoksadress_samma_81792": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "serveringsstallets_besoksadress_81793": {
+        "ui:order": [
+          "gatuadress_50421",
+          "postnummer_50422",
+          "postort_50423"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "gatuadress_50421": {
+          "ui:widget": "TextWidget"
+        },
+        "postnummer_50422": {
+          "ui:widget": "TextWidget"
+        },
+        "postort_50423": {
+          "ui:widget": "TextWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "postnummer_50422",
+              "postort_50423"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "kontaktuppgifter_till_serveringsstallet_81794": {
+        "ui:order": [
+          "telefonnummer_50424",
+          "e_postadress_50425",
+          "hemsida_50426",
+          "telefon_50427"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "telefonnummer_50424": {
+          "ui:widget": "TextWidget"
+        },
+        "e_postadress_50425": {
+          "ui:widget": "TextWidget"
+        },
+        "hemsida_50426": {
+          "ui:widget": "TextWidget"
+        },
+        "telefon_50427": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "sittplatser_i_lokalen_81795": {
+        "ui:order": [
+          "antal_sittplatser_inomhus_50428",
+          "antal_sittplatser_pa_eventuell_uteserver_50429"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "antal_sittplatser_inomhus_50428": {
+          "ui:widget": "TextWidget"
+        },
+        "antal_sittplatser_pa_eventuell_uteserver_50429": {
+          "ui:widget": "TextWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "antal_sittplatser_inomhus_50428",
+              "antal_sittplatser_pa_eventuell_uteserver_50429"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "maximalt_antal_personer_som_kommer_att_v_81796": {
+        "ui:order": [
+          "antal_personer_50430"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "antal_personer_50430": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "bifoga_livsmedelsregistrering_fran_miljo_81797": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "forsaljningsstalle_81799": {
+        "ui:order": [
+          "forsaljningsstallets_namn_50431",
+          "gatuadress_50432",
+          "postnummer_50433",
+          "postort_50434",
+          "telefonnummer_50435",
+          "e_postadress_50436"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "forsaljningsstallets_namn_50431": {
+          "ui:widget": "TextWidget"
+        },
+        "gatuadress_50432": {
+          "ui:widget": "TextWidget"
+        },
+        "postnummer_50433": {
+          "ui:widget": "TextWidget"
+        },
+        "postort_50434": {
+          "ui:widget": "TextWidget"
+        },
+        "telefonnummer_50435": {
+          "ui:widget": "TextWidget"
+        },
+        "e_postadress_50436": {
+          "ui:widget": "TextWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "postnummer_50433",
+              "postort_50434"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "alkoholdrycker_81800": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "forsaljningsperiod_81801": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "ange_period_for_forsaljning_81802": {
+        "ui:order": [
+          "startDate",
+          "endDate"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "startDate": {
+          "ui:widget": "DateWidget"
+        },
+        "endDate": {
+          "ui:widget": "DateWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "startDate",
+              "endDate"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "forsaljningstider_81803": {
+        "ui:order": [
+          "startTime",
+          "endTime"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "startTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "endTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "startTime",
+              "endTime"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "besoksarrangemang_81804": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "beskriv_besoksarrangemanget_81805": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "ladda_upp_beskrivning_pa_besoksarrangema_81806": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ""
+        }
+      },
+      "ladda_upp_egenkontrollprogram_81807": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "ritning_for_forsaljningslokal_81808": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ""
+        }
+      },
+      "hyresavtal_eller_agarbevis_81809": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ""
+        }
+      },
+      "gardsforsaljningstillstand_81810": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ""
+        }
+      },
+      "beskriv_forsaljningsplats_81811": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "kunskap_om_alkohollagen_81813": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "personnummer_81814": {
+        "ui:order": [
+          "personnummer_50437"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "personnummer_50437": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "organisationsnummer_81815": {
+        "ui:order": [
+          "organisationsnummer_50438"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "organisationsnummer_50438": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "vill_du_anmala_personer_i_foretaget_till_81816": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "harmed_anmaler_jag_foljande_person_perso_81818": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "fornamn_5765",
+            "efternamn_5766",
+            "personnummer_5767",
+            "telefonnummer_5768",
+            "e_postadress_5769"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "fornamn_5765": {
+            "ui:widget": "TextWidget"
+          },
+          "efternamn_5766": {
+            "ui:widget": "TextWidget"
+          },
+          "personnummer_5767": {
+            "ui:widget": "TextWidget"
+          },
+          "telefonnummer_5768": {
+            "ui:widget": "TextWidget"
+          },
+          "e_postadress_5769": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "vilka_alkoholdrycker_ska_serveras_81819": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "finansiering_81820": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "egna_medel_81821": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "bank_5770",
+            "kontonummer_5771",
+            "belopp_kronor_5772"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "bank_5770": {
+            "ui:widget": "TextWidget"
+          },
+          "kontonummer_5771": {
+            "ui:widget": "TextWidget"
+          },
+          "belopp_kronor_5772": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "bifoga_kontoutdrag_81822": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "banklan_81823": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "langivare_5773",
+            "belopp_kronor_5774"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "langivare_5773": {
+            "ui:widget": "TextWidget"
+          },
+          "belopp_kronor_5774": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "bifoga_lanebevis_for_banklan_81824": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "privatlan_81825": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "langivare_5775",
+            "belopp_kronor_5776"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "langivare_5775": {
+            "ui:widget": "TextWidget"
+          },
+          "belopp_kronor_5776": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "bifoga_lanebevis_for_privatlan_81826": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "annan_finansiering_81827": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "lanetyp_5777",
+            "langivare_5778",
+            "belopp_kronor_5779"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "lanetyp_5777": {
+            "ui:widget": "TextWidget"
+          },
+          "langivare_5778": {
+            "ui:widget": "TextWidget"
+          },
+          "belopp_kronor_5779": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "bifoga_lanebevis_for_annan_finansiering_81828": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "ovriga_upplysningar_angaende_finansierin_81829": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "har_ni_anmalt_koket_som_livsmedelsanlagg_81830": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "kapacitet_81832": {
+        "ui:order": [
+          "hur_manga_kan_ni_catra_for_50439",
+          "antal_anstallda_50440"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "hur_manga_kan_ni_catra_for_50439": {
+          "ui:widget": "TextWidget"
+        },
+        "antal_anstallda_50440": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "koksinformation_81833": {
+        "ui:order": [
+          "adress_50441",
+          "postnummer_50442",
+          "ort_50443"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "adress_50441": {
+          "ui:widget": "TextWidget"
+        },
+        "postnummer_50442": {
+          "ui:widget": "TextWidget"
+        },
+        "ort_50443": {
+          "ui:widget": "TextWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "postnummer_50442",
+              "ort_50443"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "planritning_kok_81834": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ""
+        }
+      },
+      "brandskydd_kok_81835": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ""
+        }
+      },
+      "hyresavtal_eller_upplatelseavtal_kok_81836": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ""
+        }
+      },
+      "godkanna_cateringtillfalle_81837": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "kunskap_om_alkohollagen_81839": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "personnummer_81840": {
+        "ui:order": [
+          "personnummer_50444"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "personnummer_50444": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "organisationsnummer_81841": {
+        "ui:order": [
+          "organisationsnummer_50445"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "organisationsnummer_50445": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "vill_du_anmala_personer_i_foretaget_till_81842": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "harmed_anmaler_jag_foljande_person_perso_81844": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "fornamn_5780",
+            "efternamn_5781",
+            "personnummer_5782",
+            "telefonnummer_5783",
+            "e_postadress_5784"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "fornamn_5780": {
+            "ui:widget": "TextWidget"
+          },
+          "efternamn_5781": {
+            "ui:widget": "TextWidget"
+          },
+          "personnummer_5782": {
+            "ui:widget": "TextWidget"
+          },
+          "telefonnummer_5783": {
+            "ui:widget": "TextWidget"
+          },
+          "e_postadress_5784": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "verksamhetens_inriktning_81846": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "har_ni_81847": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "beskriv_verksamhetens_inriktning_81848": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "finansiering_81849": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "egna_medel_81850": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "bank_5785",
+            "kontonummer_5786",
+            "belopp_kronor_5787"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "bank_5785": {
+            "ui:widget": "TextWidget"
+          },
+          "kontonummer_5786": {
+            "ui:widget": "TextWidget"
+          },
+          "belopp_kronor_5787": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "bifoga_kontoutdrag_81851": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "banklan_81852": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "langivare_5788",
+            "belopp_kronor_5789"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "langivare_5788": {
+            "ui:widget": "TextWidget"
+          },
+          "belopp_kronor_5789": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "bifoga_lanebevis_for_banklan_81853": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "privatlan_81854": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "langivare_5790",
+            "belopp_kronor_5791"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "langivare_5790": {
+            "ui:widget": "TextWidget"
+          },
+          "belopp_kronor_5791": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "bifoga_lanebevis_for_privatlan_81855": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "annan_finansiering_81856": {
+        "ui:options": {
+          "addable": true,
+          "orderable": false,
+          "addButtonLabel": "Lägg till"
+        },
+        "items": {
+          "ui:order": [
+            "lanetyp_5792",
+            "langivare_5793",
+            "belopp_kronor_5794"
+          ],
+          "ui:options": {
+            "showObjectFieldset": true
+          },
+          "lanetyp_5792": {
+            "ui:widget": "TextWidget"
+          },
+          "langivare_5793": {
+            "ui:widget": "TextWidget"
+          },
+          "belopp_kronor_5794": {
+            "ui:widget": "TextWidget"
+          }
+        }
+      },
+      "bifoga_lanebevis_for_annan_finansiering_81857": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "ovriga_upplysningar_angaende_finansierin_81858": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "sittplatser_i_lokalen_81859": {
+        "ui:order": [
+          "antal_sittplatser_inomhus_50446",
+          "antal_sittplatser_pa_eventuell_uteserver_50447"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "antal_sittplatser_inomhus_50446": {
+          "ui:widget": "TextWidget"
+        },
+        "antal_sittplatser_pa_eventuell_uteserver_50447": {
+          "ui:widget": "TextWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "antal_sittplatser_inomhus_50446",
+              "antal_sittplatser_pa_eventuell_uteserver_50447"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "maximalt_antal_personer_som_kommer_att_v_81860": {
+        "ui:order": [
+          "antal_personer_50448"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "antal_personer_50448": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "bifoga_planritning_81861": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "bifoga_avtal_gallande_lokal_och_mark_81862": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "bifoga_brandskyddsdokumentation_81863": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "regler_for_serveringstillstand_till_priv_81865": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "forsaljning_av_alkoholdrycker_81866": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "ar_tillstallningen_i_ovrigt_kostnadsfri_81867": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "var_kommer_tillstallningen_att_aga_rum_81868": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "du_behover_inte_ansoka_om_serveringstill_81869": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "bifoga_hyreskontrakt_81870": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ".doc,.docx,.pdf"
+        }
+      },
+      "datum_for_serveringen_81871": {
+        "ui:order": [
+          "startDate",
+          "endDate"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "startDate": {
+          "ui:widget": "DateWidget"
+        },
+        "endDate": {
+          "ui:widget": "DateWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "startDate",
+              "endDate"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "klockslag_for_serveringen_81872": {
+        "ui:order": [
+          "startTime",
+          "endTime"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "startTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "endTime": {
+          "ui:widget": "TimeWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "startTime",
+              "endTime"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "vilka_alkoholdrycker_ska_serveras_81873": {
+        "ui:widget": "checkboxes",
+        "ui:options": {
+          "multiple": true,
+          "className": "w-full max-w-[48rem]"
+        }
+      },
+      "meny_81874": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "beraknat_antal_gaster_81875": {
+        "ui:order": [
+          "antal_50449"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "antal_50449": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "vad_ar_det_for_typ_av_tillstallning_81876": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "vad_ar_det_for_typ_av_slutet_sallskap_81877": {
+        "ui:order": [
+          "till_exempel_50450"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "till_exempel_50450": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "adress_81878": {
+        "ui:order": [
+          "c_o_50451",
+          "gatuadress_50452",
+          "postnummer_50453",
+          "postort_50454"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "c_o_50451": {
+          "ui:widget": "TextWidget"
+        },
+        "gatuadress_50452": {
+          "ui:widget": "TextWidget"
+        },
+        "postnummer_50453": {
+          "ui:widget": "TextWidget"
+        },
+        "postort_50454": {
+          "ui:widget": "TextWidget"
+        },
+        "ui:rows": [
+          {
+            "fields": [
+              "postnummer_50453",
+              "postort_50454"
+            ],
+            "gap": "gap-24"
+          }
+        ]
+      },
+      "sittplatser_i_lokalen_81879": {
+        "ui:order": [
+          "antal_sittplatser_i_bordsavdelning_matsa_50455"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "antal_sittplatser_i_bordsavdelning_matsa_50455": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "maximalt_antal_personer_som_kommer_att_v_81880": {
+        "ui:widget": "TexteditorWidget",
+        "ui:options": {
+          "className": "w-full min-h-[14rem]"
+        }
+      },
+      "ladda_upp_ritning_pa_lokalen_med_serveri_81881": {
+        "ui:widget": "files",
+        "ui:options": {
+          "accept": ""
+        }
+      },
+      "har_du_kassaregister_81883": {
+        "ui:widget": "RadiobuttonWidget"
+      },
+      "ange_registreringskod_81884": {
+        "ui:order": [
+          "registreringskod_50456"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "registreringskod_50456": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    }
+  },
+  "description": "UI schema for aot_opene_test 1.0. Generated from the OpenE flow 2181 exports by docs/jsonschemas/build-ui-schema.mjs — edit the generator, not this file."
+}
