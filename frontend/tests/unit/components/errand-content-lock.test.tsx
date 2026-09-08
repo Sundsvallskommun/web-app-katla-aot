@@ -6,7 +6,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('src/config/appconfig', () => ({
-  appConfig: { features: { disclosureDoneMark: false } },
+  appConfig: { features: { disclosureDoneMark: false }, jsonSchemas: '' },
 }));
 
 const ErrandForm: React.FC<{ children: React.ReactNode; status: string }> = ({ children, status }) => {
