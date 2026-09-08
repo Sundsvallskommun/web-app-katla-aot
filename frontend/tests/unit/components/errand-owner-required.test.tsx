@@ -31,7 +31,7 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('src/config/appconfig', () => ({
-  appConfig: { features: { draftEnabled: true } },
+  appConfig: { features: { draftEnabled: true }, jsonSchemas: '' },
 }));
 
 vi.mock('@sk-web-gui/react', () => {

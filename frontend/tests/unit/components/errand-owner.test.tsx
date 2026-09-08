@@ -19,7 +19,7 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('src/config/appconfig', () => ({
-  appConfig: { features: { disclosureDoneMark: false } },
+  appConfig: { features: { disclosureDoneMark: false }, jsonSchemas: '' },
 }));
 
 const ACME: OrganizationDTO = {
