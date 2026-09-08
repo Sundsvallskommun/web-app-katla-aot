@@ -1,6 +1,7 @@
 export interface AppConfig {
   applicationName: string;
   features: AppConfigFeatures;
+  jsonSchemas: string;
 }
 
 interface AppConfigFeatures {
@@ -20,4 +21,5 @@ export const appConfig: AppConfig = {
     disclosureDoneMark: process.env.NEXT_PUBLIC_DISCLOSURE_DONE_MARK === 'true',
     otherPartiesDisclosure: process.env.NEXT_PUBLIC_OTHER_PARTIES_DISCLOSURE === 'true',
   },
+  jsonSchemas: process.env.NEXT_PUBLIC_JSON_SCHEMAS ?? '',
 };

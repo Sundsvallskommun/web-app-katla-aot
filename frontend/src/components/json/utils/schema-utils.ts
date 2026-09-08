@@ -3,13 +3,16 @@ import type { JsonParameterDTO } from '@data-contracts/backend/data-contracts';
 import type { ErrandFormDataItem } from '@interfaces/errand-form';
 import type { RJSFSchema, RJSFValidationError, UiSchema } from '@rjsf/utils';
 import type { TFunction } from 'i18next';
+import { appConfig } from 'src/config/appconfig';
 
 import { getJsonValueSchemaValidator } from '../schema/form-schema-validator';
 import { createJsonErrorTransformer, fieldTitleFromSchema } from './schema-form-error-handling';
 
-// The schemas making up Ärendeuppgifter. Empty until AoT's schemas exist in the jsonschema API;
-// the type is wide so it can be filled without becoming a tuple.
-export const ERRAND_FORM_SCHEMA_NAMES: readonly string[] = [];
+// Comma-separated names in NEXT_PUBLIC_JSON_SCHEMA. Blank entries are dropped so a trailing comma is harmless.
+export const ERRAND_FORM_SCHEMA_NAMES: readonly string[] = appConfig.jsonSchemas
+  .split(',')
+  .map((name) => name.trim())
+  .filter((name) => name !== '');
 
 export type ErrandFormDataContractErrorCode = 'invalid-json' | 'missing-schema-id' | 'missing-schema-name';
 
