@@ -299,10 +299,28 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
   // If no sections defined, use original flat rendering
   if (sections.length === 0) {
     const renderedRows = new Set<string>();
-    return (
+    const renderedFields = (
       <div className="flex flex-col gap-32">
         {renderFields(order, properties, visibleFields, rows, rowFieldNames, renderedRows, compact)}
       </div>
+    );
+
+    // Nested objects get no label from FieldTemplate, so a question built out of sub-fields
+    // ("Serveringsställets besöksadress") loses its text unless the ui schema asks for a fieldset.
+    const showObjectFieldset = uiSchema?.['ui:options']?.showObjectFieldset === true;
+    if (!showObjectFieldset || props.idSchema.$id === 'root') return renderedFields;
+
+    return (
+      <fieldset className="w-full min-w-0 max-w-full border-0 p-0" data-cy="schema-object-fieldset">
+        {props.title && (
+          <legend className="max-w-full whitespace-normal break-words text-label-medium font-bold">
+            {props.title}
+            {props.required ? ' *' : ''}
+          </legend>
+        )}
+        {props.description}
+        {renderedFields}
+      </fieldset>
     );
   }
 

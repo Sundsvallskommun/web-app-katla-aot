@@ -2,41 +2,14 @@
 import { FieldTemplate } from '@components/json/fields/field-template.component';
 import { ObjectFieldTemplate } from '@components/json/fields/object-field-template.component';
 import { SubmitButtonFieldTemplate } from '@components/json/fields/submit-button-field-template.component';
-import { CheckboxWidget } from '@components/json/widgets/checkbox-widget';
-import { ComboboxWidget } from '@components/json/widgets/combobox-widget';
-import { DateWidget } from '@components/json/widgets/date-widget';
-import { RadiobuttonWidget } from '@components/json/widgets/radio-widget';
-import { RADIO_WIDGET_NAMES } from '@components/json/widgets/radio-widget-names';
-import { SelectWidget } from '@components/json/widgets/select-widget';
-import { TextWidget } from '@components/json/widgets/text-widget';
-import { TexteditorWidget } from '@components/json/widgets/texteditor-widget';
-import { TimeWidget } from '@components/json/widgets/time-widget';
+import { jsonWidgets } from '@components/json/widgets';
 import Form, { IChangeEvent } from '@rjsf/core';
-import type { RegistryWidgetsType, RJSFSchema, UiSchema } from '@rjsf/utils';
+import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import createJsonErrorTransformer from '../utils/schema-form-error-handling';
 import { getFormSchemaValidator } from './form-schema-validator';
-
-const widgets: RegistryWidgetsType = {
-  TextWidget,
-  text: TextWidget,
-  SelectWidget,
-  select: SelectWidget,
-  ...Object.fromEntries(RADIO_WIDGET_NAMES.map((name) => [name, RadiobuttonWidget])),
-  CheckboxWidget,
-  checkbox: CheckboxWidget,
-  DateWidget,
-  date: DateWidget,
-  // The name TimeWidget also replaces RJSF's default widget for `format: "time"`.
-  TimeWidget,
-  time: TimeWidget,
-  ComboboxWidget,
-  combobox: ComboboxWidget,
-  TexteditorWidget,
-  texteditor: TexteditorWidget,
-};
 
 interface SchemaFormProps {
   schemaId: string;
@@ -109,7 +82,7 @@ export default function SchemaForm({
       onChange={handleChange}
       onSubmit={handleSubmit}
       validator={validator}
-      widgets={widgets}
+      widgets={jsonWidgets}
       templates={{
         FieldTemplate,
         ObjectFieldTemplate,
