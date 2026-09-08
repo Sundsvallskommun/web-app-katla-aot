@@ -1,12 +1,16 @@
 import { LabelDTO, MetadataResponseDTO } from '@data-contracts/backend/data-contracts';
 
+// This mocks the backend's own metadata response, which the BFF has already reduced to the subtree
+// under the CATEGORY_ROOT node — `labelStructure` is therefore the category list, with no root of
+// its own, while every `resourcePath` still carries the upstream `CATEGORYROOT/` prefix.
+//
 // Three levels, covering the cases the categorization handles: a type with subtypes, a leaf type,
 // and a deprecated label that must not be offered.
 export const mockSubTypeStadigvarande: LabelDTO = {
   id: '2f0e2b3a-0000-4000-8000-000000000101',
   classification: 'SUBTYPE',
   displayName: 'Stadigvarande servering',
-  resourcePath: 'ALKOHOL/SERVERINGSTILLSTAND/STADIGVARANDE',
+  resourcePath: 'CATEGORYROOT/ALKOHOL/SERVERINGSTILLSTAND/STADIGVARANDE',
   resourceName: 'STADIGVARANDE',
 };
 
@@ -14,7 +18,7 @@ export const mockSubTypeTillfalligt: LabelDTO = {
   id: '2f0e2b3a-0000-4000-8000-000000000102',
   classification: 'SUBTYPE',
   displayName: 'Tillfällig servering',
-  resourcePath: 'ALKOHOL/SERVERINGSTILLSTAND/TILLFALLIGT',
+  resourcePath: 'CATEGORYROOT/ALKOHOL/SERVERINGSTILLSTAND/TILLFALLIGT',
   resourceName: 'TILLFALLIGT',
 };
 
@@ -22,7 +26,7 @@ export const mockTypeServering: LabelDTO = {
   id: '2f0e2b3a-0000-4000-8000-000000000201',
   classification: 'TYPE',
   displayName: 'Serveringstillstånd',
-  resourcePath: 'ALKOHOL/SERVERINGSTILLSTAND',
+  resourcePath: 'CATEGORYROOT/ALKOHOL/SERVERINGSTILLSTAND',
   resourceName: 'SERVERINGSTILLSTAND',
   labels: [
     mockSubTypeTillfalligt,
@@ -31,7 +35,7 @@ export const mockTypeServering: LabelDTO = {
       id: '2f0e2b3a-0000-4000-8000-000000000103',
       classification: 'SUBTYPE',
       displayName: 'Utgången servering',
-      resourcePath: 'ALKOHOL/SERVERINGSTILLSTAND/UTGANGEN',
+      resourcePath: 'CATEGORYROOT/ALKOHOL/SERVERINGSTILLSTAND/UTGANGEN',
       resourceName: 'UTGANGEN',
       deprecated: true,
     },
@@ -43,7 +47,7 @@ export const mockTypeFolkol: LabelDTO = {
   id: '2f0e2b3a-0000-4000-8000-000000000202',
   classification: 'TYPE',
   displayName: 'Folköl klass 2',
-  resourcePath: 'ALKOHOL/FOLKOL',
+  resourcePath: 'CATEGORYROOT/ALKOHOL/FOLKOL',
   resourceName: 'FOLKOL',
   labels: [],
 };
@@ -52,7 +56,7 @@ export const mockCategoryAlkohol: LabelDTO = {
   id: '2f0e2b3a-0000-4000-8000-000000000301',
   classification: 'CATEGORY',
   displayName: 'Alkohol',
-  resourcePath: 'ALKOHOL',
+  resourcePath: 'CATEGORYROOT/ALKOHOL',
   resourceName: 'ALKOHOL',
   labels: [mockTypeServering, mockTypeFolkol],
 };
@@ -61,14 +65,14 @@ export const mockCategoryTobak: LabelDTO = {
   id: '2f0e2b3a-0000-4000-8000-000000000302',
   classification: 'CATEGORY',
   displayName: 'Tobak och nikotin',
-  resourcePath: 'TOBAK',
+  resourcePath: 'CATEGORYROOT/TOBAK',
   resourceName: 'TOBAK',
   labels: [
     {
       id: '2f0e2b3a-0000-4000-8000-000000000203',
       classification: 'TYPE',
       displayName: 'Tobaksförsäljning',
-      resourcePath: 'TOBAK/FORSALJNING',
+      resourcePath: 'CATEGORYROOT/TOBAK/FORSALJNING',
       resourceName: 'FORSALJNING',
       labels: [],
     },
@@ -79,7 +83,7 @@ const mockCategoryUtgangen: LabelDTO = {
   id: '2f0e2b3a-0000-4000-8000-000000000303',
   classification: 'CATEGORY',
   displayName: 'Utgången kategori',
-  resourcePath: 'UTGANGEN',
+  resourcePath: 'CATEGORYROOT/UTGANGEN',
   resourceName: 'UTGANGEN',
   deprecated: true,
   labels: [],
