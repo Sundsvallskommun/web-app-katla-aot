@@ -189,14 +189,20 @@
       "sourceQueryID": "81698",
       "sourceKey": "foretrader_du_ett_foretag_81698",
       "sourceTitle": "Företräder du ett företag?",
-      "targetQueryIDs": ["81700", "81701", "81716"],
+      "targetQueryIDs": [
+        "81700",
+        "81701",
+        "81716"
+      ],
       "targetKeys": [
         "kontaktuppgifter_81700",
         "hamtning_av_foretagsuppgifter_81701",
         "vad_vill_du_ansoka_om_eller_anmala_81716"
       ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49632"],
+      "requiredAlternativeIDs": [
+        "49632"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -245,7 +251,9 @@
         "ladda_upp_ritning_pa_lokalen_med_serveri_81881"
       ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49633"],
+      "requiredAlternativeIDs": [
+        "49633"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -257,10 +265,16 @@
       "sourceQueryID": "81701",
       "sourceKey": "hamtning_av_foretagsuppgifter_81701",
       "sourceTitle": "Hämtning av företagsuppgifter",
-      "targetQueryIDs": ["81702"],
-      "targetKeys": ["valj_foretag_81702"],
+      "targetQueryIDs": [
+        "81702"
+      ],
+      "targetKeys": [
+        "valj_foretag_81702"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49634"],
+      "requiredAlternativeIDs": [
+        "49634"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -272,14 +286,20 @@
       "sourceQueryID": "81701",
       "sourceKey": "hamtning_av_foretagsuppgifter_81701",
       "sourceTitle": "Hämtning av företagsuppgifter",
-      "targetQueryIDs": ["81703", "81705", "81706"],
+      "targetQueryIDs": [
+        "81703",
+        "81705",
+        "81706"
+      ],
       "targetKeys": [
         "ar_du_firmatecknare_81703",
         "ditt_foretag_81705",
         "foretagsform_81706"
       ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49635"],
+      "requiredAlternativeIDs": [
+        "49635"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -313,10 +333,16 @@
       "sourceQueryID": "81703",
       "sourceKey": "ar_du_firmatecknare_81703",
       "sourceTitle": "Är du firmatecknare?",
-      "targetQueryIDs": ["81704"],
-      "targetKeys": ["ladda_upp_fullmakt_81704"],
+      "targetQueryIDs": [
+        "81704"
+      ],
+      "targetKeys": [
+        "ladda_upp_fullmakt_81704"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49637"],
+      "requiredAlternativeIDs": [
+        "49637"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -366,10 +392,20 @@
       "sourceQueryID": "81706",
       "sourceKey": "foretagsform_81706",
       "sourceTitle": "Företagsform",
-      "targetQueryIDs": ["81710"],
-      "targetKeys": ["bifoga_aktuellt_registreringsbevis_fran_81710"],
+      "targetQueryIDs": [
+        "81710"
+      ],
+      "targetKeys": [
+        "bifoga_aktuellt_registreringsbevis_fran_81710"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49638", "49639", "49641", "49642", "49643"],
+      "requiredAlternativeIDs": [
+        "49638",
+        "49639",
+        "49641",
+        "49642",
+        "49643"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -381,10 +417,19 @@
       "sourceQueryID": "81706",
       "sourceKey": "foretagsform_81706",
       "sourceTitle": "Företagsform",
-      "targetQueryIDs": ["81711"],
-      "targetKeys": ["bifoga_uppgifter_om_agarforhallanden_81711"],
+      "targetQueryIDs": [
+        "81711"
+      ],
+      "targetKeys": [
+        "bifoga_uppgifter_om_agarforhallanden_81711"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49638", "49641", "49642", "49643"],
+      "requiredAlternativeIDs": [
+        "49638",
+        "49641",
+        "49642",
+        "49643"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -396,8 +441,12 @@
       "sourceQueryID": "81706",
       "sourceKey": "foretagsform_81706",
       "sourceTitle": "Företagsform",
-      "targetQueryIDs": ["81712"],
-      "targetKeys": ["bifoga_registerutdrag_fran_skatteverket_81712"],
+      "targetQueryIDs": [
+        "81712"
+      ],
+      "targetKeys": [
+        "bifoga_registerutdrag_fran_skatteverket_81712"
+      ],
       "selectionMode": "ANY",
       "requiredAlternativeIDs": [
         "49638",
@@ -418,8 +467,12 @@
       "sourceQueryID": "81706",
       "sourceKey": "foretagsform_81706",
       "sourceTitle": "Företagsform",
-      "targetQueryIDs": ["81713"],
-      "targetKeys": ["verksamhetsbeskrivning_81713"],
+      "targetQueryIDs": [
+        "81713"
+      ],
+      "targetKeys": [
+        "verksamhetsbeskrivning_81713"
+      ],
       "selectionMode": "ANY",
       "requiredAlternativeIDs": [
         "49638",
@@ -453,10 +506,16 @@
       "sourceQueryID": "81707",
       "sourceKey": "ar_fakturaadressen_samma_som_foretagets_81707",
       "sourceTitle": "Är fakturaadressen samma som företagets adress?",
-      "targetQueryIDs": ["81708"],
-      "targetKeys": ["fakturamottagare_81708"],
+      "targetQueryIDs": [
+        "81708"
+      ],
+      "targetKeys": [
+        "fakturamottagare_81708"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49645"],
+      "requiredAlternativeIDs": [
+        "49645"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -481,10 +540,16 @@
       "sourceQueryID": "81713",
       "sourceKey": "verksamhetsbeskrivning_81713",
       "sourceTitle": "Verksamhetsbeskrivning",
-      "targetQueryIDs": ["81714"],
-      "targetKeys": ["verksamhetsbeskrivning_81714"],
+      "targetQueryIDs": [
+        "81714"
+      ],
+      "targetKeys": [
+        "verksamhetsbeskrivning_81714"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49646"],
+      "requiredAlternativeIDs": [
+        "49646"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -496,10 +561,16 @@
       "sourceQueryID": "81713",
       "sourceKey": "verksamhetsbeskrivning_81713",
       "sourceTitle": "Verksamhetsbeskrivning",
-      "targetQueryIDs": ["81715"],
-      "targetKeys": ["bifoga_verksamhetsbeskrivning_81715"],
+      "targetQueryIDs": [
+        "81715"
+      ],
+      "targetKeys": [
+        "bifoga_verksamhetsbeskrivning_81715"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49647"],
+      "requiredAlternativeIDs": [
+        "49647"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -554,7 +625,9 @@
         "bifoga_brandskyddsdokumentation_81764"
       ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49648"],
+      "requiredAlternativeIDs": [
+        "49648"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -593,7 +666,10 @@
         "finns_polistillstand_81780"
       ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49649", "49650"],
+      "requiredAlternativeIDs": [
+        "49649",
+        "49650"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -605,14 +681,20 @@
       "sourceQueryID": "81716",
       "sourceKey": "vad_vill_du_ansoka_om_eller_anmala_81716",
       "sourceTitle": "Vad vill du ansöka om eller anmäla?",
-      "targetQueryIDs": ["81771", "81772", "81774"],
+      "targetQueryIDs": [
+        "81771",
+        "81772",
+        "81774"
+      ],
       "targetKeys": [
         "gaster_81771",
         "gastlista_eller_medlemslista_81772",
         "hur_har_gasterna_bjudits_in_81774"
       ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49650"],
+      "requiredAlternativeIDs": [
+        "49650"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -643,7 +725,9 @@
         "maximalt_antal_personer_som_kommer_att_v_81796"
       ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49651"],
+      "requiredAlternativeIDs": [
+        "49651"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -680,7 +764,9 @@
         "beskriv_forsaljningsplats_81811"
       ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49652"],
+      "requiredAlternativeIDs": [
+        "49652"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -692,7 +778,12 @@
       "sourceQueryID": "81716",
       "sourceKey": "vad_vill_du_ansoka_om_eller_anmala_81716",
       "sourceTitle": "Vad vill du ansöka om eller anmäla?",
-      "targetQueryIDs": ["81813", "81819", "81820", "81837"],
+      "targetQueryIDs": [
+        "81813",
+        "81819",
+        "81820",
+        "81837"
+      ],
       "targetKeys": [
         "kunskap_om_alkohollagen_81813",
         "vilka_alkoholdrycker_ska_serveras_81819",
@@ -700,7 +791,9 @@
         "godkanna_cateringtillfalle_81837"
       ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49653"],
+      "requiredAlternativeIDs": [
+        "49653"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -737,7 +830,9 @@
         "bifoga_brandskyddsdokumentation_81863"
       ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49654"],
+      "requiredAlternativeIDs": [
+        "49654"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -791,10 +886,17 @@
       "sourceQueryID": "81716",
       "sourceKey": "vad_vill_du_ansoka_om_eller_anmala_81716",
       "sourceTitle": "Vad vill du ansöka om eller anmäla?",
-      "targetQueryIDs": ["81767"],
-      "targetKeys": ["ovriga_uppgifter_gallande_datum_81767"],
+      "targetQueryIDs": [
+        "81767"
+      ],
+      "targetKeys": [
+        "ovriga_uppgifter_gallande_datum_81767"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49649", "49650"],
+      "requiredAlternativeIDs": [
+        "49649",
+        "49650"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -871,10 +973,16 @@
       "sourceQueryID": "81721",
       "sourceKey": "vill_du_anmala_personer_i_foretaget_till_81721",
       "sourceTitle": "Vill du anmäla personer i företaget till kunskapsprovet nu eller senare?",
-      "targetQueryIDs": ["81723"],
-      "targetKeys": ["harmed_anmaler_jag_foljande_person_perso_81723"],
+      "targetQueryIDs": [
+        "81723"
+      ],
+      "targetKeys": [
+        "harmed_anmaler_jag_foljande_person_perso_81723"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49658"],
+      "requiredAlternativeIDs": [
+        "49658"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -886,10 +994,16 @@
       "sourceQueryID": "81721",
       "sourceKey": "vill_du_anmala_personer_i_foretaget_till_81721",
       "sourceTitle": "Vill du anmäla personer i företaget till kunskapsprovet nu eller senare?",
-      "targetQueryIDs": ["81724"],
-      "targetKeys": [null],
+      "targetQueryIDs": [
+        "81724"
+      ],
+      "targetKeys": [
+        null
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49659"],
+      "requiredAlternativeIDs": [
+        "49659"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -901,8 +1015,12 @@
       "sourceQueryID": "81726",
       "sourceKey": "verksamhetens_inriktning_81726",
       "sourceTitle": "Verksamhetens inriktning",
-      "targetQueryIDs": ["81739"],
-      "targetKeys": ["beskriv_utbudet_av_mat_81739"],
+      "targetQueryIDs": [
+        "81739"
+      ],
+      "targetKeys": [
+        "beskriv_utbudet_av_mat_81739"
+      ],
       "selectionMode": "ANY",
       "requiredAlternativeIDs": [
         "30863",
@@ -925,10 +1043,16 @@
       "sourceQueryID": "81726",
       "sourceKey": "verksamhetens_inriktning_81726",
       "sourceTitle": "Verksamhetens inriktning",
-      "targetQueryIDs": ["81727"],
-      "targetKeys": ["har_ni_81727"],
+      "targetQueryIDs": [
+        "81727"
+      ],
+      "targetKeys": [
+        "har_ni_81727"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30867"],
+      "requiredAlternativeIDs": [
+        "30867"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -979,10 +1103,16 @@
       "sourceQueryID": "81730",
       "sourceKey": "serveringsperiod_for_allmanheten_81730",
       "sourceTitle": "Serveringsperiod för allmänheten",
-      "targetQueryIDs": ["81731"],
-      "targetKeys": ["ange_period_for_servering_till_allmanhet_81731"],
+      "targetQueryIDs": [
+        "81731"
+      ],
+      "targetKeys": [
+        "ange_period_for_servering_till_allmanhet_81731"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49664"],
+      "requiredAlternativeIDs": [
+        "49664"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1033,10 +1163,16 @@
       "sourceQueryID": "81734",
       "sourceKey": "serveringsperiod_for_slutet_sallskap_81734",
       "sourceTitle": "Serveringsperiod för slutet sällskap",
-      "targetQueryIDs": ["81735"],
-      "targetKeys": ["ange_period_for_servering_till_slutet_sa_81735"],
+      "targetQueryIDs": [
+        "81735"
+      ],
+      "targetKeys": [
+        "ange_period_for_servering_till_slutet_sa_81735"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49666"],
+      "requiredAlternativeIDs": [
+        "49666"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1074,10 +1210,16 @@
       "sourceQueryID": "81739",
       "sourceKey": "beskriv_utbudet_av_mat_81739",
       "sourceTitle": "Beskriv utbudet av mat",
-      "targetQueryIDs": ["81740"],
-      "targetKeys": ["bifoga_meny_81740"],
+      "targetQueryIDs": [
+        "81740"
+      ],
+      "targetKeys": [
+        "bifoga_meny_81740"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49667"],
+      "requiredAlternativeIDs": [
+        "49667"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1089,10 +1231,16 @@
       "sourceQueryID": "81739",
       "sourceKey": "beskriv_utbudet_av_mat_81739",
       "sourceTitle": "Beskriv utbudet av mat",
-      "targetQueryIDs": ["81741"],
-      "targetKeys": ["meny_81741"],
+      "targetQueryIDs": [
+        "81741"
+      ],
+      "targetKeys": [
+        "meny_81741"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49668"],
+      "requiredAlternativeIDs": [
+        "49668"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1104,10 +1252,18 @@
       "sourceQueryID": "81743",
       "sourceKey": "finansiering_81743",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81744", "81745"],
-      "targetKeys": ["egna_medel_81744", "bifoga_kontoutdrag_81745"],
+      "targetQueryIDs": [
+        "81744",
+        "81745"
+      ],
+      "targetKeys": [
+        "egna_medel_81744",
+        "bifoga_kontoutdrag_81745"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30879"],
+      "requiredAlternativeIDs": [
+        "30879"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1119,10 +1275,18 @@
       "sourceQueryID": "81743",
       "sourceKey": "finansiering_81743",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81746", "81747"],
-      "targetKeys": ["banklan_81746", "bifoga_lanebevis_for_banklan_81747"],
+      "targetQueryIDs": [
+        "81746",
+        "81747"
+      ],
+      "targetKeys": [
+        "banklan_81746",
+        "bifoga_lanebevis_for_banklan_81747"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30880"],
+      "requiredAlternativeIDs": [
+        "30880"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1134,10 +1298,18 @@
       "sourceQueryID": "81743",
       "sourceKey": "finansiering_81743",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81748", "81749"],
-      "targetKeys": ["privatlan_81748", "bifoga_lanebevis_for_privatlan_81749"],
+      "targetQueryIDs": [
+        "81748",
+        "81749"
+      ],
+      "targetKeys": [
+        "privatlan_81748",
+        "bifoga_lanebevis_for_privatlan_81749"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30881"],
+      "requiredAlternativeIDs": [
+        "30881"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1149,13 +1321,18 @@
       "sourceQueryID": "81743",
       "sourceKey": "finansiering_81743",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81750", "81751"],
+      "targetQueryIDs": [
+        "81750",
+        "81751"
+      ],
       "targetKeys": [
         "annan_finansiering_81750",
         "bifoga_lanebevis_for_annan_finansiering_81751"
       ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30882"],
+      "requiredAlternativeIDs": [
+        "30882"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1167,10 +1344,19 @@
       "sourceQueryID": "81743",
       "sourceKey": "finansiering_81743",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81752"],
-      "targetKeys": ["ovriga_upplysningar_angaende_finansierin_81752"],
+      "targetQueryIDs": [
+        "81752"
+      ],
+      "targetKeys": [
+        "ovriga_upplysningar_angaende_finansierin_81752"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30879", "30880", "30881", "30882"],
+      "requiredAlternativeIDs": [
+        "30879",
+        "30880",
+        "30881",
+        "30882"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1182,10 +1368,16 @@
       "sourceQueryID": "81755",
       "sourceKey": "ar_serveringsstallets_besoksadress_samma_81755",
       "sourceTitle": "Är serveringsställets besöksadress samma som företagets adress?",
-      "targetQueryIDs": ["81756"],
-      "targetKeys": ["serveringsstallets_besoksadress_81756"],
+      "targetQueryIDs": [
+        "81756"
+      ],
+      "targetKeys": [
+        "serveringsstallets_besoksadress_81756"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49670"],
+      "requiredAlternativeIDs": [
+        "49670"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1197,10 +1389,16 @@
       "sourceQueryID": "81780",
       "sourceKey": "finns_polistillstand_81780",
       "sourceTitle": "Finns polistillstånd",
-      "targetQueryIDs": ["81781"],
-      "targetKeys": ["ladda_upp_polistillstand_81781"],
+      "targetQueryIDs": [
+        "81781"
+      ],
+      "targetKeys": [
+        "ladda_upp_polistillstand_81781"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49671"],
+      "requiredAlternativeIDs": [
+        "49671"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1212,10 +1410,16 @@
       "sourceQueryID": "81785",
       "sourceKey": "kommer_ni_att_servera_mat_81785",
       "sourceTitle": "Kommer ni att servera mat",
-      "targetQueryIDs": ["81786"],
-      "targetKeys": ["beskriv_utbudet_av_mat_81786"],
+      "targetQueryIDs": [
+        "81786"
+      ],
+      "targetKeys": [
+        "beskriv_utbudet_av_mat_81786"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49676"],
+      "requiredAlternativeIDs": [
+        "49676"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1227,10 +1431,16 @@
       "sourceQueryID": "81786",
       "sourceKey": "beskriv_utbudet_av_mat_81786",
       "sourceTitle": "Beskriv utbudet av mat",
-      "targetQueryIDs": ["81787"],
-      "targetKeys": ["bifoga_meny_81787"],
+      "targetQueryIDs": [
+        "81787"
+      ],
+      "targetKeys": [
+        "bifoga_meny_81787"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49678"],
+      "requiredAlternativeIDs": [
+        "49678"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1242,10 +1452,16 @@
       "sourceQueryID": "81786",
       "sourceKey": "beskriv_utbudet_av_mat_81786",
       "sourceTitle": "Beskriv utbudet av mat",
-      "targetQueryIDs": ["81788"],
-      "targetKeys": ["meny_81788"],
+      "targetQueryIDs": [
+        "81788"
+      ],
+      "targetKeys": [
+        "meny_81788"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49679"],
+      "requiredAlternativeIDs": [
+        "49679"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1257,10 +1473,16 @@
       "sourceQueryID": "81789",
       "sourceKey": "egenkontrollprogram_vid_servering_av_fol_81789",
       "sourceTitle": "Egenkontrollprogram vid servering av folköl (klass 2)",
-      "targetQueryIDs": ["81790"],
-      "targetKeys": ["bifoga_egenkontrollprogram_for_servering_81790"],
+      "targetQueryIDs": [
+        "81790"
+      ],
+      "targetKeys": [
+        "bifoga_egenkontrollprogram_for_servering_81790"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49680"],
+      "requiredAlternativeIDs": [
+        "49680"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1272,10 +1494,16 @@
       "sourceQueryID": "81792",
       "sourceKey": "ar_serveringsstallets_besoksadress_samma_81792",
       "sourceTitle": "Är serveringsställets besöksadress samma som företagets adress?",
-      "targetQueryIDs": ["81793"],
-      "targetKeys": ["serveringsstallets_besoksadress_81793"],
+      "targetQueryIDs": [
+        "81793"
+      ],
+      "targetKeys": [
+        "serveringsstallets_besoksadress_81793"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49683"],
+      "requiredAlternativeIDs": [
+        "49683"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1287,10 +1515,16 @@
       "sourceQueryID": "81801",
       "sourceKey": "forsaljningsperiod_81801",
       "sourceTitle": "Försäljningsperiod",
-      "targetQueryIDs": ["81802"],
-      "targetKeys": ["ange_period_for_forsaljning_81802"],
+      "targetQueryIDs": [
+        "81802"
+      ],
+      "targetKeys": [
+        "ange_period_for_forsaljning_81802"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49685"],
+      "requiredAlternativeIDs": [
+        "49685"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1302,10 +1536,16 @@
       "sourceQueryID": "81804",
       "sourceKey": "besoksarrangemang_81804",
       "sourceTitle": "Besöksarrangemang",
-      "targetQueryIDs": ["81806"],
-      "targetKeys": ["ladda_upp_beskrivning_pa_besoksarrangema_81806"],
+      "targetQueryIDs": [
+        "81806"
+      ],
+      "targetKeys": [
+        "ladda_upp_beskrivning_pa_besoksarrangema_81806"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49686"],
+      "requiredAlternativeIDs": [
+        "49686"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1317,10 +1557,16 @@
       "sourceQueryID": "81804",
       "sourceKey": "besoksarrangemang_81804",
       "sourceTitle": "Besöksarrangemang",
-      "targetQueryIDs": ["81805"],
-      "targetKeys": ["beskriv_besoksarrangemanget_81805"],
+      "targetQueryIDs": [
+        "81805"
+      ],
+      "targetKeys": [
+        "beskriv_besoksarrangemanget_81805"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49687"],
+      "requiredAlternativeIDs": [
+        "49687"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1397,10 +1643,16 @@
       "sourceQueryID": "81816",
       "sourceKey": "vill_du_anmala_personer_i_foretaget_till_81816",
       "sourceTitle": "Vill du anmäla personer i företaget till kunskapsprovet nu eller senare?",
-      "targetQueryIDs": ["81818"],
-      "targetKeys": ["harmed_anmaler_jag_foljande_person_perso_81818"],
+      "targetQueryIDs": [
+        "81818"
+      ],
+      "targetKeys": [
+        "harmed_anmaler_jag_foljande_person_perso_81818"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49691"],
+      "requiredAlternativeIDs": [
+        "49691"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1412,10 +1664,16 @@
       "sourceQueryID": "81816",
       "sourceKey": "vill_du_anmala_personer_i_foretaget_till_81816",
       "sourceTitle": "Vill du anmäla personer i företaget till kunskapsprovet nu eller senare?",
-      "targetQueryIDs": ["81817"],
-      "targetKeys": [null],
+      "targetQueryIDs": [
+        "81817"
+      ],
+      "targetKeys": [
+        null
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49692"],
+      "requiredAlternativeIDs": [
+        "49692"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1427,10 +1685,18 @@
       "sourceQueryID": "81820",
       "sourceKey": "finansiering_81820",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81821", "81822"],
-      "targetKeys": ["egna_medel_81821", "bifoga_kontoutdrag_81822"],
+      "targetQueryIDs": [
+        "81821",
+        "81822"
+      ],
+      "targetKeys": [
+        "egna_medel_81821",
+        "bifoga_kontoutdrag_81822"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30898"],
+      "requiredAlternativeIDs": [
+        "30898"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1442,10 +1708,18 @@
       "sourceQueryID": "81820",
       "sourceKey": "finansiering_81820",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81823", "81824"],
-      "targetKeys": ["banklan_81823", "bifoga_lanebevis_for_banklan_81824"],
+      "targetQueryIDs": [
+        "81823",
+        "81824"
+      ],
+      "targetKeys": [
+        "banklan_81823",
+        "bifoga_lanebevis_for_banklan_81824"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30899"],
+      "requiredAlternativeIDs": [
+        "30899"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1457,10 +1731,18 @@
       "sourceQueryID": "81820",
       "sourceKey": "finansiering_81820",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81825", "81826"],
-      "targetKeys": ["privatlan_81825", "bifoga_lanebevis_for_privatlan_81826"],
+      "targetQueryIDs": [
+        "81825",
+        "81826"
+      ],
+      "targetKeys": [
+        "privatlan_81825",
+        "bifoga_lanebevis_for_privatlan_81826"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30900"],
+      "requiredAlternativeIDs": [
+        "30900"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1472,13 +1754,18 @@
       "sourceQueryID": "81820",
       "sourceKey": "finansiering_81820",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81827", "81828"],
+      "targetQueryIDs": [
+        "81827",
+        "81828"
+      ],
       "targetKeys": [
         "annan_finansiering_81827",
         "bifoga_lanebevis_for_annan_finansiering_81828"
       ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30901"],
+      "requiredAlternativeIDs": [
+        "30901"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1490,10 +1777,19 @@
       "sourceQueryID": "81820",
       "sourceKey": "finansiering_81820",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81829"],
-      "targetKeys": ["ovriga_upplysningar_angaende_finansierin_81829"],
+      "targetQueryIDs": [
+        "81829"
+      ],
+      "targetKeys": [
+        "ovriga_upplysningar_angaende_finansierin_81829"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30898", "30899", "30900", "30901"],
+      "requiredAlternativeIDs": [
+        "30898",
+        "30899",
+        "30900",
+        "30901"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1505,10 +1801,16 @@
       "sourceQueryID": "81830",
       "sourceKey": "har_ni_anmalt_koket_som_livsmedelsanlagg_81830",
       "sourceTitle": "Har ni anmält köket som livsmedelsanläggning hos miljökontoret",
-      "targetQueryIDs": ["81831"],
-      "targetKeys": [null],
+      "targetQueryIDs": [
+        "81831"
+      ],
+      "targetKeys": [
+        null
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49694"],
+      "requiredAlternativeIDs": [
+        "49694"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1585,10 +1887,16 @@
       "sourceQueryID": "81842",
       "sourceKey": "vill_du_anmala_personer_i_foretaget_till_81842",
       "sourceTitle": "Vill du anmäla personer i företaget till kunskapsprovet nu eller senare?",
-      "targetQueryIDs": ["81843"],
-      "targetKeys": [null],
+      "targetQueryIDs": [
+        "81843"
+      ],
+      "targetKeys": [
+        null
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49699"],
+      "requiredAlternativeIDs": [
+        "49699"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1600,10 +1908,16 @@
       "sourceQueryID": "81842",
       "sourceKey": "vill_du_anmala_personer_i_foretaget_till_81842",
       "sourceTitle": "Vill du anmäla personer i företaget till kunskapsprovet nu eller senare?",
-      "targetQueryIDs": ["81844"],
-      "targetKeys": ["harmed_anmaler_jag_foljande_person_perso_81844"],
+      "targetQueryIDs": [
+        "81844"
+      ],
+      "targetKeys": [
+        "harmed_anmaler_jag_foljande_person_perso_81844"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49698"],
+      "requiredAlternativeIDs": [
+        "49698"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1615,10 +1929,16 @@
       "sourceQueryID": "81846",
       "sourceKey": "verksamhetens_inriktning_81846",
       "sourceTitle": "Verksamhetens inriktning",
-      "targetQueryIDs": ["81847"],
-      "targetKeys": ["har_ni_81847"],
+      "targetQueryIDs": [
+        "81847"
+      ],
+      "targetKeys": [
+        "har_ni_81847"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30907"],
+      "requiredAlternativeIDs": [
+        "30907"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1630,10 +1950,18 @@
       "sourceQueryID": "81849",
       "sourceKey": "finansiering_81849",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81850", "81851"],
-      "targetKeys": ["egna_medel_81850", "bifoga_kontoutdrag_81851"],
+      "targetQueryIDs": [
+        "81850",
+        "81851"
+      ],
+      "targetKeys": [
+        "egna_medel_81850",
+        "bifoga_kontoutdrag_81851"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30915"],
+      "requiredAlternativeIDs": [
+        "30915"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1645,10 +1973,18 @@
       "sourceQueryID": "81849",
       "sourceKey": "finansiering_81849",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81852", "81853"],
-      "targetKeys": ["banklan_81852", "bifoga_lanebevis_for_banklan_81853"],
+      "targetQueryIDs": [
+        "81852",
+        "81853"
+      ],
+      "targetKeys": [
+        "banklan_81852",
+        "bifoga_lanebevis_for_banklan_81853"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30916"],
+      "requiredAlternativeIDs": [
+        "30916"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1660,10 +1996,18 @@
       "sourceQueryID": "81849",
       "sourceKey": "finansiering_81849",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81854", "81855"],
-      "targetKeys": ["privatlan_81854", "bifoga_lanebevis_for_privatlan_81855"],
+      "targetQueryIDs": [
+        "81854",
+        "81855"
+      ],
+      "targetKeys": [
+        "privatlan_81854",
+        "bifoga_lanebevis_for_privatlan_81855"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30917"],
+      "requiredAlternativeIDs": [
+        "30917"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1675,13 +2019,18 @@
       "sourceQueryID": "81849",
       "sourceKey": "finansiering_81849",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81856", "81857"],
+      "targetQueryIDs": [
+        "81856",
+        "81857"
+      ],
       "targetKeys": [
         "annan_finansiering_81856",
         "bifoga_lanebevis_for_annan_finansiering_81857"
       ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30918"],
+      "requiredAlternativeIDs": [
+        "30918"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1693,10 +2042,19 @@
       "sourceQueryID": "81849",
       "sourceKey": "finansiering_81849",
       "sourceTitle": "Finansiering",
-      "targetQueryIDs": ["81858"],
-      "targetKeys": ["ovriga_upplysningar_angaende_finansierin_81858"],
+      "targetQueryIDs": [
+        "81858"
+      ],
+      "targetKeys": [
+        "ovriga_upplysningar_angaende_finansierin_81858"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["30915", "30916", "30917", "30918"],
+      "requiredAlternativeIDs": [
+        "30915",
+        "30916",
+        "30917",
+        "30918"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false
@@ -1726,10 +2084,16 @@
       "sourceQueryID": "81868",
       "sourceKey": "var_kommer_tillstallningen_att_aga_rum_81868",
       "sourceTitle": "Var kommer tillställningen att äga rum?",
-      "targetQueryIDs": ["81870"],
-      "targetKeys": ["bifoga_hyreskontrakt_81870"],
+      "targetQueryIDs": [
+        "81870"
+      ],
+      "targetKeys": [
+        "bifoga_hyreskontrakt_81870"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49703"],
+      "requiredAlternativeIDs": [
+        "49703"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE_REQUIRED",
       "doNotResetQueryState": false
@@ -1772,10 +2136,16 @@
       "sourceQueryID": "81883",
       "sourceKey": "har_du_kassaregister_81883",
       "sourceTitle": "Har du kassaregister?",
-      "targetQueryIDs": ["81884"],
-      "targetKeys": ["ange_registreringskod_81884"],
+      "targetQueryIDs": [
+        "81884"
+      ],
+      "targetKeys": [
+        "ange_registreringskod_81884"
+      ],
       "selectionMode": "ANY",
-      "requiredAlternativeIDs": ["49704"],
+      "requiredAlternativeIDs": [
+        "49704"
+      ],
       "freeTextAlternative": false,
       "resultingQueryState": "VISIBLE",
       "doNotResetQueryState": false

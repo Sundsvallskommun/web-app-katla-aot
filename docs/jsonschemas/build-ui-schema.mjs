@@ -1,9 +1,9 @@
 /**
- * Generates the AoT ui schema from the OpenE exports.
+ * Turns the OpenE export for flow 2181 into the two request bodies the jsonschema service takes.
  *
- * The widget for a question follows mechanically from its `x-oe.queryTypeID`, and the sections
- * follow from which branch of the flow can reach it, so the ui schema is derived rather than
- * hand-written: rerun this when a new OpenE export lands.
+ * The widget for a question follows mechanically from its `x-oe.queryTypeID`, the sections follow
+ * from which branch of the flow can reach it, and the field descriptions come from OpenE's own ui
+ * schema — so both artifacts are derived rather than hand-written. Rerun when a new export lands:
  *
  *   node docs/jsonschemas/build-ui-schema.mjs
  *
@@ -16,8 +16,14 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const read = (name) => JSON.parse(readFileSync(join(here, name), 'utf8'));
 
-const schema = read('jsonschema-aot.json').value;
-const rules = read('jsonschema-rules-aot.json').rules;
+const SCHEMA_NAME = 'aot_opene_test';
+const SCHEMA_VERSION = '1.0';
+/** The platform is 2020-12 throughout: Ajv2020 throws outright on a draft-07 `$schema`. */
+const DIALECT = 'https://json-schema.org/draft/2020-12/schema';
+
+const schema = read('aot_ny_for_draken-2181.schema.json');
+const rules = read('aot_ny_for_draken-2181.rules.json').rules;
+const oeUiSchema = read('aot_ny_for_draken-2181.uischema.json');
 
 const CONTACT_STEP = 'kontaktuppgifter_6115';
 const APPLICATION_STEP = 'ansokan_6116';
@@ -121,6 +127,18 @@ function objectUi(field) {
   return ui;
 }
 
+/**
+ * OpenE's own ui schema is the only place the description links survive — the schema's plain-text
+ * `description` keeps the link text and drops the href. Some entries are CKEditor leftovers.
+ */
+function oeDescription(stepKey, fieldKey) {
+  const html = oeUiSchema[stepKey]?.[fieldKey]?.['ui:options']?.oeDescriptionHtml;
+  if (typeof html !== 'string') return undefined;
+  const stripped = html.replace(/\s/g, '');
+  if (stripped === '' || stripped === '<p></p>' || stripped.startsWith('<p></p><styletype="text/css">')) return undefined;
+  return html;
+}
+
 function fieldUi(field) {
   switch (queryType(field)) {
     case 'RadioButton':
@@ -201,7 +219,11 @@ function stepUi(stepKey) {
   const duplicated = [...counts].filter(([, count]) => count > 1).map(([key]) => key);
   if (duplicated.length) throw new Error(`${stepKey}: questions in more than one section: ${duplicated.join(', ')}`);
 
-  for (const key of keys) ui[key] = fieldUi(properties[key]);
+  for (const key of keys) {
+    ui[key] = fieldUi(properties[key]);
+    const description = oeDescription(stepKey, key);
+    if (description) ui[key]['ui:description'] = description;
+  }
   return ui;
 }
 
@@ -256,6 +278,20 @@ const value = {
 };
 
 assertWidgetsResolve(value);
+
+writeFileSync(
+  join(here, `${SCHEMA_NAME}.schema-request.json`),
+  `${JSON.stringify(
+    {
+      name: SCHEMA_NAME,
+      version: SCHEMA_VERSION,
+      value: { ...schema, $schema: DIALECT },
+      description: 'A JSON-schema that defines an open alkoholtillstånd application',
+    },
+    null,
+    2
+  )}\n`
+);
 
 const output = {
   value,

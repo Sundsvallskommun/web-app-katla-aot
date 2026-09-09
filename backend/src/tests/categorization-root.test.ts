@@ -71,6 +71,25 @@ describe('categorization root', () => {
     expect(() => selectCategorizationSubtree(structure)).toThrow(/exactly one label classified CATEGORY_ROOT, found 2/);
   });
 
+  it('accepts the three levels the categorization UI renders', () => {
+    // The real tree (docs/label-structure.json) is CATEGORY -> TYPE -> SUBTYPE, exactly at the limit.
+    const structure = labelStructure();
+    const servingPermit = structure[0]?.labels?.[0]?.labels?.[0];
+    if (!servingPermit) throw new Error('fixture lost its type label');
+    servingPermit.labels = [
+      {
+        classification: 'SUBTYPE',
+        resourceName: 'PERMANENT_SERVING',
+        resourcePath: 'CATEGORYROOT/ALCOHOL/SERVING_PERMIT_APPLICATION/PERMANENT_SERVING',
+        labels: [],
+      },
+    ];
+
+    const subtree = selectCategorizationSubtree(structure);
+
+    expect(subtree[0]?.labels?.[0]?.labels?.[0]?.resourceName).toBe('PERMANENT_SERVING');
+  });
+
   it('fails closed when the tree is deeper than the categorization UI can render', () => {
     const structure = labelStructure();
     const deepest = structure[0]?.labels?.[0]?.labels?.[0];

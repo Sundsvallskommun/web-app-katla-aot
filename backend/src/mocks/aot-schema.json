@@ -76,7 +76,10 @@
                 "format": "email"
               }
             },
-            "required": ["firstname", "lastname"],
+            "required": [
+              "firstname",
+              "lastname"
+            ],
             "title": "Kontaktuppgifter",
             "description": "Privat",
             "x-oe": {
@@ -111,7 +114,10 @@
                 "format": "email"
               }
             },
-            "required": ["firstname", "lastname"],
+            "required": [
+              "firstname",
+              "lastname"
+            ],
             "title": "Kontaktuppgifter",
             "description": "Företag",
             "x-oe": {
@@ -192,7 +198,14 @@
             "x-oe-source": {
               "service": "ALKOPROVBV_KLUSTRAD",
               "environment": "PRODUCTION",
-              "companyTypes": ["AB", "BRF", "E", "EK", "HB", "KB"],
+              "companyTypes": [
+                "AB",
+                "BRF",
+                "E",
+                "EK",
+                "HB",
+                "KB"
+              ],
               "note": "Populated by the SSBT composite service (Bolagsverket/SCB/Skatteverket); not user-editable."
             },
             "title": "Välj företag",
@@ -441,7 +454,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "title": "Bifoga aktuellt registreringsbevis från Bolagsverket",
             "description": "Här bifogar du företagets registreringsbevis från Bolagsverket.\n\nHar du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.",
             "x-oe": {
@@ -456,7 +473,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "title": "Bifoga uppgifter om ägarförhållanden",
             "description": "Nedan bifogar du handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Syftet med denna informationsinsamling är att identifiera de personer som har betydande inflytande över verksamheten så dessa kan inkluderas i prövningen.\n\nAktiebolag: Dokumentation som visar aktiefördelningen mellan ägare, exempelvis en aktiebok. Det är bolagets styrelse som ska hålla en aktuell aktiebok över aktier och aktieägare. \n\nHandelsbolag/kommanditbolag: Dokumentation som visar ägarfördelningen i bolaget, exempelvis ett bolagsavtal.\n\nFörening/stiftelse:  Stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare.\n\nKoncern: Information om ägarförhållanden för koncernbolaget, förutom den handling som gäller för bolagsformen enligt ovan.",
             "x-oe": {
@@ -471,7 +492,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "title": "Bifoga registerutdrag från Skatteverket",
             "description": "Här kan du bifoga ett registerutdrag från Skatteverket.\n\nAv registerutdraget framgår det om du eller ditt företag är godkänt för F-skatt eller FA-skatt (F-skatt med villkor). Av utdraget framgår det också om du eller ditt företag är momsregistrerat och/eller registrerat som arbetsgivare. Här hämtar du ett registerutdrag: verksamt.se",
             "x-oe": {
@@ -517,7 +542,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "title": "Bifoga verksamhetsbeskrivning",
             "x-oe": {
               "queryID": "81715",
@@ -526,7 +555,9 @@
             }
           }
         },
-        "required": ["foretrader_du_ett_foretag_81698"],
+        "required": [
+          "foretrader_du_ett_foretag_81698"
+        ],
         "x-oe": {
           "stepID": "6115"
         }
@@ -892,7 +923,10 @@
                 "title": "Till och med"
               }
             },
-            "required": ["startDate", "endDate"],
+            "required": [
+              "startDate",
+              "endDate"
+            ],
             "title": "Ange period för servering till allmänheten",
             "x-oe": {
               "queryID": "81731",
@@ -914,7 +948,10 @@
                 "title": "Till klockan"
               }
             },
-            "required": ["startTime", "endTime"],
+            "required": [
+              "startTime",
+              "endTime"
+            ],
             "x-oe-dateRestrictions": {
               "timeInterval": "15"
             },
@@ -939,7 +976,10 @@
                 "title": "Till klockan"
               }
             },
-            "required": ["startTime", "endTime"],
+            "required": [
+              "startTime",
+              "endTime"
+            ],
             "x-oe-dateRestrictions": {
               "timeInterval": "15"
             },
@@ -985,7 +1025,10 @@
                 "title": "Till och med"
               }
             },
-            "required": ["startDate", "endDate"],
+            "required": [
+              "startDate",
+              "endDate"
+            ],
             "title": "Ange period för servering till slutet sällskap",
             "x-oe": {
               "queryID": "81735",
@@ -1007,7 +1050,10 @@
                 "title": "Till klockan"
               }
             },
-            "required": ["startTime", "endTime"],
+            "required": [
+              "startTime",
+              "endTime"
+            ],
             "x-oe-dateRestrictions": {
               "timeInterval": "15"
             },
@@ -1032,7 +1078,10 @@
                 "title": "Till klockan"
               }
             },
-            "required": ["startTime", "endTime"],
+            "required": [
+              "startTime",
+              "endTime"
+            ],
             "x-oe-dateRestrictions": {
               "timeInterval": "15"
             },
@@ -1106,7 +1155,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga meny",
             "x-oe": {
@@ -1210,7 +1263,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga kontoutdrag",
             "x-oe": {
@@ -1241,7 +1298,10 @@
                   }
                 }
               },
-              "required": ["langivare_5752", "belopp_kronor_5753"]
+              "required": [
+                "langivare_5752",
+                "belopp_kronor_5753"
+              ]
             },
             "title": "Banklån",
             "x-oe": {
@@ -1256,7 +1316,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga lånebevis för banklån",
             "x-oe": {
@@ -1287,7 +1351,10 @@
                   }
                 }
               },
-              "required": ["langivare_5754", "belopp_kronor_5755"]
+              "required": [
+                "langivare_5754",
+                "belopp_kronor_5755"
+              ]
             },
             "title": "Privatlån",
             "x-oe": {
@@ -1302,7 +1369,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga lånebevis för privatlån",
             "x-oe": {
@@ -1360,7 +1431,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga lånebevis för annan finansiering",
             "x-oe": {
@@ -1581,7 +1656,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga planritning",
             "description": "Du behöver visa var i lokalen du kommer att servera alkohol genom att på en planritning visa vilken del som är serveringsyta. Planerar du att ha uteservering behöver planritningen även visa serveringsyta utomhus. Planerar du att servera alkohol på flera våningsplan behöver du visa serveringsyta för alla våningsplan. Du får inte servera alkohol utanför serveringsytan och dina gäster får inte heller ta med sig alkohol till de delar av lokalen som inte är serveringsyta. Serveringsytan ska vara överblickbar. Länkar till exempel på planritningar:  Exempel 1. Exempel 2.",
@@ -1597,7 +1676,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga avtal gällande lokal och mark",
             "description": "För att kommunen ska kunna pröva ansökningar om serveringstillstånd behöver kommunen säkerställa att ditt företag har rätt att använda lokalen inklusive platsen för eventuell uteservering. Du gör detta genom att ladda upp ett hyreskontrakt, ett arrendeavtal eller köpeavtal (inklusive bilagor) för lokalen som verksamheten ska bedrivas i.",
@@ -1613,7 +1696,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga avtal gällande verksamheten",
             "description": "Har ditt företag köpt den verksamhet som du nu söker tillstånd för behöver du bifoga köpeavtalet (inklusive bilagor) för verksamheten, eller ett arrendeavtal (inklusive bilagor) om ditt företag arrenderar verksamheten.",
@@ -1629,7 +1716,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga brandskyddsdokumentation",
             "description": "Om du vill bifoga brandskyddsdokumentation från brandkonsult eller motsvarande kan du bifoga den här.",
@@ -1653,7 +1744,10 @@
                 "title": "Till och med"
               }
             },
-            "required": ["startDate", "endDate"],
+            "required": [
+              "startDate",
+              "endDate"
+            ],
             "x-oe-dateRestrictions": {
               "startDateRestrictionType": "RESTRICT_FUTURE_DATES"
             },
@@ -1687,7 +1781,10 @@
                 "title": "Till klockan"
               }
             },
-            "required": ["startTime", "endTime"],
+            "required": [
+              "startTime",
+              "endTime"
+            ],
             "x-oe-dateRestrictions": {
               "timeInterval": "15"
             },
@@ -2059,7 +2156,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga meny",
             "x-oe": {
@@ -2105,7 +2206,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga egenkontrollprogram för servering av folköl (klass 2)",
             "x-oe": {
@@ -2285,7 +2390,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga livsmedelsregistrering från miljökontoret",
             "description": "https://e-tjanster.sundsvall.se/registrering-livsmedelsanlaggning",
@@ -2424,7 +2533,10 @@
                 "title": "Till och med"
               }
             },
-            "required": ["startDate", "endDate"],
+            "required": [
+              "startDate",
+              "endDate"
+            ],
             "title": "Ange period för försäljning",
             "x-oe": {
               "queryID": "81802",
@@ -2446,7 +2558,10 @@
                 "title": "Till klockan"
               }
             },
-            "required": ["startTime", "endTime"],
+            "required": [
+              "startTime",
+              "endTime"
+            ],
             "x-oe-dateRestrictions": {
               "timeInterval": "15"
             },
@@ -2507,7 +2622,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Ladda upp egenkontrollprogram",
             "x-oe": {
@@ -2836,7 +2955,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga kontoutdrag",
             "x-oe": {
@@ -2867,7 +2990,10 @@
                   }
                 }
               },
-              "required": ["langivare_5773", "belopp_kronor_5774"]
+              "required": [
+                "langivare_5773",
+                "belopp_kronor_5774"
+              ]
             },
             "title": "Banklån",
             "x-oe": {
@@ -2882,7 +3008,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga lånebevis för banklån",
             "x-oe": {
@@ -2913,7 +3043,10 @@
                   }
                 }
               },
-              "required": ["langivare_5775", "belopp_kronor_5776"]
+              "required": [
+                "langivare_5775",
+                "belopp_kronor_5776"
+              ]
             },
             "title": "Privatlån",
             "x-oe": {
@@ -2928,7 +3061,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga lånebevis för privatlån",
             "x-oe": {
@@ -2986,7 +3123,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga lånebevis för annan finansiering",
             "x-oe": {
@@ -3479,7 +3620,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga kontoutdrag",
             "x-oe": {
@@ -3524,7 +3669,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga lånebevis för banklån",
             "x-oe": {
@@ -3569,7 +3718,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga lånebevis för privatlån",
             "x-oe": {
@@ -3622,7 +3775,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga lånebevis för annan finansiering",
             "x-oe": {
@@ -3692,7 +3849,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga planritning",
             "description": "Du behöver visa var i lokalen du kommer att servera alkohol genom att på en planritning visa vilken del som är serveringsyta. Planerar du att ha uteservering behöver planritningen även visa serveringsyta utomhus. Planerar du att servera alkohol på flera våningsplan behöver du visa serveringsyta för alla våningsplan. Du får inte servera alkohol utanför serveringsytan och dina gäster får inte heller ta med sig alkohol till de delar av lokalen som inte är serveringsyta. Serveringsytan ska vara överblickbar. Länkar till exempel på planritningar:  Exempel 1. Exempel 2.",
@@ -3708,7 +3869,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga avtal gällande lokal och mark",
             "description": "För att kommunen ska kunna pröva ansökningar om serveringstillstånd behöver kommunen säkerställa att ditt företag har rätt att använda lokalen inklusive platsen för eventuell uteservering. Du gör detta genom att ladda upp ett hyreskontrakt, ett arrendeavtal eller köpeavtal (inklusive bilagor) för lokalen som verksamheten ska bedrivas i.",
@@ -3724,7 +3889,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "x-oe-maxFileNameLength": 255,
             "title": "Bifoga brandskyddsdokumentation",
             "description": "Om du vill bifoga brandskyddsdokumentation från brandkonsult eller motsvarande kan du bifoga den här.",
@@ -3845,7 +4014,11 @@
               "type": "string",
               "format": "data-url"
             },
-            "x-oe-allowedFileExtensions": ["doc", "docx", "pdf"],
+            "x-oe-allowedFileExtensions": [
+              "doc",
+              "docx",
+              "pdf"
+            ],
             "title": "Bifoga hyreskontrakt",
             "x-oe": {
               "queryID": "81870",
@@ -3867,7 +4040,10 @@
                 "title": "Till och med"
               }
             },
-            "required": ["startDate", "endDate"],
+            "required": [
+              "startDate",
+              "endDate"
+            ],
             "title": "Datum för serveringen",
             "x-oe": {
               "queryID": "81871",
@@ -3889,7 +4065,10 @@
                 "title": "Till klockan"
               }
             },
-            "required": ["startTime", "endTime"],
+            "required": [
+              "startTime",
+              "endTime"
+            ],
             "x-oe-dateRestrictions": {
               "timeInterval": "15"
             },
@@ -3958,7 +4137,9 @@
                 }
               }
             },
-            "required": ["antal_50449"],
+            "required": [
+              "antal_50449"
+            ],
             "title": "Beräknat antal gäster",
             "x-oe": {
               "queryID": "81875",
@@ -4060,7 +4241,9 @@
                 }
               }
             },
-            "required": ["antal_sittplatser_i_bordsavdelning_matsa_50455"],
+            "required": [
+              "antal_sittplatser_i_bordsavdelning_matsa_50455"
+            ],
             "title": "Sittplatser i lokalen",
             "x-oe": {
               "queryID": "81879",
@@ -4137,7 +4320,10 @@
         }
       }
     },
-    "required": ["kontaktuppgifter_6115", "ansokan_6116"],
+    "required": [
+      "kontaktuppgifter_6115",
+      "ansokan_6116"
+    ],
     "x-oe-flow": {
       "flowID": "2181",
       "name": "AoT ny för draken",

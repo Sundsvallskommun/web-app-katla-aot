@@ -54,7 +54,8 @@
         }
       ],
       "foretrader_du_ett_foretag_81698": {
-        "ui:widget": "RadiobuttonWidget"
+        "ui:widget": "RadiobuttonWidget",
+        "ui:description": "<p>Med företag menas aktiebolag, enskild firma, förening/stiftelse, handelsbolag eller kommanditbolag.</p>"
       },
       "kontaktuppgifter_81699": {
         "ui:order": [
@@ -127,7 +128,8 @@
         }
       },
       "hamtning_av_foretagsuppgifter_81701": {
-        "ui:widget": "RadiobuttonWidget"
+        "ui:widget": "RadiobuttonWidget",
+        "ui:description": "<p>Här kan du välja att hämta dina företagsuppgifter från Bolagsverket, SCB och Skatteverket, så att du slipper fylla i dem.<br />\nLäs mer på sidan <a href=\"http://bolagsverket.se/sammansatt-bastjanst-foretagsuppgifter\" target=\"_blank\"><u><font color=\"#0066cc\">Så här hämtas dina företagsuppgifter</font></u></a>.<br />\nDu kan också välja att fylla i uppgifter om ditt företag manuellt.</p>\n\n<p><strong>Vill du hämta uppgifter om ditt företag?</strong></p>"
       },
       "valj_foretag_81702": {
         "ui:order": [
@@ -174,7 +176,8 @@
         "email": {
           "ui:widget": "TextWidget",
           "ui:readonly": true
-        }
+        },
+        "ui:description": "<p>Välj det företag som ansökan gäller.<br />\nSaknas företaget så kan du backa och välja att fylla i uppgifterna manuellt.</p>\n\n<p>Vill du ändra uppgifter om ditt företag?<br />\nDet gör du på <a href=\"https://www.verksamt.se/\" target=\"_blank\"><u><font color=\"#0066cc\">verksamt.se</font></u></a>.<br />\nOm du som enskild näringsidkare vill ändra folkbokföringsadressen gör du det hos <a href=\"http://www.skatteverket.se/privat.4.76a43be412206334b89800052864.html\" target=\"_blank\"><u><font color=\"#0066cc\">Skatteverket</font></u></a>.</p>"
       },
       "ar_du_firmatecknare_81703": {
         "ui:widget": "RadiobuttonWidget"
@@ -233,7 +236,8 @@
         "ui:widget": "RadiobuttonWidget"
       },
       "ar_fakturaadressen_samma_som_foretagets_81707": {
-        "ui:widget": "RadiobuttonWidget"
+        "ui:widget": "RadiobuttonWidget",
+        "ui:description": "<p>Kommunen kan komma att ta ut en avgift. Om du vill att fakturan ska gå till den adress som företaget är registrerad på anger du \"Ja\" i fältet nedan. Om du vill att fakturan ska gå till en annan adress anger du \"Nej\" och fyller sedan i den. Du har även möjlighet att ange en fakturareferens.</p>"
       },
       "fakturamottagare_81708": {
         "ui:order": [
@@ -271,28 +275,33 @@
         "ui:widget": "TexteditorWidget",
         "ui:options": {
           "className": "w-full min-h-[14rem]"
-        }
+        },
+        "ui:description": "<p>Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.</p>"
       },
       "bifoga_aktuellt_registreringsbevis_fran_81710": {
         "ui:widget": "files",
         "ui:options": {
           "accept": ".doc,.docx,.pdf"
-        }
+        },
+        "ui:description": "<p>Här bifogar du företagets registreringsbevis från Bolagsverket.<br />\nHar du inte något registreringsbevis tillgängligt så kan du hämta ett på <a href=\"https://www.verksamt.se/\" target=\"_blank\"><u><font color=\"#0066cc\">verksamt.se</font></u></a>.</p>"
       },
       "bifoga_uppgifter_om_agarforhallanden_81711": {
         "ui:widget": "files",
         "ui:options": {
           "accept": ".doc,.docx,.pdf"
-        }
+        },
+        "ui:description": "<p>Nedan bifogar du handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Syftet med denna informationsinsamling är att identifiera de personer som har betydande inflytande över verksamheten så dessa kan inkluderas i prövningen.</p>\n\n<p><br />\n<strong>Aktiebolag</strong>: Dokumentation som visar aktiefördelningen mellan ägare, exempelvis en aktiebok. Det är bolagets styrelse som ska hålla en aktuell aktiebok över aktier och aktieägare. </p>\n\n<p><strong>Handelsbolag/kommanditbolag</strong>: Dokumentation som visar ägarfördelningen i bolaget, exempelvis ett bolagsavtal.</p>\n\n<p><strong>Förening/stiftelse</strong>:  Stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare.</p>\n\n<p><strong>Koncern</strong>: Information om ägarförhållanden för koncernbolaget, förutom den handling som gäller för bolagsformen enligt ovan.</p>"
       },
       "bifoga_registerutdrag_fran_skatteverket_81712": {
         "ui:widget": "files",
         "ui:options": {
           "accept": ".doc,.docx,.pdf"
-        }
+        },
+        "ui:description": "<p>Här kan du bifoga ett registerutdrag från Skatteverket.<br />\nAv registerutdraget framgår det om du eller ditt företag är godkänt för F-skatt eller FA-skatt (F-skatt med villkor). Av utdraget framgår det också om du eller ditt företag är momsregistrerat och/eller registrerat som arbetsgivare. Här hämtar du ett registerutdrag: <a href=\"https://www.verksamt.se/\" target=\"_blank\"><u><font color=\"#0066cc\">verksamt.se</font></u></a></p>"
       },
       "verksamhetsbeskrivning_81713": {
-        "ui:widget": "RadiobuttonWidget"
+        "ui:widget": "RadiobuttonWidget",
+        "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
       },
       "verksamhetsbeskrivning_81714": {
         "ui:widget": "TexteditorWidget",
@@ -698,7 +707,8 @@
         "ui:widget": "RadiobuttonWidget"
       },
       "kunskap_om_alkohollagen_81718": {
-        "ui:widget": "RadiobuttonWidget"
+        "ui:widget": "RadiobuttonWidget",
+        "ui:description": "<p>För att få ett serveringstillstånd behöver du eller annan person som är ansvarig i företaget ha kunskap om ansvarsfull alkoholservering och alkohollagen. Denna kunskap kan du visa på flera sätt.</p>"
       },
       "personnummer_81719": {
         "ui:order": [
@@ -709,7 +719,8 @@
         },
         "personnummer_50400": {
           "ui:widget": "TextWidget"
-        }
+        },
+        "ui:description": "<p>Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren.</p>"
       },
       "organisationsnummer_81720": {
         "ui:order": [
@@ -720,10 +731,12 @@
         },
         "organisationsnummer_50401": {
           "ui:widget": "TextWidget"
-        }
+        },
+        "ui:description": "<p>Vilket företag med gällande serveringstillstånd driver du eller annan person som är ansvarig i företaget idag?<br />\nOm du eller annan företrädare för organisationen har ett serveringstillstånd idag som minst motsvarar den aktuella ansökan, och det inte finns skäl att ifrågasätta kunskaperna, kan det vara så att kunskaperna inte behöver styrkas med ett kunskapsprov.</p>"
       },
       "vill_du_anmala_personer_i_foretaget_till_81721": {
-        "ui:widget": "RadiobuttonWidget"
+        "ui:widget": "RadiobuttonWidget",
+        "ui:description": "<p>Om ditt ärende gäller en ansökan om stadigvarande serveringstillstånd så kan inte tillståndet beviljas innan minst en av de personer som du uppger här har genomfört och fått godkänt på kunskapsprovet.</p>"
       },
       "harmed_anmaler_jag_foljande_person_perso_81723": {
         "ui:options": {
@@ -764,7 +777,8 @@
         "ui:options": {
           "multiple": true,
           "className": "w-full max-w-[48rem]"
-        }
+        },
+        "ui:description": "<p>Här ska du ange vilken inriktning du har med din verksamhet. Du ska också förtydliga din inriktning genom att skriva in ytterligare information om verksamheten nedan. Det är ett underlag för kommunens bedömning av din tillståndsansökan. När det gäller den alkoholpolitiska prövningen kontaktar kommunen även andra instanser för deras synpunkter på verksamheten.</p>"
       },
       "har_ni_81727": {
         "ui:widget": "checkboxes",
@@ -777,7 +791,8 @@
         "ui:widget": "TexteditorWidget",
         "ui:options": {
           "className": "w-full min-h-[14rem]"
-        }
+        },
+        "ui:description": "<p>Här ska du med egna ord förtydliga inriktningen på din verksamhet.<br />\nExempel på information som är viktig att ange är typ av restaurang, vilka öppettider som gäller, eventuella åldersgränser eller särskild \"profil\" på verksamheten (sportbar, live-musik etc). Ange även verksamhetens primära målgrupp.</p>"
       },
       "ska_servering_av_alkohol_ske_till_allman_81729": {
         "ui:widget": "RadiobuttonWidget"
@@ -940,7 +955,8 @@
         }
       },
       "beskriv_utbudet_av_mat_81739": {
-        "ui:widget": "RadiobuttonWidget"
+        "ui:widget": "RadiobuttonWidget",
+        "ui:description": "<p>En förutsättning för att få servera alkoholdrycker är att det även serveras mat. Utbudet av mat ska vara tillrett, tillräckligt och tillgängligt. Detta innebär att du ska ha mat som du har kapacitet att tillreda på plats i restaurangen och matutbudet ska även alltid vara tillgängligt för gästerna i verksamheten. Du kan välja att bifoga en meny om du har en sådan. Annars kan du välja att skriva in denna i formuläret. Om du har en annan, enklare meny efter kl. 23 ska du även bifoga den eller skriva in denna i formuläret nedan. Exempel på rätter i en enklare meny är hamburgare, sallad, paj, varma smörgåsar och bakad potatis.</p>"
       },
       "bifoga_meny_81740": {
         "ui:widget": "files",
@@ -952,14 +968,16 @@
         "ui:widget": "TexteditorWidget",
         "ui:options": {
           "className": "w-full min-h-[14rem]"
-        }
+        },
+        "ui:description": "<p>(den mat som kommer att serveras)</p>"
       },
       "finansiering_81743": {
         "ui:widget": "checkboxes",
         "ui:options": {
           "multiple": true,
           "className": "w-full max-w-[48rem]"
-        }
+        },
+        "ui:description": "<p>För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med.</p>"
       },
       "egna_medel_81744": {
         "ui:options": {
@@ -1172,7 +1190,8 @@
           "personnummer_5761": {
             "ui:widget": "TextWidget"
           }
-        }
+        },
+        "ui:description": "<p>Under öppettider måste det alltid finnas en serveringsansvarig person på plats i verksamheten. Om inte någon av företagets företrädare är på plats måste en annan utsedd och anmäld serveringsansvarig vara på plats. Nedan anger du namn och personnummer till den person eller de personer som är ansvariga för servering av alkohol. En person som är serveringsansvarig måste vara <u>minst 20 år</u>.<br />\nHar du inte anställt personal ännu kan du fylla i serveringsansvarig personal vid ett senare tillfälle.</p>"
       },
       "sittplatser_i_lokalen_81759": {
         "ui:order": [
@@ -1213,25 +1232,29 @@
         "ui:widget": "files",
         "ui:options": {
           "accept": ".doc,.docx,.pdf"
-        }
+        },
+        "ui:description": "<p>Du behöver visa var i lokalen du kommer att servera alkohol genom att på en planritning visa vilken del som är serveringsyta. Planerar du att ha uteservering behöver planritningen även visa serveringsyta utomhus. Planerar du att servera alkohol på flera våningsplan behöver du visa serveringsyta för alla våningsplan. Du får inte servera alkohol utanför serveringsytan och dina gäster får inte heller ta med sig alkohol till de delar av lokalen som inte är serveringsyta. Serveringsytan ska vara överblickbar. Länkar till exempel på planritningar:  <a href=\"https://etjanster.inera.se/fileconnector/file/Sammys%20k%C3%B6k%20ny.pdf\" target=\"_blank\"><u><font color=\"#0066cc\">Exempel 1</font></u></a>. <a href=\"https://etjanster.inera.se/fileconnector/file/Exempelritning%20Servering.pdf\" target=\"_blank\"><u><font color=\"#0066cc\">Exempel 2</font></u></a>.</p>"
       },
       "bifoga_avtal_gallande_lokal_och_mark_81762": {
         "ui:widget": "files",
         "ui:options": {
           "accept": ".doc,.docx,.pdf"
-        }
+        },
+        "ui:description": "<p>För att kommunen ska kunna pröva ansökningar om serveringstillstånd behöver kommunen säkerställa att ditt företag har rätt att använda lokalen inklusive platsen för eventuell uteservering. Du gör detta genom att ladda upp ett hyreskontrakt, ett arrendeavtal eller köpeavtal (inklusive bilagor) för lokalen som verksamheten ska bedrivas i.</p>"
       },
       "bifoga_avtal_gallande_verksamheten_81763": {
         "ui:widget": "files",
         "ui:options": {
           "accept": ".doc,.docx,.pdf"
-        }
+        },
+        "ui:description": "<p>Har ditt företag köpt den verksamhet som du nu söker tillstånd för behöver du bifoga köpeavtalet (inklusive bilagor) för verksamheten, eller ett arrendeavtal (inklusive bilagor) om ditt företag arrenderar verksamheten.</p>"
       },
       "bifoga_brandskyddsdokumentation_81764": {
         "ui:widget": "files",
         "ui:options": {
           "accept": ".doc,.docx,.pdf"
-        }
+        },
+        "ui:description": "<p>Om du vill bifoga brandskyddsdokumentation från brandkonsult eller motsvarande kan du bifoga den här.</p>"
       },
       "ange_mellan_vilka_datum_det_tillfalliga_81766": {
         "ui:order": [
@@ -1285,7 +1308,8 @@
             ],
             "gap": "gap-24"
           }
-        ]
+        ],
+        "ui:description": "<p>Ange när servering önskas påbörjas, samt avslutas (standard är 11:00-01:00 om inte annat beslutas).</p>"
       },
       "vilka_alkoholdrycker_ska_serveras_81769": {
         "ui:widget": "checkboxes",
@@ -1298,7 +1322,8 @@
         "ui:widget": "TexteditorWidget",
         "ui:options": {
           "className": "w-full min-h-[14rem]"
-        }
+        },
+        "ui:description": "<p>Vilken mat och dryck kommer att serveras. Ange även alkoholfria alternativ samt prissättning. </p>"
       },
       "gaster_81771": {
         "ui:widget": "checkboxes",
@@ -1370,7 +1395,8 @@
             ],
             "gap": "gap-24"
           }
-        ]
+        ],
+        "ui:description": "<p>Om ingen fast telefon finns, lämna mobilnummer till företrädare.</p>"
       },
       "serveringsansvarig_personal_81777": {
         "ui:options": {
@@ -1396,7 +1422,8 @@
           "personnummer_5764": {
             "ui:widget": "TextWidget"
           }
-        }
+        },
+        "ui:description": "<p>Nedan anger du namn och personnummer till den person eller de personer som ska vara ansvariga för serveringen av alkohol. En person som är serveringsansvarig måste vara <u>minst 20 år</u>.</p>"
       },
       "sittplatser_i_lokalen_81778": {
         "ui:order": [
@@ -1451,7 +1478,8 @@
         }
       },
       "egenkontrollprogram_vid_servering_av_fol_81789": {
-        "ui:widget": "RadiobuttonWidget"
+        "ui:widget": "RadiobuttonWidget",
+        "ui:description": "<p>Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".<br />\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.<br />\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig serveringsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.</p>\n\n<p>${serveringfolkolegenkontrollprogram}</p>\n\n<p><strong>Vill du bifoga ifyllt egenkontrollprogram i denna anmälan?</strong></p>"
       },
       "bifoga_egenkontrollprogram_for_servering_81790": {
         "ui:widget": "files",
@@ -1468,7 +1496,8 @@
         },
         "namn_50420": {
           "ui:widget": "TextWidget"
-        }
+        },
+        "ui:description": "<p>Det namn som du skyltar med till kund.</p>"
       },
       "ar_serveringsstallets_besoksadress_samma_81792": {
         "ui:widget": "RadiobuttonWidget"
@@ -1563,7 +1592,8 @@
         "ui:widget": "files",
         "ui:options": {
           "accept": ".doc,.docx,.pdf"
-        }
+        },
+        "ui:description": "<p><a href=\"https://e-tjanster.sundsvall.se/registrering-livsmedelsanlaggning\">https://e-tjanster.sundsvall.se/registrering-livsmedelsanlaggning</a></p>"
       },
       "forsaljningsstalle_81799": {
         "ui:order": [
@@ -1709,7 +1739,8 @@
         }
       },
       "kunskap_om_alkohollagen_81813": {
-        "ui:widget": "RadiobuttonWidget"
+        "ui:widget": "RadiobuttonWidget",
+        "ui:description": "<p>För att få ett cateringtillstånd behöver du eller annan person som är ansvarig i företaget ha kunskap om ansvarsfull alkoholservering och alkohollagen. Denna kunskap kan du visa på flera sätt.</p>"
       },
       "personnummer_81814": {
         "ui:order": [
@@ -1720,7 +1751,8 @@
         },
         "personnummer_50437": {
           "ui:widget": "TextWidget"
-        }
+        },
+        "ui:description": "<p>Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren.</p>"
       },
       "organisationsnummer_81815": {
         "ui:order": [
@@ -1731,10 +1763,12 @@
         },
         "organisationsnummer_50438": {
           "ui:widget": "TextWidget"
-        }
+        },
+        "ui:description": "<p>Vilket företag med gällande serveringstillstånd driver du eller annan person som är ansvarig i företaget idag?<br />\nOm du eller annan företrädare för organisationen har ett serveringstillstånd idag som minst motsvarar den aktuella ansökan, och det inte finns skäl att ifrågasätta kunskaperna, kan det vara så att kunskaperna inte behöver styrkas med ett kunskapsprov.</p>"
       },
       "vill_du_anmala_personer_i_foretaget_till_81816": {
-        "ui:widget": "RadiobuttonWidget"
+        "ui:widget": "RadiobuttonWidget",
+        "ui:description": "<p>Om ditt ärende gäller en ansökan om stadigvarande cateringtillstånd så kan inte tillståndet beviljas innan minst en av de personer som du uppger här har genomfört och fått godkänt på kunskapsprovet.</p>"
       },
       "harmed_anmaler_jag_foljande_person_perso_81818": {
         "ui:options": {
@@ -1782,7 +1816,8 @@
         "ui:options": {
           "multiple": true,
           "className": "w-full max-w-[48rem]"
-        }
+        },
+        "ui:description": "<p>För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med.</p>"
       },
       "egna_medel_81821": {
         "ui:options": {
@@ -1982,7 +2017,8 @@
         }
       },
       "kunskap_om_alkohollagen_81839": {
-        "ui:widget": "RadiobuttonWidget"
+        "ui:widget": "RadiobuttonWidget",
+        "ui:description": "<p>För att få ett serveringstillstånd behöver du eller annan person som är ansvarig i företaget ha kunskap om ansvarsfull alkoholservering och alkohollagen. Denna kunskap kan du visa på flera sätt.</p>"
       },
       "personnummer_81840": {
         "ui:order": [
@@ -1993,7 +2029,8 @@
         },
         "personnummer_50444": {
           "ui:widget": "TextWidget"
-        }
+        },
+        "ui:description": "<p>Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren.</p>"
       },
       "organisationsnummer_81841": {
         "ui:order": [
@@ -2004,10 +2041,12 @@
         },
         "organisationsnummer_50445": {
           "ui:widget": "TextWidget"
-        }
+        },
+        "ui:description": "<p>Vilket företag med gällande serveringstillstånd driver du eller annan person som är ansvarig i företaget idag?<br />\nOm du eller annan företrädare för organisationen har ett serveringstillstånd idag som minst motsvarar den aktuella ansökan, och det inte finns skäl att ifrågasätta kunskaperna, kan det vara så att kunskaperna inte behöver styrkas med ett kunskapsprov.</p>"
       },
       "vill_du_anmala_personer_i_foretaget_till_81842": {
-        "ui:widget": "RadiobuttonWidget"
+        "ui:widget": "RadiobuttonWidget",
+        "ui:description": "<p>Om ditt ärende gäller en ansökan om stadigvarande serveringstillstånd så kan inte tillståndet beviljas innan minst en av de personer som du uppger här har genomfört och fått godkänt på kunskapsprovet.</p>"
       },
       "harmed_anmaler_jag_foljande_person_perso_81844": {
         "ui:options": {
@@ -2048,7 +2087,8 @@
         "ui:options": {
           "multiple": true,
           "className": "w-full max-w-[48rem]"
-        }
+        },
+        "ui:description": "<p>Här ska du ange vilken inriktning du har med din verksamhet. Du ska också förtydliga din inriktning genom att skriva in ytterligare information om verksamheten nedan. Det är ett underlag för kommunens bedömning av din tillståndsansökan. När det gäller den alkoholpolitiska prövningen kontaktar kommunen även andra instanser för deras synpunkter på verksamheten.</p>"
       },
       "har_ni_81847": {
         "ui:widget": "checkboxes",
@@ -2061,14 +2101,16 @@
         "ui:widget": "TexteditorWidget",
         "ui:options": {
           "className": "w-full min-h-[14rem]"
-        }
+        },
+        "ui:description": "<p>Här ska du med egna ord förtydliga inriktningen på din verksamhet.<br />\nExempel på information som är viktig att ange är typ av restaurang, vilka öppettider som gäller, eventuella åldersgränser eller särskild \"profil\" på verksamheten (sportbar, live-musik etc). Ange även verksamhetens primära målgrupp.</p>"
       },
       "finansiering_81849": {
         "ui:widget": "checkboxes",
         "ui:options": {
           "multiple": true,
           "className": "w-full max-w-[48rem]"
-        }
+        },
+        "ui:description": "<p>För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med.</p>"
       },
       "egna_medel_81850": {
         "ui:options": {
@@ -2235,33 +2277,38 @@
         "ui:widget": "files",
         "ui:options": {
           "accept": ".doc,.docx,.pdf"
-        }
+        },
+        "ui:description": "<p>Du behöver visa var i lokalen du kommer att servera alkohol genom att på en planritning visa vilken del som är serveringsyta. Planerar du att ha uteservering behöver planritningen även visa serveringsyta utomhus. Planerar du att servera alkohol på flera våningsplan behöver du visa serveringsyta för alla våningsplan. Du får inte servera alkohol utanför serveringsytan och dina gäster får inte heller ta med sig alkohol till de delar av lokalen som inte är serveringsyta. Serveringsytan ska vara överblickbar. Länkar till exempel på planritningar:  <a href=\"https://etjanster.inera.se/fileconnector/file/Sammys%20k%C3%B6k%20ny.pdf\" target=\"_blank\"><u><font color=\"#0066cc\">Exempel 1</font></u></a>. <a href=\"https://etjanster.inera.se/fileconnector/file/Exempelritning%20Servering.pdf\" target=\"_blank\"><u><font color=\"#0066cc\">Exempel 2</font></u></a>.</p>"
       },
       "bifoga_avtal_gallande_lokal_och_mark_81862": {
         "ui:widget": "files",
         "ui:options": {
           "accept": ".doc,.docx,.pdf"
-        }
+        },
+        "ui:description": "<p>För att kommunen ska kunna pröva ansökningar om serveringstillstånd behöver kommunen säkerställa att ditt företag har rätt att använda lokalen inklusive platsen för eventuell uteservering. Du gör detta genom att ladda upp ett hyreskontrakt, ett arrendeavtal eller köpeavtal (inklusive bilagor) för lokalen som verksamheten ska bedrivas i.</p>"
       },
       "bifoga_brandskyddsdokumentation_81863": {
         "ui:widget": "files",
         "ui:options": {
           "accept": ".doc,.docx,.pdf"
-        }
+        },
+        "ui:description": "<p>Om du vill bifoga brandskyddsdokumentation från brandkonsult eller motsvarande kan du bifoga den här.</p>"
       },
       "regler_for_serveringstillstand_till_priv_81865": {
         "ui:widget": "checkboxes",
         "ui:options": {
           "multiple": true,
           "className": "w-full max-w-[48rem]"
-        }
+        },
+        "ui:description": "<p>Som privatperson kan du endast ansöka tillstånd för att servera alkohol till ett slutet sällskap, vid ett enstaka tillfälle. Det kan exempelvis vara en privat fest eller ett bröllop. Vid utfärdande av nytt tillstånd tar ${mvhk} ut en ansökningsavgift, en så kallad <em>Prövningsavgift</em>.</p>\n\n<p>${serveringtillstandinfo}</p>"
       },
       "forsaljning_av_alkoholdrycker_81866": {
         "ui:widget": "checkboxes",
         "ui:options": {
           "multiple": true,
           "className": "w-full max-w-[48rem]"
-        }
+        },
+        "ui:description": "<p>Som privatperson får du inte sälja alkoholdrycker i syfte att göra vinst. Du får däremot bjuda på alkoholdrycker, eller sälja dem till självkostnadspris, om alkoholdryckerna är inköpta på Systembolaget i Sverige.<br />\nAlkoholdrycker som du köpt utomlands är endast till för eget bruk och får inte förekomma alls på en tillställning där serveringstillstånd krävs. <a href=\"http://www.riksdagen.se/sv/dokument-lagar/dokument/svensk-forfattningssamling/alkohollag-20101622_sfs-2010-1622#K8\" target=\"_blank\">Se alkohollagen 4 kapitel 4§</a></p>"
       },
       "ar_tillstallningen_i_ovrigt_kostnadsfri_81867": {
         "ui:widget": "RadiobuttonWidget"
@@ -2274,7 +2321,8 @@
         "ui:options": {
           "multiple": true,
           "className": "w-full max-w-[48rem]"
-        }
+        },
+        "ui:description": "<p><span style=\"color:red; font-family:source sans pro; font-size:16pt; mso-ansi-language:SV; mso-bidi-font-family:\"Times New Roman\"; mso-bidi-language:AR-SA; mso-fareast-font-family:\"Times New Roman\"; mso-fareast-language:SV\"><strong>Du behöver inte ansöka om serveringstillstånd!</strong></span></p>\n\n<p>Enligt de uppgifter du fyllt i så behöver du inget serveringstillstånd från kommunen för att få servera alkoholdrycker på din tillställning.<br />\nDu får givetvis skicka in din ansökan ändå, men då kan det bli så att kommunen tar ut en avgift för hanteringen av ditt ärende.</p>\n\n<p><strong>Vill du ändå fortsätta att fylla i din ansökan och skicka in den till kommunen?</strong></p>"
       },
       "bifoga_hyreskontrakt_81870": {
         "ui:widget": "files",
@@ -2328,7 +2376,8 @@
             ],
             "gap": "gap-24"
           }
-        ]
+        ],
+        "ui:description": "<p>Ange när servering önskas påbörjas, samt avslutas (standard är 11:00-01:00 om inte annat beslutas).</p>"
       },
       "vilka_alkoholdrycker_ska_serveras_81873": {
         "ui:widget": "checkboxes",
@@ -2341,7 +2390,8 @@
         "ui:widget": "TexteditorWidget",
         "ui:options": {
           "className": "w-full min-h-[14rem]"
-        }
+        },
+        "ui:description": "<p><span class=\"html-description italic\">(den mat som kommer att serveras)</span></p>"
       },
       "beraknat_antal_gaster_81875": {
         "ui:order": [
@@ -2358,7 +2408,8 @@
         "ui:widget": "TexteditorWidget",
         "ui:options": {
           "className": "w-full min-h-[14rem]"
-        }
+        },
+        "ui:description": "<p>Till exempel bröllop, födelsedagsfest eller föreningsfest.</p>"
       },
       "vad_ar_det_for_typ_av_slutet_sallskap_81877": {
         "ui:order": [
@@ -2401,7 +2452,8 @@
             ],
             "gap": "gap-24"
           }
-        ]
+        ],
+        "ui:description": "<p>Uppge adress till den lokal där tillställningen ska äga rum.</p>"
       },
       "sittplatser_i_lokalen_81879": {
         "ui:order": [

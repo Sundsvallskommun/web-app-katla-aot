@@ -9,8 +9,10 @@ import aotUiSchema from './aot-ui-schema.json';
  * designed and has not been published upstream, so it is served from disk. Delete this module
  * and its three call sites in schema.controller.ts once the schema exists in the service.
  *
- * aot-schema.json is the OpenE export and aot-ui-schema.json the generated ui schema; both are
- * also kept in docs/jsonschemas/, where the generator lives.
+ * Both JSON files are generated — do not edit them by hand. `docs/jsonschemas/build-ui-schema.mjs`
+ * turns the OpenE export for flow 2181 into the two request bodies the jsonschema service takes,
+ * and these are copies of that output. The generator also forces `$schema` to 2020-12; the export
+ * declares draft-07, which Ajv2020 refuses to compile.
  */
 
 interface StoredSchema {
