@@ -2,6 +2,7 @@
 import { FieldTemplate } from '@components/json/fields/field-template.component';
 import { ObjectFieldTemplate } from '@components/json/fields/object-field-template.component';
 import { SubmitButtonFieldTemplate } from '@components/json/fields/submit-button-field-template.component';
+import { stripHiddenFields } from '@components/json/utils/schema-conditions';
 import { jsonWidgets } from '@components/json/widgets';
 import Form, { IChangeEvent } from '@rjsf/core';
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
@@ -10,6 +11,19 @@ import { useTranslation } from 'react-i18next';
 
 import createJsonErrorTransformer from '../utils/schema-form-error-handling';
 import { getFormSchemaValidator } from './form-schema-validator';
+
+/**
+ * RJSF names a nested field `${parentId}_${propertyName}`. The ids are built here rather than
+ * parsed back, because a property name may itself contain the separator (`ansokan_6116`).
+ */
+function collectSchemasById(schema: RJSFSchema, id = 'root', collected: Record<string, RJSFSchema> = {}) {
+  collected[id] = schema;
+  const properties = schema.properties as Record<string, RJSFSchema> | undefined;
+  for (const [name, child] of Object.entries(properties ?? {})) {
+    if (child.type === 'object') collectSchemasById(child, `${id}_${name}`, collected);
+  }
+  return collected;
+}
 
 interface SchemaFormProps {
   schemaId: string;
@@ -44,16 +58,18 @@ export default function SchemaForm({
   const shouldValidate = showValidation ?? hasSubmitted;
   const validator = useMemo(() => getFormSchemaValidator(schemaId), [schemaId]);
 
+  // A branch the user has navigated away from must not keep submitting its answers, so the data of
+  // fields that are no longer visible is dropped as it changes.
   const handleChange = useCallback(
     (e: IChangeEvent<Record<string, unknown>>) => {
-      const fd = { ...e.formData };
+      const fd = stripHiddenFields(schema, e.formData);
       if (formData !== undefined) {
         onChange?.(fd, e);
       } else {
         setLocalData(fd);
       }
     },
-    [formData, onChange]
+    [formData, onChange, schema]
   );
 
   const handleSubmit = useCallback(
@@ -67,10 +83,12 @@ export default function SchemaForm({
   const errorTransformer = useMemo(() => createJsonErrorTransformer(schema, t), [schema, t]);
 
   // Passes the original schema through formContext so ObjectFieldTemplate can read the
-  // conditionals.
+  // conditionals. `schemaById` is keyed the way RJSF builds field ids, so a nested object is
+  // matched to its own sub-schema rather than to the root's.
+  const schemaById = useMemo(() => collectSchemasById(schema), [schema]);
   const formContext = useMemo(
-    () => ({ originalSchema: schema, compact, validationActive: shouldValidate }),
-    [schema, compact, shouldValidate]
+    () => ({ originalSchema: schema, schemaById, compact, validationActive: shouldValidate }),
+    [schema, schemaById, compact, shouldValidate]
   );
 
   return (

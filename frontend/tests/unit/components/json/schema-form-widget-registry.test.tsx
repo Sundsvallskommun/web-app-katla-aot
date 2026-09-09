@@ -1,5 +1,5 @@
-import { jsonWidgets } from '@components/json/widgets';
 import SchemaForm from '@components/json/schema/schema-form.component';
+import { jsonWidgets } from '@components/json/widgets';
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

@@ -259,16 +259,21 @@ beslutas om från grunden i stället för att ärvas.
 const: V } } }, then: { required?, properties? } }]` — AND över **likhet mot ett enda värde** på
 **syskonfält i samma objekt**.
 
-| Behov i reglerna                                                      | Omfattning                                             | Stöd idag                                              |
-| --------------------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------ |
-| ELLER över flera alternativ                                           | 10 av 61 QueryState-regler                             | Nej — bara `const`                                     |
-| Checkbox som källa (`finansiering` ×3, `verksamhetens_inriktning` ×2) | 5 källfrågor                                           | Nej — kräver `contains`                                |
-| Villkor över stegets gräns                                            | 16 kanter, alla från `foretrader_du_ett_foretag_81698` | Nej — bara syskon                                      |
-| Flera regler mot samma målfält                                        | **0 förekomster**                                      | Skulle brista tyst, men utlöses inte av det här flödet |
+| Behov i reglerna                                                      | Omfattning                                             | Stöd idag         |
+| --------------------------------------------------------------------- | ------------------------------------------------------ | ----------------- |
+| ELLER över flera alternativ                                           | 10 av 61 QueryState-regler                             | ✔ `enum`          |
+| Checkbox som källa (`finansiering` ×3, `verksamhetens_inriktning` ×2) | 5 källfrågor                                           | ✔ `contains`      |
+| Villkor över stegets gräns                                            | 16 kanter, alla från `foretrader_du_ett_foretag_81698` | Nej — bara syskon |
+| Flera regler mot samma målfält                                        | **0 förekomster**                                      | ✔ villkoren OR:as |
 
-`isConditionMet` returnerar dessutom `false` när `if` saknar `properties`, så ett `anyOf`- eller
-`contains`-villkor döljer fältet permanent i stället för att fela synligt. Det är det som gör de
-två första raderna farliga: de misslyckas utan spår.
+Villkoren ligger numera i `frontend/src/components/json/utils/schema-conditions.ts`, portad från
+Draken och testad direkt. Ett okänt nyckelord **visar** fältet och loggar en varning i stället för
+att dölja det tyst — ett dolt fält betyder att svaret aldrig samlas in, och efter lanseringen finns
+inget bygg- eller CI-steg mellan en handredigering i jsonschema-tjänsten och medborgaren.
+
+Samma modul används av `stripHiddenFields`, som rensar bort svaren på dolda fält när formuläret
+ändras. Det som visas och det som sparas kan därmed inte glida isär, och en övergiven gren skickas
+inte in osedd — samma beteende som OpenE, där alla 61 regler har `doNotResetQueryState: false`.
 
 Att alla cross-step-villkor kommer från en enda fråga är väsentligt — delas företag och privatperson
 i separata scheman försvinner den raden helt.
@@ -362,6 +367,19 @@ Behåll ur steget: fakturaadress/fakturamottagare/fakturareferens, registrerings
 ägarförhållanden, registerutdrag Skatteverket och verksamhetsbeskrivning. Resten stryks.
 `foretagsform` bör komma från `legalentity` snarare än frågas — men den styr fyra
 uppladdningsregler, så beslutet måste tas medvetet.
+
+### 4.2b Regler för den som skriver villkor i schemat
+
+Två regler som gäller varje schema, oavsett om det genereras nu eller handredigeras i
+jsonschema-tjänsten sedan:
+
+- **Para alltid `if.properties` med `if.required`.** Ett saknat fält uppfyller `properties` — det är
+  korrekt JSON Schema — så `if: { properties: { x: { const: 'JA' } } }` är sant redan innan
+  användaren svarat, och följdfrågan visas direkt.
+- **Lägg aldrig ett villkorat fält i rotens `required`.** Obligatoriskheten ska bara komma från
+  `then.required`, som AJV tillämpar först när `if` slår till. Det är därför villkorsmotorn inte
+  behöver göra något åt obligatoriskhet — och varför en post i rotens `required` skulle låta ett
+  dolt fält blockera insändning.
 
 ### 4.3 Byt nycklar och enumvärden
 
@@ -506,7 +524,7 @@ AoT ska följa samma konvention, med ett par filer per ärendetyp när uppdelnin
 sektionerna följer ur vilken gren som kan nå frågan. Därför genereras ui-schemat:
 
 - `docs/jsonschemas/build-ui-schema.mjs` — läser båda OpenE-exporterna, kör samma
-  nåbarhetsanalys som avsnitt 2 och skriver ut ui-schemat. Kör om den när en ny export kommer.
+  nåbarhetsanalys som avsnitt 2 och skriver ut båda request-kropparna.
 - `docs/jsonschemas/aot_opene_test.ui-schema-request.json` — resultatet, i `UiSchemaRequest`-kuvert.
 - `backend/src/mocks/aot-ui-schema.json` — samma fil, serverad av mocken tillsammans med schemat.
 
@@ -618,7 +636,7 @@ Exporten har i praktiken inga begränsningar. Minst detta ska med innan v1.0 pub
 | 0 ✔  | Mocka jsonschema-tjänsten (`backend/src/mocks/aot-schema.mock.ts`) med både schema och genererat ui-schema, så exporten kan renderas som den är                                                       | —                |
 | 1    | Be om en ny export med viktreglernas tröskelvärden, de 19 saknade informationsfrågorna och svar på fråga 1 ovan                                                                                       | Blockerar steg 3 |
 | 2    | Beslut 2–8 ovan, inklusive etikettträdets löv (`aot-branch-label-mapping.md`)                                                                                                                         | Blockerar steg 3 |
-| 3    | Skriv ett transformskript: OpenE-export + regler → Katla-schema + ui-schema. Deterministiskt och körbart igen när OpenE ändras — inte en handredigering                                               | 1, 2             |
+| 3    | Skriv ett transformskript: OpenE-export + regler → Katla-schema + ui-schema. Deterministiskt, så migreringen kan köras om mot en ny export fram till lansering                                        | 1, 2             |
 | 4 ◐  | Widgetregistret är samsynkat med Drakens, flervalskryssrutorna finns (17 frågor) och nästlade objekt får rubrik (44 frågor). Kvar: `ArrayFieldTemplate` för DynamicTable (17 frågor, tas från Draken) | —                |
 | 5    | Utöka villkorsmotorn i `ObjectFieldTemplate`: `anyOf`/`enum`, `contains`, och ett synligt fel i stället för tyst döljning vid okänt villkor                                                           | —                |
 | 5b   | Bilagekomponent och bilage-endpoint mot SupportManagement, plus `$external:`-stöd i `ObjectFieldTemplate` om deklarationen ska styra placeringen (4.5)                                                | 2                |
