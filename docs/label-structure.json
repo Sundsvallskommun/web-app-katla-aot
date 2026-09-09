@@ -54,7 +54,58 @@
       "version": 1
     },
     {
-      "classification": "CATEGORY_ROOT",
+      "classification": "ROOT",
+      "deprecated": false,
+      "displayName": "Etikett-rot",
+      "id": "164e7395-d576-4ea5-a5da-59d15960f3a2",
+      "labels": [
+        {
+          "classification": "CATEGORY",
+          "deprecated": false,
+          "displayName": "Tobakstillsyn",
+          "id": "13b97baa-9b32-4f40-9927-b335f2e0bbf5",
+          "labels": [],
+          "resourceName": "TOBACCO_INSPECTION",
+          "resourcePath": "TAGROOT/TOBACCO_INSPECTION",
+          "version": 0
+        },
+        {
+          "classification": "CATEGORY",
+          "deprecated": false,
+          "displayName": "Yttre tillsyn",
+          "id": "9c08326a-1ec7-42f5-bcdf-e7169502c277",
+          "labels": [],
+          "resourceName": "EXTERNAL_INSPECTION",
+          "resourcePath": "TAGROOT/EXTERNAL_INSPECTION",
+          "version": 0
+        },
+        {
+          "classification": "CATEGORY",
+          "deprecated": false,
+          "displayName": "Alkoholtillsyn",
+          "id": "b195f21a-8c70-4049-8729-4c6fb24eb30e",
+          "labels": [],
+          "resourceName": "ALCOHOL_INSPECTION",
+          "resourcePath": "TAGROOT/ALCOHOL_INSPECTION",
+          "version": 0
+        },
+        {
+          "classification": "CATEGORY",
+          "deprecated": false,
+          "displayName": "Inre tillsyn",
+          "id": "bbecc91c-6a7b-4ff8-91f8-1e55611251e1",
+          "labels": [],
+          "resourceName": "INTERNAL_INSPECTION",
+          "resourcePath": "TAGROOT/INTERNAL_INSPECTION",
+          "version": 0
+        }
+      ],
+      "resourceName": "TAGROOT",
+      "resourcePath": "TAGROOT",
+      "version": 1
+    },
+    {
+      "classification": "ROOT",
       "deprecated": false,
       "displayName": "Kategori-rot",
       "id": "d5970c34-aa77-4511-9a25-62c4a611bfb8",
@@ -124,12 +175,12 @@
                 {
                   "classification": "SUBTYPE",
                   "deprecated": false,
-                  "displayName": "Provsmakning",
+                  "displayName": "Ansökan om provsmakning av alkoholhaltiga drycker",
                   "id": "c738206e-5513-4754-b00b-f6b9a11e09c5",
                   "labels": [],
                   "resourceName": "TASTING",
                   "resourcePath": "CATEGORYROOT/ALCOHOL/SERVING_PERMIT_APPLICATION/TASTING",
-                  "version": 0
+                  "version": 1
                 },
                 {
                   "classification": "SUBTYPE",
@@ -189,6 +240,78 @@
           ],
           "resourceName": "ALCOHOL",
           "resourcePath": "CATEGORYROOT/ALCOHOL",
+          "version": 0
+        },
+        {
+          "classification": "CATEGORY",
+          "deprecated": false,
+          "displayName": "Dokumentation",
+          "id": "3d32cd6e-a22f-4ffc-b80b-4ddc33a96a26",
+          "labels": [
+            {
+              "classification": "TYPE",
+              "deprecated": false,
+              "displayName": "Tips om brister vid försäljning",
+              "id": "43b1706c-e64e-4d9f-a345-51f6c30e6d2b",
+              "labels": [],
+              "resourceName": "COMPLIANCE_TIP",
+              "resourcePath": "CATEGORYROOT/DOCUMENTATION/COMPLIANCE_TIP",
+              "version": 0
+            },
+            {
+              "classification": "TYPE",
+              "deprecated": false,
+              "displayName": "Dokumenationärende",
+              "id": "68d062cd-0101-42e5-94f1-88e950a56cd5",
+              "labels": [],
+              "resourceName": "DOCUMENTATION",
+              "resourcePath": "CATEGORYROOT/DOCUMENTATION/DOCUMENTATION",
+              "version": 0
+            },
+            {
+              "classification": "TYPE",
+              "deprecated": false,
+              "displayName": "Ärende från kontakt Sundsvall",
+              "id": "aa48738b-0d5b-4afa-8e0b-8ba66c72df21",
+              "labels": [],
+              "resourceName": "ERRAND_FROM_KONTAKT_SUNDSVALL",
+              "resourcePath": "CATEGORYROOT/DOCUMENTATION/ERRAND_FROM_KONTAKT_SUNDSVALL",
+              "version": 0
+            }
+          ],
+          "resourceName": "DOCUMENTATION",
+          "resourcePath": "CATEGORYROOT/DOCUMENTATION",
+          "version": 0
+        },
+        {
+          "classification": "CATEGORY",
+          "deprecated": false,
+          "displayName": "Tilllsyn",
+          "id": "8edfec8c-be90-4806-83b5-d887e9aa3c64",
+          "labels": [
+            {
+              "classification": "TYPE",
+              "deprecated": false,
+              "displayName": "Tillsyn",
+              "id": "1404937e-057b-4690-9070-522f1d58eddc",
+              "labels": [],
+              "resourceName": "INSPECTION",
+              "resourcePath": "CATEGORYROOT/INSPECTION/INSPECTION",
+              "version": 0
+            },
+            {
+              "classification": "TYPE",
+              "deprecated": false,
+              "displayName": "Åtgärder",
+              "id": "a8561314-5335-40db-80a9-b7f426a4baa2",
+              "labels": [],
+              "resourceName": "MEASURES",
+              "resourcePath": "CATEGORYROOT/INSPECTION/MEASURES",
+              "version": 0
+            }
+          ],
+          "resourceName": "INSPECTION",
+          "resourcePath": "CATEGORYROOT/INSPECTION",
           "version": 0
         },
         {
@@ -265,7 +388,7 @@
       ],
       "resourceName": "CATEGORYROOT",
       "resourcePath": "CATEGORYROOT",
-      "version": 0
+      "version": 1
     },
     {
       "classification": "CATEGORY",

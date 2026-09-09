@@ -18,13 +18,22 @@ const category = (resourceName: string, types: string[]): Label => ({
   labels: types.map(name => type(name, `CATEGORYROOT/${resourceName}`)),
 });
 
-/** Shaped after docs/label-structure.json: the root plus an UNCATEGORIZED sibling of its own. */
+/**
+ * Shaped after docs/label-structure.json: the categorization root, the free-tag root that shares
+ * its classification, and a deprecated legacy sibling.
+ */
 const labelStructure = (): Label[] => [
   {
-    classification: 'CATEGORY_ROOT',
+    classification: 'ROOT',
     resourceName: 'CATEGORYROOT',
     resourcePath: 'CATEGORYROOT',
     labels: [category('ALCOHOL', ['SERVING_PERMIT_APPLICATION', 'INSPECTION']), category('TOBACCO', ['INSPECTION'])],
+  },
+  {
+    classification: 'ROOT',
+    resourceName: 'TAGROOT',
+    resourcePath: 'TAGROOT',
+    labels: [{ classification: 'CATEGORY', resourceName: 'ALCOHOL_INSPECTION', resourcePath: 'TAGROOT/ALCOHOL_INSPECTION', labels: [] }],
   },
   {
     classification: 'CATEGORY',
@@ -35,7 +44,7 @@ const labelStructure = (): Label[] => [
 ];
 
 describe('categorization root', () => {
-  it('returns the children of the CATEGORY_ROOT node as the tree', () => {
+  it('returns the children of the categorization root as the tree', () => {
     const subtree = selectCategorizationSubtree(labelStructure());
 
     expect(subtree.map(label => label.resourceName)).toEqual(['ALCOHOL', 'TOBACCO']);
@@ -46,6 +55,15 @@ describe('categorization root', () => {
     const subtree = selectCategorizationSubtree(labelStructure());
 
     expect(JSON.stringify(subtree)).not.toContain('UNCATEGORIZED');
+  });
+
+  // The free-tag root carries the same classification, so classification alone cannot find the
+  // categorization root.
+  it('picks the categorization root and not the free-tag root beside it', () => {
+    const subtree = selectCategorizationSubtree(labelStructure());
+
+    expect(subtree.map(label => label.resourceName)).toEqual(['ALCOHOL', 'TOBACCO']);
+    expect(JSON.stringify(subtree)).not.toContain('TAGROOT');
   });
 
   it('keeps the upstream resourcePath so a stored label still carries its full path', () => {
@@ -64,11 +82,11 @@ describe('categorization root', () => {
     );
   });
 
-  it('fails closed when more than one root is classified CATEGORY_ROOT', () => {
+  it('fails closed when the categorization root itself appears twice', () => {
     const structure = labelStructure();
-    structure.push({ classification: 'CATEGORY_ROOT', resourceName: 'OTHERROOT', resourcePath: 'OTHERROOT', labels: [] });
+    structure.push({ classification: 'ROOT', resourceName: 'CATEGORYROOT', resourcePath: 'CATEGORYROOT', labels: [] });
 
-    expect(() => selectCategorizationSubtree(structure)).toThrow(/exactly one label classified CATEGORY_ROOT, found 2/);
+    expect(() => selectCategorizationSubtree(structure)).toThrow(/found 2/);
   });
 
   it('accepts the three levels the categorization UI renders', () => {
