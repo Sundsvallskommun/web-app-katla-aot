@@ -183,6 +183,30 @@ describe('JSON schema adapter contracts', () => {
       expect(Object.keys(body.schema.properties as Record<string, unknown>)).toEqual(['kontaktuppgifter_6115', 'ansokan_6116']);
     });
 
+    // One schema per errand-type leaf, named after the leaf in lower case, for both flows.
+    it.each([
+      'aot_permanent_serving',
+      'aot_temporary_serving_public',
+      'aot_temporary_serving_private',
+      'aot_folkol_serving_notification',
+      'aot_farm_sales',
+      'aot_permanent_catering',
+      'aot_tasting',
+      'aot_sales_permit_application',
+      'aot_ecigarette_sales_notification',
+      'aot_tobacco_free_nicotine_sales_notification',
+    ])('serves %s without calling the jsonschema API', async schemaName => {
+      const getSpy = vi.spyOn(ApiService.prototype, 'get');
+
+      const response = await request(app).get(`/api/schemas/latest/${schemaName}`).expect(200);
+      const body = response.body as SchemaResponseDTO;
+
+      expect(getSpy).not.toHaveBeenCalled();
+      expect(body.schemaId).toBe(`2281_${schemaName}_0.1`);
+      expect(Object.keys(body.schema.properties as Record<string, unknown>).length).toBeGreaterThan(0);
+      expect(Object.keys(body.uiSchema).length).toBeGreaterThan(0);
+    });
+
     it('serves the same schema by its immutable ID', async () => {
       const getSpy = vi.spyOn(ApiService.prototype, 'get');
 
