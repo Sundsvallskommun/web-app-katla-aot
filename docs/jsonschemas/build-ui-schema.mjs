@@ -692,6 +692,60 @@ function schemaForBranch(branch) {
   };
 }
 
+/** Questions that came from the contact step and are kept — invoicing and company documents. */
+const COMPANY_SECTION = new Set([
+  'ar_du_firmatecknare_81703',
+  'ladda_upp_fullmakt_81704',
+  'foretagsform_81706',
+  'ar_fakturaadressen_samma_som_foretagets_81707',
+  'fakturamottagare_81708',
+  'fakturareferens_81709',
+  'bifoga_aktuellt_registreringsbevis_fran_81710',
+  'bifoga_uppgifter_om_agarforhallanden_81711',
+  'bifoga_registerutdrag_fran_skatteverket_81712',
+  'verksamhetsbeskrivning_81713',
+  'verksamhetsbeskrivning_81714',
+  'bifoga_verksamhetsbeskrivning_81715',
+]);
+
+function uiSchemaForBranch(branch) {
+  const fields = [...branch.fields].filter((key) => !SELECTOR_QUESTIONS.has(key) && !REPLACED_BY_SESSION.has(key));
+  const company = fields.filter((key) => COMPANY_SECTION.has(key));
+  const application = fields.filter((key) => !COMPANY_SECTION.has(key));
+
+  const ui = {
+    'ui:order': fields.map(keyFor),
+    'ui:sections': [
+      { id: 'foretag', title: 'Företag och fakturering', icon: 'building-2', defaultOpen: true, fields: company.map(keyFor) },
+      { id: 'ansokan', title: branch.title, icon: 'file-text', defaultOpen: true, fields: application.map(keyFor) },
+    ].filter((section) => section.fields.length > 0),
+  };
+
+  for (const key of fields) {
+    ui[keyFor(key)] = renameUiKeys(fieldUi(questionsByKey[key]));
+    const description = oeDescription(CONTACT_STEP, key) ?? oeDescription(APPLICATION_STEP, key);
+    if (description) ui[keyFor(key)]['ui:description'] = description;
+  }
+  return ui;
+}
+
+/** The nested ui entries are keyed by sub-field name, which the schema rename also changed. */
+function renameUiKeys(entry) {
+  const renamed = {};
+  for (const [key, value] of Object.entries(entry)) {
+    if (key.startsWith('ui:') || key === 'items') {
+      renamed[key] = key === 'items' ? renameUiKeys(value) : value;
+    } else {
+      renamed[keyFor(key)] = value;
+    }
+  }
+  if (Array.isArray(renamed['ui:order'])) renamed['ui:order'] = renamed['ui:order'].map(keyFor);
+  if (Array.isArray(renamed['ui:rows'])) {
+    renamed['ui:rows'] = renamed['ui:rows'].map((row) => ({ ...row, fields: row.fields.map(keyFor) }));
+  }
+  return renamed;
+}
+
 const perLeaf = reachPerBranch.filter((branch) => branch.leaf);
 console.log('\nper-leaf schemas:');
 for (const branch of perLeaf) {
@@ -700,6 +754,10 @@ for (const branch of perLeaf) {
   writeFileSync(
     join(here, `aot_${name}.schema-request.json`),
     `${JSON.stringify({ name: `aot_${name}`, version: '0.1', value: built, description: branch.title }, null, 2)}\n`
+  );
+  writeFileSync(
+    join(here, `aot_${name}.ui-schema-request.json`),
+    `${JSON.stringify({ value: uiSchemaForBranch(branch), description: `UI schema for ${branch.title}` }, null, 2)}\n`
   );
   console.log(
     `  ${name.padEnd(28)} ${String(Object.keys(built.properties).length).padStart(3)} fält, ${String((built.allOf ?? []).length).padStart(2)} villkor`
