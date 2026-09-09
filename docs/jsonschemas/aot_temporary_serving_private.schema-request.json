@@ -6,134 +6,6 @@
     "title": "Tillfälligt tillstånd, endast slutet sällskap",
     "type": "object",
     "properties": {
-      "kontaktuppgifter": {
-        "type": "object",
-        "properties": {
-          "citizenID": {
-            "type": "string",
-            "title": "Personnummer",
-            "pattern": "^(19|20)?\\d{6}[-+]?\\d{4}$"
-          },
-          "firstname": {
-            "type": "string",
-            "title": "Förnamn"
-          },
-          "lastname": {
-            "type": "string",
-            "title": "Efternamn"
-          },
-          "mobilePhone": {
-            "type": "string",
-            "title": "Mobiltelefon"
-          },
-          "email": {
-            "type": "string",
-            "title": "E-postadress",
-            "format": "email"
-          }
-        },
-        "required": [
-          "firstname",
-          "lastname"
-        ],
-        "title": "Kontaktuppgifter",
-        "description": "Företag",
-        "x-oe": {
-          "queryID": "81700",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.contactdetailquery.ContactDetailQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "hamtaForetagsuppgifter": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "JA_HAMTA_MINA_FORETAGSUPPGIFTER",
-            "title": "Ja, hämta mina företagsuppgifter",
-            "x-oe-alternativeID": "49634"
-          },
-          {
-            "const": "NEJ_JAG_VILL_FYLLA_I",
-            "title": "Nej, jag vill fylla i mina företagsuppgifter själv",
-            "x-oe-alternativeID": "49635"
-          }
-        ],
-        "title": "Hämtning av företagsuppgifter",
-        "description": "Här kan du välja att hämta dina företagsuppgifter från Bolagsverket, SCB och Skatteverket, så att du slipper fylla i dem.\n\nLäs mer på sidan Så här hämtas dina företagsuppgifter.\n\nDu kan också välja att fylla i uppgifter om ditt företag manuellt.\n\nVill du hämta uppgifter om ditt företag?",
-        "x-oe": {
-          "queryID": "81701",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "valjForetag": {
-        "type": "object",
-        "properties": {
-          "organizationNumber": {
-            "type": "string",
-            "title": "Organisationsnummer",
-            "readOnly": true,
-            "pattern": "^\\d{6}-?\\d{4}$"
-          },
-          "name": {
-            "type": "string",
-            "title": "Företagets namn",
-            "readOnly": true
-          },
-          "companyType": {
-            "type": "string",
-            "title": "Företagsform",
-            "readOnly": true
-          },
-          "address": {
-            "type": "string",
-            "title": "Utdelningsadress",
-            "readOnly": true
-          },
-          "postalCode": {
-            "type": "string",
-            "title": "Postnummer",
-            "readOnly": true,
-            "pattern": "^\\d{3}\\s?\\d{2}$"
-          },
-          "postalAddress": {
-            "type": "string",
-            "title": "Postort",
-            "readOnly": true
-          },
-          "phone": {
-            "type": "string",
-            "title": "Telefonnummer",
-            "readOnly": true
-          },
-          "email": {
-            "type": "string",
-            "title": "E-postadress",
-            "readOnly": true,
-            "format": "email"
-          }
-        },
-        "x-oe-source": {
-          "service": "ALKOPROVBV_KLUSTRAD",
-          "environment": "PRODUCTION",
-          "companyTypes": [
-            "AB",
-            "BRF",
-            "E",
-            "EK",
-            "HB",
-            "KB"
-          ],
-          "note": "Populated by the SSBT composite service (Bolagsverket/SCB/Skatteverket); not user-editable."
-        },
-        "title": "Välj företag",
-        "description": "Välj det företag som ansökan gäller.\n\nSaknas företaget så kan du backa och välja att fylla i uppgifterna manuellt.\n\nVill du ändra uppgifter om ditt företag?\n\nDet gör du på verksamt.se.\n\nOm du som enskild näringsidkare vill ändra folkbokföringsadressen gör du det hos Skatteverket.",
-        "x-oe": {
-          "queryID": "81702",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.ssbt.CompanyDetailsQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
       "arDuFirmatecknare": {
         "type": "string",
         "oneOf": [
@@ -152,79 +24,6 @@
         "x-oe": {
           "queryID": "81703",
           "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "dittForetag": {
-        "type": "object",
-        "properties": {
-          "foretagetsNamn": {
-            "type": "string",
-            "title": "Företagets namn",
-            "x-oe": {
-              "textFieldID": "50389",
-              "queryID": "81705"
-            }
-          },
-          "organisationsnummer": {
-            "type": "string",
-            "title": "Organisationsnummer",
-            "x-oe-invalidFormatMessage": "Du måste fylla i ett giltigt personnummer med formatet ÅÅMMDD-XXXX eller ett giltigt organisationsnummer med formatet XXXXXX-XXXX",
-            "x-oe": {
-              "textFieldID": "50390",
-              "queryID": "81705"
-            }
-          },
-          "utdelningsadress": {
-            "type": "string",
-            "title": "Utdelningsadress",
-            "x-oe": {
-              "textFieldID": "50391",
-              "queryID": "81705"
-            }
-          },
-          "postnummer": {
-            "type": "string",
-            "title": "Postnummer",
-            "pattern": "^\\d{3}\\s?\\d{2}$",
-            "x-oe-format": "swedish-postal-code",
-            "x-oe-invalidFormatMessage": "Du måste fylla i ett svenskt postnummer",
-            "x-oe": {
-              "textFieldID": "50392",
-              "queryID": "81705"
-            }
-          },
-          "postort": {
-            "type": "string",
-            "title": "Postort",
-            "x-oe": {
-              "textFieldID": "50393",
-              "queryID": "81705"
-            }
-          },
-          "foretagetsTelefonnummer": {
-            "type": "string",
-            "title": "Företagets telefonnummer",
-            "x-oe": {
-              "textFieldID": "50394",
-              "queryID": "81705"
-            }
-          },
-          "foretagetsEPostadress": {
-            "type": "string",
-            "title": "Företagets e-postadress",
-            "format": "email",
-            "x-oe-invalidFormatMessage": "Du måste fylla i en giltig e-postadress",
-            "x-oe": {
-              "textFieldID": "50395",
-              "queryID": "81705"
-            }
-          }
-        },
-        "title": "Ditt företag",
-        "x-oe": {
-          "queryID": "81705",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
           "defaultQueryState": "HIDDEN"
         }
       },
@@ -873,42 +672,6 @@
       {
         "if": {
           "properties": {
-            "hamtaForetagsuppgifter": {
-              "const": "JA_HAMTA_MINA_FORETAGSUPPGIFTER"
-            }
-          },
-          "required": [
-            "hamtaForetagsuppgifter"
-          ]
-        },
-        "then": {
-          "required": [
-            "valjForetag"
-          ]
-        }
-      },
-      {
-        "if": {
-          "properties": {
-            "hamtaForetagsuppgifter": {
-              "const": "NEJ_JAG_VILL_FYLLA_I"
-            }
-          },
-          "required": [
-            "hamtaForetagsuppgifter"
-          ]
-        },
-        "then": {
-          "required": [
-            "arDuFirmatecknare",
-            "dittForetag",
-            "foretagsform"
-          ]
-        }
-      },
-      {
-        "if": {
-          "properties": {
             "arDuFirmatecknare": {
               "const": "NEJ"
             }
@@ -1019,26 +782,6 @@
       {
         "if": {
           "properties": {
-            "hamtaForetagsuppgifter": {
-              "enum": [
-                "JA_HAMTA_MINA_FORETAGSUPPGIFTER",
-                "NEJ_JAG_VILL_FYLLA_I"
-              ]
-            }
-          },
-          "required": [
-            "hamtaForetagsuppgifter"
-          ]
-        },
-        "then": {
-          "required": [
-            "fakturaadressSammaSomForetaget"
-          ]
-        }
-      },
-      {
-        "if": {
-          "properties": {
             "fakturaadressSammaSomForetaget": {
               "const": "NEJ"
             }
@@ -1050,26 +793,6 @@
         "then": {
           "properties": {
             "fakturamottagare": true
-          }
-        }
-      },
-      {
-        "if": {
-          "properties": {
-            "hamtaForetagsuppgifter": {
-              "enum": [
-                "JA_HAMTA_MINA_FORETAGSUPPGIFTER",
-                "NEJ_JAG_VILL_FYLLA_I"
-              ]
-            }
-          },
-          "required": [
-            "hamtaForetagsuppgifter"
-          ]
-        },
-        "then": {
-          "properties": {
-            "fakturareferens": true
           }
         }
       },

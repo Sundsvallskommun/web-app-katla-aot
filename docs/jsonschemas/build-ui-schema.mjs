@@ -614,6 +614,29 @@ assertWidgetsResolve(value);
 /** The leaf already says which application this is, so the two selector questions become dead. */
 const SELECTOR_QUESTIONS = new Set([REPRESENTS_COMPANY, APPLICATION_TYPE]);
 
+/**
+ * Questions the app already knows the answer to. The citizen signs in with SAML and picks an
+ * errand owner from the organisations they have an engagement in, so asking again would be asking
+ * for something the backend holds and can trust (see aot-form-schema-plan.md 4.2).
+ *
+ * Dropping `hamtning_av_foretagsuppgifter` also removes the reveal condition from `foretagsform`
+ * and `ar_du_firmatecknare`, which is right: without a fetch-or-type choice they are simply asked.
+ *
+ * Deliberately kept:
+ * - `foretagsform_81706` — `OrganizationDTO` carries no company form, and it gates four uploads.
+ *   Open question 4 in OUTSTANDING_QUESTIONS.md.
+ * - `ar_du_firmatecknare_81703` and its fullmakt upload — `isAuthorizedSignatory` could replace the
+ *   question, but the upload would then hang off session data rather than an answer. Left intact
+ *   until 4.5 settles where attachments live.
+ */
+const REPLACED_BY_SESSION = new Set([
+  'kontaktuppgifter_81699', // private contact details — the SAML citizen
+  'kontaktuppgifter_81700', // company contact details — the errand owner
+  'hamtning_av_foretagsuppgifter_81701', // fetch-or-type choice, moot once the owner is chosen
+  'valj_foretag_81702', // company picker — already picked as errand owner
+  'ditt_foretag_81705', // manually typed company details
+]);
+
 /** Copies one question's definition across, renaming its keys and alternative values. */
 function propertyFor(openEKey) {
   const field = questionsByKey[openEKey];
@@ -640,7 +663,7 @@ function propertyFor(openEKey) {
 }
 
 function schemaForBranch(branch) {
-  const fields = [...branch.fields].filter((key) => !SELECTOR_QUESTIONS.has(key));
+  const fields = [...branch.fields].filter((key) => !SELECTOR_QUESTIONS.has(key) && !REPLACED_BY_SESSION.has(key));
   const properties = Object.fromEntries(fields.map((key) => [keyFor(key), propertyFor(key)]));
   const conditionals = conditionalsFor(new Set(fields));
 
