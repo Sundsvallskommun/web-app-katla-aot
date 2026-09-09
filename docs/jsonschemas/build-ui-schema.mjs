@@ -74,15 +74,70 @@ function reachable(companyAnswer, typeAnswer) {
   return visible;
 }
 
+/**
+ * Each branch of the flow becomes one schema, named after the label leaf that selects it. The
+ * binding is spelled out rather than matched on text: two of the seven differ in wording between
+ * OpenE and the label tree (folköl, and TASTING whose displayName is just "Provsmakning").
+ * See docs/aot-branch-label-mapping.md.
+ */
 const BRANCHES = [
-  { id: 'privatperson', title: 'Ansökan som privatperson', icon: 'user', answer: null, company: PRIVATE_ANSWER },
-  { id: 'stadigvarande-servering', title: 'Stadigvarande serveringstillstånd', icon: 'wine', answer: '49648' },
-  { id: 'tillfalligt-allmanheten', title: 'Tillfälligt tillstånd (allmänheten och slutet sällskap)', icon: 'calendar-days', answer: '49649' },
-  { id: 'tillfalligt-slutet-sallskap', title: 'Tillfälligt tillstånd, endast slutet sällskap', icon: 'users', answer: '49650' },
-  { id: 'folkol', title: 'Servering av folköl (klass 2)', icon: 'beer', answer: '49651' },
-  { id: 'gardsforsaljning', title: 'Gårdsförsäljning', icon: 'store', answer: '49652' },
-  { id: 'catering', title: 'Catering till slutna sällskap', icon: 'utensils-crossed', answer: '49653' },
-  { id: 'provsmakning', title: 'Provsmakning', icon: 'flask-conical', answer: '49654' },
+  {
+    id: 'privatperson',
+    title: 'Ansökan som privatperson',
+    icon: 'user',
+    answer: null,
+    company: PRIVATE_ANSWER,
+    leaf: null,
+  },
+  {
+    id: 'stadigvarande-servering',
+    title: 'Stadigvarande serveringstillstånd',
+    icon: 'wine',
+    answer: '49648',
+    leaf: 'ALCOHOL/SERVING_PERMIT_APPLICATION/PERMANENT_SERVING',
+  },
+  {
+    id: 'tillfalligt-allmanheten',
+    title: 'Tillfälligt tillstånd (allmänheten och slutet sällskap)',
+    icon: 'calendar-days',
+    answer: '49649',
+    leaf: 'ALCOHOL/SERVING_PERMIT_APPLICATION/TEMPORARY_SERVING_PUBLIC',
+  },
+  {
+    id: 'tillfalligt-slutet-sallskap',
+    title: 'Tillfälligt tillstånd, endast slutet sällskap',
+    icon: 'users',
+    answer: '49650',
+    leaf: 'ALCOHOL/SERVING_PERMIT_APPLICATION/TEMPORARY_SERVING_PRIVATE',
+  },
+  {
+    id: 'folkol',
+    title: 'Servering av folköl (klass 2)',
+    icon: 'beer',
+    answer: '49651',
+    leaf: 'ALCOHOL/FOLKOL_SERVING_NOTIFICATION',
+  },
+  {
+    id: 'gardsforsaljning',
+    title: 'Gårdsförsäljning',
+    icon: 'store',
+    answer: '49652',
+    leaf: 'ALCOHOL/SERVING_PERMIT_APPLICATION/FARM_SALES',
+  },
+  {
+    id: 'catering',
+    title: 'Catering till slutna sällskap',
+    icon: 'utensils-crossed',
+    answer: '49653',
+    leaf: 'ALCOHOL/SERVING_PERMIT_APPLICATION/PERMANENT_CATERING',
+  },
+  {
+    id: 'provsmakning',
+    title: 'Provsmakning',
+    icon: 'flask-conical',
+    answer: '49654',
+    leaf: 'ALCOHOL/SERVING_PERMIT_APPLICATION/TASTING',
+  },
 ];
 
 const reachPerBranch = BRANCHES.map((branch) => ({
