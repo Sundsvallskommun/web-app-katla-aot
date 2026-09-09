@@ -16,34 +16,97 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const read = (name) => JSON.parse(readFileSync(join(here, name), 'utf8'));
 
-const SCHEMA_NAME = 'aot_opene_test';
-const SCHEMA_VERSION = '1.0';
 /** The platform is 2020-12 throughout: Ajv2020 throws outright on a draft-07 `$schema`. */
 const DIALECT = 'https://json-schema.org/draft/2020-12/schema';
 
-const schema = read('aot_ny_for_draken-2181.schema.json');
-const rules = read('aot_ny_for_draken-2181.rules.json').rules;
-const oeUiSchema = read('aot_ny_for_draken-2181.uischema.json');
+/**
+ * The two migrated OpenE flows. Everything below is written against one flow at a time; `useFlow`
+ * sets which, and the flows are built in sequence. Module-level mutation rather than threading a
+ * context through twenty functions — this is a build script, not a library.
+ */
+const FLOWS = [
+  {
+    id: '2181',
+    files: 'aot_ny_for_draken-2181',
+    contactStep: 'kontaktuppgifter_6115',
+    applicationStep: 'ansokan_6116',
+    /** The only question visible from the start; reachability spreads from here. */
+    seeds: ['foretrader_du_ett_foretag_81698'],
+    representsCompany: 'foretrader_du_ett_foretag_81698',
+    companyAnswer: '49632',
+    privateAnswer: '49633',
+    applicationType: 'vad_vill_du_ansoka_om_eller_anmala_81716',
+    wholeFlow: { name: 'aot_opene_test', version: '1.0', description: 'A JSON-schema that defines an open alkoholtillstånd application' },
+  },
+  {
+    id: '2153',
+    files: 'aot_tobak_ny_for_draken-2153',
+    contactStep: 'kontaktuppgifter_6055',
+    applicationStep: 'ansokan_6056',
+    seeds: ['kontaktuppgifter_80358', 'hamtning_av_foretagsuppgifter_80359', 'vad_vill_du_gora_80555'],
+    // No company-or-private gate in this flow: it goes straight to the company questions.
+    representsCompany: null,
+    companyAnswer: null,
+    privateAnswer: null,
+    applicationType: 'vad_vill_du_gora_80555',
+    wholeFlow: null,
+  },
+];
 
-const CONTACT_STEP = 'kontaktuppgifter_6115';
-const APPLICATION_STEP = 'ansokan_6116';
-const REPRESENTS_COMPANY = 'foretrader_du_ett_foretag_81698';
-const APPLICATION_TYPE = 'vad_vill_du_ansoka_om_eller_anmala_81716';
-const COMPANY_ANSWER = '49632';
-const PRIVATE_ANSWER = '49633';
+let flow = FLOWS[0];
+let schema;
+let rules;
+let oeUiSchema;
+let CONTACT_STEP;
+let APPLICATION_STEP;
+let REPRESENTS_COMPANY;
+let APPLICATION_TYPE;
+let COMPANY_ANSWER;
+let PRIVATE_ANSWER;
+
+function useFlow(next) {
+  flow = next;
+  schema = read(`${next.files}.schema.json`);
+  rules = read(`${next.files}.rules.json`).rules;
+  oeUiSchema = read(`${next.files}.uischema.json`);
+  CONTACT_STEP = next.contactStep;
+  APPLICATION_STEP = next.applicationStep;
+  REPRESENTS_COMPANY = next.representsCompany;
+  APPLICATION_TYPE = next.applicationType;
+  COMPANY_ANSWER = next.companyAnswer;
+  PRIVATE_ANSWER = next.privateAnswer;
+
+  weightSources = Object.fromEntries(
+    rules.filter((rule) => rule.type === 'SetWeightEvaluationProviderModule').map((rule) => [rule.weightType, rule.sourceKey])
+  );
+  questionsByKey = Object.fromEntries(Object.values(schema.properties).flatMap((step) => Object.entries(step.properties)));
+  weightSetters = Object.fromEntries(
+    rules
+      .filter((rule) => rule.type === 'SetWeightEvaluationProviderModule')
+      .map((rule) => [
+        rule.weightType,
+        {
+          source: rule.sourceKey,
+          weights: Object.fromEntries(rule.alternativeWeights.map((w) => [w.alternativeID, Number(w.weight)])),
+        },
+      ])
+  );
+  reachPerBranch = (BRANCHES_BY_FLOW[next.id] ?? []).map((branch) => ({
+    ...branch,
+    fields: reachable(branch.company ?? COMPANY_ANSWER, branch.answer),
+  }));
+}
 
 const queryType = (field) => (field['x-oe']?.queryTypeID ?? '').split('.').at(-1).replace('QueryProviderModule', '');
 
 /* ------------------------------------------------------------------ reachability */
 
-const weightSources = Object.fromEntries(
-  rules.filter((rule) => rule.type === 'SetWeightEvaluationProviderModule').map((rule) => [rule.weightType, rule.sourceKey])
-);
+let weightSources;
 
 /** Over-approximates the questions one branch can show. Weight thresholds are absent from the
  *  export, so a weight-gated question counts as reachable once its feeding question is. */
 function reachable(companyAnswer, typeAnswer) {
-  const visible = new Set([REPRESENTS_COMPANY]);
+  const visible = new Set(flow.seeds);
   for (let changed = true; changed; ) {
     changed = false;
     for (const rule of rules) {
@@ -80,13 +143,14 @@ function reachable(companyAnswer, typeAnswer) {
  * OpenE and the label tree (folköl, and TASTING whose displayName is just "Provsmakning").
  * See docs/aot-branch-label-mapping.md.
  */
-const BRANCHES = [
+const BRANCHES_BY_FLOW = {
+  2181: [
   {
     id: 'privatperson',
     title: 'Ansökan som privatperson',
     icon: 'user',
     answer: null,
-    company: PRIVATE_ANSWER,
+    company: '49633', // Nej, jag ansöker som privatperson
     leaf: null,
   },
   {
@@ -138,12 +202,40 @@ const BRANCHES = [
     answer: '49654',
     leaf: 'ALCOHOL/SERVING_PERMIT_APPLICATION/TASTING',
   },
-];
+  ],
+  /**
+   * Flow 2153 is one form with a multi-select scope, not three branches: every option reveals the
+   * same questions. Each tobacco sales type therefore gets the same form, with the scope question
+   * dropped because the errand type already says which product it is. That treats one submission as
+   * one product; if verksamhet would rather have one type carrying several, these merge back and the
+   * scope question returns. See OUTSTANDING_QUESTIONS.md question 1.
+   */
+  2153: [
+    {
+      id: 'tobaksforsaljning',
+      title: 'Ansökan om tillstånd för försäljning av tobak',
+      icon: 'store',
+      answer: '30343',
+      leaf: 'TOBACCO/SALES_PERMIT_APPLICATION',
+    },
+    {
+      id: 'ecigaretter',
+      title: 'Anmälan om försäljning av elektroniska cigaretter och påfyllnadsbehållare',
+      icon: 'store',
+      answer: '30344',
+      leaf: 'TOBACCO/ECIGARETTE_SALES_NOTIFICATION',
+    },
+    {
+      id: 'nikotinfria',
+      title: 'Anmälan om försäljning av tobaksfria nikotinprodukter',
+      icon: 'store',
+      answer: '30345',
+      leaf: 'TOBACCO/TOBACCO_FREE_NICOTINE_SALES_NOTIFICATION',
+    },
+  ],
+};
 
-const reachPerBranch = BRANCHES.map((branch) => ({
-  ...branch,
-  fields: reachable(branch.company ?? COMPANY_ANSWER, branch.answer),
-}));
+let reachPerBranch;
 
 /* ------------------------------------------------------------------ keys */
 
@@ -176,6 +268,14 @@ const KEY_OVERRIDES = {
   // Not truncated, but the mechanical name is unwieldy.
   ar_fakturaadressen_samma_som_foretagets: 'fakturaadressSammaSomForetaget',
   vad_vill_du_ansoka_om_eller_anmala: 'ansokningstyp',
+  vad_vill_du_gora: 'omfattning',
+  finns_avtal_med_tillverkare_partihandlar: 'avtalMedTillverkareEllerPartihandlare',
+  jag_kommer_ocksa_bedriva_distansforsaljn: 'bedriverAvenDistansforsaljning',
+  registreringen_omfattar_forsaljning_av_s: 'omfattarSarskiltFarligaProdukter',
+  ar_forsaljningsstallets_besoksadress_sam: 'besoksadressSammaSomForetaget',
+  bifoga_underlag_som_styrker_dispositions: 'bifogatUnderlagDispositionsratt',
+  bifoga_registrering_fran_lansstyrelsen: 'bifogadRegistreringLansstyrelsen',
+  period_for_tidsbegransad_forsaljning: 'periodTidsbegransadForsaljning',
   foretrader_du_ett_foretag: 'foretraderForetag',
   hamtning_av_foretagsuppgifter: 'hamtaForetagsuppgifter',
 };
@@ -187,20 +287,28 @@ const KEY_OVERRIDES = {
 const KEY_OVERRIDES_BY_QUERY = {
   verksamhetsbeskrivning_81713: 'verksamhetsbeskrivningsval',
   verksamhetsbeskrivning_81714: 'verksamhetsbeskrivning',
+  verksamhetsbeskrivning_80369: 'verksamhetsbeskrivningsval',
+  verksamhetsbeskrivning_80370: 'verksamhetsbeskrivning',
 };
 
 const slugOf = (key) => key.replace(/_\d+$/, '');
 
-const allSlugs = new Set(
-  Object.values(schema.properties).flatMap((step) => Object.keys(step.properties).map((key) => key.replace(/_\d+$/, '')))
+/**
+ * The override tables are shared vocabulary across both flows, so they are checked against the
+ * union of every flow's questions — an entry naming nothing anywhere is a typo.
+ */
+const everyQuestionKey = new Set(
+  FLOWS.flatMap((each) =>
+    Object.values(read(`${each.files}.schema.json`).properties).flatMap((step) => Object.keys(step.properties))
+  )
 );
-for (const slug of Object.keys(KEY_OVERRIDES)) {
-  if (!allSlugs.has(slug)) throw new Error(`KEY_OVERRIDES has no question named '${slug}'`);
-}
+const everySlug = new Set([...everyQuestionKey].map((key) => key.replace(/_\d+$/, '')));
 
-const allQuestionKeys = new Set(Object.values(schema.properties).flatMap((step) => Object.keys(step.properties)));
+for (const slug of Object.keys(KEY_OVERRIDES)) {
+  if (!everySlug.has(slug)) throw new Error(`KEY_OVERRIDES has no question named '${slug}'`);
+}
 for (const key of Object.keys(KEY_OVERRIDES_BY_QUERY)) {
-  if (!allQuestionKeys.has(key)) throw new Error(`KEY_OVERRIDES_BY_QUERY has no question named '${key}'`);
+  if (!everyQuestionKey.has(key)) throw new Error(`KEY_OVERRIDES_BY_QUERY has no question named '${key}'`);
 }
 
 const camelCase = (slug) => {
@@ -280,18 +388,8 @@ function constantsFor(field) {
 
 /* ------------------------------------------------------------------ conditions */
 
-const questionsByKey = Object.fromEntries(
-  Object.values(schema.properties).flatMap((step) => Object.entries(step.properties))
-);
-
-const weightSetters = Object.fromEntries(
-  rules
-    .filter((rule) => rule.type === 'SetWeightEvaluationProviderModule')
-    .map((rule) => [
-      rule.weightType,
-      { source: rule.sourceKey, weights: Object.fromEntries(rule.alternativeWeights.map((w) => [w.alternativeID, Number(w.weight)])) },
-    ])
-);
+let questionsByKey;
+let weightSetters;
 
 /**
  * The export drops the threshold of a WeightQueryState rule — `weightExpression` is null and no
@@ -300,6 +398,9 @@ const weightSetters = Object.fromEntries(
  * question. Ask OpenE for an export that includes the value, then delete this table.
  */
 const WEIGHT_THRESHOLDS = {
+  // Flow 2153: 'visa om uppgifter = 1||2', either answer to hämtning av företagsuppgifter.
+  87434: [1, 2],
+  87436: [1, 2],
   88930: [1, 2], // "visa om uppgifter = 1||2" — either answer to hämtning av företagsuppgifter
   88932: [1, 2],
   88945: [1], // "visa om alkohollag1 = 1"
@@ -339,6 +440,41 @@ function answeredWith(sourceKey, alternativeIds) {
   return { properties: { [keyFor(sourceKey)]: test }, required: [keyFor(sourceKey)] };
 }
 
+/**
+ * Evaluates a single-bucket weight expression for one weight value. Handles the comparison shapes
+ * the exports use — `= 1 || = 3`, `!= 4 && > 0` — without a parser or eval: every term is
+ * `$weight{bucket} OP number`, joined by `||` or `&&`.
+ */
+function weightExpressionHolds(expression, weight) {
+  const compare = (operator, right) => {
+    if (operator === '=') return weight === right;
+    if (operator === '!=') return weight !== right;
+    if (operator === '>') return weight > right;
+    if (operator === '<') return weight < right;
+    if (operator === '>=') return weight >= right;
+    if (operator === '<=') return weight <= right;
+    throw new Error(`Unrecognised weight comparison '${operator}'`);
+  };
+  const term = /\$weight\{\w+\}\s*(!=|>=|<=|=|>|<)\s*(\d+)/g;
+
+  // `&&` binds tighter than `||`, and the exports never mix them within one side.
+  return expression
+    .split('||')
+    .some((clause) =>
+      [...clause.matchAll(term)].every(([, operator, right]) => compare(operator, Number(right)))
+    );
+}
+
+/** The alternatives of the feeding question that satisfy a single-bucket weight expression. */
+function alternativesSatisfying(bucket, expression) {
+  const setter = weightSetters[bucket];
+  if (!setter) throw new Error(`No SetWeight rule feeds the weight '${bucket}'`);
+  const matched = Object.entries(setter.weights)
+    .filter(([, weight]) => weightExpressionHolds(expression, weight))
+    .map(([alternativeID]) => alternativeID);
+  return { source: setter.source, alternatives: matched };
+}
+
 /** The weight expressions in this flow come in two shapes; anything else should stop the build. */
 function conditionFromExpression(expression) {
   const equality = [...expression.matchAll(/\$weight\{(\w+)\}\s*=\s*(\d+)/g)];
@@ -355,9 +491,11 @@ function conditionFromExpression(expression) {
     };
   }
 
-  if (equality.length > 0 && new Set(equality.map((m) => m[1])).size === 1) {
-    const bucket = equality[0][1];
-    const { source, alternatives } = alternativesWithWeight(bucket, equality.map((m) => Number(m[2])));
+  const buckets = new Set([...expression.matchAll(/\$weight\{(\w+)\}/g)].map((m) => m[1]));
+  if (buckets.size === 1) {
+    const [bucket] = buckets;
+    const { source, alternatives } = alternativesSatisfying(bucket, expression);
+    if (alternatives.length === 0) throw new Error(`No alternative satisfies: ${expression}`);
     return answeredWith(source, alternatives);
   }
 
@@ -601,18 +739,21 @@ function assertWidgetsResolve(node, path = '') {
   }
 }
 
-const value = {
-  'ui:order': [CONTACT_STEP, APPLICATION_STEP],
-  [CONTACT_STEP]: stepUi(CONTACT_STEP),
-  [APPLICATION_STEP]: stepUi(APPLICATION_STEP),
-};
-
-assertWidgetsResolve(value);
+/** The ui schema for the undivided flow, mirroring OpenE's two steps. */
+function wholeFlowUiSchema() {
+  const value = {
+    'ui:order': [CONTACT_STEP, APPLICATION_STEP],
+    [CONTACT_STEP]: stepUi(CONTACT_STEP),
+    [APPLICATION_STEP]: stepUi(APPLICATION_STEP),
+  };
+  assertWidgetsResolve(value);
+  return value;
+}
 
 /* ------------------------------------------------------------------ per-leaf schemas */
 
-/** The leaf already says which application this is, so the two selector questions become dead. */
-const SELECTOR_QUESTIONS = new Set([REPRESENTS_COMPANY, APPLICATION_TYPE]);
+/** The leaf already says which application this is, so the selector questions become dead. */
+const selectorQuestions = () => new Set([REPRESENTS_COMPANY, APPLICATION_TYPE].filter(Boolean));
 
 /**
  * Questions the app already knows the answer to. The citizen signs in with SAML and picks an
@@ -630,11 +771,17 @@ const SELECTOR_QUESTIONS = new Set([REPRESENTS_COMPANY, APPLICATION_TYPE]);
  *   until 4.5 settles where attachments live.
  */
 const REPLACED_BY_SESSION = new Set([
+  // Flow 2181
   'kontaktuppgifter_81699', // private contact details — the SAML citizen
   'kontaktuppgifter_81700', // company contact details — the errand owner
   'hamtning_av_foretagsuppgifter_81701', // fetch-or-type choice, moot once the owner is chosen
   'valj_foretag_81702', // company picker — already picked as errand owner
   'ditt_foretag_81705', // manually typed company details
+  // Flow 2153, the same questions under their own query ids
+  'kontaktuppgifter_80358',
+  'hamtning_av_foretagsuppgifter_80359',
+  'valj_foretag_80360',
+  'ditt_foretag_80361',
 ]);
 
 /** Copies one question's definition across, renaming its keys and alternative values. */
@@ -662,8 +809,31 @@ function propertyFor(openEKey) {
   return copy;
 }
 
+/**
+ * A rule gated only on the selector cannot survive as a conditional, because the selector is dropped
+ * — the errand type already carries the answer. Such a rule resolves to a constant per branch: keep
+ * the field, or leave it out. Flow 2153's `$weight{caseType} != 4 && $weight{caseType} > 0` is the
+ * case that matters: the dödskallemärkta question does not belong on the nicotine-free form.
+ */
+function excludedBySelector(branch) {
+  const excluded = new Set();
+  for (const rule of rules) {
+    if (rule.type !== 'WeightCalculatedQueryStateEvaluationProviderModule') continue;
+    const buckets = new Set([...(rule.weightExpression ?? '').matchAll(/\$weight\{(\w+)\}/g)].map((m) => m[1]));
+    if (buckets.size !== 1) continue;
+    const [bucket] = buckets;
+    const { source, alternatives } = alternativesSatisfying(bucket, rule.weightExpression);
+    if (source !== APPLICATION_TYPE) continue;
+    if (!alternatives.includes(branch.answer)) excluded.add(rule.sourceKey);
+  }
+  return excluded;
+}
+
 function schemaForBranch(branch) {
-  const fields = [...branch.fields].filter((key) => !SELECTOR_QUESTIONS.has(key) && !REPLACED_BY_SESSION.has(key));
+  const dropped = excludedBySelector(branch);
+  const fields = [...branch.fields].filter(
+    (key) => !selectorQuestions().has(key) && !REPLACED_BY_SESSION.has(key) && !dropped.has(key)
+  );
   const properties = Object.fromEntries(fields.map((key) => [keyFor(key), propertyFor(key)]));
   const conditionals = conditionalsFor(new Set(fields));
 
@@ -694,6 +864,20 @@ function schemaForBranch(branch) {
 
 /** Questions that came from the contact step and are kept — invoicing and company documents. */
 const COMPANY_SECTION = new Set([
+  // Flow 2153
+  'ar_du_firmatecknare_80557',
+  'ladda_upp_fullmakt_80558',
+  'foretagsform_80362',
+  'ar_fakturaadressen_samma_som_foretagets_80363',
+  'fakturamottagare_80364',
+  'fakturareferens_80365',
+  'bifoga_aktuellt_registreringsbevis_fran_80366',
+  'bifoga_uppgifter_om_agarforhallanden_80367',
+  'bifoga_registerutdrag_fran_skatteverket_80368',
+  'verksamhetsbeskrivning_80369',
+  'verksamhetsbeskrivning_80370',
+  'bifoga_verksamhetsbeskrivning_80371',
+  // Flow 2181
   'ar_du_firmatecknare_81703',
   'ladda_upp_fullmakt_81704',
   'foretagsform_81706',
@@ -709,7 +893,10 @@ const COMPANY_SECTION = new Set([
 ]);
 
 function uiSchemaForBranch(branch) {
-  const fields = [...branch.fields].filter((key) => !SELECTOR_QUESTIONS.has(key) && !REPLACED_BY_SESSION.has(key));
+  const dropped = excludedBySelector(branch);
+  const fields = [...branch.fields].filter(
+    (key) => !selectorQuestions().has(key) && !REPLACED_BY_SESSION.has(key) && !dropped.has(key)
+  );
   const company = fields.filter((key) => COMPANY_SECTION.has(key));
   const application = fields.filter((key) => !COMPANY_SECTION.has(key));
 
@@ -746,48 +933,44 @@ function renameUiKeys(entry) {
   return renamed;
 }
 
-const perLeaf = reachPerBranch.filter((branch) => branch.leaf);
-console.log('\nper-leaf schemas:');
-for (const branch of perLeaf) {
-  const built = schemaForBranch(branch);
-  const name = branch.leaf.split('/').at(-1).toLowerCase();
+function buildFlow(each) {
+  useFlow(each);
+
+  console.log(`\nflow ${each.id}:`);
+  for (const branch of reachPerBranch.filter((b) => b.leaf)) {
+    const built = schemaForBranch(branch);
+    const name = branch.leaf.split('/').at(-1).toLowerCase();
+    writeFileSync(
+      join(here, `aot_${name}.schema-request.json`),
+      `${JSON.stringify({ name: `aot_${name}`, version: '0.1', value: built, description: branch.title }, null, 2)}\n`
+    );
+    writeFileSync(
+      join(here, `aot_${name}.ui-schema-request.json`),
+      `${JSON.stringify({ value: uiSchemaForBranch(branch), description: `UI schema for ${branch.title}` }, null, 2)}\n`
+    );
+    console.log(
+      `  ${name.padEnd(44)} ${String(Object.keys(built.properties).length).padStart(3)} fält, ${String((built.allOf ?? []).length).padStart(2)} villkor`
+    );
+  }
+
+  // The undivided flow, kept while the split is verified against it.
+  if (!each.wholeFlow) return;
+  const { name, version, description } = each.wholeFlow;
   writeFileSync(
-    join(here, `aot_${name}.schema-request.json`),
-    `${JSON.stringify({ name: `aot_${name}`, version: '0.1', value: built, description: branch.title }, null, 2)}\n`
+    join(here, `${name}.schema-request.json`),
+    `${JSON.stringify({ name, version, value: { ...schema, $schema: DIALECT }, description }, null, 2)}\n`
   );
   writeFileSync(
-    join(here, `aot_${name}.ui-schema-request.json`),
-    `${JSON.stringify({ value: uiSchemaForBranch(branch), description: `UI schema for ${branch.title}` }, null, 2)}\n`
-  );
-  console.log(
-    `  ${name.padEnd(28)} ${String(Object.keys(built.properties).length).padStart(3)} fält, ${String((built.allOf ?? []).length).padStart(2)} villkor`
+    join(here, `${name}.ui-schema-request.json`),
+    `${JSON.stringify(
+      {
+        value: wholeFlowUiSchema(),
+        description: `UI schema for ${name} ${version}. Generated from the OpenE flow ${each.id} exports by docs/jsonschemas/build-ui-schema.mjs — edit the generator, not this file.`,
+      },
+      null,
+      2
+    )}\n`
   );
 }
 
-writeFileSync(
-  join(here, `${SCHEMA_NAME}.schema-request.json`),
-  `${JSON.stringify(
-    {
-      name: SCHEMA_NAME,
-      version: SCHEMA_VERSION,
-      value: { ...schema, $schema: DIALECT },
-      description: 'A JSON-schema that defines an open alkoholtillstånd application',
-    },
-    null,
-    2
-  )}\n`
-);
-
-const output = {
-  value,
-  description:
-    'UI schema for aot_opene_test 1.0. Generated from the OpenE flow 2181 exports by docs/jsonschemas/build-ui-schema.mjs — edit the generator, not this file.',
-};
-
-writeFileSync(join(here, 'aot_opene_test.ui-schema-request.json'), `${JSON.stringify(output, null, 2)}\n`);
-
-const sections = value[APPLICATION_STEP]['ui:sections'];
-console.log('sections:');
-for (const section of [...value[CONTACT_STEP]['ui:sections'], ...sections]) {
-  console.log(`  ${section.id.padEnd(30)} ${String(section.fields.length).padStart(3)} questions`);
-}
+for (const each of FLOWS) buildFlow(each);
