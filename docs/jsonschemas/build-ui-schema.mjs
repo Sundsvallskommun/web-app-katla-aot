@@ -145,6 +145,281 @@ const reachPerBranch = BRANCHES.map((branch) => ({
   fields: reachable(branch.company ?? COMPANY_ANSWER, branch.answer),
 }));
 
+/* ------------------------------------------------------------------ keys */
+
+/**
+ * OpenE keys carry the query id of one flow version and are truncated at 40 characters, often
+ * mid-word, so they are unusable as a durable contract: a key becomes permanent the moment an
+ * errand is saved against it. Names are camelCase with the Swedish domain words kept, per the
+ * repo convention — translating serveringsställe or kunskapsprov would read worse, not better.
+ *
+ * Defaults are mechanical; these override the truncated ones and the few that camelCase into a
+ * mouthful. The OpenE identity survives in each field's `x-oe.queryID`.
+ */
+const KEY_OVERRIDES = {
+  ange_period_for_servering_till_allmanhet: 'periodServeringAllmanheten',
+  ange_period_for_servering_till_slutet_sa: 'periodServeringSlutetSallskap',
+  ar_serveringsstallets_besoksadress_samma: 'besoksadressSammaSomForetaget',
+  bifoga_egenkontrollprogram_for_servering: 'bifogatEgenkontrollprogramFolkol',
+  bifoga_livsmedelsregistrering_fran_miljo: 'bifogadLivsmedelsregistrering',
+  du_behover_inte_ansoka_om_serveringstill: 'serveringstillstandBehovsInte',
+  egenkontrollprogram_vid_servering_av_fol: 'egenkontrollprogramFolkol',
+  har_ni_anmalt_koket_som_livsmedelsanlagg: 'koketAnmaltSomLivsmedelsanlaggning',
+  harmed_anmaler_jag_foljande_person_perso: 'personerTillKunskapsprovet',
+  ladda_upp_beskrivning_pa_besoksarrangema: 'bifogadBeskrivningBesoksarrangemang',
+  ladda_upp_ritning_pa_lokalen_med_serveri: 'bifogadRitningServeringsyta',
+  maximalt_antal_personer_som_kommer_att_v: 'maximaltAntalPersonerILokalen',
+  ovriga_upplysningar_angaende_finansierin: 'ovrigaUpplysningarFinansiering',
+  regler_for_serveringstillstand_till_priv: 'reglerServeringstillstandPrivatperson',
+  ska_servering_av_alkohol_ske_till_allman: 'serveringTillAllmanhetenEllerSlutetSallskap',
+  vill_du_anmala_personer_i_foretaget_till: 'anmalPersonerTillKunskapsprovet',
+  // Not truncated, but the mechanical name is unwieldy.
+  ar_fakturaadressen_samma_som_foretagets: 'fakturaadressSammaSomForetaget',
+  vad_vill_du_ansoka_om_eller_anmala: 'ansokningstyp',
+  foretrader_du_ett_foretag: 'foretraderForetag',
+  hamtning_av_foretagsuppgifter: 'hamtaForetagsuppgifter',
+};
+
+/**
+ * Two questions can share a slug — OpenE gave 81713 (the radio choosing how to supply the
+ * description) and 81714 (the text itself) the same title. Those are keyed by the full OpenE key.
+ */
+const KEY_OVERRIDES_BY_QUERY = {
+  verksamhetsbeskrivning_81713: 'verksamhetsbeskrivningsval',
+  verksamhetsbeskrivning_81714: 'verksamhetsbeskrivning',
+};
+
+const slugOf = (key) => key.replace(/_\d+$/, '');
+
+const allSlugs = new Set(
+  Object.values(schema.properties).flatMap((step) => Object.keys(step.properties).map((key) => key.replace(/_\d+$/, '')))
+);
+for (const slug of Object.keys(KEY_OVERRIDES)) {
+  if (!allSlugs.has(slug)) throw new Error(`KEY_OVERRIDES has no question named '${slug}'`);
+}
+
+const allQuestionKeys = new Set(Object.values(schema.properties).flatMap((step) => Object.keys(step.properties)));
+for (const key of Object.keys(KEY_OVERRIDES_BY_QUERY)) {
+  if (!allQuestionKeys.has(key)) throw new Error(`KEY_OVERRIDES_BY_QUERY has no question named '${key}'`);
+}
+
+const camelCase = (slug) => {
+  const [first, ...rest] = slug.split('_').filter(Boolean);
+  return first + rest.map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join('');
+};
+
+/** The durable name for an OpenE question or sub-field key. */
+const keyFor = (openEKey) => {
+  const slug = slugOf(openEKey);
+  return KEY_OVERRIDES_BY_QUERY[openEKey] ?? KEY_OVERRIDES[slug] ?? camelCase(slug);
+};
+
+/* ------------------------------------------------------------------ enum values */
+
+const ASCII = { å: 'a', ä: 'a', ö: 'o', é: 'e', ü: 'u' };
+
+/**
+ * Alternative ids are flow-version identifiers, so they make poor stored values. The label text
+ * becomes a stable constant instead; the id survives in `x-oe-alternativeID`.
+ */
+const constantFrom = (title) =>
+  title
+    .toLowerCase()
+    // Folded before stripping: an uppercase replacement would itself be stripped as non-a-z.
+    .replace(/[åäöéü]/g, (char) => ASCII[char])
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_|_$/g, '')
+    .toUpperCase()
+    .split('_')
+    .slice(0, 5)
+    .join('_');
+
+/**
+ * Alternatives whose first words are identical, so the mechanical constant cannot tell them apart.
+ * Keyed by OpenE alternative id, which is unique across the flow. The three kunskapsprov questions
+ * are copies of one block, so each id is listed separately.
+ */
+const CONSTANT_OVERRIDES = {
+  49648: 'STADIGVARANDE_SERVERING',
+  49649: 'TILLFALLIGT_ALLMANHETEN',
+  49650: 'TILLFALLIGT_SLUTET_SALLSKAP',
+  49651: 'FOLKOL_SERVERING',
+  49652: 'GARDSFORSALJNING',
+  49653: 'STADIGVARANDE_CATERING',
+  49654: 'PROVSMAKNING',
+  // Kunskap om alkohollagen, three copies of the same three alternatives.
+  49655: 'HAR_GODKANT_KUNSKAPSPROV',
+  49656: 'DRIVER_ANNAT_FORETAG_MED_TILLSTAND',
+  49657: 'BEHOVER_SKRIVA_KUNSKAPSPROV',
+  49688: 'HAR_GODKANT_KUNSKAPSPROV',
+  49689: 'DRIVER_ANNAT_FORETAG_MED_TILLSTAND',
+  49690: 'BEHOVER_SKRIVA_KUNSKAPSPROV',
+  49695: 'HAR_GODKANT_KUNSKAPSPROV',
+  49696: 'DRIVER_ANNAT_FORETAG_MED_TILLSTAND',
+  49697: 'BEHOVER_SKRIVA_KUNSKAPSPROV',
+};
+
+const alternativesOf = (field) => field.oneOf ?? field.items?.oneOf ?? [];
+
+/** Per question: alternative id to constant, made unique by suffixing when two titles collapse. */
+function constantsFor(field) {
+  const used = new Map();
+  const byId = {};
+  for (const alternative of alternativesOf(field)) {
+    const base = CONSTANT_OVERRIDES[alternative.const] ?? constantFrom(alternative.title ?? alternative.const);
+    if (used.has(base)) {
+      throw new Error(
+        `Alternatives ${used.get(base)} and ${alternative.const} both become '${base}'; add them to CONSTANT_OVERRIDES`
+      );
+    }
+    used.set(base, alternative.const);
+    byId[alternative.const] = base;
+  }
+  return byId;
+}
+
+/* ------------------------------------------------------------------ conditions */
+
+const questionsByKey = Object.fromEntries(
+  Object.values(schema.properties).flatMap((step) => Object.entries(step.properties))
+);
+
+const weightSetters = Object.fromEntries(
+  rules
+    .filter((rule) => rule.type === 'SetWeightEvaluationProviderModule')
+    .map((rule) => [
+      rule.weightType,
+      { source: rule.sourceKey, weights: Object.fromEntries(rule.alternativeWeights.map((w) => [w.alternativeID, Number(w.weight)])) },
+    ])
+);
+
+/**
+ * The export drops the threshold of a WeightQueryState rule — `weightExpression` is null and no
+ * other field carries it, so the condition survives only in the rule's Swedish name. These are
+ * reconstructed from those names; the mapping is unambiguous because every bucket is fed by one
+ * question. Ask OpenE for an export that includes the value, then delete this table.
+ */
+const WEIGHT_THRESHOLDS = {
+  88930: [1, 2], // "visa om uppgifter = 1||2" — either answer to hämtning av företagsuppgifter
+  88932: [1, 2],
+  88945: [1], // "visa om alkohollag1 = 1"
+  88946: [2],
+  88947: [3],
+  88979: [1], // alkohollag2
+  88980: [2],
+  88981: [3],
+  88991: [1], // alkohollag3
+  88992: [2],
+  88993: [3],
+  89007: [1, 2, 3, 4, 5, 6, 7], // "visa om ansökan = 1-7" — any ärendetyp chosen
+};
+
+const alternativesWithWeight = (bucket, values) => {
+  const setter = weightSetters[bucket];
+  if (!setter) throw new Error(`No SetWeight rule feeds the weight '${bucket}'`);
+  const matched = Object.entries(setter.weights)
+    .filter(([, weight]) => values.includes(weight))
+    .map(([alternativeID]) => alternativeID);
+  if (matched.length === 0) throw new Error(`No alternative of '${setter.source}' has weight in ${values.join(', ')}`);
+  return { source: setter.source, alternatives: matched };
+};
+
+/** `if` for "this question was answered with one of these alternatives". */
+function answeredWith(sourceKey, alternativeIds) {
+  const field = questionsByKey[sourceKey];
+  const constants = constantsFor(field);
+  const values = alternativeIds.map((id) => constants[id]).filter(Boolean);
+  if (values.length === 0) throw new Error(`No alternatives matched on '${sourceKey}'`);
+
+  const match = values.length === 1 ? { const: values[0] } : { enum: values };
+  // A checkbox answer is an array, so the test is containment rather than equality.
+  const test = field.type === 'array' ? { contains: match } : match;
+  // Paired with `required`: an absent key satisfies `properties`, which would reveal the
+  // dependent field before the question has been answered.
+  return { properties: { [keyFor(sourceKey)]: test }, required: [keyFor(sourceKey)] };
+}
+
+/** The weight expressions in this flow come in two shapes; anything else should stop the build. */
+function conditionFromExpression(expression) {
+  const equality = [...expression.matchAll(/\$weight\{(\w+)\}\s*=\s*(\d+)/g)];
+  const isSum = /\(\s*\$weight\{\w+\}\s*\+\s*\$weight\{\w+\}\s*\)\s*=\s*(\d+)/.test(expression);
+
+  if (isSum) {
+    // `($weight{a} + $weight{b}) = 2` with both buckets weighted 1: both must be answered that way.
+    const buckets = [...expression.matchAll(/\$weight\{(\w+)\}/g)].map((m) => m[1]);
+    return {
+      allOf: buckets.map((bucket) => {
+        const { source, alternatives } = alternativesWithWeight(bucket, [1]);
+        return answeredWith(source, alternatives);
+      }),
+    };
+  }
+
+  if (equality.length > 0 && new Set(equality.map((m) => m[1])).size === 1) {
+    const bucket = equality[0][1];
+    const { source, alternatives } = alternativesWithWeight(bucket, equality.map((m) => Number(m[2])));
+    return answeredWith(source, alternatives);
+  }
+
+  throw new Error(`Unrecognised weight expression: ${expression}`);
+}
+
+/**
+ * One OpenE rule as a JSON Schema conditional. `VISIBLE_REQUIRED` reveals and requires;
+ * `VISIBLE` only reveals, which the renderer reads off `then.properties`.
+ */
+function conditionalFor(rule) {
+  const reveal = (condition, targets, required) => ({
+    if: condition,
+    then:
+      required ?
+        { required: targets.map(keyFor) }
+      : { properties: Object.fromEntries(targets.map((target) => [keyFor(target), true])) },
+  });
+  const required = rule.resultingQueryState === 'VISIBLE_REQUIRED';
+
+  if (rule.type === 'QueryStateEvaluationProviderModule') {
+    const targets = rule.targetKeys.filter(Boolean);
+    if (targets.length === 0) return null;
+    return reveal(answeredWith(rule.sourceKey, rule.requiredAlternativeIDs ?? []), targets, required);
+  }
+
+  // The weight rules reveal their own source rather than a target list.
+  if (rule.type === 'WeightQueryStateEvaluationProviderModule') {
+    const values = WEIGHT_THRESHOLDS[rule.evaluatorID];
+    if (!values) throw new Error(`No reconstructed threshold for weight rule ${rule.evaluatorID} (${rule.name})`);
+    const { source, alternatives } = alternativesWithWeight(rule.weightType, values);
+    return reveal(answeredWith(source, alternatives), [rule.sourceKey], required);
+  }
+
+  if (rule.type === 'WeightCalculatedQueryStateEvaluationProviderModule') {
+    return reveal(conditionFromExpression(rule.weightExpression), [rule.sourceKey], required);
+  }
+
+  return null;
+}
+
+/** The conditionals that apply inside one branch: both ends of the rule have to be in it. */
+function conditionalsFor(fields) {
+  const conditionals = [];
+  for (const rule of rules) {
+    if (rule.type === 'SetWeightEvaluationProviderModule') continue;
+    const conditional = conditionalFor(rule);
+    if (!conditional) continue;
+
+    const targets = Object.keys(conditional.then.required ? {} : (conditional.then.properties ?? {}));
+    const revealed = conditional.then.required ?? targets;
+    const sources = Object.keys(conditional.if.properties ?? {});
+    const nested = (conditional.if.allOf ?? []).flatMap((part) => Object.keys(part.properties ?? {}));
+    const names = new Set([...fields].map(keyFor));
+    if (![...sources, ...nested].every((name) => names.has(name))) continue;
+    if (!revealed.every((name) => names.has(name))) continue;
+
+    conditionals.push(conditional);
+  }
+  return conditionals;
+}
+
 /* ------------------------------------------------------------------ widgets */
 
 const TEXT_FIELD_ROWS = [
@@ -333,6 +608,80 @@ const value = {
 };
 
 assertWidgetsResolve(value);
+
+/* ------------------------------------------------------------------ per-leaf schemas */
+
+/** The leaf already says which application this is, so the two selector questions become dead. */
+const SELECTOR_QUESTIONS = new Set([REPRESENTS_COMPANY, APPLICATION_TYPE]);
+
+/** Copies one question's definition across, renaming its keys and alternative values. */
+function propertyFor(openEKey) {
+  const field = questionsByKey[openEKey];
+  const copy = structuredClone(field);
+  const constants = constantsFor(field);
+
+  const renameAlternatives = (node) => {
+    for (const alternative of node.oneOf ?? []) {
+      alternative['x-oe-alternativeID'] = alternative.const;
+      alternative.const = constants[alternative.const] ?? alternative.const;
+    }
+  };
+  renameAlternatives(copy);
+  if (copy.items) renameAlternatives(copy.items);
+
+  const renameChildren = (node) => {
+    if (!node?.properties) return;
+    node.properties = Object.fromEntries(Object.entries(node.properties).map(([k, v]) => [keyFor(k), v]));
+    if (node.required) node.required = node.required.map(keyFor);
+  };
+  renameChildren(copy);
+  renameChildren(copy.items);
+  return copy;
+}
+
+function schemaForBranch(branch) {
+  const fields = [...branch.fields].filter((key) => !SELECTOR_QUESTIONS.has(key));
+  const properties = Object.fromEntries(fields.map((key) => [keyFor(key), propertyFor(key)]));
+  const conditionals = conditionalsFor(new Set(fields));
+
+  // Every conditional must point at properties this schema actually has, or the form silently
+  // loses a field. Requiredness only ever comes from `then.required`, never from a root `required`.
+  for (const conditional of conditionals) {
+    const referenced = [
+      ...Object.keys(conditional.if.properties ?? {}),
+      ...(conditional.if.allOf ?? []).flatMap((part) => Object.keys(part.properties ?? {})),
+      ...(conditional.then.required ?? []),
+      ...Object.keys(conditional.then.properties ?? {}),
+    ];
+    for (const name of referenced) {
+      if (!(name in properties)) throw new Error(`${branch.id}: conditional refers to missing property '${name}'`);
+    }
+  }
+
+  return {
+    $schema: DIALECT,
+    title: branch.title,
+    type: 'object',
+    properties,
+    ...(conditionals.length ? { allOf: conditionals } : {}),
+    'x-oe-flow': schema['x-oe-flow'],
+    'x-katla-label-leaf': branch.leaf,
+  };
+}
+
+const perLeaf = reachPerBranch.filter((branch) => branch.leaf);
+console.log('\nper-leaf schemas:');
+for (const branch of perLeaf) {
+  const built = schemaForBranch(branch);
+  const name = branch.leaf.split('/').at(-1).toLowerCase();
+  writeFileSync(
+    join(here, `aot_${name}.schema-request.json`),
+    `${JSON.stringify({ name: `aot_${name}`, version: '0.1', value: built, description: branch.title }, null, 2)}\n`
+  );
+  console.log(
+    `  ${name.padEnd(28)} ${String(Object.keys(built.properties).length).padStart(3)} fält, ${String((built.allOf ?? []).length).padStart(2)} villkor`
+  );
+}
 
 writeFileSync(
   join(here, `${SCHEMA_NAME}.schema-request.json`),

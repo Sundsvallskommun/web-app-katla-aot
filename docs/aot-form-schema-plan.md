@@ -631,16 +631,16 @@ Exporten har i praktiken inga begränsningar. Minst detta ska med innan v1.0 pub
 
 ## 8. Arbetsordning
 
-| Steg | Innehåll                                                                                                                                                                                              | Beroende         |
-| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
-| 0 ✔  | Mocka jsonschema-tjänsten (`backend/src/mocks/aot-schema.mock.ts`) med både schema och genererat ui-schema, så exporten kan renderas som den är                                                       | —                |
-| 1    | Be om en ny export med viktreglernas tröskelvärden, de 19 saknade informationsfrågorna och svar på fråga 1 ovan                                                                                       | Blockerar steg 3 |
-| 2    | Beslut 2–8 ovan, inklusive etikettträdets löv (`aot-branch-label-mapping.md`)                                                                                                                         | Blockerar steg 3 |
-| 3    | Skriv ett transformskript: OpenE-export + regler → Katla-schema + ui-schema. Deterministiskt, så migreringen kan köras om mot en ny export fram till lansering                                        | 1, 2             |
-| 4 ◐  | Widgetregistret är samsynkat med Drakens, flervalskryssrutorna finns (17 frågor) och nästlade objekt får rubrik (44 frågor). Kvar: `ArrayFieldTemplate` för DynamicTable (17 frågor, tas från Draken) | —                |
-| 5    | Utöka villkorsmotorn i `ObjectFieldTemplate`: `anyOf`/`enum`, `contains`, och ett synligt fel i stället för tyst döljning vid okänt villkor                                                           | —                |
-| 5b   | Bilagekomponent och bilage-endpoint mot SupportManagement, plus `$external:`-stöd i `ObjectFieldTemplate` om deklarationen ska styra placeringen (4.5)                                                | 2                |
-| 6    | Lägg på valideringen i avsnitt 6, inklusive åldersgrinden i backend                                                                                                                                   | 3                |
-| 7    | Publicera v1.0 enligt Drakens konvention (`POST /schemas`, sedan `PUT .../ui-schema`), lägg till README och kontraktstest, ta bort mocken                                                             | 3–6              |
+| Steg | Innehåll                                                                                                                                                                                                    | Beroende         |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| 0 ✔  | Mocka jsonschema-tjänsten (`backend/src/mocks/aot-schema.mock.ts`) med både schema och genererat ui-schema, så exporten kan renderas som den är                                                             | —                |
+| 1 ◐  | Be om en ny export med de 19 saknade informationsfrågorna och svar på köksblocket. Viktreglernas tröskelvärden rekonstrueras för hand ur regelnamnen i stället — entydigt, och blockerar därmed inte steg 3 | Blockerar steg 3 |
+| 2 ◐  | Etikettträdets löv är klara och uppdelningen beslutad. Kvar: `OUTSTANDING_QUESTIONS.md` — obligatoriskhet och köksblocket rör alkoholuppdelningen, tobaksflervalet bara tobak                               | Blockerar steg 3 |
+| 3 ◐  | Skriv ett transformskript: OpenE-export + regler → Katla-schema + ui-schema. Deterministiskt, så migreringen kan köras om mot en ny export fram till lansering                                              | 1, 2             |
+| 4 ◐  | Widgetregistret är samsynkat med Drakens, flervalskryssrutorna finns (17 frågor) och nästlade objekt får rubrik (44 frågor). Kvar: `ArrayFieldTemplate` för DynamicTable (17 frågor, tas från Draken)       | —                |
+| 5 ✔  | Villkorsmotorn ligger i `frontend/src/components/json/utils/schema-conditions.ts`: `enum`, `contains`, flera regler per fält, dolda svar rensas, okänt nyckelord visar fältet och varnar                    | —                |
+| 5b   | Bilagekomponent och bilage-endpoint mot SupportManagement, plus `$external:`-stöd i `ObjectFieldTemplate` om deklarationen ska styra placeringen (4.5)                                                      | 2                |
+| 6    | Lägg på valideringen i avsnitt 6, inklusive åldersgrinden i backend                                                                                                                                         | 3                |
+| 7    | Publicera v1.0 enligt Drakens konvention (`POST /schemas`, sedan `PUT .../ui-schema`), lägg till README och kontraktstest, ta bort mocken                                                                   | 3–6              |
 
 Steg 4 och 5 är oberoende av 1–3 och kan börja direkt — de behövs oavsett hur schemat delas.
