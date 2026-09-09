@@ -1,6 +1,5 @@
 import i18nConfig from '@app/i18nConfig';
-import type { JsonParameterDTO } from '@data-contracts/backend/data-contracts';
-import type { ErrandLabelDTO } from '@data-contracts/backend/data-contracts';
+import type { ErrandLabelDTO, JsonParameterDTO } from '@data-contracts/backend/data-contracts';
 import type { ErrandFormDataItem } from '@interfaces/errand-form';
 import type { RJSFSchema, RJSFValidationError, UiSchema } from '@rjsf/utils';
 import { getSelectedLabels } from '@utils/label-tree';

@@ -14,9 +14,7 @@ const { createErrandMock, routerPushMock, snackbarMock, updateErrandMock } = vi.
 }));
 
 // These cases are about categorization and ownership. Whether the required schemas have data is a
-// separate precondition, covered in json/schema-utils.test.ts. Note the function has to be mocked
-// rather than ERRAND_FORM_SCHEMA_NAMES: it reads that list from its own module closure as a default
-// parameter, so replacing the export alone changes nothing.
+// separate precondition, covered in json/schema-utils.test.ts.
 vi.mock('@components/json/utils/schema-utils', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@components/json/utils/schema-utils')>()),
   validateErrandFormData: () => Promise.resolve([]),

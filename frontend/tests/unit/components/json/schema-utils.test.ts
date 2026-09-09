@@ -16,8 +16,8 @@ import {
 } from '../../../../src/components/json/utils/schema-utils';
 
 const REQUIRED_SCHEMA_NAME = 'aot_test_schema';
-// Pins the fail-closed list so these cases test the entries they are given rather than whichever
-// schemas ERRAND_FORM_SCHEMA_NAMES happens to require.
+// The required list is normally derived from the errand's ärendetyp; these cases pass it explicitly
+// so they test the entries they are given.
 const REQUIRED_SCHEMA_NAMES = [REQUIRED_SCHEMA_NAME];
 
 afterEach(() => {
