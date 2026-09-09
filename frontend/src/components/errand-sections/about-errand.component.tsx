@@ -123,7 +123,7 @@ export const AboutErrandContent: React.FC = () => {
       <FormControl
         required
         invalid={typeHasError}
-        className="w-full sm:w-[calc(50%-10px)]"
+        className="w-full sm:w-[calc(80%-10px)]"
         {...(typeHasError ? { [INVALID_FIELD_ATTRIBUTE]: TYPE_FIELD_ID } : {})}
       >
         <FormLabel htmlFor={TYPE_FIELD_ID}>{t('errand-information:about.type_label')}</FormLabel>

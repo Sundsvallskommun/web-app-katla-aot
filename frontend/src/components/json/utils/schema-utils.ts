@@ -1,15 +1,40 @@
 import i18nConfig from '@app/i18nConfig';
 import type { JsonParameterDTO } from '@data-contracts/backend/data-contracts';
+import type { ErrandLabelDTO } from '@data-contracts/backend/data-contracts';
 import type { ErrandFormDataItem } from '@interfaces/errand-form';
 import type { RJSFSchema, RJSFValidationError, UiSchema } from '@rjsf/utils';
+import { getSelectedLabels } from '@utils/label-tree';
 import type { TFunction } from 'i18next';
 
 import { getJsonValueSchemaValidator } from '../schema/form-schema-validator';
 import { createJsonErrorTransformer, fieldTitleFromSchema } from './schema-form-error-handling';
 
-// The schemas making up Ärendeuppgifter. Empty until AoT's schemas exist in the jsonschema API;
-// the type is wide so it can be filled without becoming a tuple.
-export const ERRAND_FORM_SCHEMA_NAMES: readonly string[] = ['aot_opene_test'];
+/**
+ * Ärendeuppgifter is one schema per errand type, named after the leaf of the errand's
+ * categorization in lower case: an errand classified ALCOHOL / SERVING_PERMIT_APPLICATION /
+ * PERMANENT_SERVING is filled in with `aot_permanent_serving`. The generator names the schemas the
+ * same way, so neither side needs a lookup table.
+ *
+ * An errand type with no schema — tillsyn, or a type whose flow has not been migrated — has no
+ * form, which is why this returns a list rather than a name.
+ */
+export const schemaNamesForErrand = (labels: ErrandLabelDTO[] | undefined): readonly string[] => {
+  const selected = getSelectedLabels(labels);
+  const leaf = selected.SUBTYPE ?? selected.TYPE;
+  const resourceName = leaf?.resourceName;
+  return resourceName ? [`aot_${resourceName.toLowerCase()}`] : [];
+};
+
+/**
+ * The jsonschema service has no schema by that name. For an errand type whose flow has not been
+ * migrated that is the normal answer, not a failure: it means the type has no form yet.
+ */
+export class SchemaNotFoundError extends Error {
+  constructor(readonly schemaName: string) {
+    super(`No schema named ${schemaName}`);
+    this.name = 'SchemaNotFoundError';
+  }
+}
 
 export type ErrandFormDataContractErrorCode = 'invalid-json' | 'missing-schema-id' | 'missing-schema-name';
 
@@ -122,6 +147,9 @@ export async function loadFormSchema(
       credentials: 'include',
       headers: localeHeaders(locale),
     });
+    if (response.status === 404) {
+      throw new SchemaNotFoundError(schemaName);
+    }
     if (!response.ok) {
       throw new Error(`Failed to load schema: ${response.statusText}`);
     }
@@ -147,6 +175,7 @@ export async function loadFormSchema(
 
     return result;
   } catch (error) {
+    if (error instanceof SchemaNotFoundError) throw error;
     console.error(`Failed to load schema: ${schemaName}`, error);
     if (error instanceof ErrandFormDataContractError) throw error;
     const errorMessage = t ? t('schema_load_error', { schemaName }) : `Could not load schema: ${schemaName}`;
@@ -271,7 +300,7 @@ export async function validateErrandFormData(
   // wrong language in the error summary.
   locale = i18nConfig.defaultLocale,
   // Injectable so the fail-closed rule can be covered even while the real list is empty.
-  requiredSchemaNames: readonly string[] = ERRAND_FORM_SCHEMA_NAMES
+  requiredSchemaNames: readonly string[] = []
 ): Promise<string[]> {
   const errors: string[] = [];
   const entries = formDataEntries ?? [];
@@ -280,6 +309,12 @@ export async function validateErrandFormData(
   );
 
   for (const schemaName of missingSchemaNames) {
+    // An errand type whose flow has no schema has nothing to fill in, so it cannot be missing it.
+    try {
+      await loadFormSchema(schemaName, t, locale);
+    } catch (error) {
+      if (error instanceof SchemaNotFoundError) continue;
+    }
     errors.push(requiredFormDataError(schemaName, t));
   }
 

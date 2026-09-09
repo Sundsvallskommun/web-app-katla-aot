@@ -6,6 +6,12 @@ import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+/** The errand type chooses the form, so the test errand needs a categorization to render one. */
+const TEST_LABELS = [
+  { classification: 'CATEGORY', resourceName: 'ALCOHOL' },
+  { classification: 'TYPE', resourceName: 'TEST_SCHEMA' },
+];
+
 const { loadFormSchemaForEntryMock, translateMock } = vi.hoisted(() => ({
   loadFormSchemaForEntryMock: vi.fn(),
   translateMock: vi.fn((key: string) => key),
@@ -15,9 +21,6 @@ vi.mock('@components/json/utils/schema-utils', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@components/json/utils/schema-utils')>();
   return {
     ...actual,
-    // The real list is empty until AoT's schemas exist, so the test injects a name of its own
-    // to still render the schema form.
-    ERRAND_FORM_SCHEMA_NAMES: ['aot-test-schema'],
     loadFormSchemaForEntry: loadFormSchemaForEntryMock,
   };
 });
@@ -48,9 +51,10 @@ function TestForm() {
   const methods = useForm<ErrandFormDTO>({
     defaultValues: {
       status: 'DRAFT',
+      labels: TEST_LABELS,
       errandFormData: [
         {
-          schemaName: 'aot-test-schema',
+          schemaName: 'aot_test_schema',
           schemaId: 'schema-v1',
           data: '{"location":""}',
         },
@@ -88,6 +92,6 @@ describe('ErrandDetails schema stability', () => {
     expect(input).toHaveValue('ABC');
     expect(input).toHaveFocus();
     expect(loadFormSchemaForEntryMock).toHaveBeenCalledTimes(1);
-    expect(loadFormSchemaForEntryMock).toHaveBeenCalledWith('aot-test-schema', 'schema-v1', translateMock, 'sv');
+    expect(loadFormSchemaForEntryMock).toHaveBeenCalledWith('aot_test_schema', 'schema-v1', translateMock, 'sv');
   });
 });

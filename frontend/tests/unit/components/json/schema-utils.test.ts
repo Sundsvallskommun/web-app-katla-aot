@@ -9,11 +9,12 @@ import {
   jsonParametersToErrandFormData,
   loadFormSchema,
   loadFormSchemaById,
+  SchemaNotFoundError,
   upsertErrandFormDataItem,
   validateErrandFormData,
 } from '../../../../src/components/json/utils/schema-utils';
 
-const REQUIRED_SCHEMA_NAME = 'aot-test-schema';
+const REQUIRED_SCHEMA_NAME = 'aot_test_schema';
 // Pins the fail-closed list so these cases test the entries they are given rather than whichever
 // schemas ERRAND_FORM_SCHEMA_NAMES happens to require.
 const REQUIRED_SCHEMA_NAMES = [REQUIRED_SCHEMA_NAME];
@@ -24,6 +25,8 @@ afterEach(() => {
 });
 
 describe('validateErrandFormData', () => {
+  // A required name is looked up first, because a type whose flow has no schema has nothing to
+  // fill in. When that lookup cannot answer, the entry still counts as missing.
   it.each([undefined, []])('fails closed when required form data is missing', async (formDataEntries) => {
     const fetchMock = vi.fn<typeof fetch>();
     vi.stubGlobal('fetch', fetchMock);
@@ -31,7 +34,7 @@ describe('validateErrandFormData', () => {
     await expect(
       validateErrandFormData(formDataEntries, undefined, undefined, REQUIRED_SCHEMA_NAMES)
     ).resolves.toHaveLength(1);
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/schemas/latest/'), expect.anything());
   });
 
   it('fails closed when the required entry has no serialized data', async () => {
@@ -399,6 +402,39 @@ describe('schema loading per locale', () => {
     expect(svSchema.schemaId).toBe('pinned-v1');
     expect(enSchema.schemaId).toBe('pinned-v1');
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('an errand type whose flow has no schema', () => {
+  const notFound = () =>
+    vi.fn<typeof fetch>().mockResolvedValue(new Response('', { status: 404, statusText: 'Not Found' }));
+
+  it('reports a missing schema as not found rather than as a load failure', async () => {
+    vi.stubGlobal('fetch', notFound());
+
+    await expect(loadFormSchema('aot_folkol_sales_notification')).rejects.toBeInstanceOf(SchemaNotFoundError);
+  });
+
+  it('does not demand form data for a type that has no schema to fill in', async () => {
+    vi.stubGlobal('fetch', notFound());
+
+    await expect(validateErrandFormData([], undefined, undefined, ['aot_folkol_sales_notification'])).resolves.toEqual(
+      []
+    );
+  });
+
+  it('still fails closed when the schema exists but its data is missing', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<typeof fetch>().mockResolvedValue(
+        new Response(JSON.stringify({ schema: { type: 'object' }, schemaId: 'exists-v1' }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      )
+    );
+
+    await expect(validateErrandFormData([], undefined, undefined, ['aot_exists'])).resolves.toHaveLength(1);
   });
 });
 

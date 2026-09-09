@@ -5,6 +5,12 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+/** The errand type chooses the schema: this categorization derives `aot_test_schema`. */
+const TEST_LABELS = [
+  { classification: 'CATEGORY', resourceName: 'ALCOHOL' },
+  { classification: 'TYPE', resourceName: 'TEST_SCHEMA' },
+];
+
 const { useFormSchemaMock } = vi.hoisted(() => ({
   useFormSchemaMock: vi.fn(() => ({
     schema: { type: 'object' },
@@ -17,9 +23,6 @@ const { useFormSchemaMock } = vi.hoisted(() => ({
 
 vi.mock('@components/json/utils/schema-utils', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@components/json/utils/schema-utils')>()),
-  // The real list is empty until AoT's schemas exist, so the test injects a name of its own to
-  // still run form values through schema values.
-  ERRAND_FORM_SCHEMA_NAMES: ['aot-test-schema'],
 }));
 
 vi.mock('@components/json/hooks/use-form-schema', () => ({
@@ -58,7 +61,7 @@ function FormState() {
 
 function TestForm({ errandFormData }: { errandFormData: ErrandFormDataItem[] }) {
   const methods = useForm<ErrandFormDTO>({
-    defaultValues: { status: 'DRAFT', errandFormData },
+    defaultValues: { status: 'DRAFT', errandFormData, labels: TEST_LABELS },
   });
 
   return (
@@ -83,7 +86,7 @@ describe('ErrandDetails', () => {
       data: '{"untouched":true}',
     };
     const targetEntry: ErrandFormDataItem = {
-      schemaName: 'aot-test-schema',
+      schemaName: 'aot_test_schema',
       schemaId: 'schema-v1',
       data: '{"location":"old"}',
     };
@@ -91,7 +94,7 @@ describe('ErrandDetails', () => {
     render(<TestForm errandFormData={[otherEntry, targetEntry]} />);
 
     expect(screen.getByTestId('rendered-json')).toHaveTextContent('{"location":"old"}');
-    expect(useFormSchemaMock).toHaveBeenCalledWith('aot-test-schema', {
+    expect(useFormSchemaMock).toHaveBeenCalledWith('aot_test_schema', {
       kind: 'persisted',
       schemaId: targetEntry.schemaId,
     });
@@ -110,7 +113,7 @@ describe('ErrandDetails', () => {
       <TestForm
         errandFormData={[
           {
-            schemaName: 'aot-test-schema',
+            schemaName: 'aot_test_schema',
             schemaId: 'schema-v1',
             data: '{invalid-json',
           },
@@ -118,7 +121,7 @@ describe('ErrandDetails', () => {
       />
     );
 
-    expect(screen.getByRole('alert')).toHaveTextContent('Ogiltig JSON för aot-test-schema');
+    expect(screen.getByRole('alert')).toHaveTextContent('Ogiltig JSON för aot_test_schema');
     expect(screen.queryByTestId('rendered-json')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Update schema form' })).not.toBeInTheDocument();
     expect(screen.getByTestId('form-state')).toHaveTextContent('{invalid-json');

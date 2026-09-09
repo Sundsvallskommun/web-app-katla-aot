@@ -7,6 +7,12 @@ import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+/** The errand type chooses the form, so the test errand needs a categorization to render one. */
+const TEST_LABELS = [
+  { classification: 'CATEGORY', resourceName: 'ALCOHOL' },
+  { classification: 'TYPE', resourceName: 'TEST_SCHEMA' },
+];
+
 const { loadFormSchemaForEntryMock, loadFormSchemaMock, translateMock } = vi.hoisted(() => ({
   loadFormSchemaForEntryMock: vi.fn(),
   loadFormSchemaMock: vi.fn(),
@@ -17,9 +23,6 @@ vi.mock('@components/json/utils/schema-utils', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@components/json/utils/schema-utils')>();
   return {
     ...actual,
-    // The real list is empty until AoT's schemas exist, so the test injects a name of its own
-    // to still render the schema form.
-    ERRAND_FORM_SCHEMA_NAMES: ['aot-test-schema'],
     loadFormSchema: loadFormSchemaMock,
     loadFormSchemaForEntry: loadFormSchemaForEntryMock,
   };
@@ -58,6 +61,7 @@ function TestForm() {
   const methods = useForm<ErrandFormDTO>({
     defaultValues: {
       status: 'DRAFT',
+      labels: TEST_LABELS,
       errandFormData: [],
     },
   });
@@ -90,7 +94,7 @@ describe('ErrandDetails new entry schema stability', () => {
       expect(screen.getByTestId('form-state')).toHaveTextContent(
         JSON.stringify([
           {
-            schemaName: 'aot-test-schema',
+            schemaName: 'aot_test_schema',
             schemaId: 'schema-v1',
             data: '{"locationType":"FACILITY"}',
           },
