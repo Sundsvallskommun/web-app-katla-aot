@@ -4,8 +4,16 @@ Status: Underlag för beslut
 
 Datum: 2026-09-08
 
-Källor: `docs/jsonschemas/jsonschema-aot.json` (schemaexport) och
-`docs/jsonschemas/jsonschema-rules-aot.json` (regelexport). Båda kommer från OpenE-flöde **2181**
+Källor: OpenE-exporterna i `docs/jsonschemas/` — `aot_ny_for_draken-2181.*` för alkohol och
+`aot_tobak_ny_for_draken-2153.*` för tobak, var och en med `.schema.json`, `.rules.json` och
+`.uischema.json`. Kartan gren mot ärendetyp finns i `aot-branch-label-mapping.md`, öppna frågor i
+`OUTSTANDING_QUESTIONS.md`.
+
+**Exporten deklarerar draft-07.** Hela plattformen är 2020-12: jsonschema-tjänsten dokumenterar det,
+`docs/json-schema-localization.md` slår fast det, och `form-schema-validator.ts` använder `Ajv2020`,
+som kastar `no schema with key or ref "http://json-schema.org/draft-07/schema#"` på en draft-07-rot.
+Att sätta om `$schema` är därför ett obligatoriskt inläsningssteg, inte en detalj — generatorn gör
+det, så en ny export inte tyst återinför felet. Båda kommer från OpenE-flöde **2181**
 "AoT ny för draken" v4 och är utdrag ur XML-exporter. De 169 frågenycklarna matchar varandra
 exakt, i båda riktningarna.
 
@@ -42,17 +50,17 @@ till jsonschema-tjänsten som det är. `name` är `aot_opene_test`, vilket redan
 
 ### Frågetyper
 
-| OpenE-frågetyp | Antal | JSON Schema-form i exporten |
-| --- | --- | --- |
-| FileUpload | 39 | `array` av `string`/`format: data-url` |
-| TextField | 32 | `object` med ett delfält per textruta |
-| RadioButton | 30 | `string` med `oneOf: [{const, title}]` |
-| TextArea | 19 | `string` |
-| DynamicTable | 17 | `array` av `object` (en egenskap per kolumn) |
-| Checkbox | 17 | `array`, `uniqueItems`, `items.oneOf` |
-| DateTime | 12 | `object` med `startDate`/`endDate` eller `startTime`/`endTime` |
-| ContactDetail | 2 | `object` (personnummer, namn, adress, e-post) |
-| CompanyDetails | 1 | `object`, `readOnly`, med `x-oe-source` (SSBT/Bolagsverket) |
+| OpenE-frågetyp | Antal | JSON Schema-form i exporten                                    |
+| -------------- | ----- | -------------------------------------------------------------- |
+| FileUpload     | 39    | `array` av `string`/`format: data-url`                         |
+| TextField      | 32    | `object` med ett delfält per textruta                          |
+| RadioButton    | 30    | `string` med `oneOf: [{const, title}]`                         |
+| TextArea       | 19    | `string`                                                       |
+| DynamicTable   | 17    | `array` av `object` (en egenskap per kolumn)                   |
+| Checkbox       | 17    | `array`, `uniqueItems`, `items.oneOf`                          |
+| DateTime       | 12    | `object` med `startDate`/`endDate` eller `startTime`/`endTime` |
+| ContactDetail  | 2     | `object` (personnummer, namn, adress, e-post)                  |
+| CompanyDetails | 1     | `object`, `readOnly`, med `x-oe-source` (SSBT/Bolagsverket)    |
 
 ### Nyckelformat och alternativ
 
@@ -63,7 +71,10 @@ för kolumner i DynamicTable. Slugen är trunkerad till 40 tecken, ibland mitt i
 Alternativ anges som `oneOf` med `const` satt till OpenE:s alternativ-ID:
 
 ```json
-{ "const": "49648", "title": "Ansöka om stadigvarande tillstånd för servering av alkoholdrycker" }
+{
+  "const": "49648",
+  "title": "Ansöka om stadigvarande tillstånd för servering av alkoholdrycker"
+}
 ```
 
 ### Annotationer
@@ -82,12 +93,12 @@ tidsfrågor och `startDateRestrictionType: "RESTRICT_FUTURE_DATES"` på en.
 151 frågor i `ansokan_6116`, men bara **91 unika slugar**. OpenE saknar återanvändning, så samma
 frågeblock är inklistrat en gång per gren:
 
-| Antal kopior | Fråga/block |
-| --- | --- |
-| 5× | `sittplatser_i_lokalen`, `maximalt_antal_personer_som_kommer_att_v` |
-| 4× | `vilka_alkoholdrycker_ska_serveras`, `meny` |
-| 3× | hela finansieringsblocket (9 frågor), hela kunskapsprovsblocket (5 frågor) |
-| 2× | serveringsställe, verksamhetens inriktning, matutbud, planritning, brandskydd m.fl. |
+| Antal kopior | Fråga/block                                                                         |
+| ------------ | ----------------------------------------------------------------------------------- |
+| 5×           | `sittplatser_i_lokalen`, `maximalt_antal_personer_som_kommer_att_v`                 |
+| 4×           | `vilka_alkoholdrycker_ska_serveras`, `meny`                                         |
+| 3×           | hela finansieringsblocket (9 frågor), hela kunskapsprovsblocket (5 frågor)          |
+| 2×           | serveringsställe, verksamhetens inriktning, matutbud, planritning, brandskydd m.fl. |
 
 60 av 151 frågor är kopior. I JSON Schema har vi `$defs`/`$ref` och behöver dem inte.
 
@@ -105,13 +116,13 @@ som den gör. Be om dem i nästa export och lägg dem som `ui:description` på s
 
 90 regler över samma 169 frågor.
 
-| Evaluator | Antal | Betydelse |
-| --- | --- | --- |
-| `QueryStateEvaluationProviderModule` | 61 | Om källfrågans svar finns i `requiredAlternativeIDs` (`selectionMode: ANY`) sätts `targetKeys` till `VISIBLE` (36) eller `VISIBLE_REQUIRED` (25). |
-| `WeightQueryStateEvaluationProviderModule` | 12 | *Källfrågan själv* blir synlig när en namngiven vikt har ett visst värde. |
-| `SetWeightEvaluationProviderModule` | 9 | Källfrågans valda alternativ tilldelar ett tal till en namngiven vikt. Inga targets. |
-| `WeightCalculatedQueryStateEvaluationProviderModule` | 7 | *Källfrågan själv* blir synlig när `weightExpression` är sann. |
-| `UserAgeQueryStateEvaluationProviderModule` | 1 | Åldersgrind. |
+| Evaluator                                            | Antal | Betydelse                                                                                                                                         |
+| ---------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `QueryStateEvaluationProviderModule`                 | 61    | Om källfrågans svar finns i `requiredAlternativeIDs` (`selectionMode: ANY`) sätts `targetKeys` till `VISIBLE` (36) eller `VISIBLE_REQUIRED` (25). |
+| `WeightQueryStateEvaluationProviderModule`           | 12    | _Källfrågan själv_ blir synlig när en namngiven vikt har ett visst värde.                                                                         |
+| `SetWeightEvaluationProviderModule`                  | 9     | Källfrågans valda alternativ tilldelar ett tal till en namngiven vikt. Inga targets.                                                              |
+| `WeightCalculatedQueryStateEvaluationProviderModule` | 7     | _Källfrågan själv_ blir synlig när `weightExpression` är sann.                                                                                    |
+| `UserAgeQueryStateEvaluationProviderModule`          | 1     | Åldersgrind.                                                                                                                                      |
 
 `doNotResetQueryState` är `false` i samtliga 61 regler som har fältet — **ett svar nollställs alltså
 alltid när frågan döljs igen**. `freeTextAlternative` är `false` överallt, och
@@ -121,18 +132,19 @@ alltid när frågan döljs igen**. `freeTextAlternative` är `false` överallt, 
 
 Nio viktbuckets, var och en matad av **exakt en** fråga:
 
-| Vikt | Matas av |
-| --- | --- |
-| `uppgifter` | `hamtning_av_foretagsuppgifter_81701` |
-| `företag` | `foretagsform_81706` |
-| `ansökan` | `vad_vill_du_ansoka_om_eller_anmala_81716` |
+| Vikt                                          | Matas av                                              |
+| --------------------------------------------- | ----------------------------------------------------- |
+| `uppgifter`                                   | `hamtning_av_foretagsuppgifter_81701`                 |
+| `företag`                                     | `foretagsform_81706`                                  |
+| `ansökan`                                     | `vad_vill_du_ansoka_om_eller_anmala_81716`            |
 | `alkohollag1` / `alkohollag2` / `alkohollag3` | `kunskap_om_alkohollagen_81718` / `_81813` / `_81839` |
-| `typeOfServing` | `ska_servering_av_alkohol_ske_till_allman_81729` |
-| `kostnadsfri` | `ar_tillstallningen_i_ovrigt_kostnadsfri_81867` |
-| `bostad` | `var_kommer_tillstallningen_att_aga_rum_81868` |
+| `typeOfServing`                               | `ska_servering_av_alkohol_ske_till_allman_81729`      |
+| `kostnadsfri`                                 | `ar_tillstallningen_i_ovrigt_kostnadsfri_81867`       |
+| `bostad`                                      | `var_kommer_tillstallningen_att_aga_rum_81868`        |
 
 Eftersom ingen bucket matas av mer än en fråga är vikten bara en indirektion, och varje viktregel
-går att skriva om till ett villkor över svaret direkt. `$weight{typeOfServing} = 1 ||
+går att skriva om till ett villkor över svaret direkt. Det gäller **detta** flöde; se varningen
+nedan. `$weight{typeOfServing} = 1 ||
 $weight{typeOfServing} = 3` blir `ska_servering_av_alkohol_ske_till_allmanheten ∈ {49660, 49662}`.
 Vikten `företag` sätts men läses aldrig och kan strykas helt.
 
@@ -143,22 +155,29 @@ privat bostad. Det är en vanlig AND över två frågor.
 Uttryckssyntaxen är slarvig och en parser måste tåla det: `= 1` betyder likhet, `||` betyder eller,
 och ett av de sex `typeOfServing`-uttrycken saknar mellanslag (`1 ||$weight{...}`).
 
+**Varning: en vikt är inte alltid en likhet.** Matas bucketen av en _kryssrutefråga_ med
+`useOnlyHighestWeight: false` blir vikten **summan** av de valda alternativens vikter, alltså en
+bitmask. Så fungerar tobaksflödets `caseType`: alternativen väger 1, 2 och 4, och
+`$weight{caseType} != 4 && $weight{caseType} > 0` betyder "något är valt och det är inte enbart
+nikotinfria produkter". Att platta ut ett sådant uttryck är att räkna upp delmängder, inte likheter.
+Kontrollera källfrågans typ innan en viktregel skrivs om.
+
 ### Regelexporten har tappat tröskelvärdena
 
 De 12 `WeightQueryState`-reglerna bär `weightType` men **inget villkorsvärde** — `weightExpression`
 är `null` och inget annat fält anger vilket värde som krävs. Villkoret finns bara i regelns namn:
 
-| Fråga | Namnet säger |
-| --- | --- |
-| `personnummer_81719` | `visa om alkohollag1 = 1` |
-| `organisationsnummer_81720` | `visa om alkohollag1 = 2` |
-| `vill_du_anmala_personer_i_foretaget_till_81721` | `visa om alkohollag = 3` |
-| `personnummer_81814` / `_81840` | `alkohollag2 = 1` / `alkohollag3 = 1` |
-| `organisationsnummer_81815` / `_81841` | `alkohollag2 = 2` / `alkohollag3 = 2` |
-| `vill_du_anmala…_81816` / `_81842` | `alkohollag2 = 3` / `alkohollag3 = 3` |
-| `ar_fakturaadressen_samma_som_foretagets_81707` | `uppgifter = 1\|\|2` |
-| `fakturareferens_81709` | `uppgifter = 1\|\|2` |
-| `har_du_kassaregister_81883` | `ansökan = 1-7` |
+| Fråga                                            | Namnet säger                          |
+| ------------------------------------------------ | ------------------------------------- |
+| `personnummer_81719`                             | `visa om alkohollag1 = 1`             |
+| `organisationsnummer_81720`                      | `visa om alkohollag1 = 2`             |
+| `vill_du_anmala_personer_i_foretaget_till_81721` | `visa om alkohollag = 3`              |
+| `personnummer_81814` / `_81840`                  | `alkohollag2 = 1` / `alkohollag3 = 1` |
+| `organisationsnummer_81815` / `_81841`           | `alkohollag2 = 2` / `alkohollag3 = 2` |
+| `vill_du_anmala…_81816` / `_81842`               | `alkohollag2 = 3` / `alkohollag3 = 3` |
+| `ar_fakturaadressen_samma_som_foretagets_81707`  | `uppgifter = 1\|\|2`                  |
+| `fakturareferens_81709`                          | `uppgifter = 1\|\|2`                  |
+| `har_du_kassaregister_81883`                     | `ansökan = 1-7`                       |
 
 Att läsa dem som "synlig så snart vikten är satt" fungerar för `uppgifter` och `ansökan`, där namnet
 räknar upp alla möjliga värden, men inte för `alkohollagN`: då skulle personnummer,
@@ -173,10 +192,15 @@ svensk namnsträng.
 ### Åldersgrinden finns inte i schemat
 
 ```json
-{ "type": "UserAgeQueryStateEvaluationProviderModule", "name": "visa om under 20",
-  "sourceQueryID": "81697", "sourceKey": null,
+{
+  "type": "UserAgeQueryStateEvaluationProviderModule",
+  "name": "visa om under 20",
+  "sourceQueryID": "81697",
+  "sourceKey": null,
   "sourceTitle": "Du måste vara 20 år eller äldre för att kunna ansöka",
-  "targetQueryIDs": [], "targetKeys": [] }
+  "targetQueryIDs": [],
+  "targetKeys": []
+}
 ```
 
 Query 81697 är en av de 19 som saknas, så regeln pekar på ingenting. Kravet — sökanden måste vara
@@ -208,16 +232,16 @@ alternativ.
 
 Antal frågor som kan bli synliga per gren:
 
-| Gren | Ansökan | Kontaktuppgifter | Totalt |
-| --- | --- | --- | --- |
-| Privatperson | 17 | 2 | **19** |
-| Stadigvarande servering (49648) | 45 | 17 | **62** |
-| Tillfälligt, allmänheten (49649) | 16 | 17 | **33** |
-| Tillfälligt, slutet sällskap (49650) | 19 | 17 | **36** |
-| Folköl klass 2 (49651) | 15 | 17 | **32** |
-| Gårdsförsäljning (49652) | 16 | 17 | **33** |
-| Catering till slutna sällskap (49653) | 20 | 17 | **37** |
-| Provsmakning (49654) | 26 | 17 | **43** |
+| Gren                                  | Ansökan | Kontaktuppgifter | Totalt |
+| ------------------------------------- | ------- | ---------------- | ------ |
+| Privatperson                          | 17      | 2                | **19** |
+| Stadigvarande servering (49648)       | 45      | 17               | **62** |
+| Tillfälligt, allmänheten (49649)      | 16      | 17               | **33** |
+| Tillfälligt, slutet sällskap (49650)  | 19      | 17               | **36** |
+| Folköl klass 2 (49651)                | 15      | 17               | **32** |
+| Gårdsförsäljning (49652)              | 16      | 17               | **33** |
+| Catering till slutna sällskap (49653) | 20      | 17               | **37** |
+| Provsmakning (49654)                  | 26      | 17               | **43** |
 
 De två tillfälliga tillstånden delar samma block; 49650 lägger till tre frågor om gäster och
 gästlista. Tjugo frågor är gemensamma för alla sju företagsgrenar: hela företags- och
@@ -235,12 +259,12 @@ beslutas om från grunden i stället för att ärvas.
 const: V } } }, then: { required?, properties? } }]` — AND över **likhet mot ett enda värde** på
 **syskonfält i samma objekt**.
 
-| Behov i reglerna | Omfattning | Stöd idag |
-| --- | --- | --- |
-| ELLER över flera alternativ | 10 av 61 QueryState-regler | Nej — bara `const` |
-| Checkbox som källa (`finansiering` ×3, `verksamhetens_inriktning` ×2) | 5 källfrågor | Nej — kräver `contains` |
-| Villkor över stegets gräns | 16 kanter, alla från `foretrader_du_ett_foretag_81698` | Nej — bara syskon |
-| Flera regler mot samma målfält | **0 förekomster** | Skulle brista tyst, men utlöses inte av det här flödet |
+| Behov i reglerna                                                      | Omfattning                                             | Stöd idag                                              |
+| --------------------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------ |
+| ELLER över flera alternativ                                           | 10 av 61 QueryState-regler                             | Nej — bara `const`                                     |
+| Checkbox som källa (`finansiering` ×3, `verksamhetens_inriktning` ×2) | 5 källfrågor                                           | Nej — kräver `contains`                                |
+| Villkor över stegets gräns                                            | 16 kanter, alla från `foretrader_du_ett_foretag_81698` | Nej — bara syskon                                      |
+| Flera regler mot samma målfält                                        | **0 förekomster**                                      | Skulle brista tyst, men utlöses inte av det här flödet |
 
 `isConditionMet` returnerar dessutom `false` när `if` saknar `properties`, så ett `anyOf`- eller
 `contains`-villkor döljer fältet permanent i stället för att fela synligt. Det är det som gör de
@@ -254,12 +278,12 @@ i separata scheman försvinner den raden helt.
 Widgetregistret i `schema-form.component.tsx` täcker text, texteditor, select, combobox, radio,
 date och time. Tre saker saknas, och de täcker tillsammans **73 av 169 frågor**:
 
-| Lucka | Frågor | Läge |
-| --- | --- | --- |
-| Filuppladdning (`format: data-url`) | 39 | Behövs inte — uppladdningarna flyttas till bilagor, se 4.5. Renderas tills dess av RJSF:s egen `FileWidget` (`ui:widget: "files"`; `file` är ett string-alias och kastar på arrayer) |
-| Array av objekt (DynamicTable) | 17 | Draken har `array-object-field-template.componant.tsx`; Katla har ingen `ArrayFieldTemplate` alls |
-| Flervalskryssrutor | 17 | ✔ Åtgärdat — `CheckboxGroupWidget` portad till Katla, se avsnitt 5 |
-| Rubrik på nästlade objekt | 44 | ✔ Åtgärdat — `ui:options.showObjectFieldset` portad från Draken; utan den tappade varje TextField- och DateTime-fråga sin frågetext |
+| Lucka                               | Frågor | Läge                                                                                                                                                                                 |
+| ----------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Filuppladdning (`format: data-url`) | 39     | Behövs inte — uppladdningarna flyttas till bilagor, se 4.5. Renderas tills dess av RJSF:s egen `FileWidget` (`ui:widget: "files"`; `file` är ett string-alias och kastar på arrayer) |
+| Array av objekt (DynamicTable)      | 17     | Draken har `array-object-field-template.componant.tsx`; Katla har ingen `ArrayFieldTemplate` alls                                                                                    |
+| Flervalskryssrutor                  | 17     | ✔ Åtgärdat — `CheckboxGroupWidget` portad till Katla, se avsnitt 5                                                                                                                   |
+| Rubrik på nästlade objekt           | 44     | ✔ Åtgärdat — `ui:options.showObjectFieldset` portad från Draken; utan den tappade varje TextField- och DateTime-fråga sin frågetext                                                  |
 
 Utan dem faller fälten tillbaka på RJSF:s ostilade standardmallar, som varken följer `@sk-web-gui`
 eller granskningen i `docs/wcag-conformance-review.md`. Det är den enskilt största posten i
@@ -290,18 +314,18 @@ Beslutat. Grentabellen i avsnitt 2 är argumentet: ingen sökande möter mer än
 kategoriseringsetiketter som används idag ska ersättas med rätt värden senare, men kopplingen
 schema ↔ ärendetyp är densamma oavsett vad etiketterna heter. Ett schema per gren:
 
-| Schema | Fält |
-| --- | --- |
-| `aot_stadigvarande_servering` | 62 |
-| `aot_provsmakning` | 43 |
-| `aot_catering` | 37 |
-| `aot_tillfalligt_slutet_sallskap` | 36 |
-| `aot_tillfalligt_allmanheten` | 33 |
-| `aot_gardsforsaljning` | 33 |
-| `aot_folkol` | 32 |
-| `aot_privatperson` | 19 |
+Schemanamnen följer etikettträdets lövnamn. Trädet har nu tre nivåer
+(`CATEGORY_ROOT → CATEGORY → TYPE → SUBTYPE`) med 17 valbara löv, och **alla** grenar i båda
+exporterna har ett löv. `aot-branch-label-mapping.md` håller kartan gren för gren; åtta scheman
+täcker exporterna. Ett lövnamn blir
+ett schemanamn, och ett schemanamn är permanent så snart ett ärende sparats mot det.
 
-med `$defs` för blocken som återkommer — finansiering, kunskapsprov, serveringsställe, sittplatser.
+Uppdelningen omfattar två exporter, inte en. Flöde **2181** är alkohol med åtta grenar. Flöde
+**2153** är tobak, och är inte tre grenar utan **ett formulär med en flervalsomfattning** — dess
+`vad_vill_du_gora` är en kryssrutefråga och alla tre alternativen får samma följdfrågor. Fem
+ärendetyper i trädet har ingen export alls; se kartan.
+
+Blocken som återkommer — finansiering, kunskapsprov, serveringsställe, sittplatser — blir `$defs`.
 Skälen:
 
 - **Grenvalet försvinner.** Katla har redan Kategori/Ärendetyp på ärendet (se `TODO.md`,
@@ -407,41 +431,61 @@ JSON-schema.
 
 ### Vokabulär som redan finns i Draken
 
-| Konstruktion | Används till |
-| --- | --- |
-| `ui:sections` `{ id, title, icon, defaultOpen, fields }` | Dragspelen. Ersätter OpenE:s steg; `id` måste vara stabilt eftersom lokaliseringen binder mot det. Ikonerna är Lucides kebab-case-namn (`menu`, `file-text`, `users`, `info`, `pen`). |
-| `ui:order` | Fältordning, på rot- och objektnivå |
-| `ui:rows` `{ fields, gap }` | Vågrät gruppering, t.ex. `gap-24` |
-| `ui:widget` | Widgetval per fält |
-| `ui:options.className` | Bredd/höjd, t.ex. `w-full max-w-[48rem]` |
-| `ui:options.multiple` | Flerval på `checkboxes`/`ComboboxWidget` |
-| `ui:options.showObjectFieldset` | Fältgrupp med `fieldset`/`legend` för nästlade objekt |
-| `ui:options.addable` / `orderable` / `itemTitle` / `addButtonLabel` | Arrayer av objekt |
-| `items: { ui:order, ui:rows, … }` | Ui-schema för raderna i en array |
-| `ui:placeholder`, `ui:readonly` | |
-| `$external:<namn>` i `ui:sections.fields` | Platshållare för något som renderas i sektionen men inte finns i schemat — Draken använder `$external:errandClassification` |
+| Konstruktion                                                        | Används till                                                                                                                                                                          |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ui:sections` `{ id, title, icon, defaultOpen, fields }`            | Dragspelen. Ersätter OpenE:s steg; `id` måste vara stabilt eftersom lokaliseringen binder mot det. Ikonerna är Lucides kebab-case-namn (`menu`, `file-text`, `users`, `info`, `pen`). |
+| `ui:order`                                                          | Fältordning, på rot- och objektnivå                                                                                                                                                   |
+| `ui:rows` `{ fields, gap }`                                         | Vågrät gruppering, t.ex. `gap-24`                                                                                                                                                     |
+| `ui:widget`                                                         | Widgetval per fält                                                                                                                                                                    |
+| `ui:options.className`                                              | Bredd/höjd, t.ex. `w-full max-w-[48rem]`                                                                                                                                              |
+| `ui:options.multiple`                                               | Flerval på `checkboxes`/`ComboboxWidget`                                                                                                                                              |
+| `ui:options.showObjectFieldset`                                     | Fältgrupp med `fieldset`/`legend` för nästlade objekt                                                                                                                                 |
+| `ui:options.addable` / `orderable` / `itemTitle` / `addButtonLabel` | Arrayer av objekt                                                                                                                                                                     |
+| `items: { ui:order, ui:rows, … }`                                   | Ui-schema för raderna i en array                                                                                                                                                      |
+| `ui:placeholder`, `ui:readonly`                                     |                                                                                                                                                                                       |
+| `$external:<namn>` i `ui:sections.fields`                           | Platshållare för något som renderas i sektionen men inte finns i schemat — Draken använder `$external:errandClassification`                                                           |
 
 `$external:` är precis vad AoT behöver när ärendetypen och ärendeägaren flyttar ut ur formuläret
 (4.1 och 4.2): sektionen kan fortfarande visa dem, utan att de blir schemafält.
 
 ### Widgetval per OpenE-frågetyp
 
-| queryTypeID | ui:widget | Läge |
-| --- | --- | --- |
-| RadioButtonQuery | `RadiobuttonWidget` | Finns i båda |
-| CheckboxQuery (array) | `checkboxes` → `CheckboxGroupWidget` | Finns i båda |
-| TextFieldQuery | `TextWidget` | Finns |
-| TextAreaQuery | `TexteditorWidget` | Finns |
-| DateTimeQuery (datum) | `DateWidget` | Finns |
-| DateTimeQuery (tid) | `TimeWidget` | Finns i båda |
-| FileUploadQuery | `file` | **Måste byggas i båda apparna** |
-| DynamicTableQuery | array-mall med `itemTitle`/`addButtonLabel` | Saknas i Katla, finns i Draken |
-| ContactDetail / CompanyDetails | — | Utgår, se 4.2 |
+| queryTypeID                    | ui:widget                                   | Läge                            |
+| ------------------------------ | ------------------------------------------- | ------------------------------- |
+| RadioButtonQuery               | `RadiobuttonWidget`                         | Finns i båda                    |
+| CheckboxQuery (array)          | `checkboxes` → `CheckboxGroupWidget`        | Finns i båda                    |
+| TextFieldQuery                 | `TextWidget`                                | Finns                           |
+| TextAreaQuery                  | `TexteditorWidget`                          | Finns                           |
+| DateTimeQuery (datum)          | `DateWidget`                                | Finns                           |
+| DateTimeQuery (tid)            | `TimeWidget`                                | Finns i båda                    |
+| FileUploadQuery                | `file`                                      | **Måste byggas i båda apparna** |
+| DynamicTableQuery              | array-mall med `itemTitle`/`addButtonLabel` | Saknas i Katla, finns i Draken  |
+| ContactDetail / CompanyDetails | —                                           | Utgår, se 4.2                   |
 
 Varning från Drakens eget registerkommentar: `TextareaWidget` renderar **inte** en `<textarea>`
 utan Quill-editorn och lagrar HTML, och den ockuperar RJSF:s reserverade namn `textarea`. Det finns
 ingen enkel flerradig textwidget i någon av apparna. AoT har 19 TextArea-frågor; avgör per fält om
 HTML är önskvärt (t.ex. `meny`, `verksamhetsbeskrivning`) eller om en ren `TextWidget` räcker.
+
+### OpenE-exporten har ett eget ui-schema
+
+`aot_tobak_ny_for_draken-2153.uischema.json` är OpenE:s eget ui-schema. Det går inte att använda som
+det är — det saknar `ui:sections` helt, och dess `textarea`-alias landar i Quill-editorn i båda
+apparna, inte i en vanlig flerradig ruta. Men en sak i det finns ingen annanstans:
+
+`ui:options.oeDescriptionHtml` bär **länkarna** som JSON-schemats `description` har plattat bort.
+Schemat renderar `Läs mer på sidan Så här hämtas dina företagsuppgifter.` med `href` borta, medan
+ui-schemat har `<a href="http://bolagsverket.se/...">`. Tretton av 42 fält i tobaksflödet har
+riktig HTML där. Katlas `sanitizeFieldDescription` stöder redan länkar (med uppläsning av "öppnas i
+ny flik") och `ul`/`ol`, så det är precis vad den maskineriet är byggt för.
+
+Generatorn läser därför OpenE:s ui-schema och tar `ui:description` därifrån, men slänger skräpet: en
+del poster är CKEditor-rester av formen `<p> </p><style>.cke{visibility:hidden;}</style>`. I
+alkoholflödet ger det 52 fält med riktig HTML och noll skräpposter.
+
+Notera också att tobaksexportens schema är ett **naket** JSON Schema, inte
+`{name, version, value, description}`-kuvertet som alkoholexporten använder. Inläsningen måste tåla
+båda.
 
 ### Filkonventionen — Drakens
 
@@ -469,19 +513,19 @@ sektionerna följer ur vilken gren som kan nå frågan. Därför genereras ui-sc
 Generatorn kastar om en fråga hamnar i noll eller i flera sektioner, så uppdelningen kan inte tysta
 tappa fält. Sektionerna blir:
 
-| Sektion | Frågor |
-| --- | --- |
-| Kontaktuppgifter och företag | 18 |
-| Om ansökan (gemensamt: ärendetyp + kassaregister) | 3 |
-| Ansökan som privatperson | 17 |
-| Stadigvarande serveringstillstånd | 42 |
-| Tillfälligt tillstånd (allmänheten och slutet sällskap) | 13 |
-| Tillfälligt tillstånd, endast slutet sällskap | 3 |
-| Servering av folköl (klass 2) | 12 |
-| Gårdsförsäljning | 13 |
-| Catering till slutna sällskap | 17 |
-| Provsmakning | 23 |
-| Frågor utan synlighetsregel | 8 |
+| Sektion                                                 | Frågor |
+| ------------------------------------------------------- | ------ |
+| Kontaktuppgifter och företag                            | 18     |
+| Om ansökan (gemensamt: ärendetyp + kassaregister)       | 3      |
+| Ansökan som privatperson                                | 17     |
+| Stadigvarande serveringstillstånd                       | 42     |
+| Tillfälligt tillstånd (allmänheten och slutet sällskap) | 13     |
+| Tillfälligt tillstånd, endast slutet sällskap           | 3      |
+| Servering av folköl (klass 2)                           | 12     |
+| Gårdsförsäljning                                        | 13     |
+| Catering till slutna sällskap                           | 17     |
+| Provsmakning                                            | 23     |
+| Frågor utan synlighetsregel                             | 8      |
 
 Den sista sektionen är de åtta frågorna ur avsnitt 2 som ingen regel kan nå. De renderas hellre
 under en tydlig rubrik än försvinner tyst innan flödesägaren har svarat.
@@ -550,8 +594,7 @@ Exporten har i praktiken inga begränsningar. Minst detta ska med innan v1.0 pub
 
 ## 7. Öppna frågor
 
-1. **Är köksblocket i cateringgrenen dött?** Fem frågor plus tre till kan aldrig bli synliga i flöde
-   2181. Fel i flödet, eller något exporten missat? Frågan går till flödesägaren.
+1. **Är köksblocket i cateringgrenen dött?** Fem frågor plus tre till kan aldrig bli synliga i flöde 2181. Fel i flödet, eller något exporten missat? Frågan går till flödesägaren.
 2. **Ska privatpersonsgrenen finnas i Katla?** Den utlöses av "Nej, jag ansöker som privatperson",
    men Katla kräver att en organisation väljs som ärendeägare. Antingen byggs grenen medvetet eller
    så stryks den — den ska inte bli ett fält som inte går att nå.
@@ -562,19 +605,24 @@ Exporten har i praktiken inga begränsningar. Minst detta ska med innan v1.0 pub
    ärendet sparas.
 6. **Bilagekategorier och deras obligatoriskhet** (4.5) — vad de heter, och hur ett obligatoriskt
    bilagekrav valideras vid insändning när det inte är ett `required` i schemat.
+7. **Hur hanteras tobaksflödets flerval?** En inlämning kan avse tobak, e-cigaretter och nikotinfria
+   produkter samtidigt, men ett ärende bär en enda ärendetyp i `errand.labels`. Ett ärende per vald
+   produkt, eller en ärendetyp med produkturvalet kvar som ett fält?
+8. **Behövs en ärendetyp för tobaksfria nikotinprodukter?** Alternativ 30345 saknar motsvarighet i
+   etikettträdet. Se `aot-branch-label-mapping.md`.
 
 ## 8. Arbetsordning
 
-| Steg | Innehåll | Beroende |
-| --- | --- | --- |
-| 0 ✔ | Mocka jsonschema-tjänsten (`backend/src/mocks/aot-schema.mock.ts`) med både schema och genererat ui-schema, så exporten kan renderas som den är | — |
-| 1 | Be om en ny export med viktreglernas tröskelvärden, de 19 saknade informationsfrågorna och svar på fråga 1 ovan | Blockerar steg 3 |
-| 2 | Beslut 2–6 ovan | Blockerar steg 3 |
-| 3 | Skriv ett transformskript: OpenE-export + regler → Katla-schema + ui-schema. Deterministiskt och körbart igen när OpenE ändras — inte en handredigering | 1, 2 |
-| 4 ◐ | Widgetregistret är samsynkat med Drakens, flervalskryssrutorna finns (17 frågor) och nästlade objekt får rubrik (44 frågor). Kvar: `ArrayFieldTemplate` för DynamicTable (17 frågor, tas från Draken) | — |
-| 5 | Utöka villkorsmotorn i `ObjectFieldTemplate`: `anyOf`/`enum`, `contains`, och ett synligt fel i stället för tyst döljning vid okänt villkor | — |
-| 5b | Bilagekomponent och bilage-endpoint mot SupportManagement, plus `$external:`-stöd i `ObjectFieldTemplate` om deklarationen ska styra placeringen (4.5) | 2 |
-| 6 | Lägg på valideringen i avsnitt 6, inklusive åldersgrinden i backend | 3 |
-| 7 | Publicera v1.0 enligt Drakens konvention (`POST /schemas`, sedan `PUT .../ui-schema`), lägg till README och kontraktstest, ta bort mocken | 3–6 |
+| Steg | Innehåll                                                                                                                                                                                              | Beroende         |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| 0 ✔  | Mocka jsonschema-tjänsten (`backend/src/mocks/aot-schema.mock.ts`) med både schema och genererat ui-schema, så exporten kan renderas som den är                                                       | —                |
+| 1    | Be om en ny export med viktreglernas tröskelvärden, de 19 saknade informationsfrågorna och svar på fråga 1 ovan                                                                                       | Blockerar steg 3 |
+| 2    | Beslut 2–8 ovan, inklusive etikettträdets löv (`aot-branch-label-mapping.md`)                                                                                                                         | Blockerar steg 3 |
+| 3    | Skriv ett transformskript: OpenE-export + regler → Katla-schema + ui-schema. Deterministiskt och körbart igen när OpenE ändras — inte en handredigering                                               | 1, 2             |
+| 4 ◐  | Widgetregistret är samsynkat med Drakens, flervalskryssrutorna finns (17 frågor) och nästlade objekt får rubrik (44 frågor). Kvar: `ArrayFieldTemplate` för DynamicTable (17 frågor, tas från Draken) | —                |
+| 5    | Utöka villkorsmotorn i `ObjectFieldTemplate`: `anyOf`/`enum`, `contains`, och ett synligt fel i stället för tyst döljning vid okänt villkor                                                           | —                |
+| 5b   | Bilagekomponent och bilage-endpoint mot SupportManagement, plus `$external:`-stöd i `ObjectFieldTemplate` om deklarationen ska styra placeringen (4.5)                                                | 2                |
+| 6    | Lägg på valideringen i avsnitt 6, inklusive åldersgrinden i backend                                                                                                                                   | 3                |
+| 7    | Publicera v1.0 enligt Drakens konvention (`POST /schemas`, sedan `PUT .../ui-schema`), lägg till README och kontraktstest, ta bort mocken                                                             | 3–6              |
 
 Steg 4 och 5 är oberoende av 1–3 och kan börja direkt — de behövs oavsett hur schemat delas.
