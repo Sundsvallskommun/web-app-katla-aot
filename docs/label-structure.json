@@ -117,6 +117,16 @@
           "id": "2f3e1ff2-f55b-4adc-a6bc-22d5cbaf27c0",
           "labels": [
             {
+              "attributes": [
+                {
+                  "key": "processKey",
+                  "value": "low-alcohol-beer-serving"
+                },
+                {
+                  "key": "processStartMode",
+                  "value": "AUTOMATIC"
+                }
+              ],
               "classification": "TYPE",
               "deprecated": false,
               "displayName": "Anmälan om servering av endast folköl (klass 2)",
@@ -124,15 +134,35 @@
               "labels": [],
               "resourceName": "FOLKOL_SERVING_NOTIFICATION",
               "resourcePath": "CATEGORYROOT/ALCOHOL/FOLKOL_SERVING_NOTIFICATION",
-              "version": 1
+              "version": 2
             },
             {
+              "attributes": [
+                {
+                  "key": "processKey",
+                  "value": "alcohol-serving"
+                },
+                {
+                  "key": "processStartMode",
+                  "value": "AUTOMATIC"
+                }
+              ],
               "classification": "TYPE",
               "deprecated": false,
               "displayName": "Ansökan om serveringstillstånd av alkoholdrycker",
               "id": "32f9e744-52d3-4a44-be4f-5e515bbbb3eb",
               "labels": [
                 {
+                  "attributes": [
+                    {
+                      "key": "processKey",
+                      "value": "alcohol-serving"
+                    },
+                    {
+                      "key": "processStartMode",
+                      "value": "AUTOMATIC"
+                    }
+                  ],
                   "classification": "SUBTYPE",
                   "deprecated": false,
                   "displayName": "Ansöka om stadigvarande tillstånd för servering av alkoholdrycker",
@@ -140,9 +170,19 @@
                   "labels": [],
                   "resourceName": "PERMANENT_SERVING",
                   "resourcePath": "CATEGORYROOT/ALCOHOL/SERVING_PERMIT_APPLICATION/PERMANENT_SERVING",
-                  "version": 0
+                  "version": 1
                 },
                 {
+                  "attributes": [
+                    {
+                      "key": "processKey",
+                      "value": "alcohol-serving"
+                    },
+                    {
+                      "key": "processStartMode",
+                      "value": "AUTOMATIC"
+                    }
+                  ],
                   "classification": "SUBTYPE",
                   "deprecated": false,
                   "displayName": "Ansöka om tillstånd för gårdsförsäljning",
@@ -150,9 +190,19 @@
                   "labels": [],
                   "resourceName": "FARM_SALES",
                   "resourcePath": "CATEGORYROOT/ALCOHOL/SERVING_PERMIT_APPLICATION/FARM_SALES",
-                  "version": 0
+                  "version": 1
                 },
                 {
+                  "attributes": [
+                    {
+                      "key": "processKey",
+                      "value": "alcohol-serving"
+                    },
+                    {
+                      "key": "processStartMode",
+                      "value": "AUTOMATIC"
+                    }
+                  ],
                   "classification": "SUBTYPE",
                   "deprecated": false,
                   "displayName": "Ansökan om stadigvarande tillstånd för catering till slutna sällskap",
@@ -160,9 +210,19 @@
                   "labels": [],
                   "resourceName": "PERMANENT_CATERING",
                   "resourcePath": "CATEGORYROOT/ALCOHOL/SERVING_PERMIT_APPLICATION/PERMANENT_CATERING",
-                  "version": 0
+                  "version": 1
                 },
                 {
+                  "attributes": [
+                    {
+                      "key": "processKey",
+                      "value": "alcohol-serving"
+                    },
+                    {
+                      "key": "processStartMode",
+                      "value": "AUTOMATIC"
+                    }
+                  ],
                   "classification": "SUBTYPE",
                   "deprecated": false,
                   "displayName": "Ansöka om tillfälligt tillstånd för servering av alkoholdrycker till allmänheten",
@@ -170,9 +230,19 @@
                   "labels": [],
                   "resourceName": "TEMPORARY_SERVING_PUBLIC",
                   "resourcePath": "CATEGORYROOT/ALCOHOL/SERVING_PERMIT_APPLICATION/TEMPORARY_SERVING_PUBLIC",
-                  "version": 0
+                  "version": 1
                 },
                 {
+                  "attributes": [
+                    {
+                      "key": "processKey",
+                      "value": "alcohol-serving"
+                    },
+                    {
+                      "key": "processStartMode",
+                      "value": "AUTOMATIC"
+                    }
+                  ],
                   "classification": "SUBTYPE",
                   "deprecated": false,
                   "displayName": "Ansökan om provsmakning av alkoholhaltiga drycker",
@@ -180,9 +250,19 @@
                   "labels": [],
                   "resourceName": "TASTING",
                   "resourcePath": "CATEGORYROOT/ALCOHOL/SERVING_PERMIT_APPLICATION/TASTING",
-                  "version": 1
+                  "version": 2
                 },
                 {
+                  "attributes": [
+                    {
+                      "key": "processKey",
+                      "value": "alcohol-serving"
+                    },
+                    {
+                      "key": "processStartMode",
+                      "value": "AUTOMATIC"
+                    }
+                  ],
                   "classification": "SUBTYPE",
                   "deprecated": false,
                   "displayName": "Ansöka om tillfälligt tillstånd för servering av alkoholdrycker till slutet sällskap",
@@ -190,14 +270,24 @@
                   "labels": [],
                   "resourceName": "TEMPORARY_SERVING_PRIVATE",
                   "resourcePath": "CATEGORYROOT/ALCOHOL/SERVING_PERMIT_APPLICATION/TEMPORARY_SERVING_PRIVATE",
-                  "version": 0
+                  "version": 1
                 }
               ],
               "resourceName": "SERVING_PERMIT_APPLICATION",
               "resourcePath": "CATEGORYROOT/ALCOHOL/SERVING_PERMIT_APPLICATION",
-              "version": 0
+              "version": 1
             },
             {
+              "attributes": [
+                {
+                  "key": "processKey",
+                  "value": "alcohol-serving-change"
+                },
+                {
+                  "key": "processStartMode",
+                  "value": "AUTOMATIC"
+                }
+              ],
               "classification": "TYPE",
               "deprecated": false,
               "displayName": "Förändring av befintligt serveringstillstånd",
@@ -205,9 +295,19 @@
               "labels": [],
               "resourceName": "SERVING_PERMIT_CHANGE",
               "resourcePath": "CATEGORYROOT/ALCOHOL/SERVING_PERMIT_CHANGE",
-              "version": 0
+              "version": 1
             },
             {
+              "attributes": [
+                {
+                  "key": "processKey",
+                  "value": "low-alcohol-beer-sales"
+                },
+                {
+                  "key": "processStartMode",
+                  "value": "AUTOMATIC"
+                }
+              ],
               "classification": "TYPE",
               "deprecated": false,
               "displayName": "Anmälan om försäljning av folköl",
@@ -215,9 +315,19 @@
               "labels": [],
               "resourceName": "FOLKOL_SALES_NOTIFICATION",
               "resourcePath": "CATEGORYROOT/ALCOHOL/FOLKOL_SALES_NOTIFICATION",
-              "version": 0
+              "version": 1
             },
             {
+              "attributes": [
+                {
+                  "key": "processKey",
+                  "value": "alcohol-serving-addition"
+                },
+                {
+                  "key": "processStartMode",
+                  "value": "AUTOMATIC"
+                }
+              ],
               "classification": "TYPE",
               "deprecated": false,
               "displayName": "Tillägg av befintligt serveringstillstånd",
@@ -225,17 +335,7 @@
               "labels": [],
               "resourceName": "SERVING_PERMIT_ADDITION",
               "resourcePath": "CATEGORYROOT/ALCOHOL/SERVING_PERMIT_ADDITION",
-              "version": 0
-            },
-            {
-              "classification": "TYPE",
-              "deprecated": false,
-              "displayName": "Tillsyn",
-              "id": "e056aa3d-23f0-4ff5-9915-7856fe8eaffd",
-              "labels": [],
-              "resourceName": "ALCOHOL_INSPECTION",
-              "resourcePath": "CATEGORYROOT/ALCOHOL/ALCOHOL_INSPECTION",
-              "version": 0
+              "version": 1
             }
           ],
           "resourceName": "ALCOHOL",
@@ -290,6 +390,16 @@
           "id": "8edfec8c-be90-4806-83b5-d887e9aa3c64",
           "labels": [
             {
+              "attributes": [
+                {
+                  "key": "processKey",
+                  "value": "supervision"
+                },
+                {
+                  "key": "processStartMode",
+                  "value": "MANUAL"
+                }
+              ],
               "classification": "TYPE",
               "deprecated": false,
               "displayName": "Tillsyn",
@@ -297,7 +407,7 @@
               "labels": [],
               "resourceName": "INSPECTION",
               "resourcePath": "CATEGORYROOT/INSPECTION/INSPECTION",
-              "version": 0
+              "version": 1
             },
             {
               "classification": "TYPE",
@@ -321,16 +431,16 @@
           "id": "d683c82a-c60c-4457-90d3-5bd7d29edeea",
           "labels": [
             {
-              "classification": "TYPE",
-              "deprecated": false,
-              "displayName": "Tillsyn",
-              "id": "30e2b207-38ac-4e3c-8477-63233341992b",
-              "labels": [],
-              "resourceName": "TOBACCO_INSPECTION",
-              "resourcePath": "CATEGORYROOT/TOBACCO/TOBACCO_INSPECTION",
-              "version": 1
-            },
-            {
+              "attributes": [
+                {
+                  "key": "processKey",
+                  "value": "tobacco-sales-change"
+                },
+                {
+                  "key": "processStartMode",
+                  "value": "AUTOMATIC"
+                }
+              ],
               "classification": "TYPE",
               "deprecated": false,
               "displayName": "Ändring av tillståndspliktig försäljning av tobaksvaror",
@@ -338,7 +448,7 @@
               "labels": [],
               "resourceName": "SALES_PERMIT_CHANGE",
               "resourcePath": "CATEGORYROOT/TOBACCO/SALES_PERMIT_CHANGE",
-              "version": 0
+              "version": 1
             },
             {
               "classification": "TYPE",
@@ -351,6 +461,16 @@
               "version": 0
             },
             {
+              "attributes": [
+                {
+                  "key": "processKey",
+                  "value": "tobacco-sales"
+                },
+                {
+                  "key": "processStartMode",
+                  "value": "AUTOMATIC"
+                }
+              ],
               "classification": "TYPE",
               "deprecated": false,
               "displayName": "Ansökan om försäljning av tobaksvaror",
@@ -358,9 +478,19 @@
               "labels": [],
               "resourceName": "SALES_PERMIT_APPLICATION",
               "resourcePath": "CATEGORYROOT/TOBACCO/SALES_PERMIT_APPLICATION",
-              "version": 0
+              "version": 1
             },
             {
+              "attributes": [
+                {
+                  "key": "processKey",
+                  "value": "tobacco-sales-closure"
+                },
+                {
+                  "key": "processStartMode",
+                  "value": "AUTOMATIC"
+                }
+              ],
               "classification": "TYPE",
               "deprecated": false,
               "displayName": "Avslut av tillståndspliktig försäljning av tobaksvaror",
@@ -368,9 +498,19 @@
               "labels": [],
               "resourceName": "SALES_PERMIT_TERMINATION",
               "resourcePath": "CATEGORYROOT/TOBACCO/SALES_PERMIT_TERMINATION",
-              "version": 0
+              "version": 1
             },
             {
+              "attributes": [
+                {
+                  "key": "processKey",
+                  "value": "e-cigarette-sales"
+                },
+                {
+                  "key": "processStartMode",
+                  "value": "AUTOMATIC"
+                }
+              ],
               "classification": "TYPE",
               "deprecated": false,
               "displayName": "Anmälan om försäljning av elektroniska cigaretter och påfyllnadsbehållare",
@@ -378,7 +518,7 @@
               "labels": [],
               "resourceName": "ECIGARETTE_SALES_NOTIFICATION",
               "resourcePath": "CATEGORYROOT/TOBACCO/ECIGARETTE_SALES_NOTIFICATION",
-              "version": 0
+              "version": 1
             }
           ],
           "resourceName": "TOBACCO",

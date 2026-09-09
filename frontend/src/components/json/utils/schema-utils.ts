@@ -303,7 +303,7 @@ export async function validateErrandFormData(
   requiredSchemaNames: readonly string[] = []
 ): Promise<string[]> {
   const errors: string[] = [];
-  const entries = formDataEntries ?? [];
+  const entries = errandFormDataForSchemas(formDataEntries, requiredSchemaNames);
   const missingSchemaNames = requiredSchemaNames.filter(
     (schemaName) => !entries.some((entry) => entry.schemaName === schemaName)
   );
@@ -368,6 +368,16 @@ export function upsertErrandFormDataItem(
   };
   return nextEntries;
 }
+
+/**
+ * The entries the current errand type calls for. Changing ärendetyp leaves the previous type's
+ * answers in form state — deliberately, so switching back does not lose them — but they must not be
+ * validated or filed, or an alcohol errand carries a tobacco form's data and its required fields.
+ */
+export const errandFormDataForSchemas = (
+  formData: ErrandFormDataItem[] | undefined,
+  schemaNames: readonly string[]
+): ErrandFormDataItem[] => (formData ?? []).filter((entry) => schemaNames.includes(entry.schemaName));
 
 export function errandFormDataToJsonParameters(formData: ErrandFormDataItem[] | undefined): JsonParameterDTO[] {
   if (!formData) return [];

@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   ErrandFormDataContractError,
+  errandFormDataForSchemas,
   errandFormDataToJsonParameters,
   jsonParametersToErrandFormData,
   loadFormSchema,
@@ -145,7 +146,7 @@ describe('validateErrandFormData', () => {
     expect(fetchMock).not.toHaveBeenCalledWith(expect.stringContaining('/schemas/latest/'), expect.anything());
   });
 
-  it('continues validating existing non-required schema entries', async () => {
+  it('validates every entry the errand type calls for', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockImplementation((input) => {
       const url =
         typeof input === 'string' ? input
@@ -182,7 +183,7 @@ describe('validateErrandFormData', () => {
         ],
         undefined,
         undefined,
-        REQUIRED_SCHEMA_NAMES
+        [REQUIRED_SCHEMA_NAME, 'optional-schema']
       )
     ).resolves.toEqual([expect.stringContaining('Optional schema')]);
   });
@@ -402,6 +403,57 @@ describe('schema loading per locale', () => {
     expect(svSchema.schemaId).toBe('pinned-v1');
     expect(enSchema.schemaId).toBe('pinned-v1');
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('answers left behind by a change of ärendetyp', () => {
+  // Selecting a tobacco type and then switching to an alcohol one used to leave the tobacco entry in
+  // errandFormData, so the alcohol errand was refused over a required tobacco field.
+  const staleTobacco = {
+    schemaName: 'aot_sales_permit_application',
+    schemaId: 'tobacco-v1',
+    data: '{}',
+  };
+  const currentAlcohol = {
+    schemaName: 'aot_folkol_serving_notification',
+    schemaId: 'folkol-v1',
+    data: '{"nagot":"ifyllt"}',
+  };
+
+  it('is not validated against the schema the errand no longer uses', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation((input) => {
+      const url =
+        typeof input === 'string' ? input
+        : input instanceof URL ? input.href
+        : input.url;
+      const schemaId = url.split('/').at(-1);
+      const schema =
+        schemaId === 'tobacco-v1' ?
+          {
+            $schema: 'https://json-schema.org/draft/2020-12/schema',
+            title: 'Tobak',
+            type: 'object',
+            required: ['startdatum'],
+          }
+        : { $schema: 'https://json-schema.org/draft/2020-12/schema', type: 'object' };
+      return Promise.resolve(
+        new Response(JSON.stringify({ schema, schemaId }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      );
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      validateErrandFormData([staleTobacco, currentAlcohol], undefined, undefined, [currentAlcohol.schemaName])
+    ).resolves.toEqual([]);
+  });
+
+  it('is dropped from the entries the errand files', () => {
+    expect(errandFormDataForSchemas([staleTobacco, currentAlcohol], [currentAlcohol.schemaName])).toEqual([
+      currentAlcohol,
+    ]);
   });
 });
 
