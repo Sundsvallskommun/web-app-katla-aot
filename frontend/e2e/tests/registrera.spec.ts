@@ -14,7 +14,7 @@ import { mockManualEditStakeholder, mockStakeholder } from '../fixtures/mockStak
 import { aboutErrandSection, selectCategorization } from '../utils/categorization';
 import { MOCK_COUNTRY_CODE_PHONE_NUMBER, MOCK_EMAIL, MOCK_HYPHEN_PERSON_NUMBER } from '../utils/constants';
 import { errandOwnerSection, selectErrandOwner } from '../utils/errand-owner';
-import { jsonRoute } from '../utils/routes';
+import { emptyRoute, jsonRoute } from '../utils/routes';
 import {
   addStakeholder,
   disclosureByTitle,
@@ -79,6 +79,8 @@ test.describe('Register new errand page', () => {
   test.beforeEach(async ({ appUrl, page }) => {
     await page.route('**/supportmanagement/errand/create', jsonRoute(mockErrand));
     await page.route('**/supportmanagement/metadata', jsonRoute(mockMetadata));
+    // 404 is the errand type having no form yet, not a failure.
+    await page.route('**/schemas/**', emptyRoute(404));
     await page.goto(appUrl('/arende/registrera'));
 
     // Visible sections do not prove the server-rendered page has hydrated.
