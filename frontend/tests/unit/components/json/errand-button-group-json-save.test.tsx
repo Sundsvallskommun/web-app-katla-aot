@@ -62,9 +62,15 @@ function TestForm() {
   const methods = useForm<ErrandFormDTO>({
     defaultValues: {
       status: 'DRAFT',
+      // Labels select the schema; without them the broken entry is filtered out before the save.
+      labels: [
+        { id: 'alkohol', classification: 'CATEGORY', resourceName: 'ALCOHOL' },
+        { id: 'servering', classification: 'TYPE', resourceName: 'SERVING_PERMIT_APPLICATION' },
+        { id: 'stadigvarande', classification: 'SUBTYPE', resourceName: 'PERMANENT_SERVING' },
+      ],
       errandFormData: [
         {
-          schemaName: 'avvikelse-plats-handelse',
+          schemaName: 'aot_permanent_serving',
           schemaId: 'schema-v1',
           data: '{invalid-json',
         },
