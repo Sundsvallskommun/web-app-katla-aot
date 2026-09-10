@@ -2,6 +2,7 @@ import { getFormSchemaValidator } from '@components/json/schema/form-schema-vali
 import SchemaForm from '@components/json/schema/schema-form.component';
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 import { fireEvent, render, screen } from '@testing-library/react';
+import dayjs from 'dayjs';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('react-i18next', () => ({
@@ -12,14 +13,18 @@ vi.mock('react-i18next', () => ({
 
 const TIME_SCHEMA_ID = 'time-widget-schema:1';
 
-function renderTimeField(schema: RJSFSchema, uiSchema: UiSchema<Record<string, unknown>> = {}) {
+function renderTimeField(
+  schema: RJSFSchema,
+  uiSchema: UiSchema<Record<string, unknown>> = {},
+  formData: Record<string, unknown> = {}
+) {
   const onChange = vi.fn();
   render(
     <SchemaForm
       schemaId={TIME_SCHEMA_ID}
       schema={schema}
       uiSchema={uiSchema}
-      formData={{}}
+      formData={formData}
       onChange={onChange}
       hideSubmitButton
     />
@@ -56,7 +61,7 @@ describe('SchemaForm time widget', () => {
     expect(input).toHaveClass('sk-form-input');
   });
 
-  it('pads with seconds only when the schema requires the time format', () => {
+  it('emits RFC 3339 full-time only when the schema requires the time format', () => {
     const { input: timeFormatInput, onChange: onTimeFormatChange } = renderTimeField({
       type: 'object',
       properties: {
@@ -64,8 +69,27 @@ describe('SchemaForm time widget', () => {
       },
     });
 
+    // The offset is whatever the machine running this is on, so it is derived rather than hardcoded.
+    const expected = dayjs().hour(12).minute(11).second(0).millisecond(0).format('HH:mm:ssZ');
+    expect(expected).toMatch(/^12:11:00[+-]\d{2}:\d{2}$/);
+
     fireEvent.change(timeFormatInput, { target: { value: '12:11' } });
-    expect(onTimeFormatChange).toHaveBeenLastCalledWith({ discoveredTime: '12:11:00' }, expect.anything());
+    expect(onTimeFormatChange).toHaveBeenLastCalledWith({ discoveredTime: expected }, expect.anything());
+  });
+
+  it('shows a stored full-time as HH:mm instead of blanking the field', () => {
+    const { input } = renderTimeField(
+      {
+        type: 'object',
+        properties: {
+          discoveredTime: { type: 'string', format: 'time', title: 'Tid' },
+        },
+      },
+      {},
+      { discoveredTime: '12:11:00+02:00' }
+    );
+
+    expect(input).toHaveValue('12:11');
   });
 
   it('keeps HH:mm for fields without the time format', () => {
@@ -83,8 +107,9 @@ describe('SchemaForm time widget', () => {
     expect(onChange).toHaveBeenLastCalledWith({ discoveredTime: '12:11' }, expect.anything());
   });
 
-  // A published schema declares eventTime and occurredTime as format: "time", and that format
-  // requires seconds. Without padding them the value fails validation.
+  // A published schema declares eventTime and occurredTime as format: "time". AJV's `time` treats
+  // the offset as optional, so it is deliberately not the contract being pinned here — the upstream
+  // API is stricter and wants full RFC 3339, which is why the widget always emits an offset.
   it('yields a value that validates against format time', () => {
     const schema: RJSFSchema = {
       $schema: 'https://json-schema.org/draft/2020-12/schema',
@@ -95,7 +120,8 @@ describe('SchemaForm time widget', () => {
     };
     const validator = getFormSchemaValidator('time-format-contract:1');
 
-    expect(validator.validateFormData({ eventTime: '17:05:00' }, schema).errors).toEqual([]);
+    expect(validator.validateFormData({ eventTime: '17:05:00+02:00' }, schema).errors).toEqual([]);
+    expect(validator.validateFormData({ eventTime: '17:05:00Z' }, schema).errors).toEqual([]);
     expect(validator.validateFormData({ eventTime: '17:05' }, schema).errors).not.toEqual([]);
     expect(validator.validateFormData({}, schema).errors).toEqual([]);
   });
