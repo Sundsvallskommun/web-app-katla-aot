@@ -4,6 +4,12 @@ import { describe, expect, it } from 'vitest';
 
 const errand = (errandFormData: ErrandFormDataItem[] = []): ErrandFormDTO => ({ errandFormData });
 
+const permanentServingLabels = [
+  { id: 'alkohol', classification: 'CATEGORY', resourceName: 'ALCOHOL' },
+  { id: 'servering', classification: 'TYPE', resourceName: 'SERVING_PERMIT_APPLICATION' },
+  { id: 'stadigvarande', classification: 'SUBTYPE', resourceName: 'PERMANENT_SERVING' },
+];
+
 describe('prepareErrandForApi', () => {
   it('files the labels the categorization put on the form', () => {
     const labels = [
@@ -21,12 +27,34 @@ describe('prepareErrandForApi', () => {
 
   it('serialises the form data to jsonParameters and leaves no errandFormData behind', () => {
     const prepared = prepareErrandForApi(
-      errand([{ schemaName: 'aot-formular', schemaId: 'schema-1', data: '{"foo":"bar"}' }]),
+      {
+        ...errand([{ schemaName: 'aot_permanent_serving', schemaId: 'schema-1', data: '{"foo":"bar"}' }]),
+        labels: permanentServingLabels,
+      },
       'NEW'
     );
 
-    expect(prepared.jsonParameters).toEqual([{ key: 'aot-formular', value: { foo: 'bar' }, schemaId: 'schema-1' }]);
+    expect(prepared.jsonParameters).toEqual([
+      { key: 'aot_permanent_serving', value: { foo: 'bar' }, schemaId: 'schema-1' },
+    ]);
     expect(prepared).not.toHaveProperty('errandFormData');
+  });
+
+  it('leaves the form data of an errand type the citizen changed away from out of jsonParameters', () => {
+    const prepared = prepareErrandForApi(
+      {
+        ...errand([
+          { schemaName: 'aot_temporary_serving', schemaId: 'schema-2', data: '{"stale":true}' },
+          { schemaName: 'aot_permanent_serving', schemaId: 'schema-1', data: '{"foo":"bar"}' },
+        ]),
+        labels: permanentServingLabels,
+      },
+      'NEW'
+    );
+
+    expect(prepared.jsonParameters).toEqual([
+      { key: 'aot_permanent_serving', value: { foo: 'bar' }, schemaId: 'schema-1' },
+    ]);
   });
 
   it('keeps the stakeholders and sets the given status', () => {

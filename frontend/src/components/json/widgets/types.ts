@@ -13,7 +13,9 @@ export interface WidgetOptions {
   placeholder?: string;
   multiple?: boolean;
   disableToolbar?: boolean;
+  direction?: 'row' | 'column';
   enumOptions?: EnumOption[];
+  enumDisabled?: unknown[];
 }
 
 export function getWidgetOptions(options: WidgetProps['options']): WidgetOptions {
@@ -23,7 +25,9 @@ export function getWidgetOptions(options: WidgetProps['options']): WidgetOptions
     placeholder: opts.placeholder as string | undefined,
     multiple: opts.multiple as boolean | undefined,
     disableToolbar: opts.disableToolbar as boolean | undefined,
+    direction: opts.direction === 'row' || opts.direction === 'column' ? opts.direction : undefined,
     enumOptions: opts.enumOptions as EnumOption[] | undefined,
+    enumDisabled: Array.isArray(opts.enumDisabled) ? opts.enumDisabled : undefined,
   };
 }
 

@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig, AxiosResponse, RawAxiosRequestHeaders } from
 import { Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 
+import { ENVIRONMENT } from '@/config';
 import { HttpException } from '@/exceptions/HttpException';
 import ApiResponse from '@/interfaces/api-service.interface';
 import { RequestWithUser } from '@/interfaces/auth.interface';
@@ -133,10 +134,34 @@ const resolveRequestUrl = (config: Pick<AxiosRequestConfig, 'baseURL' | 'url'>):
   return { requestUrl, boundaryUrl };
 };
 
+/**
+ * The upstream body carries the reason a request was rejected; without it the log only says that it
+ * was. Local only: bodies and payloads hold personal data, which is also why the body is never
+ * propagated to the client.
+ */
+const logUpstreamDetail = (response: AxiosResponse<unknown>): void => {
+  if (ENVIRONMENT !== 'LOCAL') return;
+
+  const asText = (value: unknown): string => {
+    if (value === undefined || value === '') return '(empty)';
+    if (typeof value === 'string') return value.slice(0, 2000);
+    try {
+      return JSON.stringify(value).slice(0, 2000);
+    } catch {
+      return '(unserialisable)';
+    }
+  };
+
+  logger.error(`  upstream url: ${response.config.url ?? 'unknown'}`);
+  logger.error(`  upstream body: ${asText(response.data)}`);
+  logger.error(`  request payload: ${asText(response.config.data)}`);
+};
+
 const logAxiosErrorResponse = (response: AxiosResponse<unknown>): void => {
   const requestId = response.config.headers.get('X-Request-Id');
   const safeRequestId = typeof requestId === 'string' ? requestId : 'unknown';
   logger.error(`API request failed: status=${response.status}, method=${response.config.method ?? 'unknown'}, requestId=${safeRequestId}`);
+  logUpstreamDetail(response);
 };
 
 const getBoundedLocation = (location: string, requestUrl: URL, boundaryUrl: URL): string => {

@@ -1,22 +1,12 @@
 'use client';
 import { ErrandContentLock } from '@components/errand-content-lock/errand-content-lock.component';
+import { visibleFields as fieldsVisibleIn } from '@components/json/utils/schema-conditions';
 import type { ErrorSchema, ObjectFieldTemplateProps, RJSFSchema, UiSchema } from '@rjsf/utils';
 import { Checkbox, Disclosure, Divider, Label } from '@sk-web-gui/react';
 import { icons } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
-
-interface ConditionalRule {
-  if: {
-    properties: Record<string, { const: unknown }>;
-    required?: string[];
-  };
-  then: {
-    required?: string[];
-    properties?: Record<string, unknown>;
-  };
-}
 
 interface RowDefinition {
   fields: string[];
@@ -33,58 +23,10 @@ interface SectionDefinition {
 
 interface FormContext {
   originalSchema?: RJSFSchema;
+  /** Sub-schema per RJSF field id, so a nested object is judged by its own conditions. */
+  schemaById?: Record<string, RJSFSchema>;
   compact?: boolean;
   validationActive?: boolean;
-}
-
-function isConditionMet(condition: ConditionalRule['if'], formData: Record<string, unknown>): boolean {
-  if (!condition?.properties) return false;
-
-  for (const [field, rule] of Object.entries(condition.properties)) {
-    if ('const' in rule) {
-      if (formData[field] !== rule.const) {
-        return false;
-      }
-    }
-  }
-  return true;
-}
-
-/**
- * Extracts field names from a then-block (required fields and property keys)
- */
-function extractDependentFields(then: ConditionalRule['then']): string[] {
-  return [...(then.required ?? []), ...(then.properties ? Object.keys(then.properties) : [])];
-}
-
-/**
- * Extracts all conditional fields from the schema based on if/then rules
- */
-function getConditionalFields(schema: RJSFSchema): Map<string, ConditionalRule['if']> {
-  const conditionalFields = new Map<string, ConditionalRule['if']>();
-
-  // Handle allOf with if/then
-  const allOf = schema.allOf as ConditionalRule[] | undefined;
-  if (allOf) {
-    for (const rule of allOf) {
-      if (rule.if && rule.then) {
-        for (const field of extractDependentFields(rule.then)) {
-          conditionalFields.set(field, rule.if);
-        }
-      }
-    }
-  }
-
-  // Handle simple if/then at root level
-  const rootIf = schema.if as ConditionalRule['if'] | undefined;
-  const rootThen = schema.then as ConditionalRule['then'] | undefined;
-  if (rootIf && rootThen) {
-    for (const field of extractDependentFields(rootThen)) {
-      conditionalFields.set(field, rootIf);
-    }
-  }
-
-  return conditionalFields;
 }
 
 /**
@@ -266,11 +208,9 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
   const { properties, uiSchema, errorSchema } = props;
   const formData = props.formData as Record<string, unknown> | undefined;
 
-  // Get original schema from formContext (RJSF processes and removes allOf from schema prop)
+  // RJSF strips allOf from the schema prop, so the conditions come from formContext instead.
   const ctx = props.formContext as FormContext | undefined;
-  const originalSchema = ctx?.originalSchema;
-  const conditionalFields =
-    originalSchema ? getConditionalFields(originalSchema) : new Map<string, ConditionalRule['if']>();
+  const objectSchema = ctx?.schemaById?.[props.idSchema.$id] ?? ctx?.originalSchema;
 
   // Get row and section definitions from uiSchema
   const rows = getRowDefinitions(uiSchema);
@@ -280,18 +220,11 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
   // Get field order from uiSchema or use properties order
   const order = uiSchema?.['ui:order'] ?? properties.map((p) => p.name);
 
-  // Filter out hidden conditional fields
-  const visibleFields = new Set<string>();
-  for (const prop of properties) {
-    const condition = conditionalFields.get(prop.name);
-    if (condition) {
-      if (isConditionMet(condition, formData ?? {})) {
-        visibleFields.add(prop.name);
-      }
-    } else {
-      visibleFields.add(prop.name);
-    }
-  }
+  const visibleFields = fieldsVisibleIn(
+    objectSchema,
+    formData,
+    properties.map((prop) => prop.name)
+  );
 
   const compact = ctx?.compact ?? false;
   const validationActive = ctx?.validationActive ?? false;
@@ -299,10 +232,28 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
   // If no sections defined, use original flat rendering
   if (sections.length === 0) {
     const renderedRows = new Set<string>();
-    return (
+    const renderedFields = (
       <div className="flex flex-col gap-32">
         {renderFields(order, properties, visibleFields, rows, rowFieldNames, renderedRows, compact)}
       </div>
+    );
+
+    // Nested objects get no label from FieldTemplate, so a question built out of sub-fields
+    // ("Serveringsställets besöksadress") loses its text unless the ui schema asks for a fieldset.
+    const showObjectFieldset = uiSchema?.['ui:options']?.showObjectFieldset === true;
+    if (!showObjectFieldset || props.idSchema.$id === 'root') return renderedFields;
+
+    return (
+      <fieldset className="w-full min-w-0 max-w-full border-0 p-0" data-cy="schema-object-fieldset">
+        {props.title && (
+          <legend className="max-w-full whitespace-normal break-words text-label-medium font-bold">
+            {props.title}
+            {props.required ? ' *' : ''}
+          </legend>
+        )}
+        {props.description}
+        {renderedFields}
+      </fieldset>
     );
   }
 

@@ -3,6 +3,7 @@ import { CancelErrandDialog } from '@components/cancel-errand-dialog.component';
 import {
   errandFormDataContractErrorMessage,
   jsonParametersToErrandFormData,
+  schemaNamesForErrand,
   validateErrandFormData,
 } from '@components/json/utils/schema-utils';
 import { useFormValidation } from '@contexts/form-validation-context';
@@ -118,7 +119,12 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
       return;
     }
 
-    const formDataErrors = await validateErrandFormData(values.errandFormData, tForms, locale);
+    const formDataErrors = await validateErrandFormData(
+      values.errandFormData,
+      tForms,
+      locale,
+      schemaNamesForErrand(values.labels)
+    );
 
     if (formDataErrors.length > 0) {
       reportValidationError(formDataErrors[0]);

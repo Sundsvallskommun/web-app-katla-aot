@@ -1,0 +1,1212 @@
+{
+  "name": "aot_tobacco_free_nicotine_sales_notification",
+  "version": "0.1",
+  "value": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Anmälan om försäljning av tobaksfria nikotinprodukter",
+    "type": "object",
+    "properties": {
+      "foretagsform": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "AKTIEBOLAG",
+            "title": "Aktiebolag",
+            "x-oe-alternativeID": "48719"
+          },
+          {
+            "const": "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
+            "title": "Enskild firma (registrerad hos Skatteverket och Bolagsverket)",
+            "x-oe-alternativeID": "48720"
+          },
+          {
+            "const": "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
+            "title": "Enskild firma (registrerad endast hos Skatteverket)",
+            "x-oe-alternativeID": "48721"
+          },
+          {
+            "const": "FORENING_STIFTELSE",
+            "title": "Förening/stiftelse",
+            "x-oe-alternativeID": "48722"
+          },
+          {
+            "const": "HANDELSBOLAG",
+            "title": "Handelsbolag",
+            "x-oe-alternativeID": "48723"
+          },
+          {
+            "const": "KOMMANDITBOLAG",
+            "title": "Kommanditbolag",
+            "x-oe-alternativeID": "48724"
+          }
+        ],
+        "title": "Företagsform",
+        "x-oe": {
+          "queryID": "80362",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "arDuFirmatecknare": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja",
+            "x-oe-alternativeID": "48854"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej",
+            "x-oe-alternativeID": "48855"
+          }
+        ],
+        "title": "Är du firmatecknare?",
+        "x-oe": {
+          "queryID": "80557",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "laddaUppFullmakt": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-maxFileNameLength": 255,
+        "title": "Ladda upp fullmakt",
+        "x-oe": {
+          "queryID": "80558",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "bifogaAktuelltRegistreringsbevisFran": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-allowedFileExtensions": [
+          "doc",
+          "docx",
+          "pdf"
+        ],
+        "title": "Bifoga aktuellt registreringsbevis från Bolagsverket",
+        "description": "Här bifogar du företagets registreringsbevis från Bolagsverket.\n\nHar du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.",
+        "x-oe": {
+          "queryID": "80366",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "bifogaUppgifterOmAgarforhallanden": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-allowedFileExtensions": [
+          "doc",
+          "docx",
+          "pdf"
+        ],
+        "title": "Bifoga uppgifter om ägarförhållanden",
+        "description": "Nedan bifogar du handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Syftet med denna informationsinsamling är att identifiera de personer som har betydande inflytande över verksamheten så dessa kan inkluderas i prövningen.\n\nAktiebolag: Dokumentation som visar aktiefördelningen mellan ägare, exempelvis en aktiebok. Det är bolagets styrelse som ska hålla en aktuell aktiebok över aktier och aktieägare. \n\nHandelsbolag/kommanditbolag: Dokumentation som visar ägarfördelningen i bolaget, exempelvis ett bolagsavtal.\n\nFörening/stiftelse:  Stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare.\n\nKoncern: Information om ägarförhållanden för koncernbolaget, förutom den handling som gäller för bolagsformen enligt ovan.",
+        "x-oe": {
+          "queryID": "80367",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "bifogaRegisterutdragFranSkatteverket": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-allowedFileExtensions": [
+          "doc",
+          "docx",
+          "pdf"
+        ],
+        "title": "Bifoga registerutdrag från Skatteverket",
+        "description": "Här kan du bifoga ett registerutdrag från Skatteverket.\n\nAv registerutdraget framgår det om du eller ditt företag är godkänt för F-skatt eller FA-skatt (F-skatt med villkor). Av utdraget framgår det också om du eller ditt företag är momsregistrerat och/eller registrerat som arbetsgivare. Här hämtar du ett registerutdrag: verksamt.se",
+        "x-oe": {
+          "queryID": "80368",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "verksamhetsbeskrivningsval": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I",
+            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret",
+            "x-oe-alternativeID": "48727"
+          },
+          {
+            "const": "JAG_VILL_BIFOGA_VERKSAMHETSBESKRIVNINGEN_SOM",
+            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil",
+            "x-oe-alternativeID": "48728"
+          }
+        ],
+        "title": "Verksamhetsbeskrivning",
+        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?",
+        "x-oe": {
+          "queryID": "80369",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "fakturaadressSammaSomForetaget": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja",
+            "x-oe-alternativeID": "48725"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej",
+            "x-oe-alternativeID": "48726"
+          }
+        ],
+        "title": "Är fakturaadressen samma som företagets adress?",
+        "description": "Kommunen kan komma att ta ut en avgift. Om du vill att fakturan ska gå till den adress som företaget är registrerad på anger du \"Ja\" i fältet nedan. Om du vill att fakturan ska gå till en annan adress anger du \"Nej\" och fyller sedan i den. Du har även möjlighet att ange en fakturareferens.",
+        "x-oe": {
+          "queryID": "80363",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "fakturamottagare": {
+        "type": "object",
+        "properties": {
+          "cO": {
+            "type": "string",
+            "title": "c/o",
+            "x-oe": {
+              "textFieldID": "49871",
+              "queryID": "80364"
+            }
+          },
+          "utdelningsadress": {
+            "type": "string",
+            "title": "Utdelningsadress",
+            "x-oe": {
+              "textFieldID": "49872",
+              "queryID": "80364"
+            }
+          },
+          "postnummer": {
+            "type": "string",
+            "title": "Postnummer",
+            "pattern": "^\\d{3}\\s?\\d{2}$",
+            "x-oe-format": "swedish-postal-code",
+            "x-oe-invalidFormatMessage": "Du måste fylla i ett svenskt postnummer",
+            "x-oe": {
+              "textFieldID": "49873",
+              "queryID": "80364"
+            }
+          },
+          "postort": {
+            "type": "string",
+            "title": "Postort",
+            "x-oe": {
+              "textFieldID": "49874",
+              "queryID": "80364"
+            }
+          }
+        },
+        "required": [
+          "utdelningsadress",
+          "postnummer",
+          "postort"
+        ],
+        "title": "Fakturamottagare",
+        "x-oe": {
+          "queryID": "80364",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "fakturareferens": {
+        "type": "string",
+        "title": "Fakturareferens",
+        "description": "Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.",
+        "x-oe": {
+          "queryID": "80365",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "verksamhetsbeskrivning": {
+        "type": "string",
+        "title": "Verksamhetsbeskrivning",
+        "x-oe": {
+          "queryID": "80370",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "bifogaVerksamhetsbeskrivning": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-allowedFileExtensions": [
+          "doc",
+          "docx",
+          "pdf"
+        ],
+        "title": "Bifoga verksamhetsbeskrivning",
+        "x-oe": {
+          "queryID": "80371",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "tidsperiodForForsaljningen": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "TILLSVIDARE",
+            "title": "Tillsvidare",
+            "x-oe-alternativeID": "48732"
+          },
+          {
+            "const": "TIDSBEGRANSAD_FORSALJNING",
+            "title": "Tidsbegränsad försäljning",
+            "x-oe-alternativeID": "48733"
+          }
+        ],
+        "title": "Tidsperiod för försäljningen",
+        "x-oe": {
+          "queryID": "80375",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "forsaljningsstallet": {
+        "type": "object",
+        "properties": {
+          "forsaljningsstalletsNamn": {
+            "type": "string",
+            "title": "Försäljningsställets namn",
+            "x-oe": {
+              "textFieldID": "49875",
+              "queryID": "80377"
+            }
+          }
+        },
+        "title": "Försäljningsstället",
+        "description": ".cke{visibility:hidden;}",
+        "x-oe": {
+          "queryID": "80377",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "besoksadressSammaSomForetaget": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja",
+            "x-oe-alternativeID": "48734"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej",
+            "x-oe-alternativeID": "48735"
+          }
+        ],
+        "title": "Är försäljningsställets besöksadress samma som bolagets adress?",
+        "x-oe": {
+          "queryID": "80378",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "bedriverAvenDistansforsaljning": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja",
+            "x-oe-alternativeID": "48736"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej",
+            "x-oe-alternativeID": "48737"
+          }
+        ],
+        "title": "Jag kommer också bedriva distansförsäljning",
+        "description": "Distansförsäljning är försäljning av varor via postorder, telefon eller internet där leverantören ansvarar för leveransen av varorna.",
+        "x-oe": {
+          "queryID": "80380",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "avtalMedTillverkareEllerPartihandlare": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja",
+            "x-oe-alternativeID": "48740"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej",
+            "x-oe-alternativeID": "48741"
+          }
+        ],
+        "title": "Finns avtal med tillverkare, partihandlare eller importör",
+        "x-oe": {
+          "queryID": "80384",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "bifogaProduktlista": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-maxFileNameLength": 255,
+        "title": "Bifoga produktlista",
+        "description": "Produkterna som ska säljas är registrerade hos Folkhälsomyndigheten.",
+        "x-oe": {
+          "queryID": "80386",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "bifogatUnderlagDispositionsratt": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-maxFileNameLength": 255,
+        "title": "Bifoga underlag som styrker dispositionsrätten",
+        "description": "Företaget har rätt att nyttja lokalen.",
+        "x-oe": {
+          "queryID": "80387",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "egenkontrollprogram": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-allowedFileExtensions": [
+          "doc",
+          "docx",
+          "pdf"
+        ],
+        "title": "Egenkontrollprogram",
+        "description": "Enligt Lag om tobak och liknande produkter och lagen om tobaksfria nikotinprodukter måste egenkontrollprogram bifogas anmälan. Läs mer på https://www.folkhalsomyndigheten.se/publikationer-och-material/publikationsarkiv/v/vagledning-till-naringsidkare-om-egenkontrollprogram-for-den-som-saljer-tobaksvaror-elektroniska-cigaretter-och-pafyllningsbehallare-samt-tobaksfria-nikotinprodukter/",
+        "x-oe": {
+          "queryID": "80388",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "periodTidsbegransadForsaljning": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "title": "Från och med"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "title": "Till och med"
+          }
+        },
+        "required": [
+          "startDate",
+          "endDate"
+        ],
+        "title": "Period för tidsbegränsad försäljning",
+        "x-oe": {
+          "queryID": "80376",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.DateTimeQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "startdatumForsaljning": {
+        "type": "string",
+        "format": "date",
+        "title": "Startdatum försäljning",
+        "x-oe": {
+          "queryID": "80556",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.DateTimeQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "besoksadress": {
+        "type": "object",
+        "properties": {
+          "gatuadress": {
+            "type": "string",
+            "title": "Gatuadress",
+            "x-oe": {
+              "textFieldID": "49876",
+              "queryID": "80379"
+            }
+          },
+          "postnummer": {
+            "type": "string",
+            "title": "Postnummer",
+            "x-oe": {
+              "textFieldID": "49877",
+              "queryID": "80379"
+            }
+          },
+          "postort": {
+            "type": "string",
+            "title": "Postort",
+            "x-oe": {
+              "textFieldID": "49878",
+              "queryID": "80379"
+            }
+          },
+          "telefonnummer": {
+            "type": "string",
+            "title": "Telefonnummer",
+            "x-oe": {
+              "textFieldID": "49879",
+              "queryID": "80379"
+            }
+          },
+          "ePost": {
+            "type": "string",
+            "title": "E-post",
+            "format": "email",
+            "x-oe-invalidFormatMessage": "Du måste fylla i en giltig e-post adress",
+            "x-oe": {
+              "textFieldID": "49880",
+              "queryID": "80379"
+            }
+          }
+        },
+        "required": [
+          "gatuadress",
+          "postnummer",
+          "postort",
+          "telefonnummer"
+        ],
+        "title": "Besöksadress",
+        "x-oe": {
+          "queryID": "80379",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "hemsida": {
+        "type": "object",
+        "properties": {
+          "hemsida": {
+            "type": "string",
+            "title": "Hemsida",
+            "x-oe": {
+              "textFieldID": "49881",
+              "queryID": "80381"
+            }
+          }
+        },
+        "required": [
+          "hemsida"
+        ],
+        "title": "Hemsida",
+        "x-oe": {
+          "queryID": "80381",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "finansiering": {
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "EGNA_MEDEL",
+              "title": "Egna medel",
+              "x-oe-alternativeID": "30356"
+            },
+            {
+              "const": "BANKLAN",
+              "title": "Banklån",
+              "x-oe-alternativeID": "30357"
+            },
+            {
+              "const": "PRIVATLAN",
+              "title": "Privatlån",
+              "x-oe-alternativeID": "30358"
+            },
+            {
+              "const": "ANNAN_FINANSIERING_EXEMPELVIS_ALMILAN_BRYGGERILAN",
+              "title": "Annan finansiering (exempelvis Almilån, Bryggerilån eller Revers)",
+              "x-oe-alternativeID": "30359"
+            }
+          ]
+        },
+        "title": "Finansiering",
+        "description": "För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med.",
+        "x-oe": {
+          "queryID": "80687",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.checkboxquery.CheckboxQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "bifogaAvtal": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-maxFileNameLength": 255,
+        "title": "Bifoga avtal",
+        "x-oe": {
+          "queryID": "80385",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "bifogadRegistreringLansstyrelsen": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-maxFileNameLength": 255,
+        "title": "Bifoga registrering från Länsstyrelsen",
+        "x-oe": {
+          "queryID": "80383",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "egnaMedel": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "bank": {
+              "type": "string",
+              "title": "Bank",
+              "x-oe": {
+                "columnID": "5664",
+                "columnType": "STRING"
+              }
+            },
+            "kontonummer": {
+              "type": "string",
+              "title": "Kontonummer",
+              "x-oe": {
+                "columnID": "5665",
+                "columnType": "STRING"
+              }
+            },
+            "beloppKronor": {
+              "type": "string",
+              "title": "Belopp (kronor)",
+              "x-oe": {
+                "columnID": "5666",
+                "columnType": "STRING"
+              }
+            }
+          },
+          "required": [
+            "bank",
+            "kontonummer",
+            "beloppKronor"
+          ]
+        },
+        "title": "Egna medel",
+        "x-oe": {
+          "queryID": "80688",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.dynamictablequery.DynamicTableQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "bifogaKontoutdrag": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-allowedFileExtensions": [
+          "doc",
+          "docx",
+          "pdf"
+        ],
+        "x-oe-maxFileNameLength": 255,
+        "title": "Bifoga kontoutdrag",
+        "x-oe": {
+          "queryID": "80689",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "banklan": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "langivare": {
+              "type": "string",
+              "title": "Långivare",
+              "x-oe": {
+                "columnID": "5667",
+                "columnType": "STRING"
+              }
+            },
+            "beloppKronor": {
+              "type": "string",
+              "title": "Belopp (kronor)",
+              "x-oe": {
+                "columnID": "5668",
+                "columnType": "STRING"
+              }
+            }
+          },
+          "required": [
+            "langivare",
+            "beloppKronor"
+          ]
+        },
+        "title": "Banklån",
+        "x-oe": {
+          "queryID": "80690",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.dynamictablequery.DynamicTableQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "bifogaLanebevisForBanklan": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-allowedFileExtensions": [
+          "doc",
+          "docx",
+          "pdf"
+        ],
+        "x-oe-maxFileNameLength": 255,
+        "title": "Bifoga lånebevis för banklån",
+        "x-oe": {
+          "queryID": "80691",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "privatlan": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "langivare": {
+              "type": "string",
+              "title": "Långivare",
+              "x-oe": {
+                "columnID": "5669",
+                "columnType": "STRING"
+              }
+            },
+            "beloppKronor": {
+              "type": "string",
+              "title": "Belopp (kronor)",
+              "x-oe": {
+                "columnID": "5670",
+                "columnType": "STRING"
+              }
+            }
+          },
+          "required": [
+            "langivare",
+            "beloppKronor"
+          ]
+        },
+        "title": "Privatlån",
+        "x-oe": {
+          "queryID": "80692",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.dynamictablequery.DynamicTableQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "bifogaLanebevisForPrivatlan": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-allowedFileExtensions": [
+          "doc",
+          "docx",
+          "pdf"
+        ],
+        "x-oe-maxFileNameLength": 255,
+        "title": "Bifoga lånebevis för privatlån",
+        "x-oe": {
+          "queryID": "80693",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "annanFinansiering": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "lanetyp": {
+              "type": "string",
+              "title": "Lånetyp",
+              "x-oe": {
+                "columnID": "5671",
+                "columnType": "STRING"
+              }
+            },
+            "langivare": {
+              "type": "string",
+              "title": "Långivare",
+              "x-oe": {
+                "columnID": "5672",
+                "columnType": "STRING"
+              }
+            },
+            "beloppKronor": {
+              "type": "string",
+              "title": "Belopp (kronor)",
+              "x-oe": {
+                "columnID": "5673",
+                "columnType": "STRING"
+              }
+            }
+          },
+          "required": [
+            "lanetyp",
+            "langivare",
+            "beloppKronor"
+          ]
+        },
+        "title": "Annan finansiering",
+        "x-oe": {
+          "queryID": "80694",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.dynamictablequery.DynamicTableQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "bifogaLanebevisForAnnanFinansiering": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "format": "data-url"
+        },
+        "x-oe-allowedFileExtensions": [
+          "doc",
+          "docx",
+          "pdf"
+        ],
+        "x-oe-maxFileNameLength": 255,
+        "title": "Bifoga lånebevis för annan finansiering",
+        "x-oe": {
+          "queryID": "80695",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.fileuploadquery.FileUploadQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "ovrigaUpplysningarFinansiering": {
+        "type": "string",
+        "title": "Övriga upplysningar angående finansieringen",
+        "x-oe": {
+          "queryID": "80696",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      }
+    },
+    "allOf": [
+      {
+        "if": {
+          "properties": {
+            "arDuFirmatecknare": {
+              "const": "NEJ"
+            }
+          },
+          "required": [
+            "arDuFirmatecknare"
+          ]
+        },
+        "then": {
+          "required": [
+            "laddaUppFullmakt"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "foretagsform": {
+              "enum": [
+                "AKTIEBOLAG",
+                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
+                "FORENING_STIFTELSE",
+                "HANDELSBOLAG",
+                "KOMMANDITBOLAG"
+              ]
+            }
+          },
+          "required": [
+            "foretagsform"
+          ]
+        },
+        "then": {
+          "required": [
+            "bifogaAktuelltRegistreringsbevisFran"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "foretagsform": {
+              "enum": [
+                "AKTIEBOLAG",
+                "FORENING_STIFTELSE",
+                "HANDELSBOLAG",
+                "KOMMANDITBOLAG"
+              ]
+            }
+          },
+          "required": [
+            "foretagsform"
+          ]
+        },
+        "then": {
+          "required": [
+            "bifogaUppgifterOmAgarforhallanden"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "foretagsform": {
+              "enum": [
+                "AKTIEBOLAG",
+                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
+                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
+                "FORENING_STIFTELSE",
+                "HANDELSBOLAG",
+                "KOMMANDITBOLAG"
+              ]
+            }
+          },
+          "required": [
+            "foretagsform"
+          ]
+        },
+        "then": {
+          "required": [
+            "bifogaRegisterutdragFranSkatteverket"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "foretagsform": {
+              "enum": [
+                "AKTIEBOLAG",
+                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
+                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
+                "FORENING_STIFTELSE",
+                "HANDELSBOLAG",
+                "KOMMANDITBOLAG"
+              ]
+            }
+          },
+          "required": [
+            "foretagsform"
+          ]
+        },
+        "then": {
+          "required": [
+            "verksamhetsbeskrivningsval"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "fakturaadressSammaSomForetaget": {
+              "const": "NEJ"
+            }
+          },
+          "required": [
+            "fakturaadressSammaSomForetaget"
+          ]
+        },
+        "then": {
+          "properties": {
+            "fakturamottagare": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "verksamhetsbeskrivningsval": {
+              "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I"
+            }
+          },
+          "required": [
+            "verksamhetsbeskrivningsval"
+          ]
+        },
+        "then": {
+          "properties": {
+            "verksamhetsbeskrivning": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "verksamhetsbeskrivningsval": {
+              "const": "JAG_VILL_BIFOGA_VERKSAMHETSBESKRIVNINGEN_SOM"
+            }
+          },
+          "required": [
+            "verksamhetsbeskrivningsval"
+          ]
+        },
+        "then": {
+          "properties": {
+            "bifogaVerksamhetsbeskrivning": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "tidsperiodForForsaljningen": {
+              "const": "TIDSBEGRANSAD_FORSALJNING"
+            }
+          },
+          "required": [
+            "tidsperiodForForsaljningen"
+          ]
+        },
+        "then": {
+          "required": [
+            "periodTidsbegransadForsaljning"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "tidsperiodForForsaljningen": {
+              "const": "TILLSVIDARE"
+            }
+          },
+          "required": [
+            "tidsperiodForForsaljningen"
+          ]
+        },
+        "then": {
+          "required": [
+            "startdatumForsaljning"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "besoksadressSammaSomForetaget": {
+              "const": "NEJ"
+            }
+          },
+          "required": [
+            "besoksadressSammaSomForetaget"
+          ]
+        },
+        "then": {
+          "required": [
+            "besoksadress"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "bedriverAvenDistansforsaljning": {
+              "const": "JA"
+            }
+          },
+          "required": [
+            "bedriverAvenDistansforsaljning"
+          ]
+        },
+        "then": {
+          "properties": {
+            "hemsida": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "EGNA_MEDEL"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "egnaMedel",
+            "bifogaKontoutdrag"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "BANKLAN"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "banklan",
+            "bifogaLanebevisForBanklan"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "PRIVATLAN"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "privatlan",
+            "bifogaLanebevisForPrivatlan"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "ANNAN_FINANSIERING_EXEMPELVIS_ALMILAN_BRYGGERILAN"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "annanFinansiering",
+            "bifogaLanebevisForAnnanFinansiering"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "enum": [
+                  "EGNA_MEDEL",
+                  "BANKLAN",
+                  "PRIVATLAN",
+                  "ANNAN_FINANSIERING_EXEMPELVIS_ALMILAN_BRYGGERILAN"
+                ]
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "properties": {
+            "ovrigaUpplysningarFinansiering": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "avtalMedTillverkareEllerPartihandlare": {
+              "const": "JA"
+            }
+          },
+          "required": [
+            "avtalMedTillverkareEllerPartihandlare"
+          ]
+        },
+        "then": {
+          "required": [
+            "bifogaAvtal"
+          ]
+        }
+      }
+    ],
+    "x-oe-flow": {
+      "flowID": "2153",
+      "name": "AoT tobak ny för draken",
+      "version": "2",
+      "familyID": "634",
+      "requireAuthentication": false,
+      "requireSigning": false,
+      "paymentSupportEnabled": false
+    },
+    "x-katla-label-leaf": "TOBACCO/TOBACCO_FREE_NICOTINE_SALES_NOTIFICATION"
+  },
+  "description": "Anmälan om försäljning av tobaksfria nikotinprodukter"
+}

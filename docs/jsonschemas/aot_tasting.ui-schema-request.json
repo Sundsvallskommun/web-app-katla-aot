@@ -1,0 +1,483 @@
+{
+  "value": {
+    "ui:order": [
+      "arDuFirmatecknare",
+      "foretagsform",
+      "laddaUppFullmakt",
+      "bifogaAktuelltRegistreringsbevisFran",
+      "bifogaUppgifterOmAgarforhallanden",
+      "bifogaRegisterutdragFranSkatteverket",
+      "verksamhetsbeskrivningsval",
+      "fakturaadressSammaSomForetaget",
+      "fakturamottagare",
+      "fakturareferens",
+      "verksamhetsbeskrivning",
+      "bifogaVerksamhetsbeskrivning",
+      "kunskapOmAlkohollagen",
+      "verksamhetensInriktning",
+      "beskrivVerksamhetensInriktning",
+      "finansiering",
+      "sittplatserILokalen",
+      "maximaltAntalPersonerILokalen",
+      "bifogaPlanritning",
+      "bifogaAvtalGallandeLokalOchMark",
+      "bifogaBrandskyddsdokumentation",
+      "personnummer",
+      "organisationsnummer",
+      "anmalPersonerTillKunskapsprovet",
+      "personerTillKunskapsprovet",
+      "harNi",
+      "egnaMedel",
+      "bifogaKontoutdrag",
+      "banklan",
+      "bifogaLanebevisForBanklan",
+      "privatlan",
+      "bifogaLanebevisForPrivatlan",
+      "annanFinansiering",
+      "bifogaLanebevisForAnnanFinansiering",
+      "ovrigaUpplysningarFinansiering",
+      "harDuKassaregister",
+      "angeRegistreringskod"
+    ],
+    "ui:sections": [
+      {
+        "id": "foretag",
+        "title": "Företag och fakturering",
+        "icon": "building-2",
+        "defaultOpen": true,
+        "fields": [
+          "arDuFirmatecknare",
+          "foretagsform",
+          "laddaUppFullmakt",
+          "bifogaAktuelltRegistreringsbevisFran",
+          "bifogaUppgifterOmAgarforhallanden",
+          "bifogaRegisterutdragFranSkatteverket",
+          "verksamhetsbeskrivningsval",
+          "fakturaadressSammaSomForetaget",
+          "fakturamottagare",
+          "fakturareferens",
+          "verksamhetsbeskrivning",
+          "bifogaVerksamhetsbeskrivning"
+        ]
+      },
+      {
+        "id": "ansokan",
+        "title": "Provsmakning",
+        "icon": "file-text",
+        "defaultOpen": true,
+        "fields": [
+          "kunskapOmAlkohollagen",
+          "verksamhetensInriktning",
+          "beskrivVerksamhetensInriktning",
+          "finansiering",
+          "sittplatserILokalen",
+          "maximaltAntalPersonerILokalen",
+          "bifogaPlanritning",
+          "bifogaAvtalGallandeLokalOchMark",
+          "bifogaBrandskyddsdokumentation",
+          "personnummer",
+          "organisationsnummer",
+          "anmalPersonerTillKunskapsprovet",
+          "personerTillKunskapsprovet",
+          "harNi",
+          "egnaMedel",
+          "bifogaKontoutdrag",
+          "banklan",
+          "bifogaLanebevisForBanklan",
+          "privatlan",
+          "bifogaLanebevisForPrivatlan",
+          "annanFinansiering",
+          "bifogaLanebevisForAnnanFinansiering",
+          "ovrigaUpplysningarFinansiering",
+          "harDuKassaregister",
+          "angeRegistreringskod"
+        ]
+      }
+    ],
+    "arDuFirmatecknare": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "foretagsform": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "laddaUppFullmakt": {
+      "ui:widget": "files",
+      "ui:options": {
+        "accept": ""
+      }
+    },
+    "bifogaAktuelltRegistreringsbevisFran": {
+      "ui:widget": "files",
+      "ui:options": {
+        "accept": ".doc,.docx,.pdf"
+      },
+      "ui:description": "<p>Här bifogar du företagets registreringsbevis från Bolagsverket.<br />\nHar du inte något registreringsbevis tillgängligt så kan du hämta ett på <a href=\"https://www.verksamt.se/\" target=\"_blank\"><u><font color=\"#0066cc\">verksamt.se</font></u></a>.</p>"
+    },
+    "bifogaUppgifterOmAgarforhallanden": {
+      "ui:widget": "files",
+      "ui:options": {
+        "accept": ".doc,.docx,.pdf"
+      },
+      "ui:description": "<p>Nedan bifogar du handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Syftet med denna informationsinsamling är att identifiera de personer som har betydande inflytande över verksamheten så dessa kan inkluderas i prövningen.</p>\n\n<p><br />\n<strong>Aktiebolag</strong>: Dokumentation som visar aktiefördelningen mellan ägare, exempelvis en aktiebok. Det är bolagets styrelse som ska hålla en aktuell aktiebok över aktier och aktieägare. </p>\n\n<p><strong>Handelsbolag/kommanditbolag</strong>: Dokumentation som visar ägarfördelningen i bolaget, exempelvis ett bolagsavtal.</p>\n\n<p><strong>Förening/stiftelse</strong>:  Stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare.</p>\n\n<p><strong>Koncern</strong>: Information om ägarförhållanden för koncernbolaget, förutom den handling som gäller för bolagsformen enligt ovan.</p>"
+    },
+    "bifogaRegisterutdragFranSkatteverket": {
+      "ui:widget": "files",
+      "ui:options": {
+        "accept": ".doc,.docx,.pdf"
+      },
+      "ui:description": "<p>Här kan du bifoga ett registerutdrag från Skatteverket.<br />\nAv registerutdraget framgår det om du eller ditt företag är godkänt för F-skatt eller FA-skatt (F-skatt med villkor). Av utdraget framgår det också om du eller ditt företag är momsregistrerat och/eller registrerat som arbetsgivare. Här hämtar du ett registerutdrag: <a href=\"https://www.verksamt.se/\" target=\"_blank\"><u><font color=\"#0066cc\">verksamt.se</font></u></a></p>"
+    },
+    "verksamhetsbeskrivningsval": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
+    },
+    "fakturaadressSammaSomForetaget": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Kommunen kan komma att ta ut en avgift. Om du vill att fakturan ska gå till den adress som företaget är registrerad på anger du \"Ja\" i fältet nedan. Om du vill att fakturan ska gå till en annan adress anger du \"Nej\" och fyller sedan i den. Du har även möjlighet att ange en fakturareferens.</p>"
+    },
+    "fakturamottagare": {
+      "ui:order": [
+        "cO",
+        "utdelningsadress",
+        "postnummer",
+        "postort"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "cO": {
+        "ui:widget": "TextWidget"
+      },
+      "utdelningsadress": {
+        "ui:widget": "TextWidget"
+      },
+      "postnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "postort": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "postnummer",
+            "postort"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "fakturareferens": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      },
+      "ui:description": "<p>Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.</p>"
+    },
+    "verksamhetsbeskrivning": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "bifogaVerksamhetsbeskrivning": {
+      "ui:widget": "files",
+      "ui:options": {
+        "accept": ".doc,.docx,.pdf"
+      }
+    },
+    "kunskapOmAlkohollagen": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>För att få ett serveringstillstånd behöver du eller annan person som är ansvarig i företaget ha kunskap om ansvarsfull alkoholservering och alkohollagen. Denna kunskap kan du visa på flera sätt.</p>"
+    },
+    "verksamhetensInriktning": {
+      "ui:widget": "checkboxes",
+      "ui:options": {
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
+      },
+      "ui:description": "<p>Här ska du ange vilken inriktning du har med din verksamhet. Du ska också förtydliga din inriktning genom att skriva in ytterligare information om verksamheten nedan. Det är ett underlag för kommunens bedömning av din tillståndsansökan. När det gäller den alkoholpolitiska prövningen kontaktar kommunen även andra instanser för deras synpunkter på verksamheten.</p>"
+    },
+    "beskrivVerksamhetensInriktning": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      },
+      "ui:description": "<p>Här ska du med egna ord förtydliga inriktningen på din verksamhet.<br />\nExempel på information som är viktig att ange är typ av restaurang, vilka öppettider som gäller, eventuella åldersgränser eller särskild \"profil\" på verksamheten (sportbar, live-musik etc). Ange även verksamhetens primära målgrupp.</p>"
+    },
+    "finansiering": {
+      "ui:widget": "checkboxes",
+      "ui:options": {
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
+      },
+      "ui:description": "<p>För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med.</p>"
+    },
+    "sittplatserILokalen": {
+      "ui:order": [
+        "antalSittplatserInomhus",
+        "antalSittplatserPaEventuellUteserver"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "antalSittplatserInomhus": {
+        "ui:widget": "TextWidget"
+      },
+      "antalSittplatserPaEventuellUteserver": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "antalSittplatserInomhus",
+            "antalSittplatserPaEventuellUteserver"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "maximaltAntalPersonerILokalen": {
+      "ui:order": [
+        "antalPersoner"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "antalPersoner": {
+        "ui:widget": "TextWidget"
+      }
+    },
+    "bifogaPlanritning": {
+      "ui:widget": "files",
+      "ui:options": {
+        "accept": ".doc,.docx,.pdf"
+      },
+      "ui:description": "<p>Du behöver visa var i lokalen du kommer att servera alkohol genom att på en planritning visa vilken del som är serveringsyta. Planerar du att ha uteservering behöver planritningen även visa serveringsyta utomhus. Planerar du att servera alkohol på flera våningsplan behöver du visa serveringsyta för alla våningsplan. Du får inte servera alkohol utanför serveringsytan och dina gäster får inte heller ta med sig alkohol till de delar av lokalen som inte är serveringsyta. Serveringsytan ska vara överblickbar. Länkar till exempel på planritningar:  <a href=\"https://etjanster.inera.se/fileconnector/file/Sammys%20k%C3%B6k%20ny.pdf\" target=\"_blank\"><u><font color=\"#0066cc\">Exempel 1</font></u></a>. <a href=\"https://etjanster.inera.se/fileconnector/file/Exempelritning%20Servering.pdf\" target=\"_blank\"><u><font color=\"#0066cc\">Exempel 2</font></u></a>.</p>"
+    },
+    "bifogaAvtalGallandeLokalOchMark": {
+      "ui:widget": "files",
+      "ui:options": {
+        "accept": ".doc,.docx,.pdf"
+      },
+      "ui:description": "<p>För att kommunen ska kunna pröva ansökningar om serveringstillstånd behöver kommunen säkerställa att ditt företag har rätt att använda lokalen inklusive platsen för eventuell uteservering. Du gör detta genom att ladda upp ett hyreskontrakt, ett arrendeavtal eller köpeavtal (inklusive bilagor) för lokalen som verksamheten ska bedrivas i.</p>"
+    },
+    "bifogaBrandskyddsdokumentation": {
+      "ui:widget": "files",
+      "ui:options": {
+        "accept": ".doc,.docx,.pdf"
+      },
+      "ui:description": "<p>Om du vill bifoga brandskyddsdokumentation från brandkonsult eller motsvarande kan du bifoga den här.</p>"
+    },
+    "personnummer": {
+      "ui:order": [
+        "personnummer"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "personnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:description": "<p>Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren.</p>"
+    },
+    "organisationsnummer": {
+      "ui:order": [
+        "organisationsnummer"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "organisationsnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:description": "<p>Vilket företag med gällande serveringstillstånd driver du eller annan person som är ansvarig i företaget idag?<br />\nOm du eller annan företrädare för organisationen har ett serveringstillstånd idag som minst motsvarar den aktuella ansökan, och det inte finns skäl att ifrågasätta kunskaperna, kan det vara så att kunskaperna inte behöver styrkas med ett kunskapsprov.</p>"
+    },
+    "anmalPersonerTillKunskapsprovet": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Om ditt ärende gäller en ansökan om stadigvarande serveringstillstånd så kan inte tillståndet beviljas innan minst en av de personer som du uppger här har genomfört och fått godkänt på kunskapsprovet.</p>"
+    },
+    "personerTillKunskapsprovet": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "fornamn",
+          "efternamn",
+          "personnummer",
+          "telefonnummer",
+          "ePostadress"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "fornamn": {
+          "ui:widget": "TextWidget"
+        },
+        "efternamn": {
+          "ui:widget": "TextWidget"
+        },
+        "personnummer": {
+          "ui:widget": "TextWidget"
+        },
+        "telefonnummer": {
+          "ui:widget": "TextWidget"
+        },
+        "ePostadress": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "harNi": {
+      "ui:widget": "checkboxes",
+      "ui:options": {
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
+      }
+    },
+    "egnaMedel": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "bank",
+          "kontonummer",
+          "beloppKronor"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "bank": {
+          "ui:widget": "TextWidget"
+        },
+        "kontonummer": {
+          "ui:widget": "TextWidget"
+        },
+        "beloppKronor": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "bifogaKontoutdrag": {
+      "ui:widget": "files",
+      "ui:options": {
+        "accept": ".doc,.docx,.pdf"
+      }
+    },
+    "banklan": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "langivare",
+          "beloppKronor"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "langivare": {
+          "ui:widget": "TextWidget"
+        },
+        "beloppKronor": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "bifogaLanebevisForBanklan": {
+      "ui:widget": "files",
+      "ui:options": {
+        "accept": ".doc,.docx,.pdf"
+      }
+    },
+    "privatlan": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "langivare",
+          "beloppKronor"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "langivare": {
+          "ui:widget": "TextWidget"
+        },
+        "beloppKronor": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "bifogaLanebevisForPrivatlan": {
+      "ui:widget": "files",
+      "ui:options": {
+        "accept": ".doc,.docx,.pdf"
+      }
+    },
+    "annanFinansiering": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "lanetyp",
+          "langivare",
+          "beloppKronor"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "lanetyp": {
+          "ui:widget": "TextWidget"
+        },
+        "langivare": {
+          "ui:widget": "TextWidget"
+        },
+        "beloppKronor": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "bifogaLanebevisForAnnanFinansiering": {
+      "ui:widget": "files",
+      "ui:options": {
+        "accept": ".doc,.docx,.pdf"
+      }
+    },
+    "ovrigaUpplysningarFinansiering": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "harDuKassaregister": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "angeRegistreringskod": {
+      "ui:order": [
+        "registreringskod"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "registreringskod": {
+        "ui:widget": "TextWidget"
+      }
+    }
+  },
+  "description": "UI schema for Provsmakning"
+}

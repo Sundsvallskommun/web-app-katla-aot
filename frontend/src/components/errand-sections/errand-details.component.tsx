@@ -3,10 +3,10 @@
 import { useFormSchema } from '@components/json/hooks/use-form-schema';
 import SchemaForm from '@components/json/schema/schema-form.component';
 import {
-  ERRAND_FORM_SCHEMA_NAMES,
   errandFormDataContractErrorMessage,
   isJsonObject,
   parseErrandFormData,
+  schemaNamesForErrand,
   upsertErrandFormDataItem,
 } from '@components/json/utils/schema-utils';
 import { useFormValidation } from '@contexts/form-validation-context';
@@ -26,7 +26,7 @@ function SchemaFormField({ schemaName, compact }: SchemaFormFieldProps) {
   const { t } = useTranslation('forms');
   const errandFormData = watch('errandFormData');
   const entry = errandFormData?.find((candidate) => candidate.schemaName === schemaName);
-  const { schema, uiSchema, schemaId, loading, error } = useFormSchema(
+  const { schema, uiSchema, schemaId, loading, error, notFound } = useFormSchema(
     schemaName,
     entry === undefined ? { kind: 'new' } : { kind: 'persisted', schemaId: entry.schemaId }
   );
@@ -70,6 +70,11 @@ function SchemaFormField({ schemaName, compact }: SchemaFormFieldProps) {
     return <div className="text-gray-500">{t('errand-information:errand_details.loading_form')}</div>;
   }
 
+  // An errand type whose flow has no schema simply has no fields to fill in.
+  if (notFound) {
+    return <span className="text-dark-secondary">{t('errand-information:section_placeholder')}</span>;
+  }
+
   if (error || !schema || !schemaId) {
     return <div className="text-error">Fel: {error ?? 'Kunde inte ladda schema'}</div>;
   }
@@ -95,16 +100,19 @@ interface ErrandDetailsProps {
 
 export const ErrandDetails: React.FC<ErrandDetailsProps> = ({ compact }) => {
   const { t } = useTranslation('errand-information');
+  const { watch } = useFormContext<ErrandFormDTO>();
+  const schemaNames = schemaNamesForErrand(watch('labels'));
 
-  // Until AoT has its own schemas there is no form list to render. The placeholder distinguishes
-  // "no fields yet" from "the schema failed to load".
-  if (ERRAND_FORM_SCHEMA_NAMES.length === 0) {
+  // The errand type chooses the form, so before it is categorized — or for a type whose flow has
+  // no schema — there is nothing to render. The placeholder distinguishes "no fields yet" from
+  // "the schema failed to load".
+  if (schemaNames.length === 0) {
     return <span className="text-dark-secondary">{t('section_placeholder')}</span>;
   }
 
   return (
     <div className="flex flex-col gap-24">
-      {ERRAND_FORM_SCHEMA_NAMES.map((schemaName) => (
+      {schemaNames.map((schemaName) => (
         <SchemaFormField key={schemaName} schemaName={schemaName} compact={compact} />
       ))}
     </div>

@@ -10,6 +10,7 @@ import authMiddleware from '@/middlewares/auth.middleware';
 import { ErrandCountDTO, ErrandDTO, ErrandsQueryDTO, PageErrandDTO } from '@/responses/supportmanagement.response';
 import { MetadataResponseDTO } from '@/responses/supportmanagement-metadata.response';
 import ApiService from '@/services/api.service';
+import { withCategorizationSubtree } from '@/utils/categorization-root';
 import { mapStakeholderDTOToStakeholder, mapStakeholderToStakeholderDTO } from '@/utils/stakeholder-mapping';
 import { apiURL } from '@/utils/util';
 
@@ -290,6 +291,6 @@ export class SupportManagementController {
     const res = await this.apiService.get<MetadataResponse>({ url }, req);
     if (!res.data) throw new HttpException(502, 'Invalid response when reading metadata');
 
-    return res.data;
+    return withCategorizationSubtree(res.data);
   }
 }

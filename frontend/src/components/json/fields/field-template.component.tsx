@@ -1,4 +1,4 @@
-import { isRadioWidgetName } from '@components/json/widgets/radio-widget-names';
+import { isGroupWidgetName } from '@components/json/widgets/group-widget-names';
 import { ariaDescribedByIds, descriptionId, errorId, type FieldTemplateProps, titleId } from '@rjsf/utils';
 import { FormControl, FormErrorMessage, FormLabel } from '@sk-web-gui/react';
 import { INVALID_FIELD_ATTRIBUTE } from '@utils/focus-first-error';
@@ -23,7 +23,7 @@ export function FieldTemplate(props: FieldTemplateProps) {
 
   const hasError = Boolean(rawErrors?.length);
   const formControlClassName = className ? `form-row ${className}` : 'form-row w-full';
-  const isRadioGroup = isRadioWidgetName(uiSchema?.['ui:widget']);
+  const isFieldGroup = isGroupWidgetName(uiSchema?.['ui:widget']);
   // Flags the field so error navigation finds it, wherever it sits in the form.
   const invalidFieldProps = hasError ? { [INVALID_FIELD_ATTRIBUTE]: id } : {};
 
@@ -56,7 +56,7 @@ export function FieldTemplate(props: FieldTemplateProps) {
       {displayLabel && (
         <FormLabel
           id={titleId(id)}
-          {...(isRadioGroup ? { as: 'legend' } : { htmlFor: id })}
+          {...(isFieldGroup ? { as: 'legend' } : { htmlFor: id })}
           className={hideLabel ? 'sr-only' : undefined}
         >
           {label}
@@ -79,7 +79,7 @@ export function FieldTemplate(props: FieldTemplateProps) {
     </>
   );
 
-  if (isRadioGroup) {
+  if (isFieldGroup) {
     return (
       <FormControl
         className={formControlClassName}

@@ -5,15 +5,20 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   ErrandFormDataContractError,
+  errandFormDataForSchemas,
   errandFormDataToJsonParameters,
   jsonParametersToErrandFormData,
   loadFormSchema,
   loadFormSchemaById,
+  SchemaNotFoundError,
   upsertErrandFormDataItem,
   validateErrandFormData,
 } from '../../../../src/components/json/utils/schema-utils';
 
-const REQUIRED_SCHEMA_NAME = 'aot-test-schema';
+const REQUIRED_SCHEMA_NAME = 'aot_test_schema';
+// The required list is normally derived from the errand's ärendetyp; these cases pass it explicitly
+// so they test the entries they are given.
+const REQUIRED_SCHEMA_NAMES = [REQUIRED_SCHEMA_NAME];
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -21,14 +26,16 @@ afterEach(() => {
 });
 
 describe('validateErrandFormData', () => {
+  // A required name is looked up first, because a type whose flow has no schema has nothing to
+  // fill in. When that lookup cannot answer, the entry still counts as missing.
   it.each([undefined, []])('fails closed when required form data is missing', async (formDataEntries) => {
     const fetchMock = vi.fn<typeof fetch>();
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(
-      validateErrandFormData(formDataEntries, undefined, undefined, [REQUIRED_SCHEMA_NAME])
+      validateErrandFormData(formDataEntries, undefined, undefined, REQUIRED_SCHEMA_NAMES)
     ).resolves.toHaveLength(1);
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/schemas/latest/'), expect.anything());
   });
 
   it('fails closed when the required entry has no serialized data', async () => {
@@ -36,7 +43,12 @@ describe('validateErrandFormData', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(
-      validateErrandFormData([{ schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'schema-v1', data: '' }])
+      validateErrandFormData(
+        [{ schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'schema-v1', data: '' }],
+        undefined,
+        undefined,
+        REQUIRED_SCHEMA_NAMES
+      )
     ).resolves.toHaveLength(1);
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -52,9 +64,12 @@ describe('validateErrandFormData', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(
-      validateErrandFormData([
-        { schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'missing-schema', data: JSON.stringify({ location: 'A' }) },
-      ])
+      validateErrandFormData(
+        [{ schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'missing-schema', data: JSON.stringify({ location: 'A' }) }],
+        undefined,
+        undefined,
+        REQUIRED_SCHEMA_NAMES
+      )
     ).resolves.toHaveLength(1);
   });
 
@@ -65,7 +80,9 @@ describe('validateErrandFormData', () => {
       { schemaName: REQUIRED_SCHEMA_NAME, data: JSON.stringify({ location: 'A' }) },
     ];
 
-    await expect(validateErrandFormData(entries)).resolves.toEqual([expect.stringContaining('Missing schema ID')]);
+    await expect(validateErrandFormData(entries, undefined, undefined, REQUIRED_SCHEMA_NAMES)).resolves.toEqual([
+      expect.stringContaining('Missing schema ID'),
+    ]);
     expect(fetchMock).not.toHaveBeenCalled();
     expect(() => errandFormDataToJsonParameters(entries)).toThrow(
       expect.objectContaining<Partial<ErrandFormDataContractError>>({ code: 'missing-schema-id' })
@@ -115,9 +132,12 @@ describe('validateErrandFormData', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(
-      validateErrandFormData([
-        { schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'schema-v1', data: JSON.stringify({ location: 'A' }) },
-      ])
+      validateErrandFormData(
+        [{ schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'schema-v1', data: JSON.stringify({ location: 'A' }) }],
+        undefined,
+        undefined,
+        REQUIRED_SCHEMA_NAMES
+      )
     ).resolves.toEqual([]);
     expect(fetchMock).toHaveBeenCalledWith('http://localhost:3001/api/schemas/schema-v1', {
       credentials: 'include',
@@ -126,7 +146,7 @@ describe('validateErrandFormData', () => {
     expect(fetchMock).not.toHaveBeenCalledWith(expect.stringContaining('/schemas/latest/'), expect.anything());
   });
 
-  it('continues validating existing non-required schema entries', async () => {
+  it('validates every entry the errand type calls for', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockImplementation((input) => {
       const url =
         typeof input === 'string' ? input
@@ -156,10 +176,15 @@ describe('validateErrandFormData', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(
-      validateErrandFormData([
-        { schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'required-v1', data: '{}' },
-        { schemaName: 'optional-schema', schemaId: 'optional-v1', data: '{}' },
-      ])
+      validateErrandFormData(
+        [
+          { schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'required-v1', data: '{}' },
+          { schemaName: 'optional-schema', schemaId: 'optional-v1', data: '{}' },
+        ],
+        undefined,
+        undefined,
+        [REQUIRED_SCHEMA_NAME, 'optional-schema']
+      )
     ).resolves.toEqual([expect.stringContaining('Optional schema')]);
   });
 
@@ -196,11 +221,16 @@ describe('validateErrandFormData', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(
-      validateErrandFormData([
-        { schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'required-object-v1', data: '{}' },
-        { schemaName: 'optional-array', schemaId: 'optional-array-v1', data: '["A","B"]' },
-        { schemaName: 'optional-scalar', schemaId: 'optional-scalar-v1', data: '"ready"' },
-      ])
+      validateErrandFormData(
+        [
+          { schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'required-object-v1', data: '{}' },
+          { schemaName: 'optional-array', schemaId: 'optional-array-v1', data: '["A","B"]' },
+          { schemaName: 'optional-scalar', schemaId: 'optional-scalar-v1', data: '"ready"' },
+        ],
+        undefined,
+        undefined,
+        REQUIRED_SCHEMA_NAMES
+      )
     ).resolves.toEqual([]);
   });
 
@@ -255,7 +285,12 @@ describe('validateErrandFormData', () => {
       : (translations[key] ?? key)) as unknown as TFunction;
 
     await expect(
-      validateErrandFormData([{ schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'translated-error-v1', data: '{}' }], t)
+      validateErrandFormData(
+        [{ schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'translated-error-v1', data: '{}' }],
+        t,
+        undefined,
+        REQUIRED_SCHEMA_NAMES
+      )
     ).resolves.toEqual(['Plats och händelse – Datum för händelsen: Obligatoriskt fält']);
   });
 });
@@ -371,6 +406,90 @@ describe('schema loading per locale', () => {
   });
 });
 
+describe('answers left behind by a change of ärendetyp', () => {
+  // Selecting a tobacco type and then switching to an alcohol one used to leave the tobacco entry in
+  // errandFormData, so the alcohol errand was refused over a required tobacco field.
+  const staleTobacco = {
+    schemaName: 'aot_sales_permit_application',
+    schemaId: 'tobacco-v1',
+    data: '{}',
+  };
+  const currentAlcohol = {
+    schemaName: 'aot_folkol_serving_notification',
+    schemaId: 'folkol-v1',
+    data: '{"nagot":"ifyllt"}',
+  };
+
+  it('is not validated against the schema the errand no longer uses', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockImplementation((input) => {
+      const url =
+        typeof input === 'string' ? input
+        : input instanceof URL ? input.href
+        : input.url;
+      const schemaId = url.split('/').at(-1);
+      const schema =
+        schemaId === 'tobacco-v1' ?
+          {
+            $schema: 'https://json-schema.org/draft/2020-12/schema',
+            title: 'Tobak',
+            type: 'object',
+            required: ['startdatum'],
+          }
+        : { $schema: 'https://json-schema.org/draft/2020-12/schema', type: 'object' };
+      return Promise.resolve(
+        new Response(JSON.stringify({ schema, schemaId }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      );
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(
+      validateErrandFormData([staleTobacco, currentAlcohol], undefined, undefined, [currentAlcohol.schemaName])
+    ).resolves.toEqual([]);
+  });
+
+  it('is dropped from the entries the errand files', () => {
+    expect(errandFormDataForSchemas([staleTobacco, currentAlcohol], [currentAlcohol.schemaName])).toEqual([
+      currentAlcohol,
+    ]);
+  });
+});
+
+describe('an errand type whose flow has no schema', () => {
+  const notFound = () =>
+    vi.fn<typeof fetch>().mockResolvedValue(new Response('', { status: 404, statusText: 'Not Found' }));
+
+  it('reports a missing schema as not found rather than as a load failure', async () => {
+    vi.stubGlobal('fetch', notFound());
+
+    await expect(loadFormSchema('aot_folkol_sales_notification')).rejects.toBeInstanceOf(SchemaNotFoundError);
+  });
+
+  it('does not demand form data for a type that has no schema to fill in', async () => {
+    vi.stubGlobal('fetch', notFound());
+
+    await expect(validateErrandFormData([], undefined, undefined, ['aot_folkol_sales_notification'])).resolves.toEqual(
+      []
+    );
+  });
+
+  it('still fails closed when the schema exists but its data is missing', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<typeof fetch>().mockResolvedValue(
+        new Response(JSON.stringify({ schema: { type: 'object' }, schemaId: 'exists-v1' }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      )
+    );
+
+    await expect(validateErrandFormData([], undefined, undefined, ['aot_exists'])).resolves.toHaveLength(1);
+  });
+});
+
 describe('validateErrandFormData locale', () => {
   it('validates against the schema in the active language rather than the default one', async () => {
     const fetchMock = vi.fn<typeof fetch>().mockImplementation(() =>
@@ -391,7 +510,8 @@ describe('validateErrandFormData locale', () => {
     await validateErrandFormData(
       [{ schemaName: REQUIRED_SCHEMA_NAME, schemaId: 'validate-locale-v1', data: '{}' }],
       undefined,
-      'en'
+      'en',
+      REQUIRED_SCHEMA_NAMES
     );
 
     expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/schemas/validate-locale-v1'), {
