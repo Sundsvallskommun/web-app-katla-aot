@@ -23,5 +23,9 @@
   },
   "owner": {
     "required": "Select the company or organisation the case concerns."
+  },
+  "categorization": {
+    "category_required": "Select the category the case concerns.",
+    "type_required": "Select the case type the case concerns."
   }
 }

@@ -20,7 +20,13 @@
     "error": "Something went wrong while saving the case"
   },
   "about": {
-    "title": "About the case"
+    "title": "About the case",
+    "category_label": "Category",
+    "category_placeholder": "Select a category…",
+    "type_label": "Case type",
+    "type_placeholder": "Select a case type…",
+    "type_placeholder_no_category": "Select a category first",
+    "type_search_placeholder": "Search case types"
   },
   "other_parties": {
     "title": "Other parties",

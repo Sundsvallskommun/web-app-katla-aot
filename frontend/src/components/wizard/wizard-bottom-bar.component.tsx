@@ -10,6 +10,7 @@ import { ErrandFormDTO } from '@interfaces/errand-form';
 import { CenterDiv } from '@layouts/center-div.component';
 import { createErrand, updateErrand } from '@services/errand-service/errand-service';
 import { Button, Dialog, useSnackbar } from '@sk-web-gui/react';
+import { prepareErrandForApi } from '@utils/prepare-errand';
 import { getPrimaryStakeholder } from '@utils/stakeholder';
 import { ChevronLeft, ChevronRight, Inbox } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -18,7 +19,6 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
 import { useActiveWizardSteps } from 'src/hooks/use-active-wizard-steps';
-import { usePrepareErrand } from 'src/hooks/use-prepare-errand';
 import { useWizardStore } from 'src/stores/wizard-store';
 
 import { validateStep } from './wizard-step-validator';
@@ -34,7 +34,6 @@ export const WizardBottomBar: React.FC = () => {
   const { currentStep, goNext, goBack, setStepErrors } = useWizardStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
-  const { prepareErrandForApi } = usePrepareErrand();
 
   const steps = useActiveWizardSteps();
   const errandId = watch('id');
