@@ -68,28 +68,6 @@
           "defaultQueryState": "HIDDEN"
         }
       },
-      "verksamhetsbeskrivningsval": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I",
-            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret",
-            "x-oe-alternativeID": "49646"
-          },
-          {
-            "const": "JAG_VILL_BIFOGA_VERKSAMHETSBESKRIVNINGEN_SOM",
-            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil",
-            "x-oe-alternativeID": "49647"
-          }
-        ],
-        "title": "Verksamhetsbeskrivning",
-        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?",
-        "x-oe": {
-          "queryID": "81713",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
       "fakturaadressSammaSomForetaget": {
         "type": "string",
         "oneOf": [
@@ -173,6 +151,28 @@
           "defaultQueryState": "HIDDEN"
         }
       },
+      "verksamhetsbeskrivningsval": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I",
+            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret",
+            "x-oe-alternativeID": "49646"
+          },
+          {
+            "const": "JAG_VILL_BIFOGA_VERKSAMHETSBESKRIVNINGEN_SOM",
+            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil",
+            "x-oe-alternativeID": "49647"
+          }
+        ],
+        "title": "Verksamhetsbeskrivning",
+        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?",
+        "x-oe": {
+          "queryID": "81713",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
       "verksamhetsbeskrivning": {
         "type": "string",
         "title": "Verksamhetsbeskrivning",
@@ -200,6 +200,37 @@
         "x-oe": {
           "queryID": "81785",
           "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "beskrivUtbudetAvMat": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JAG_VILL_BIFOGA_MENY_SOM",
+            "title": "Jag vill bifoga meny som bilaga",
+            "x-oe-alternativeID": "49678"
+          },
+          {
+            "const": "JAG_VILL_SKRIVA_IN_MENYN",
+            "title": "Jag vill skriva in menyn i formuläret",
+            "x-oe-alternativeID": "49679"
+          }
+        ],
+        "title": "Beskriv utbudet av mat",
+        "description": "\"En förutsättning för att få servera alkoholdrycker är att det även serveras mat. Utbudet av mat ska vara tillrett, tillräckligt och tillgängligt. Detta innebär att du ska ha mat som du har kapacitet att tillreda på plats i restaurangen och matutbudet ska även alltid vara tillgängligt för gästerna i verksamheten. Du kan välja att bifoga en meny om du har en sådan. Annars kan du välja att skriva in denna i formuläret. Om du har en annan, enklare meny efter kl. 23 ska du även bifoga den eller skriva in denna i formuläret nedan. Exempel på rätter i en enklare meny är hamburgare, sallad, paj, varma smörgåsar och bakad potatis.\" detta stod tidigare i beskrivning",
+        "x-oe": {
+          "queryID": "81786",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "meny": {
+        "type": "string",
+        "title": "Meny",
+        "x-oe": {
+          "queryID": "81788",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
           "defaultQueryState": "HIDDEN"
         }
       },
@@ -263,6 +294,41 @@
         "x-oe": {
           "queryID": "81792",
           "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "serveringsstalletsBesoksadress": {
+        "type": "object",
+        "properties": {
+          "gatuadress": {
+            "type": "string",
+            "title": "Gatuadress",
+            "x-oe": {
+              "textFieldID": "50421",
+              "queryID": "81793"
+            }
+          },
+          "postnummer": {
+            "type": "string",
+            "title": "Postnummer",
+            "x-oe": {
+              "textFieldID": "50422",
+              "queryID": "81793"
+            }
+          },
+          "postort": {
+            "type": "string",
+            "title": "Postort",
+            "x-oe": {
+              "textFieldID": "50423",
+              "queryID": "81793"
+            }
+          }
+        },
+        "title": "Serveringsställets besöksadress",
+        "x-oe": {
+          "queryID": "81793",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
           "defaultQueryState": "HIDDEN"
         }
       },
@@ -351,72 +417,6 @@
         "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)",
         "x-oe": {
           "queryID": "81796",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "beskrivUtbudetAvMat": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "JAG_VILL_BIFOGA_MENY_SOM",
-            "title": "Jag vill bifoga meny som bilaga",
-            "x-oe-alternativeID": "49678"
-          },
-          {
-            "const": "JAG_VILL_SKRIVA_IN_MENYN",
-            "title": "Jag vill skriva in menyn i formuläret",
-            "x-oe-alternativeID": "49679"
-          }
-        ],
-        "title": "Beskriv utbudet av mat",
-        "description": "\"En förutsättning för att få servera alkoholdrycker är att det även serveras mat. Utbudet av mat ska vara tillrett, tillräckligt och tillgängligt. Detta innebär att du ska ha mat som du har kapacitet att tillreda på plats i restaurangen och matutbudet ska även alltid vara tillgängligt för gästerna i verksamheten. Du kan välja att bifoga en meny om du har en sådan. Annars kan du välja att skriva in denna i formuläret. Om du har en annan, enklare meny efter kl. 23 ska du även bifoga den eller skriva in denna i formuläret nedan. Exempel på rätter i en enklare meny är hamburgare, sallad, paj, varma smörgåsar och bakad potatis.\" detta stod tidigare i beskrivning",
-        "x-oe": {
-          "queryID": "81786",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "meny": {
-        "type": "string",
-        "title": "Meny",
-        "x-oe": {
-          "queryID": "81788",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "serveringsstalletsBesoksadress": {
-        "type": "object",
-        "properties": {
-          "gatuadress": {
-            "type": "string",
-            "title": "Gatuadress",
-            "x-oe": {
-              "textFieldID": "50421",
-              "queryID": "81793"
-            }
-          },
-          "postnummer": {
-            "type": "string",
-            "title": "Postnummer",
-            "x-oe": {
-              "textFieldID": "50422",
-              "queryID": "81793"
-            }
-          },
-          "postort": {
-            "type": "string",
-            "title": "Postort",
-            "x-oe": {
-              "textFieldID": "50423",
-              "queryID": "81793"
-            }
-          }
-        },
-        "title": "Serveringsställets besöksadress",
-        "x-oe": {
-          "queryID": "81793",
           "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
           "defaultQueryState": "HIDDEN"
         }

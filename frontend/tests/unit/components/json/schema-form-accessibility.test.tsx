@@ -124,6 +124,35 @@ describe('SchemaForm accessibility contract', () => {
     });
   });
 
+  // A grouped question carries its description as ui schema markup. RJSF hands that markup to the
+  // object template as a plain string, where it would render as escaped text next to the real one.
+  it('renders a grouped question description once, as markup', () => {
+    const schema: RJSFSchema = {
+      type: 'object',
+      properties: {
+        personnummer: {
+          type: 'object',
+          title: 'Personnummer',
+          properties: { personnummer: { type: 'string', title: 'Personnummer' } },
+        },
+      },
+    };
+    const uiSchema: FormUiSchema = {
+      personnummer: {
+        'ui:options': { showObjectFieldset: true },
+        'ui:description': '<p>Ange personnummer</p>',
+        personnummer: { 'ui:widget': 'TextWidget' },
+      },
+    };
+
+    render(<SchemaForm schemaId={ACCESSIBILITY_TEST_SCHEMA_ID} schema={schema} uiSchema={uiSchema} hideSubmitButton />);
+
+    const description = document.getElementById(descriptionId('root_personnummer'));
+    expect(description).toHaveTextContent('Ange personnummer');
+    expect(description?.querySelector('p')).toBeInTheDocument();
+    expect(screen.queryByText('<p>Ange personnummer</p>')).not.toBeInTheDocument();
+  });
+
   it('gives a radio group a real accessible name, shared native group name and clickable option labels', async () => {
     const user = userEvent.setup();
     const schema: RJSFSchema = {

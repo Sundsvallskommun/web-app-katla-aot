@@ -718,7 +718,10 @@
           "showObjectFieldset": true
         },
         "personnummer_50400": {
-          "ui:widget": "TextWidget"
+          "ui:widget": "TextWidget",
+          "ui:options": {
+            "hideLabel": true
+          }
         },
         "ui:description": "<p>Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren.</p>"
       },
@@ -730,7 +733,10 @@
           "showObjectFieldset": true
         },
         "organisationsnummer_50401": {
-          "ui:widget": "TextWidget"
+          "ui:widget": "TextWidget",
+          "ui:options": {
+            "hideLabel": true
+          }
         },
         "ui:description": "<p>Vilket företag med gällande serveringstillstånd driver du eller annan person som är ansvarig i företaget idag?<br />\nOm du eller annan företrädare för organisationen har ett serveringstillstånd idag som minst motsvarar den aktuella ansökan, och det inte finns skäl att ifrågasätta kunskaperna, kan det vara så att kunskaperna inte behöver styrkas med ett kunskapsprov.</p>"
       },
@@ -752,9 +758,6 @@
             "telefonnummer_5747",
             "e_postadress_5748"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "fornamn_5744": {
             "ui:widget": "TextWidget"
           },
@@ -833,10 +836,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {
@@ -857,10 +866,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {
@@ -908,10 +923,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {
@@ -932,10 +953,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {
@@ -991,9 +1018,6 @@
             "kontonummer_5750",
             "belopp_kronor_5751"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "bank_5749": {
             "ui:widget": "TextWidget"
           },
@@ -1022,9 +1046,6 @@
             "langivare_5752",
             "belopp_kronor_5753"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "langivare_5752": {
             "ui:widget": "TextWidget"
           },
@@ -1050,9 +1071,6 @@
             "langivare_5754",
             "belopp_kronor_5755"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "langivare_5754": {
             "ui:widget": "TextWidget"
           },
@@ -1079,9 +1097,6 @@
             "langivare_5757",
             "belopp_kronor_5758"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "lanetyp_5756": {
             "ui:widget": "TextWidget"
           },
@@ -1178,9 +1193,6 @@
             "efternamn_5760",
             "personnummer_5761"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "fornamn_5759": {
             "ui:widget": "TextWidget"
           },
@@ -1295,10 +1307,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {
@@ -1410,9 +1428,6 @@
             "efternamn_5763",
             "personnummer_5764"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "fornamn_5762": {
             "ui:widget": "TextWidget"
           },
@@ -1678,10 +1693,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {
@@ -1750,7 +1771,10 @@
           "showObjectFieldset": true
         },
         "personnummer_50437": {
-          "ui:widget": "TextWidget"
+          "ui:widget": "TextWidget",
+          "ui:options": {
+            "hideLabel": true
+          }
         },
         "ui:description": "<p>Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren.</p>"
       },
@@ -1762,7 +1786,10 @@
           "showObjectFieldset": true
         },
         "organisationsnummer_50438": {
-          "ui:widget": "TextWidget"
+          "ui:widget": "TextWidget",
+          "ui:options": {
+            "hideLabel": true
+          }
         },
         "ui:description": "<p>Vilket företag med gällande serveringstillstånd driver du eller annan person som är ansvarig i företaget idag?<br />\nOm du eller annan företrädare för organisationen har ett serveringstillstånd idag som minst motsvarar den aktuella ansökan, och det inte finns skäl att ifrågasätta kunskaperna, kan det vara så att kunskaperna inte behöver styrkas med ett kunskapsprov.</p>"
       },
@@ -1784,9 +1811,6 @@
             "telefonnummer_5768",
             "e_postadress_5769"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "fornamn_5765": {
             "ui:widget": "TextWidget"
           },
@@ -1831,9 +1855,6 @@
             "kontonummer_5771",
             "belopp_kronor_5772"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "bank_5770": {
             "ui:widget": "TextWidget"
           },
@@ -1862,9 +1883,6 @@
             "langivare_5773",
             "belopp_kronor_5774"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "langivare_5773": {
             "ui:widget": "TextWidget"
           },
@@ -1890,9 +1908,6 @@
             "langivare_5775",
             "belopp_kronor_5776"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "langivare_5775": {
             "ui:widget": "TextWidget"
           },
@@ -1919,9 +1934,6 @@
             "langivare_5778",
             "belopp_kronor_5779"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "lanetyp_5777": {
             "ui:widget": "TextWidget"
           },
@@ -2028,7 +2040,10 @@
           "showObjectFieldset": true
         },
         "personnummer_50444": {
-          "ui:widget": "TextWidget"
+          "ui:widget": "TextWidget",
+          "ui:options": {
+            "hideLabel": true
+          }
         },
         "ui:description": "<p>Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren.</p>"
       },
@@ -2040,7 +2055,10 @@
           "showObjectFieldset": true
         },
         "organisationsnummer_50445": {
-          "ui:widget": "TextWidget"
+          "ui:widget": "TextWidget",
+          "ui:options": {
+            "hideLabel": true
+          }
         },
         "ui:description": "<p>Vilket företag med gällande serveringstillstånd driver du eller annan person som är ansvarig i företaget idag?<br />\nOm du eller annan företrädare för organisationen har ett serveringstillstånd idag som minst motsvarar den aktuella ansökan, och det inte finns skäl att ifrågasätta kunskaperna, kan det vara så att kunskaperna inte behöver styrkas med ett kunskapsprov.</p>"
       },
@@ -2062,9 +2080,6 @@
             "telefonnummer_5783",
             "e_postadress_5784"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "fornamn_5780": {
             "ui:widget": "TextWidget"
           },
@@ -2124,9 +2139,6 @@
             "kontonummer_5786",
             "belopp_kronor_5787"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "bank_5785": {
             "ui:widget": "TextWidget"
           },
@@ -2155,9 +2167,6 @@
             "langivare_5788",
             "belopp_kronor_5789"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "langivare_5788": {
             "ui:widget": "TextWidget"
           },
@@ -2183,9 +2192,6 @@
             "langivare_5790",
             "belopp_kronor_5791"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "langivare_5790": {
             "ui:widget": "TextWidget"
           },
@@ -2212,9 +2218,6 @@
             "langivare_5793",
             "belopp_kronor_5794"
           ],
-          "ui:options": {
-            "showObjectFieldset": true
-          },
           "lanetyp_5792": {
             "ui:widget": "TextWidget"
           },
@@ -2363,10 +2366,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {

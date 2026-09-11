@@ -3,19 +3,19 @@
     "ui:order": [
       "arDuFirmatecknare",
       "foretagsform",
-      "verksamhetsbeskrivningsval",
       "fakturaadressSammaSomForetaget",
       "fakturamottagare",
       "fakturareferens",
+      "verksamhetsbeskrivningsval",
       "verksamhetsbeskrivning",
       "forsaljningsstalle",
       "alkoholdrycker",
       "forsaljningsperiod",
+      "angePeriodForForsaljning",
       "forsaljningstider",
       "besoksarrangemang",
-      "beskrivForsaljningsplats",
-      "angePeriodForForsaljning",
       "beskrivBesoksarrangemanget",
+      "beskrivForsaljningsplats",
       "harDuKassaregister",
       "angeRegistreringskod"
     ],
@@ -28,10 +28,10 @@
         "fields": [
           "arDuFirmatecknare",
           "foretagsform",
-          "verksamhetsbeskrivningsval",
           "fakturaadressSammaSomForetaget",
           "fakturamottagare",
           "fakturareferens",
+          "verksamhetsbeskrivningsval",
           "verksamhetsbeskrivning"
         ]
       },
@@ -44,11 +44,11 @@
           "forsaljningsstalle",
           "alkoholdrycker",
           "forsaljningsperiod",
+          "angePeriodForForsaljning",
           "forsaljningstider",
           "besoksarrangemang",
-          "beskrivForsaljningsplats",
-          "angePeriodForForsaljning",
           "beskrivBesoksarrangemanget",
+          "beskrivForsaljningsplats",
           "harDuKassaregister",
           "angeRegistreringskod"
         ]
@@ -59,10 +59,6 @@
     },
     "foretagsform": {
       "ui:widget": "RadiobuttonWidget"
-    },
-    "verksamhetsbeskrivningsval": {
-      "ui:widget": "RadiobuttonWidget",
-      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
     },
     "fakturaadressSammaSomForetaget": {
       "ui:widget": "RadiobuttonWidget",
@@ -106,6 +102,10 @@
         "className": "w-full min-h-[14rem]"
       },
       "ui:description": "<p>Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.</p>"
+    },
+    "verksamhetsbeskrivningsval": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
     },
     "verksamhetsbeskrivning": {
       "ui:widget": "TexteditorWidget",
@@ -163,6 +163,30 @@
     "forsaljningsperiod": {
       "ui:widget": "RadiobuttonWidget"
     },
+    "angePeriodForForsaljning": {
+      "ui:order": [
+        "startDate",
+        "endDate"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "startDate": {
+        "ui:widget": "DateWidget"
+      },
+      "endDate": {
+        "ui:widget": "DateWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "startDate",
+            "endDate"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
     "forsaljningstider": {
       "ui:order": [
         "startTime",
@@ -196,37 +220,13 @@
     "besoksarrangemang": {
       "ui:widget": "RadiobuttonWidget"
     },
-    "beskrivForsaljningsplats": {
+    "beskrivBesoksarrangemanget": {
       "ui:widget": "TexteditorWidget",
       "ui:options": {
         "className": "w-full min-h-[14rem]"
       }
     },
-    "angePeriodForForsaljning": {
-      "ui:order": [
-        "startDate",
-        "endDate"
-      ],
-      "ui:options": {
-        "showObjectFieldset": true
-      },
-      "startDate": {
-        "ui:widget": "DateWidget"
-      },
-      "endDate": {
-        "ui:widget": "DateWidget"
-      },
-      "ui:rows": [
-        {
-          "fields": [
-            "startDate",
-            "endDate"
-          ],
-          "gap": "gap-24"
-        }
-      ]
-    },
-    "beskrivBesoksarrangemanget": {
+    "beskrivForsaljningsplats": {
       "ui:widget": "TexteditorWidget",
       "ui:options": {
         "className": "w-full min-h-[14rem]"

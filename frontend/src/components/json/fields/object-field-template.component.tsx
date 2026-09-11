@@ -251,7 +251,8 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
             {props.required ? ' *' : ''}
           </legend>
         )}
-        {props.description}
+        {/* The description is FieldTemplate's: RJSF hands it over as the raw ui:description
+            markup, which would render as escaped text here. */}
         {renderedFields}
       </fieldset>
     );
