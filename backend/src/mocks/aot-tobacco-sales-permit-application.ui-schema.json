@@ -1,0 +1,344 @@
+{
+  "value": {
+    "ui:order": [
+      "foretagsform",
+      "arDuFirmatecknare",
+      "verksamhetsbeskrivningsval",
+      "fakturaadressSammaSomForetaget",
+      "fakturamottagare",
+      "fakturareferens",
+      "verksamhetsbeskrivning",
+      "tidsperiodForForsaljningen",
+      "forsaljningsstallet",
+      "besoksadressSammaSomForetaget",
+      "bedriverAvenDistansforsaljning",
+      "avtalMedTillverkareEllerPartihandlare",
+      "periodTidsbegransadForsaljning",
+      "startdatumForsaljning",
+      "besoksadress",
+      "hemsida",
+      "omfattarSarskiltFarligaProdukter",
+      "finansiering",
+      "egnaMedel",
+      "banklan",
+      "privatlan",
+      "annanFinansiering",
+      "ovrigaUpplysningarFinansiering"
+    ],
+    "ui:sections": [
+      {
+        "id": "foretag",
+        "title": "Företag och fakturering",
+        "icon": "building-2",
+        "defaultOpen": true,
+        "fields": [
+          "foretagsform",
+          "arDuFirmatecknare",
+          "verksamhetsbeskrivningsval",
+          "fakturaadressSammaSomForetaget",
+          "fakturamottagare",
+          "fakturareferens",
+          "verksamhetsbeskrivning"
+        ]
+      },
+      {
+        "id": "ansokan",
+        "title": "Ansökan om tillstånd för försäljning av tobak",
+        "icon": "file-text",
+        "defaultOpen": true,
+        "fields": [
+          "tidsperiodForForsaljningen",
+          "forsaljningsstallet",
+          "besoksadressSammaSomForetaget",
+          "bedriverAvenDistansforsaljning",
+          "avtalMedTillverkareEllerPartihandlare",
+          "periodTidsbegransadForsaljning",
+          "startdatumForsaljning",
+          "besoksadress",
+          "hemsida",
+          "omfattarSarskiltFarligaProdukter",
+          "finansiering",
+          "egnaMedel",
+          "banklan",
+          "privatlan",
+          "annanFinansiering",
+          "ovrigaUpplysningarFinansiering"
+        ]
+      }
+    ],
+    "foretagsform": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "arDuFirmatecknare": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "verksamhetsbeskrivningsval": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
+    },
+    "fakturaadressSammaSomForetaget": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Kommunen kan komma att ta ut en avgift. Om du vill att fakturan ska gå till den adress som företaget är registrerad på anger du \"Ja\" i fältet nedan. Om du vill att fakturan ska gå till en annan adress anger du \"Nej\" och fyller sedan i den. Du har även möjlighet att ange en fakturareferens.</p>"
+    },
+    "fakturamottagare": {
+      "ui:order": [
+        "cO",
+        "utdelningsadress",
+        "postnummer",
+        "postort"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "cO": {
+        "ui:widget": "TextWidget"
+      },
+      "utdelningsadress": {
+        "ui:widget": "TextWidget"
+      },
+      "postnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "postort": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "postnummer",
+            "postort"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "fakturareferens": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      },
+      "ui:description": "<p>Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.</p>"
+    },
+    "verksamhetsbeskrivning": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "tidsperiodForForsaljningen": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "forsaljningsstallet": {
+      "ui:order": [
+        "forsaljningsstalletsNamn"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "forsaljningsstalletsNamn": {
+        "ui:widget": "TextWidget"
+      }
+    },
+    "besoksadressSammaSomForetaget": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "bedriverAvenDistansforsaljning": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Distansförsäljning är försäljning av varor via postorder, telefon eller internet där leverantören ansvarar för leveransen av varorna.</p>"
+    },
+    "avtalMedTillverkareEllerPartihandlare": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "periodTidsbegransadForsaljning": {
+      "ui:order": [
+        "startDate",
+        "endDate"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "startDate": {
+        "ui:widget": "DateWidget"
+      },
+      "endDate": {
+        "ui:widget": "DateWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "startDate",
+            "endDate"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "startdatumForsaljning": {
+      "ui:order": [],
+      "ui:options": {
+        "showObjectFieldset": true
+      }
+    },
+    "besoksadress": {
+      "ui:order": [
+        "gatuadress",
+        "postnummer",
+        "postort",
+        "telefonnummer",
+        "ePost"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "gatuadress": {
+        "ui:widget": "TextWidget"
+      },
+      "postnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "postort": {
+        "ui:widget": "TextWidget"
+      },
+      "telefonnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "ePost": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "postnummer",
+            "postort"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "hemsida": {
+      "ui:order": [
+        "hemsida"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "hemsida": {
+        "ui:widget": "TextWidget"
+      }
+    },
+    "omfattarSarskiltFarligaProdukter": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "finansiering": {
+      "ui:widget": "checkboxes",
+      "ui:options": {
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
+      },
+      "ui:description": "<p>För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med.</p>"
+    },
+    "egnaMedel": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "bank",
+          "kontonummer",
+          "beloppKronor"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "bank": {
+          "ui:widget": "TextWidget"
+        },
+        "kontonummer": {
+          "ui:widget": "TextWidget"
+        },
+        "beloppKronor": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "banklan": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "langivare",
+          "beloppKronor"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "langivare": {
+          "ui:widget": "TextWidget"
+        },
+        "beloppKronor": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "privatlan": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "langivare",
+          "beloppKronor"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "langivare": {
+          "ui:widget": "TextWidget"
+        },
+        "beloppKronor": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "annanFinansiering": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "lanetyp",
+          "langivare",
+          "beloppKronor"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "lanetyp": {
+          "ui:widget": "TextWidget"
+        },
+        "langivare": {
+          "ui:widget": "TextWidget"
+        },
+        "beloppKronor": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "ovrigaUpplysningarFinansiering": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    }
+  },
+  "description": "UI schema for Ansökan om tillstånd för försäljning av tobak"
+}

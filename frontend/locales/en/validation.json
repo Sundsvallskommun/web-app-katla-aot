@@ -27,5 +27,9 @@
   "categorization": {
     "category_required": "Select the category the case concerns.",
     "type_required": "Select the case type the case concerns."
+  },
+  "attachments": {
+    "required": "The attachment \"{{label}}\" is missing.",
+    "check_failed": "The attachments could not be checked. Please try again."
   }
 }

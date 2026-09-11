@@ -1,0 +1,253 @@
+{
+  "value": {
+    "ui:order": [
+      "arDuFirmatecknare",
+      "foretagsform",
+      "verksamhetsbeskrivningsval",
+      "fakturaadressSammaSomForetaget",
+      "fakturamottagare",
+      "fakturareferens",
+      "verksamhetsbeskrivning",
+      "kommerNiAttServeraMat",
+      "egenkontrollprogramFolkol",
+      "serveringsstalletsNamn",
+      "besoksadressSammaSomForetaget",
+      "kontaktuppgifterTillServeringsstallet",
+      "sittplatserILokalen",
+      "maximaltAntalPersonerILokalen",
+      "beskrivUtbudetAvMat",
+      "meny",
+      "serveringsstalletsBesoksadress",
+      "harDuKassaregister",
+      "angeRegistreringskod"
+    ],
+    "ui:sections": [
+      {
+        "id": "foretag",
+        "title": "Företag och fakturering",
+        "icon": "building-2",
+        "defaultOpen": true,
+        "fields": [
+          "arDuFirmatecknare",
+          "foretagsform",
+          "verksamhetsbeskrivningsval",
+          "fakturaadressSammaSomForetaget",
+          "fakturamottagare",
+          "fakturareferens",
+          "verksamhetsbeskrivning"
+        ]
+      },
+      {
+        "id": "ansokan",
+        "title": "Servering av folköl (klass 2)",
+        "icon": "file-text",
+        "defaultOpen": true,
+        "fields": [
+          "kommerNiAttServeraMat",
+          "egenkontrollprogramFolkol",
+          "serveringsstalletsNamn",
+          "besoksadressSammaSomForetaget",
+          "kontaktuppgifterTillServeringsstallet",
+          "sittplatserILokalen",
+          "maximaltAntalPersonerILokalen",
+          "beskrivUtbudetAvMat",
+          "meny",
+          "serveringsstalletsBesoksadress",
+          "harDuKassaregister",
+          "angeRegistreringskod"
+        ]
+      }
+    ],
+    "arDuFirmatecknare": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "foretagsform": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "verksamhetsbeskrivningsval": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
+    },
+    "fakturaadressSammaSomForetaget": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Kommunen kan komma att ta ut en avgift. Om du vill att fakturan ska gå till den adress som företaget är registrerad på anger du \"Ja\" i fältet nedan. Om du vill att fakturan ska gå till en annan adress anger du \"Nej\" och fyller sedan i den. Du har även möjlighet att ange en fakturareferens.</p>"
+    },
+    "fakturamottagare": {
+      "ui:order": [
+        "cO",
+        "utdelningsadress",
+        "postnummer",
+        "postort"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "cO": {
+        "ui:widget": "TextWidget"
+      },
+      "utdelningsadress": {
+        "ui:widget": "TextWidget"
+      },
+      "postnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "postort": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "postnummer",
+            "postort"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "fakturareferens": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      },
+      "ui:description": "<p>Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.</p>"
+    },
+    "verksamhetsbeskrivning": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "kommerNiAttServeraMat": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "egenkontrollprogramFolkol": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".<br />\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.<br />\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig serveringsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.</p>\n\n<p>${serveringfolkolegenkontrollprogram}</p>\n\n<p><strong>Vill du bifoga ifyllt egenkontrollprogram i denna anmälan?</strong></p>"
+    },
+    "serveringsstalletsNamn": {
+      "ui:order": [
+        "namn"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "namn": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:description": "<p>Det namn som du skyltar med till kund.</p>"
+    },
+    "besoksadressSammaSomForetaget": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "kontaktuppgifterTillServeringsstallet": {
+      "ui:order": [
+        "telefonnummer",
+        "ePostadress",
+        "hemsida",
+        "telefon"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "telefonnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "ePostadress": {
+        "ui:widget": "TextWidget"
+      },
+      "hemsida": {
+        "ui:widget": "TextWidget"
+      },
+      "telefon": {
+        "ui:widget": "TextWidget"
+      }
+    },
+    "sittplatserILokalen": {
+      "ui:order": [
+        "antalSittplatserInomhus",
+        "antalSittplatserPaEventuellUteserver"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "antalSittplatserInomhus": {
+        "ui:widget": "TextWidget"
+      },
+      "antalSittplatserPaEventuellUteserver": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "antalSittplatserInomhus",
+            "antalSittplatserPaEventuellUteserver"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "maximaltAntalPersonerILokalen": {
+      "ui:order": [
+        "antalPersoner"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "antalPersoner": {
+        "ui:widget": "TextWidget"
+      }
+    },
+    "beskrivUtbudetAvMat": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "meny": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "serveringsstalletsBesoksadress": {
+      "ui:order": [
+        "gatuadress",
+        "postnummer",
+        "postort"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "gatuadress": {
+        "ui:widget": "TextWidget"
+      },
+      "postnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "postort": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "postnummer",
+            "postort"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "harDuKassaregister": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "angeRegistreringskod": {
+      "ui:order": [
+        "registreringskod"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "registreringskod": {
+        "ui:widget": "TextWidget"
+      }
+    }
+  },
+  "description": "UI schema for Servering av folköl (klass 2)"
+}

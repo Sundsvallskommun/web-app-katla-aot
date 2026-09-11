@@ -9,19 +9,34 @@ import { getJsonValueSchemaValidator } from '../schema/form-schema-validator';
 import { createJsonErrorTransformer, fieldTitleFromSchema } from './schema-form-error-handling';
 
 /**
- * Ärendeuppgifter is one schema per errand type, named after the leaf of the errand's
- * categorization in lower case: an errand classified ALCOHOL / SERVING_PERMIT_APPLICATION /
- * PERMANENT_SERVING is filled in with `aot_permanent_serving`. The generator names the schemas the
- * same way, so neither side needs a lookup table.
+ * Ärendeuppgifter is one schema per errand type, named after the app's SupportManagement namespace
+ * followed by the errand's whole categorization path, lower case: an AOT errand classified
+ * ALCOHOL / SERVING_PERMIT_APPLICATION / PERMANENT_SERVING is filled in with
+ * `aot_alcohol_serving_permit_application_permanent_serving`.
+ *
+ * Both halves earn their place. The jsonschema service partitions only by municipality, so every
+ * app in the kommun shares one flat name space and the namespace is the sole collision boundary.
+ * The full path rather than the leaf because a leaf name is only unique under its own parent —
+ * STADIGVARANDE sits under both ALKOHOL and TOBACCO in the label tree today.
+ *
+ * The generator names the schemas the same way, so neither side needs a lookup table.
  *
  * An errand type with no schema — tillsyn, or a type whose flow has not been migrated — has no
  * form, which is why this returns a list rather than a name.
  */
-export const schemaNamesForErrand = (labels: ErrandLabelDTO[] | undefined): readonly string[] => {
-  const selected = getSelectedLabels(labels);
-  const leaf = selected.SUBTYPE ?? selected.TYPE;
-  const resourceName = leaf?.resourceName;
-  return resourceName ? [`aot_${resourceName.toLowerCase()}`] : [];
+export const schemaNamesForErrand = (
+  labels: ErrandLabelDTO[] | undefined,
+  namespace: string | undefined
+): readonly string[] => {
+  const { CATEGORY, TYPE, SUBTYPE } = getSelectedLabels(labels);
+  const path = [CATEGORY, TYPE, SUBTYPE]
+    .map((label) => label?.resourceName)
+    .filter((resourceName): resourceName is string => !!resourceName);
+
+  // A CATEGORY on its own is not an errand type, so it selects no schema.
+  if (!namespace || path.length < 2) return [];
+
+  return [[namespace, ...path].join('_').toLowerCase()];
 };
 
 /**

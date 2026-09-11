@@ -42,8 +42,8 @@ Tre saker behöver åtgärdas innan ett schema kan publiceras:
 ## 1. Schemaexporten
 
 Kuvertet är exakt `JsonSchemaRequest` (`name`, `version`, `value`, `description`) och kan PUT:as
-till jsonschema-tjänsten som det är. `name` är `aot_opene_test`, vilket redan står i
-`ERRAND_FORM_SCHEMA_NAMES`.
+till jsonschema-tjänsten som det är. `name` är `aot_opene_test` — den odelade flödeskopian, som ingen etikett väljer; ärendetypernas
+scheman namnges enligt 4.1.
 
 `value` är draft 2020-12 med två egenskaper på roten — OpenE:s två steg:
 `kontaktuppgifter_6115` (18 frågor) och `ansokan_6116` (151 frågor).
@@ -285,7 +285,7 @@ date och time. Tre saker saknas, och de täcker tillsammans **73 av 169 frågor*
 
 | Lucka                               | Frågor | Läge                                                                                                                                                                                 |
 | ----------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Filuppladdning (`format: data-url`) | 39     | Behövs inte — uppladdningarna flyttas till bilagor, se 4.5. Renderas tills dess av RJSF:s egen `FileWidget` (`ui:widget: "files"`; `file` är ett string-alias och kastar på arrayer) |
+| Filuppladdning (`format: data-url`) | 39     | Behövs inte — uppladdningarna är flyttade till bilagor, se 4.5. Frågorna finns inte längre i ärendetypernas scheman |
 | Array av objekt (DynamicTable)      | 17     | Draken har `array-object-field-template.componant.tsx`; Katla har ingen `ArrayFieldTemplate` alls                                                                                    |
 | Flervalskryssrutor                  | 17     | ✔ Åtgärdat — `CheckboxGroupWidget` portad till Katla, se avsnitt 5                                                                                                                   |
 | Rubrik på nästlade objekt           | 44     | ✔ Åtgärdat — `ui:options.showObjectFieldset` portad från Draken; utan den tappade varje TextField- och DateTime-fråga sin frågetext                                                  |
@@ -319,11 +319,22 @@ Beslutat. Grentabellen i avsnitt 2 är argumentet: ingen sökande möter mer än
 kategoriseringsetiketter som används idag ska ersättas med rätt värden senare, men kopplingen
 schema ↔ ärendetyp är densamma oavsett vad etiketterna heter. Ett schema per gren:
 
-Schemanamnen följer etikettträdets lövnamn. Trädet har nu tre nivåer
+Schemanamnet är appens SM-namespace följt av hela etikettvägen, gemener:
+`aot_alcohol_serving_permit_application_permanent_serving`. Trädet har nu tre nivåer
 (`CATEGORY_ROOT → CATEGORY → TYPE → SUBTYPE`) med 17 valbara löv, och **alla** grenar i båda
 exporterna har ett löv. `aot-branch-label-mapping.md` håller kartan gren för gren; åtta scheman
-täcker exporterna. Ett lövnamn blir
-ett schemanamn, och ett schemanamn är permanent så snart ett ärende sparats mot det.
+täcker exporterna. Ett schemanamn är permanent så snart ett ärende sparats mot det — det lagras
+som `jsonParameters`-nyckel på ärendet.
+
+Båda halvorna behövs. Jsonschema-tjänsten partitionerar bara på `municipalityId`
+(`/{municipalityId}/schemas/{name}/versions/latest`), så alla appar i kommunen delar ett platt
+namnrum och namespacet är enda kollisionsgränsen mellan dem. Hela vägen i stället för lövet
+eftersom ett lövnamn bara är unikt under sin egen förälder — `STADIGVARANDE` ligger under både
+`ALKOHOL` och `TOBACCO` i trädet idag.
+
+Generatorn (`schemaNameFor`) och appen (`schemaNamesForErrand`) bygger namnet likadant, så ingen
+uppslagstabell behövs på någondera sidan. Appen får namespacet ur metadatasvaret — backend lägger
+`namespace` på `MetadataResponseDTO` — så det finns på ett ställe, i backendens env.
 
 Uppdelningen omfattar två exporter, inte en. Flöde **2181** är alkohol med åtta grenar. Flöde
 **2153** är tobak, och är inte tre grenar utan **ett formulär med en flervalsomfattning** — dess
@@ -420,25 +431,35 @@ base64 inuti formulärets värde. Det hör inte hemma i Katla:
   kontrakten — och `frontend/src/components/tabs/tabs.tsx` har redan en utkommenterad
   `common:tabs.attachments`-flik.
 
-Uppladdningarna lyfts därför ur JSON-schemat och hanteras av en bilagekomponent mot
-SupportManagement. Schemat ska fortsätta **deklarera** vilka bilagor en gren förväntar sig — samma
-mönster som Drakens `x-draken-external-fields` med `$external:`-platshållare i `ui:sections` — så att
-kravet versionshanteras med schemat medan innehållet ligger där bilagor hör hemma. `x-oe-allowedFileExtensions`
-(`doc`, `docx`, `pdf`) och frågetexten blir metadata på bilagekategorin i stället för på ett fält.
+Uppladdningarna är därför lyfta ur JSON-schemat och hanteras av en bilagekomponent mot
+SupportManagement.
 
-Två följder:
+**Så här blev det.** Filfrågorna är inte längre properties — men schemat *deklarerar* dem, som
+avsnittet alltid tänkt sig, under `x-attachments` i schemaroten:
 
-- **Filuppladdningswidgeten behövs inte längre** i någondera appen. Den försvinner ur arbetsordningen
-  och ersätts av en bilagekomponent plus en bilage-endpoint i backend.
-- Katlas `ObjectFieldTemplate` stöder inte `$external:`. Ska deklarationen styra var bilagorna visas
-  i formuläret måste den porteras från Draken, på samma sätt som `showObjectFieldset`.
+```json
+"x-attachments": [
+  { "key": "laddaUppFullmakt", "label": "Fullmakt",
+    "requiredWhen": { "properties": { "arDuFirmatecknare": { "const": "NEJ" } },
+                      "required": ["arDuFirmatecknare"] } }
+]
+```
 
-Kvar att bestämma: bilagekategoriernas namn, och hur "obligatorisk bilaga i den här grenen"
-valideras vid insändning när den inte längre är ett `required` i JSON-schemat.
+`requiredWhen` är exakt det `allOf`-villkor som gjorde filfältet obligatoriskt, så appen läser det
+med samma villkorstolk (`matchesSchemaCondition`) som den läser schemats egna villkor.
+Frontend har ingen egen lista: `attachmentTypesOfSchema` plockar blocket ur det schema som redan
+laddas för Ärendeuppgifter, vilket betyder att en ny ärendetyp får sina bilagor utan att appen
+släpps om. Ett schema utan blocket kräver helt enkelt ingen särskild bilaga.
 
-Tills uppdelningen i 4.1 är gjord ligger de 39 fälten kvar i det mockade schemat och renderas av
-RJSF:s egen `FileWidget` via aliaset `files`. De faller bort ur det genererade ui-schemat automatiskt
-när de lämnar JSON-schemat.
+- **Filuppladdningswidgeten behövs inte** i någondera appen. Bilagorna ligger i ett eget
+  Bilagor-avsnitt i registreringsformuläret (`errand-attachments.component.tsx`) och laddas upp mot
+  `/supportmanagement/errand/:id/attachments`.
+- `$external:`-stödet i `ObjectFieldTemplate` behövdes inte: avsnittet står för sig självt i
+  formuläret i stället för att pekas ut inifrån ui-schemat.
+- SupportManagement har ännu ingen kategori på `ErrandAttachment`. Bilagetypen väljs och valideras i
+  klienten och följer med hela vägen ner i BFF:en, men släpps i det uppströms anropet —
+  `UPSTREAM_CATEGORY_FIELD` i `supportmanagement-attachment.controller.ts` är enda stället att
+  ändra när fältet finns.
 
 ## 5. Ui-schemat
 
@@ -621,8 +642,8 @@ Exporten har i praktiken inga begränsningar. Minst detta ska med innan v1.0 pub
 4. **Ska `foretagsform` frågas eller hämtas?** Den styr fyra uppladdningsregler.
 5. **Nyckel- och enumkonvention** — svensk eller engelsk camelCase. Låses i samma stund som första
    ärendet sparas.
-6. **Bilagekategorier och deras obligatoriskhet** (4.5) — vad de heter, och hur ett obligatoriskt
-   bilagekrav valideras vid insändning när det inte är ett `required` i schemat.
+6. ~~**Bilagekategorier och deras obligatoriskhet** (4.5)~~ — avgjord: katalogen ligger i
+   `frontend/src/constants/attachment-types.ts` och `requiredWhen` bär schemats eget villkor.
 7. **Hur hanteras tobaksflödets flerval?** En inlämning kan avse tobak, e-cigaretter och nikotinfria
    produkter samtidigt, men ett ärende bär en enda ärendetyp i `errand.labels`. Ett ärende per vald
    produkt, eller en ärendetyp med produkturvalet kvar som ett fält?
@@ -639,8 +660,25 @@ Exporten har i praktiken inga begränsningar. Minst detta ska med innan v1.0 pub
 | 3 ◐  | Skriv ett transformskript: OpenE-export + regler → Katla-schema + ui-schema. Deterministiskt, så migreringen kan köras om mot en ny export fram till lansering                                              | 1, 2             |
 | 4 ◐  | Widgetregistret är samsynkat med Drakens, flervalskryssrutorna finns (17 frågor) och nästlade objekt får rubrik (44 frågor). Kvar: `ArrayFieldTemplate` för DynamicTable (17 frågor, tas från Draken)       | —                |
 | 5 ✔  | Villkorsmotorn ligger i `frontend/src/components/json/utils/schema-conditions.ts`: `enum`, `contains`, flera regler per fält, dolda svar rensas, okänt nyckelord visar fältet och varnar                    | —                |
-| 5b   | Bilagekomponent och bilage-endpoint mot SupportManagement, plus `$external:`-stöd i `ObjectFieldTemplate` om deklarationen ska styra placeringen (4.5)                                                      | 2                |
+| 5b ✔ | Bilagor: eget Bilagor-avsnitt i formuläret, bilage-endpoints i BFF:en och bilagekatalog per ärendetyp. Filfrågorna är borta ur ärendetypernas scheman (4.5)                                                  | 2                |
 | 6    | Lägg på valideringen i avsnitt 6, inklusive åldersgrinden i backend                                                                                                                                         | 3                |
-| 7    | Publicera v1.0 enligt Drakens konvention (`POST /schemas`, sedan `PUT .../ui-schema`), lägg till README och kontraktstest, ta bort mocken                                                                   | 3–6              |
+| 7    | Publicera v1.0 enligt Drakens konvention (`POST /schemas`, sedan `PUT .../ui-schema`), **strippa `x-oe*`** (se nedan), lägg till README och kontraktstest, ta bort mocken                                    | 3–6              |
+
+### `x-oe*` strippas vid publiceringen
+
+Alla `x-oe`-nycklar är OpenE-proveniens och läses inte av någon app — varken Katla eller Draken.
+De hör inte hemma i det publicerade schemat, men är kvar så länge generatorn används: `x-oe.queryID`
+och `x-oe-alternativeID` är enda tråden tillbaka till OpenE-frågan, och alltså det som gör en ny
+export diffbar mot ett publicerat schema.
+
+| Nyckel | Vad som händer vid strippningen |
+| ------ | ------------------------------- |
+| `x-oe`, `x-oe-alternativeID`, `x-oe-flow` | Ren proveniens, försvinner utan förlust |
+| `x-oe-format` | Dubblett — `pattern` bredvid säger redan samma sak |
+| `x-oe-invalidFormatMessage` | OpenE:s felmeddelanden, ersatta av appens egna i `locales/*/validation.json` |
+| `x-oe-dateRestrictions` | **Bar en regel som inget annat uttryckte.** Kvartsstegen i serveringstiderna ligger nu som `ui:options.step` (sekunder) i ui-schemat och överlever strippningen |
+
+Kommer nya `x-oe`-nycklar med en framtida export måste samma kontroll göras: bär nyckeln en regel
+som schemat inte uttrycker någon annanstans, eller är den bara proveniens?
 
 Steg 4 och 5 är oberoende av 1–3 och kan börja direkt — de behövs oavsett hur schemat delas.

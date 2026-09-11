@@ -22,7 +22,8 @@ interface AppFixtures {
   appUrl: (path: string) => string;
 }
 
-// Sets cookie consent and mocks a logged-in user, with their organisations, for every test. The fixture callback is named
+// Sets cookie consent and mocks a logged-in user, their organisations and an empty attachment
+// list for every test. The fixture callback is named
 // `run` rather than Playwright's conventional `use` so it does not trip
 // react-hooks/rules-of-hooks, which reads `use(...)` as React's use hook.
 export const test = base.extend<AppFixtures>({
@@ -32,6 +33,7 @@ export const test = base.extend<AppFixtures>({
     ]);
     await page.route('**/api/me', jsonRoute(getMe));
     await page.route('**/api/my-organizations', jsonRoute(getMyOrganizations));
+    await page.route('**/supportmanagement/errand/*/attachments', jsonRoute([]));
     await run(page);
   },
   appUrl: async ({ baseURL }, run) => {

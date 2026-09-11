@@ -183,18 +183,18 @@ describe('JSON schema adapter contracts', () => {
       expect(Object.keys(body.schema.properties as Record<string, unknown>)).toEqual(['kontaktuppgifter_6115', 'ansokan_6116']);
     });
 
-    // One schema per errand-type leaf, named after the leaf in lower case, for both flows.
+    // One schema per errand type, named after the namespace and the whole categorization path.
     it.each([
-      'aot_permanent_serving',
-      'aot_temporary_serving_public',
-      'aot_temporary_serving_private',
-      'aot_folkol_serving_notification',
-      'aot_farm_sales',
-      'aot_permanent_catering',
-      'aot_tasting',
-      'aot_sales_permit_application',
-      'aot_ecigarette_sales_notification',
-      'aot_tobacco_free_nicotine_sales_notification',
+      'aot_alcohol_serving_permit_application_permanent_serving',
+      'aot_alcohol_serving_permit_application_temporary_serving_public',
+      'aot_alcohol_serving_permit_application_temporary_serving_private',
+      'aot_alcohol_folkol_serving_notification',
+      'aot_alcohol_serving_permit_application_farm_sales',
+      'aot_alcohol_serving_permit_application_permanent_catering',
+      'aot_alcohol_serving_permit_application_tasting',
+      'aot_tobacco_sales_permit_application',
+      'aot_tobacco_ecigarette_sales_notification',
+      'aot_tobacco_tobacco_free_nicotine_sales_notification',
     ])('serves %s without calling the jsonschema API', async schemaName => {
       const getSpy = vi.spyOn(ApiService.prototype, 'get');
 

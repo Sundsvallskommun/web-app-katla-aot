@@ -12,7 +12,7 @@ const formValues = (labels?: ErrandFormDTO['labels']): ErrandFormDTO => ({ label
 
 describe('wizard about step', () => {
   it('asks for a category while nothing has been chosen', async () => {
-    await expect(validateStep(aboutStep, formValues(), t)).resolves.toEqual([
+    await expect(validateStep(aboutStep, formValues(), t, 'sv', 'AOT')).resolves.toEqual([
       'validation:categorization.category_required',
     ]);
   });
@@ -20,7 +20,7 @@ describe('wizard about step', () => {
   it('asks for a type once the category is chosen', async () => {
     const labels = [{ id: 'alkohol', classification: 'CATEGORY' }];
 
-    await expect(validateStep(aboutStep, formValues(labels), t)).resolves.toEqual([
+    await expect(validateStep(aboutStep, formValues(labels), t, 'sv', 'AOT')).resolves.toEqual([
       'validation:categorization.type_required',
     ]);
   });
@@ -31,7 +31,7 @@ describe('wizard about step', () => {
       { id: 'folkol', classification: 'TYPE' },
     ];
 
-    await expect(validateStep(aboutStep, formValues(labels), t)).resolves.toEqual([]);
+    await expect(validateStep(aboutStep, formValues(labels), t, 'sv', 'AOT')).resolves.toEqual([]);
   });
 
   it('accepts the full three-level path', async () => {
@@ -41,6 +41,6 @@ describe('wizard about step', () => {
       { id: 'stadigvarande', classification: 'SUBTYPE' },
     ];
 
-    await expect(validateStep(aboutStep, formValues(labels), t)).resolves.toEqual([]);
+    await expect(validateStep(aboutStep, formValues(labels), t, 'sv', 'AOT')).resolves.toEqual([]);
   });
 });

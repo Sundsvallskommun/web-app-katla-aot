@@ -183,4 +183,28 @@ describe('ApiService effective URL boundary', () => {
       await close(redirectServer);
     }
   });
+
+  it('leaves the Location unfollowed when the caller opts out', async () => {
+    let followed = false;
+    const redirectServer = createServer((request, response) => {
+      if (request.method === 'POST') {
+        response.statusCode = 201;
+        response.setHeader('Location', '/2281/CONTACTCENTER/errands/errand-id/attachments/attachment-id');
+        response.end();
+        return;
+      }
+      followed = true;
+      response.end();
+    });
+    const redirectPort = await listen(redirectServer);
+    const serviceBaseUrl = `http://127.0.0.1:${redirectPort}/gateway`;
+
+    try {
+      await new ApiService().post({ baseURL: serviceBaseUrl, url: '/resource', skipLocationFollow: true }, citizenSender);
+
+      expect(followed).toBe(false);
+    } finally {
+      await close(redirectServer);
+    }
+  });
 });

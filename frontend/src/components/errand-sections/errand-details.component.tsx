@@ -14,6 +14,7 @@ import { ErrandFormDTO } from '@interfaces/errand-form';
 import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { useMetadataStore } from 'src/stores/metadata-store';
 
 interface SchemaFormFieldProps {
   schemaName: string;
@@ -101,7 +102,8 @@ interface ErrandDetailsProps {
 export const ErrandDetails: React.FC<ErrandDetailsProps> = ({ compact }) => {
   const { t } = useTranslation('errand-information');
   const { watch } = useFormContext<ErrandFormDTO>();
-  const schemaNames = schemaNamesForErrand(watch('labels'));
+  const namespace = useMetadataStore((state) => state.metadata?.namespace);
+  const schemaNames = schemaNamesForErrand(watch('labels'), namespace);
 
   // The errand type chooses the form, so before it is categorized — or for a type whose flow has
   // no schema — there is nothing to render. The placeholder distinguishes "no fields yet" from

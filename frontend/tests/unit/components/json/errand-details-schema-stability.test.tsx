@@ -4,6 +4,7 @@ import type { ErrandFormDTO } from '@interfaces/errand-form';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useMetadataStore } from 'src/stores/metadata-store';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 /** The errand type chooses the form, so the test errand needs a categorization to render one. */
@@ -54,7 +55,7 @@ function TestForm() {
       labels: TEST_LABELS,
       errandFormData: [
         {
-          schemaName: 'aot_test_schema',
+          schemaName: 'aot_alcohol_test_schema',
           schemaId: 'schema-v1',
           data: '{"location":""}',
         },
@@ -73,6 +74,7 @@ function TestForm() {
 
 describe('ErrandDetails schema stability', () => {
   beforeEach(() => {
+    useMetadataStore.setState({ metadata: { namespace: 'AOT' } });
     loadFormSchemaForEntryMock.mockReset().mockResolvedValue({
       schema: { type: 'object' },
       uiSchema: {},
@@ -92,6 +94,11 @@ describe('ErrandDetails schema stability', () => {
     expect(input).toHaveValue('ABC');
     expect(input).toHaveFocus();
     expect(loadFormSchemaForEntryMock).toHaveBeenCalledTimes(1);
-    expect(loadFormSchemaForEntryMock).toHaveBeenCalledWith('aot_test_schema', 'schema-v1', translateMock, 'sv');
+    expect(loadFormSchemaForEntryMock).toHaveBeenCalledWith(
+      'aot_alcohol_test_schema',
+      'schema-v1',
+      translateMock,
+      'sv'
+    );
   });
 });

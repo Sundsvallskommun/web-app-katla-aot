@@ -1,0 +1,729 @@
+{
+  "name": "aot_alcohol_folkol_serving_notification",
+  "version": "0.1",
+  "value": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Servering av folköl (klass 2)",
+    "type": "object",
+    "properties": {
+      "arDuFirmatecknare": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja",
+            "x-oe-alternativeID": "49636"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej",
+            "x-oe-alternativeID": "49637"
+          }
+        ],
+        "title": "Är du firmatecknare?",
+        "x-oe": {
+          "queryID": "81703",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "foretagsform": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "AKTIEBOLAG",
+            "title": "Aktiebolag",
+            "x-oe-alternativeID": "49638"
+          },
+          {
+            "const": "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
+            "title": "Enskild firma (registrerad hos Skatteverket och Bolagsverket)",
+            "x-oe-alternativeID": "49639"
+          },
+          {
+            "const": "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
+            "title": "Enskild firma (registrerad endast hos Skatteverket)",
+            "x-oe-alternativeID": "49640"
+          },
+          {
+            "const": "FORENING_STIFTELSE",
+            "title": "Förening/stiftelse",
+            "x-oe-alternativeID": "49641"
+          },
+          {
+            "const": "HANDELSBOLAG",
+            "title": "Handelsbolag",
+            "x-oe-alternativeID": "49642"
+          },
+          {
+            "const": "KOMMANDITBOLAG",
+            "title": "Kommanditbolag",
+            "x-oe-alternativeID": "49643"
+          }
+        ],
+        "title": "Företagsform",
+        "x-oe": {
+          "queryID": "81706",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "verksamhetsbeskrivningsval": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I",
+            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret",
+            "x-oe-alternativeID": "49646"
+          },
+          {
+            "const": "JAG_VILL_BIFOGA_VERKSAMHETSBESKRIVNINGEN_SOM",
+            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil",
+            "x-oe-alternativeID": "49647"
+          }
+        ],
+        "title": "Verksamhetsbeskrivning",
+        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?",
+        "x-oe": {
+          "queryID": "81713",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "fakturaadressSammaSomForetaget": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja",
+            "x-oe-alternativeID": "49644"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej",
+            "x-oe-alternativeID": "49645"
+          }
+        ],
+        "title": "Är fakturaadressen samma som företagets adress?",
+        "description": "Kommunen kan komma att ta ut en avgift. Om du vill att fakturan ska gå till den adress som företaget är registrerad på anger du \"Ja\" i fältet nedan. Om du vill att fakturan ska gå till en annan adress anger du \"Nej\" och fyller sedan i den. Du har även möjlighet att ange en fakturareferens.",
+        "x-oe": {
+          "queryID": "81707",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "fakturamottagare": {
+        "type": "object",
+        "properties": {
+          "cO": {
+            "type": "string",
+            "title": "c/o",
+            "x-oe": {
+              "textFieldID": "50396",
+              "queryID": "81708"
+            }
+          },
+          "utdelningsadress": {
+            "type": "string",
+            "title": "Utdelningsadress",
+            "x-oe": {
+              "textFieldID": "50397",
+              "queryID": "81708"
+            }
+          },
+          "postnummer": {
+            "type": "string",
+            "title": "Postnummer",
+            "pattern": "^\\d{3}\\s?\\d{2}$",
+            "x-oe-format": "swedish-postal-code",
+            "x-oe-invalidFormatMessage": "Du måste fylla i ett svenskt postnummer",
+            "x-oe": {
+              "textFieldID": "50398",
+              "queryID": "81708"
+            }
+          },
+          "postort": {
+            "type": "string",
+            "title": "Postort",
+            "x-oe": {
+              "textFieldID": "50399",
+              "queryID": "81708"
+            }
+          }
+        },
+        "required": [
+          "utdelningsadress",
+          "postnummer",
+          "postort"
+        ],
+        "title": "Fakturamottagare",
+        "x-oe": {
+          "queryID": "81708",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "fakturareferens": {
+        "type": "string",
+        "title": "Fakturareferens",
+        "description": "Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.",
+        "x-oe": {
+          "queryID": "81709",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "verksamhetsbeskrivning": {
+        "type": "string",
+        "title": "Verksamhetsbeskrivning",
+        "x-oe": {
+          "queryID": "81714",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "kommerNiAttServeraMat": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja",
+            "x-oe-alternativeID": "49676"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej",
+            "x-oe-alternativeID": "49677"
+          }
+        ],
+        "title": "Kommer ni att servera mat",
+        "x-oe": {
+          "queryID": "81785",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "egenkontrollprogramFolkol": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja",
+            "x-oe-alternativeID": "49680"
+          },
+          {
+            "const": "NEJ_JAG_FYLLER_I_DOKUMENTET",
+            "title": "Nej, jag fyller i dokumentet och kan visa upp det vid tillsyn",
+            "x-oe-alternativeID": "49681"
+          }
+        ],
+        "title": "Egenkontrollprogram vid servering av folköl (klass 2)",
+        "description": "Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".\n\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.\n\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig serveringsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.\n\n${serveringfolkolegenkontrollprogram}\n\nVill du bifoga ifyllt egenkontrollprogram i denna anmälan?",
+        "x-oe": {
+          "queryID": "81789",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "serveringsstalletsNamn": {
+        "type": "object",
+        "properties": {
+          "namn": {
+            "type": "string",
+            "title": "Namn",
+            "x-oe": {
+              "textFieldID": "50420",
+              "queryID": "81791"
+            }
+          }
+        },
+        "title": "Serveringsställets namn",
+        "description": "Det namn som du skyltar med till kund.",
+        "x-oe": {
+          "queryID": "81791",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "besoksadressSammaSomForetaget": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja",
+            "x-oe-alternativeID": "49682"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej",
+            "x-oe-alternativeID": "49683"
+          }
+        ],
+        "title": "Är serveringsställets besöksadress samma som företagets adress?",
+        "x-oe": {
+          "queryID": "81792",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "kontaktuppgifterTillServeringsstallet": {
+        "type": "object",
+        "properties": {
+          "telefonnummer": {
+            "type": "string",
+            "title": "Telefonnummer",
+            "x-oe": {
+              "textFieldID": "50424",
+              "queryID": "81794"
+            }
+          },
+          "ePostadress": {
+            "type": "string",
+            "title": "E-postadress",
+            "x-oe": {
+              "textFieldID": "50425",
+              "queryID": "81794"
+            }
+          },
+          "hemsida": {
+            "type": "string",
+            "title": "Hemsida",
+            "x-oe": {
+              "textFieldID": "50426",
+              "queryID": "81794"
+            }
+          },
+          "telefon": {
+            "type": "string",
+            "title": "Telefon",
+            "x-oe": {
+              "textFieldID": "50427",
+              "queryID": "81794"
+            }
+          }
+        },
+        "title": "Kontaktuppgifter till serveringsstället",
+        "x-oe": {
+          "queryID": "81794",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "sittplatserILokalen": {
+        "type": "object",
+        "properties": {
+          "antalSittplatserInomhus": {
+            "type": "string",
+            "title": "Antal sittplatser inomhus",
+            "x-oe": {
+              "textFieldID": "50428",
+              "queryID": "81795"
+            }
+          },
+          "antalSittplatserPaEventuellUteserver": {
+            "type": "string",
+            "title": "Antal sittplatser på eventuell uteservering",
+            "x-oe": {
+              "textFieldID": "50429",
+              "queryID": "81795"
+            }
+          }
+        },
+        "title": "Sittplatser i lokalen",
+        "x-oe": {
+          "queryID": "81795",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "maximaltAntalPersonerILokalen": {
+        "type": "object",
+        "properties": {
+          "antalPersoner": {
+            "type": "string",
+            "title": "Antal personer",
+            "x-oe": {
+              "textFieldID": "50430",
+              "queryID": "81796"
+            }
+          }
+        },
+        "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)",
+        "x-oe": {
+          "queryID": "81796",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "beskrivUtbudetAvMat": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JAG_VILL_BIFOGA_MENY_SOM",
+            "title": "Jag vill bifoga meny som bilaga",
+            "x-oe-alternativeID": "49678"
+          },
+          {
+            "const": "JAG_VILL_SKRIVA_IN_MENYN",
+            "title": "Jag vill skriva in menyn i formuläret",
+            "x-oe-alternativeID": "49679"
+          }
+        ],
+        "title": "Beskriv utbudet av mat",
+        "description": "\"En förutsättning för att få servera alkoholdrycker är att det även serveras mat. Utbudet av mat ska vara tillrett, tillräckligt och tillgängligt. Detta innebär att du ska ha mat som du har kapacitet att tillreda på plats i restaurangen och matutbudet ska även alltid vara tillgängligt för gästerna i verksamheten. Du kan välja att bifoga en meny om du har en sådan. Annars kan du välja att skriva in denna i formuläret. Om du har en annan, enklare meny efter kl. 23 ska du även bifoga den eller skriva in denna i formuläret nedan. Exempel på rätter i en enklare meny är hamburgare, sallad, paj, varma smörgåsar och bakad potatis.\" detta stod tidigare i beskrivning",
+        "x-oe": {
+          "queryID": "81786",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "meny": {
+        "type": "string",
+        "title": "Meny",
+        "x-oe": {
+          "queryID": "81788",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "serveringsstalletsBesoksadress": {
+        "type": "object",
+        "properties": {
+          "gatuadress": {
+            "type": "string",
+            "title": "Gatuadress",
+            "x-oe": {
+              "textFieldID": "50421",
+              "queryID": "81793"
+            }
+          },
+          "postnummer": {
+            "type": "string",
+            "title": "Postnummer",
+            "x-oe": {
+              "textFieldID": "50422",
+              "queryID": "81793"
+            }
+          },
+          "postort": {
+            "type": "string",
+            "title": "Postort",
+            "x-oe": {
+              "textFieldID": "50423",
+              "queryID": "81793"
+            }
+          }
+        },
+        "title": "Serveringsställets besöksadress",
+        "x-oe": {
+          "queryID": "81793",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "harDuKassaregister": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja",
+            "x-oe-alternativeID": "49704"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej",
+            "x-oe-alternativeID": "49705"
+          }
+        ],
+        "title": "Har du kassaregister?",
+        "x-oe": {
+          "queryID": "81883",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "angeRegistreringskod": {
+        "type": "object",
+        "properties": {
+          "registreringskod": {
+            "type": "string",
+            "title": "Registreringskod",
+            "x-oe": {
+              "textFieldID": "50456",
+              "queryID": "81884"
+            }
+          }
+        },
+        "title": "Ange registreringskod",
+        "x-oe": {
+          "queryID": "81884",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      }
+    },
+    "allOf": [
+      {
+        "if": {
+          "properties": {
+            "foretagsform": {
+              "enum": [
+                "AKTIEBOLAG",
+                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
+                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
+                "FORENING_STIFTELSE",
+                "HANDELSBOLAG",
+                "KOMMANDITBOLAG"
+              ]
+            }
+          },
+          "required": [
+            "foretagsform"
+          ]
+        },
+        "then": {
+          "required": [
+            "verksamhetsbeskrivningsval"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "fakturaadressSammaSomForetaget": {
+              "const": "NEJ"
+            }
+          },
+          "required": [
+            "fakturaadressSammaSomForetaget"
+          ]
+        },
+        "then": {
+          "properties": {
+            "fakturamottagare": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "verksamhetsbeskrivningsval": {
+              "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I"
+            }
+          },
+          "required": [
+            "verksamhetsbeskrivningsval"
+          ]
+        },
+        "then": {
+          "properties": {
+            "verksamhetsbeskrivning": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "beskrivUtbudetAvMat": {
+              "const": "JAG_VILL_SKRIVA_IN_MENYN"
+            }
+          },
+          "required": [
+            "beskrivUtbudetAvMat"
+          ]
+        },
+        "then": {
+          "properties": {
+            "meny": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "besoksadressSammaSomForetaget": {
+              "const": "NEJ"
+            }
+          },
+          "required": [
+            "besoksadressSammaSomForetaget"
+          ]
+        },
+        "then": {
+          "properties": {
+            "serveringsstalletsBesoksadress": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "kommerNiAttServeraMat": {
+              "const": "JA"
+            }
+          },
+          "required": [
+            "kommerNiAttServeraMat"
+          ]
+        },
+        "then": {
+          "properties": {
+            "beskrivUtbudetAvMat": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "beskrivUtbudetAvMat": {
+              "const": "JAG_VILL_SKRIVA_IN_MENYN"
+            }
+          },
+          "required": [
+            "beskrivUtbudetAvMat"
+          ]
+        },
+        "then": {
+          "properties": {
+            "meny": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "besoksadressSammaSomForetaget": {
+              "const": "NEJ"
+            }
+          },
+          "required": [
+            "besoksadressSammaSomForetaget"
+          ]
+        },
+        "then": {
+          "properties": {
+            "serveringsstalletsBesoksadress": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "harDuKassaregister": {
+              "const": "JA"
+            }
+          },
+          "required": [
+            "harDuKassaregister"
+          ]
+        },
+        "then": {
+          "properties": {
+            "angeRegistreringskod": true
+          }
+        }
+      }
+    ],
+    "x-attachments": [
+      {
+        "key": "laddaUppFullmakt",
+        "label": "Fullmakt",
+        "requiredWhen": {
+          "properties": {
+            "arDuFirmatecknare": {
+              "const": "NEJ"
+            }
+          },
+          "required": [
+            "arDuFirmatecknare"
+          ]
+        }
+      },
+      {
+        "key": "bifogaAktuelltRegistreringsbevisFran",
+        "label": "Registreringsbevis från Bolagsverket",
+        "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.",
+        "requiredWhen": {
+          "properties": {
+            "foretagsform": {
+              "enum": [
+                "AKTIEBOLAG",
+                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
+                "FORENING_STIFTELSE",
+                "HANDELSBOLAG",
+                "KOMMANDITBOLAG"
+              ]
+            }
+          },
+          "required": [
+            "foretagsform"
+          ]
+        }
+      },
+      {
+        "key": "bifogaUppgifterOmAgarforhallanden",
+        "label": "Uppgifter om ägarförhållanden",
+        "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen.",
+        "requiredWhen": {
+          "properties": {
+            "foretagsform": {
+              "enum": [
+                "AKTIEBOLAG",
+                "FORENING_STIFTELSE",
+                "HANDELSBOLAG",
+                "KOMMANDITBOLAG"
+              ]
+            }
+          },
+          "required": [
+            "foretagsform"
+          ]
+        }
+      },
+      {
+        "key": "bifogaRegisterutdragFranSkatteverket",
+        "label": "Registerutdrag från Skatteverket",
+        "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se.",
+        "requiredWhen": {
+          "properties": {
+            "foretagsform": {
+              "enum": [
+                "AKTIEBOLAG",
+                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
+                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
+                "FORENING_STIFTELSE",
+                "HANDELSBOLAG",
+                "KOMMANDITBOLAG"
+              ]
+            }
+          },
+          "required": [
+            "foretagsform"
+          ]
+        }
+      },
+      {
+        "key": "bifogaVerksamhetsbeskrivning",
+        "label": "Verksamhetsbeskrivning"
+      },
+      {
+        "key": "bifogaMeny",
+        "label": "Meny"
+      },
+      {
+        "key": "bifogatEgenkontrollprogramFolkol",
+        "label": "Egenkontrollprogram för servering av folköl (klass 2)"
+      }
+    ],
+    "x-oe-flow": {
+      "flowID": "2181",
+      "name": "AoT ny för draken",
+      "version": "4",
+      "familyID": "621",
+      "requireAuthentication": false,
+      "requireSigning": false,
+      "paymentSupportEnabled": false
+    }
+  },
+  "description": "Servering av folköl (klass 2)"
+}

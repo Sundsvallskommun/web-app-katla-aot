@@ -1,0 +1,346 @@
+{
+  "value": {
+    "ui:order": [
+      "arDuFirmatecknare",
+      "foretagsform",
+      "verksamhetsbeskrivningsval",
+      "fakturaadressSammaSomForetaget",
+      "fakturamottagare",
+      "fakturareferens",
+      "verksamhetsbeskrivning",
+      "angeMellanVilkaDatumDetTillfalliga",
+      "klockslagForServeringen",
+      "vilkaAlkoholdryckerSkaServeras",
+      "meny",
+      "beraknatAntalGaster",
+      "vadArDetForTypAvTillstallning",
+      "serveringsstalle",
+      "serveringsansvarigPersonal",
+      "sittplatserILokalen",
+      "maximaltAntalPersonerILokalen",
+      "finnsPolistillstand",
+      "gaster",
+      "gastlistaEllerMedlemslista",
+      "hurHarGasternaBjuditsIn",
+      "ovrigaUppgifterGallandeDatum",
+      "harDuKassaregister",
+      "angeRegistreringskod"
+    ],
+    "ui:sections": [
+      {
+        "id": "foretag",
+        "title": "Företag och fakturering",
+        "icon": "building-2",
+        "defaultOpen": true,
+        "fields": [
+          "arDuFirmatecknare",
+          "foretagsform",
+          "verksamhetsbeskrivningsval",
+          "fakturaadressSammaSomForetaget",
+          "fakturamottagare",
+          "fakturareferens",
+          "verksamhetsbeskrivning"
+        ]
+      },
+      {
+        "id": "ansokan",
+        "title": "Tillfälligt tillstånd, endast slutet sällskap",
+        "icon": "file-text",
+        "defaultOpen": true,
+        "fields": [
+          "angeMellanVilkaDatumDetTillfalliga",
+          "klockslagForServeringen",
+          "vilkaAlkoholdryckerSkaServeras",
+          "meny",
+          "beraknatAntalGaster",
+          "vadArDetForTypAvTillstallning",
+          "serveringsstalle",
+          "serveringsansvarigPersonal",
+          "sittplatserILokalen",
+          "maximaltAntalPersonerILokalen",
+          "finnsPolistillstand",
+          "gaster",
+          "gastlistaEllerMedlemslista",
+          "hurHarGasternaBjuditsIn",
+          "ovrigaUppgifterGallandeDatum",
+          "harDuKassaregister",
+          "angeRegistreringskod"
+        ]
+      }
+    ],
+    "arDuFirmatecknare": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "foretagsform": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "verksamhetsbeskrivningsval": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
+    },
+    "fakturaadressSammaSomForetaget": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Kommunen kan komma att ta ut en avgift. Om du vill att fakturan ska gå till den adress som företaget är registrerad på anger du \"Ja\" i fältet nedan. Om du vill att fakturan ska gå till en annan adress anger du \"Nej\" och fyller sedan i den. Du har även möjlighet att ange en fakturareferens.</p>"
+    },
+    "fakturamottagare": {
+      "ui:order": [
+        "cO",
+        "utdelningsadress",
+        "postnummer",
+        "postort"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "cO": {
+        "ui:widget": "TextWidget"
+      },
+      "utdelningsadress": {
+        "ui:widget": "TextWidget"
+      },
+      "postnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "postort": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "postnummer",
+            "postort"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "fakturareferens": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      },
+      "ui:description": "<p>Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.</p>"
+    },
+    "verksamhetsbeskrivning": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "angeMellanVilkaDatumDetTillfalliga": {
+      "ui:order": [
+        "startDate",
+        "endDate"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "startDate": {
+        "ui:widget": "DateWidget"
+      },
+      "endDate": {
+        "ui:widget": "DateWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "startDate",
+            "endDate"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "klockslagForServeringen": {
+      "ui:order": [
+        "startTime",
+        "endTime"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "startTime": {
+        "ui:widget": "TimeWidget",
+        "ui:options": {
+          "step": 900
+        }
+      },
+      "endTime": {
+        "ui:widget": "TimeWidget",
+        "ui:options": {
+          "step": 900
+        }
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "startTime",
+            "endTime"
+          ],
+          "gap": "gap-24"
+        }
+      ],
+      "ui:description": "<p>Ange när servering önskas påbörjas, samt avslutas (standard är 11:00-01:00 om inte annat beslutas).</p>"
+    },
+    "vilkaAlkoholdryckerSkaServeras": {
+      "ui:widget": "checkboxes",
+      "ui:options": {
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
+      }
+    },
+    "meny": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      },
+      "ui:description": "<p>Vilken mat och dryck kommer att serveras. Ange även alkoholfria alternativ samt prissättning. </p>"
+    },
+    "beraknatAntalGaster": {
+      "ui:order": [
+        "antal"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "antal": {
+        "ui:widget": "TextWidget"
+      }
+    },
+    "vadArDetForTypAvTillstallning": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "serveringsstalle": {
+      "ui:order": [
+        "serveringsstalletsNamn",
+        "gatuadress",
+        "postnummer",
+        "postort",
+        "telefonnummer"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "serveringsstalletsNamn": {
+        "ui:widget": "TextWidget"
+      },
+      "gatuadress": {
+        "ui:widget": "TextWidget"
+      },
+      "postnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "postort": {
+        "ui:widget": "TextWidget"
+      },
+      "telefonnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "postnummer",
+            "postort"
+          ],
+          "gap": "gap-24"
+        }
+      ],
+      "ui:description": "<p>Om ingen fast telefon finns, lämna mobilnummer till företrädare.</p>"
+    },
+    "serveringsansvarigPersonal": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "fornamn",
+          "efternamn",
+          "personnummer"
+        ],
+        "ui:options": {
+          "showObjectFieldset": true
+        },
+        "fornamn": {
+          "ui:widget": "TextWidget"
+        },
+        "efternamn": {
+          "ui:widget": "TextWidget"
+        },
+        "personnummer": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "ui:description": "<p>Nedan anger du namn och personnummer till den person eller de personer som ska vara ansvariga för serveringen av alkohol. En person som är serveringsansvarig måste vara <u>minst 20 år</u>.</p>"
+    },
+    "sittplatserILokalen": {
+      "ui:order": [
+        "antalSittplatserIBordsavdelningMatsa"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "antalSittplatserIBordsavdelningMatsa": {
+        "ui:widget": "TextWidget"
+      }
+    },
+    "maximaltAntalPersonerILokalen": {
+      "ui:order": [
+        "antalPersoner"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "antalPersoner": {
+        "ui:widget": "TextWidget"
+      }
+    },
+    "finnsPolistillstand": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "gaster": {
+      "ui:widget": "checkboxes",
+      "ui:options": {
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
+      }
+    },
+    "gastlistaEllerMedlemslista": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "hurHarGasternaBjuditsIn": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "ovrigaUppgifterGallandeDatum": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "harDuKassaregister": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "angeRegistreringskod": {
+      "ui:order": [
+        "registreringskod"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "registreringskod": {
+        "ui:widget": "TextWidget"
+      }
+    }
+  },
+  "description": "UI schema for Tillfälligt tillstånd, endast slutet sällskap"
+}

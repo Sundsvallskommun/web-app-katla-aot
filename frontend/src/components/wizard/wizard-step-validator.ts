@@ -1,5 +1,6 @@
 import { validateErrandFormData } from '@components/json/utils/schema-utils';
 import { ErrandFormDTO } from '@interfaces/errand-form';
+import { validateErrandAttachments } from '@utils/errand-attachments';
 import { getSelectedLabels } from '@utils/label-tree';
 import { getPrimaryStakeholder } from '@utils/stakeholder';
 import type { TFunction } from 'i18next';
@@ -15,11 +16,16 @@ export async function validateStep(
   step: WizardStep,
   formValues: ErrandFormDTO,
   t: TFunction,
-  locale?: string
+  locale: string | undefined,
+  namespace: string | undefined
 ): Promise<string[]> {
   switch (step.id) {
     case 'details': {
       return validateErrandFormData(formValues.errandFormData, t, locale);
+    }
+
+    case 'attachments': {
+      return validateErrandAttachments(formValues, t, locale, namespace);
     }
 
     case 'owner': {

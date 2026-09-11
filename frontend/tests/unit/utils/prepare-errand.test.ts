@@ -18,24 +18,31 @@ describe('prepareErrandForApi', () => {
       { id: 'stadigvarande', classification: 'SUBTYPE' },
     ];
 
-    expect(prepareErrandForApi({ ...errand(), labels }, 'NEW').labels).toEqual(labels);
+    expect(prepareErrandForApi({ ...errand(), labels }, 'NEW', 'AOT').labels).toEqual(labels);
   });
 
   it('gives an empty label list when nothing has been categorized', () => {
-    expect(prepareErrandForApi(errand(), 'DRAFT').labels).toEqual([]);
+    expect(prepareErrandForApi(errand(), 'DRAFT', 'AOT').labels).toEqual([]);
   });
 
   it('serialises the form data to jsonParameters and leaves no errandFormData behind', () => {
     const prepared = prepareErrandForApi(
       {
-        ...errand([{ schemaName: 'aot_permanent_serving', schemaId: 'schema-1', data: '{"foo":"bar"}' }]),
+        ...errand([
+          {
+            schemaName: 'aot_alcohol_serving_permit_application_permanent_serving',
+            schemaId: 'schema-1',
+            data: '{"foo":"bar"}',
+          },
+        ]),
         labels: permanentServingLabels,
       },
-      'NEW'
+      'NEW',
+      'AOT'
     );
 
     expect(prepared.jsonParameters).toEqual([
-      { key: 'aot_permanent_serving', value: { foo: 'bar' }, schemaId: 'schema-1' },
+      { key: 'aot_alcohol_serving_permit_application_permanent_serving', value: { foo: 'bar' }, schemaId: 'schema-1' },
     ]);
     expect(prepared).not.toHaveProperty('errandFormData');
   });
@@ -44,28 +51,37 @@ describe('prepareErrandForApi', () => {
     const prepared = prepareErrandForApi(
       {
         ...errand([
-          { schemaName: 'aot_temporary_serving', schemaId: 'schema-2', data: '{"stale":true}' },
-          { schemaName: 'aot_permanent_serving', schemaId: 'schema-1', data: '{"foo":"bar"}' },
+          {
+            schemaName: 'aot_alcohol_serving_permit_application_temporary_serving',
+            schemaId: 'schema-2',
+            data: '{"stale":true}',
+          },
+          {
+            schemaName: 'aot_alcohol_serving_permit_application_permanent_serving',
+            schemaId: 'schema-1',
+            data: '{"foo":"bar"}',
+          },
         ]),
         labels: permanentServingLabels,
       },
-      'NEW'
+      'NEW',
+      'AOT'
     );
 
     expect(prepared.jsonParameters).toEqual([
-      { key: 'aot_permanent_serving', value: { foo: 'bar' }, schemaId: 'schema-1' },
+      { key: 'aot_alcohol_serving_permit_application_permanent_serving', value: { foo: 'bar' }, schemaId: 'schema-1' },
     ]);
   });
 
   it('keeps the stakeholders and sets the given status', () => {
     const stakeholders = [{ firstName: 'Anna', lastName: 'Andersson', role: 'PRIMARY' }];
-    const prepared = prepareErrandForApi({ ...errand(), stakeholders }, 'DRAFT');
+    const prepared = prepareErrandForApi({ ...errand(), stakeholders }, 'DRAFT', 'AOT');
 
     expect(prepared.stakeholders).toEqual(stakeholders);
     expect(prepared.status).toBe('DRAFT');
   });
 
   it('gives an empty stakeholder list when the errand has none', () => {
-    expect(prepareErrandForApi(errand(), 'NEW').stakeholders).toEqual([]);
+    expect(prepareErrandForApi(errand(), 'NEW', 'AOT').stakeholders).toEqual([]);
   });
 });
