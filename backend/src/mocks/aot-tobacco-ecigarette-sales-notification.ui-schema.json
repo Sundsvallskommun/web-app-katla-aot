@@ -1,21 +1,20 @@
 {
   "value": {
     "ui:order": [
-      "foretagsform",
       "arDuFirmatecknare",
-      "verksamhetsbeskrivningsval",
+      "foretagsform",
       "fakturaadressSammaSomForetaget",
       "fakturamottagare",
       "fakturareferens",
+      "verksamhetsbeskrivningsval",
       "verksamhetsbeskrivning",
       "tidsperiodForForsaljningen",
+      "startdatumForsaljning",
+      "periodTidsbegransadForsaljning",
       "forsaljningsstallet",
       "besoksadressSammaSomForetaget",
-      "bedriverAvenDistansforsaljning",
-      "avtalMedTillverkareEllerPartihandlare",
-      "periodTidsbegransadForsaljning",
-      "startdatumForsaljning",
       "besoksadress",
+      "bedriverAvenDistansforsaljning",
       "hemsida",
       "omfattarSarskiltFarligaProdukter",
       "finansiering",
@@ -23,7 +22,8 @@
       "banklan",
       "privatlan",
       "annanFinansiering",
-      "ovrigaUpplysningarFinansiering"
+      "ovrigaUpplysningarFinansiering",
+      "avtalMedTillverkareEllerPartihandlare"
     ],
     "ui:sections": [
       {
@@ -32,12 +32,12 @@
         "icon": "building-2",
         "defaultOpen": true,
         "fields": [
-          "foretagsform",
           "arDuFirmatecknare",
-          "verksamhetsbeskrivningsval",
+          "foretagsform",
           "fakturaadressSammaSomForetaget",
           "fakturamottagare",
           "fakturareferens",
+          "verksamhetsbeskrivningsval",
           "verksamhetsbeskrivning"
         ]
       },
@@ -48,13 +48,12 @@
         "defaultOpen": true,
         "fields": [
           "tidsperiodForForsaljningen",
+          "startdatumForsaljning",
+          "periodTidsbegransadForsaljning",
           "forsaljningsstallet",
           "besoksadressSammaSomForetaget",
-          "bedriverAvenDistansforsaljning",
-          "avtalMedTillverkareEllerPartihandlare",
-          "periodTidsbegransadForsaljning",
-          "startdatumForsaljning",
           "besoksadress",
+          "bedriverAvenDistansforsaljning",
           "hemsida",
           "omfattarSarskiltFarligaProdukter",
           "finansiering",
@@ -62,19 +61,16 @@
           "banklan",
           "privatlan",
           "annanFinansiering",
-          "ovrigaUpplysningarFinansiering"
+          "ovrigaUpplysningarFinansiering",
+          "avtalMedTillverkareEllerPartihandlare"
         ]
       }
     ],
-    "foretagsform": {
-      "ui:widget": "RadiobuttonWidget"
-    },
     "arDuFirmatecknare": {
       "ui:widget": "RadiobuttonWidget"
     },
-    "verksamhetsbeskrivningsval": {
-      "ui:widget": "RadiobuttonWidget",
-      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
+    "foretagsform": {
+      "ui:widget": "RadiobuttonWidget"
     },
     "fakturaadressSammaSomForetaget": {
       "ui:widget": "RadiobuttonWidget",
@@ -119,6 +115,10 @@
       },
       "ui:description": "<p>Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.</p>"
     },
+    "verksamhetsbeskrivningsval": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
+    },
     "verksamhetsbeskrivning": {
       "ui:widget": "TexteditorWidget",
       "ui:options": {
@@ -128,26 +128,11 @@
     "tidsperiodForForsaljningen": {
       "ui:widget": "RadiobuttonWidget"
     },
-    "forsaljningsstallet": {
-      "ui:order": [
-        "forsaljningsstalletsNamn"
-      ],
+    "startdatumForsaljning": {
+      "ui:order": [],
       "ui:options": {
         "showObjectFieldset": true
-      },
-      "forsaljningsstalletsNamn": {
-        "ui:widget": "TextWidget"
       }
-    },
-    "besoksadressSammaSomForetaget": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "bedriverAvenDistansforsaljning": {
-      "ui:widget": "RadiobuttonWidget",
-      "ui:description": "<p>Distansförsäljning är försäljning av varor via postorder, telefon eller internet där leverantören ansvarar för leveransen av varorna.</p>"
-    },
-    "avtalMedTillverkareEllerPartihandlare": {
-      "ui:widget": "RadiobuttonWidget"
     },
     "periodTidsbegransadForsaljning": {
       "ui:order": [
@@ -173,11 +158,19 @@
         }
       ]
     },
-    "startdatumForsaljning": {
-      "ui:order": [],
+    "forsaljningsstallet": {
+      "ui:order": [
+        "forsaljningsstalletsNamn"
+      ],
       "ui:options": {
         "showObjectFieldset": true
+      },
+      "forsaljningsstalletsNamn": {
+        "ui:widget": "TextWidget"
       }
+    },
+    "besoksadressSammaSomForetaget": {
+      "ui:widget": "RadiobuttonWidget"
     },
     "besoksadress": {
       "ui:order": [
@@ -215,6 +208,10 @@
         }
       ]
     },
+    "bedriverAvenDistansforsaljning": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Distansförsäljning är försäljning av varor via postorder, telefon eller internet där leverantören ansvarar för leveransen av varorna.</p>"
+    },
     "hemsida": {
       "ui:order": [
         "hemsida"
@@ -223,7 +220,10 @@
         "showObjectFieldset": true
       },
       "hemsida": {
-        "ui:widget": "TextWidget"
+        "ui:widget": "TextWidget",
+        "ui:options": {
+          "hideLabel": true
+        }
       }
     },
     "omfattarSarskiltFarligaProdukter": {
@@ -249,9 +249,6 @@
           "kontonummer",
           "beloppKronor"
         ],
-        "ui:options": {
-          "showObjectFieldset": true
-        },
         "bank": {
           "ui:widget": "TextWidget"
         },
@@ -274,9 +271,6 @@
           "langivare",
           "beloppKronor"
         ],
-        "ui:options": {
-          "showObjectFieldset": true
-        },
         "langivare": {
           "ui:widget": "TextWidget"
         },
@@ -296,9 +290,6 @@
           "langivare",
           "beloppKronor"
         ],
-        "ui:options": {
-          "showObjectFieldset": true
-        },
         "langivare": {
           "ui:widget": "TextWidget"
         },
@@ -319,9 +310,6 @@
           "langivare",
           "beloppKronor"
         ],
-        "ui:options": {
-          "showObjectFieldset": true
-        },
         "lanetyp": {
           "ui:widget": "TextWidget"
         },
@@ -338,6 +326,9 @@
       "ui:options": {
         "className": "w-full min-h-[14rem]"
       }
+    },
+    "avtalMedTillverkareEllerPartihandlare": {
+      "ui:widget": "RadiobuttonWidget"
     }
   },
   "description": "UI schema for Anmälan om försäljning av elektroniska cigaretter och påfyllnadsbehållare"

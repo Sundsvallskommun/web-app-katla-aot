@@ -1,4 +1,5 @@
 'use client';
+import { ArrayFieldItemTemplate, ArrayFieldTemplate } from '@components/json/fields/array-field-template.component';
 import { FieldTemplate } from '@components/json/fields/field-template.component';
 import { ObjectFieldTemplate } from '@components/json/fields/object-field-template.component';
 import { SubmitButtonFieldTemplate } from '@components/json/fields/submit-button-field-template.component';
@@ -102,12 +103,18 @@ export default function SchemaForm({
       validator={validator}
       widgets={jsonWidgets}
       templates={{
+        ArrayFieldTemplate,
+        ArrayFieldItemTemplate,
         FieldTemplate,
         ObjectFieldTemplate,
         ButtonTemplates: {
           SubmitButton: hideSubmitButton ? () => null : SubmitButtonFieldTemplate,
         },
       }}
+      // A `oneOf` of consts is how the schemas state a choice; RJSF would otherwise default every
+      // such question to its first alternative, filing answers the citizen never gave and
+      // revealing the fields that depend on them.
+      experimental_defaultFormStateBehavior={{ constAsDefaults: 'skipOneOf' }}
       transformErrors={errorTransformer}
       noHtml5Validate
       showErrorList={false}

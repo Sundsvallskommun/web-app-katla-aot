@@ -68,28 +68,6 @@
           "defaultQueryState": "HIDDEN"
         }
       },
-      "verksamhetsbeskrivningsval": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I",
-            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret",
-            "x-oe-alternativeID": "49646"
-          },
-          {
-            "const": "JAG_VILL_BIFOGA_VERKSAMHETSBESKRIVNINGEN_SOM",
-            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil",
-            "x-oe-alternativeID": "49647"
-          }
-        ],
-        "title": "Verksamhetsbeskrivning",
-        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?",
-        "x-oe": {
-          "queryID": "81713",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
       "fakturaadressSammaSomForetaget": {
         "type": "string",
         "oneOf": [
@@ -173,6 +151,28 @@
           "defaultQueryState": "HIDDEN"
         }
       },
+      "verksamhetsbeskrivningsval": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I",
+            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret",
+            "x-oe-alternativeID": "49646"
+          },
+          {
+            "const": "JAG_VILL_BIFOGA_VERKSAMHETSBESKRIVNINGEN_SOM",
+            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil",
+            "x-oe-alternativeID": "49647"
+          }
+        ],
+        "title": "Verksamhetsbeskrivning",
+        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?",
+        "x-oe": {
+          "queryID": "81713",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
       "verksamhetsbeskrivning": {
         "type": "string",
         "title": "Verksamhetsbeskrivning",
@@ -207,6 +207,15 @@
         "x-oe": {
           "queryID": "81766",
           "queryTypeID": "com.nordicpeak.flowengine.queries.DateTimeQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "ovrigaUppgifterGallandeDatum": {
+        "type": "string",
+        "title": "Övriga uppgifter gällande datum",
+        "x-oe": {
+          "queryID": "81767",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
           "defaultQueryState": "HIDDEN"
         }
       },
@@ -464,15 +473,6 @@
         "x-oe": {
           "queryID": "81780",
           "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "ovrigaUppgifterGallandeDatum": {
-        "type": "string",
-        "title": "Övriga uppgifter gällande datum",
-        "x-oe": {
-          "queryID": "81767",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
           "defaultQueryState": "HIDDEN"
         }
       },

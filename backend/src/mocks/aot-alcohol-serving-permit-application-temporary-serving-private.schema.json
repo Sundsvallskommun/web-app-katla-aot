@@ -68,28 +68,6 @@
           "defaultQueryState": "HIDDEN"
         }
       },
-      "verksamhetsbeskrivningsval": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I",
-            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret",
-            "x-oe-alternativeID": "49646"
-          },
-          {
-            "const": "JAG_VILL_BIFOGA_VERKSAMHETSBESKRIVNINGEN_SOM",
-            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil",
-            "x-oe-alternativeID": "49647"
-          }
-        ],
-        "title": "Verksamhetsbeskrivning",
-        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?",
-        "x-oe": {
-          "queryID": "81713",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
       "fakturaadressSammaSomForetaget": {
         "type": "string",
         "oneOf": [
@@ -173,6 +151,28 @@
           "defaultQueryState": "HIDDEN"
         }
       },
+      "verksamhetsbeskrivningsval": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I",
+            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret",
+            "x-oe-alternativeID": "49646"
+          },
+          {
+            "const": "JAG_VILL_BIFOGA_VERKSAMHETSBESKRIVNINGEN_SOM",
+            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil",
+            "x-oe-alternativeID": "49647"
+          }
+        ],
+        "title": "Verksamhetsbeskrivning",
+        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?",
+        "x-oe": {
+          "queryID": "81713",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
       "verksamhetsbeskrivning": {
         "type": "string",
         "title": "Verksamhetsbeskrivning",
@@ -207,6 +207,15 @@
         "x-oe": {
           "queryID": "81766",
           "queryTypeID": "com.nordicpeak.flowengine.queries.DateTimeQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "ovrigaUppgifterGallandeDatum": {
+        "type": "string",
+        "title": "Övriga uppgifter gällande datum",
+        "x-oe": {
+          "queryID": "81767",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
           "defaultQueryState": "HIDDEN"
         }
       },
@@ -284,6 +293,45 @@
           "defaultQueryState": "HIDDEN"
         }
       },
+      "gaster": {
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "ANSTALLDA",
+              "title": "Anställda",
+              "x-oe-alternativeID": "30887"
+            },
+            {
+              "const": "MEDLEMMAR",
+              "title": "Medlemmar",
+              "x-oe-alternativeID": "30888"
+            },
+            {
+              "const": "ANNAT_SLUTET_SALLSKAP",
+              "title": "Annat slutet sällskap",
+              "x-oe-alternativeID": "30889"
+            }
+          ]
+        },
+        "title": "Gäster",
+        "x-oe": {
+          "queryID": "81771",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.checkboxquery.CheckboxQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "gastlistaEllerMedlemslista": {
+        "type": "string",
+        "title": "Gästlista eller medlemslista",
+        "x-oe": {
+          "queryID": "81772",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
       "beraknatAntalGaster": {
         "type": "object",
         "properties": {
@@ -300,6 +348,15 @@
         "x-oe": {
           "queryID": "81773",
           "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "hurHarGasternaBjuditsIn": {
+        "type": "string",
+        "title": "Hur har gästerna bjudits in",
+        "x-oe": {
+          "queryID": "81774",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
           "defaultQueryState": "HIDDEN"
         }
       },
@@ -464,63 +521,6 @@
         "x-oe": {
           "queryID": "81780",
           "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "gaster": {
-        "type": "array",
-        "uniqueItems": true,
-        "items": {
-          "type": "string",
-          "oneOf": [
-            {
-              "const": "ANSTALLDA",
-              "title": "Anställda",
-              "x-oe-alternativeID": "30887"
-            },
-            {
-              "const": "MEDLEMMAR",
-              "title": "Medlemmar",
-              "x-oe-alternativeID": "30888"
-            },
-            {
-              "const": "ANNAT_SLUTET_SALLSKAP",
-              "title": "Annat slutet sällskap",
-              "x-oe-alternativeID": "30889"
-            }
-          ]
-        },
-        "title": "Gäster",
-        "x-oe": {
-          "queryID": "81771",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.checkboxquery.CheckboxQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "gastlistaEllerMedlemslista": {
-        "type": "string",
-        "title": "Gästlista eller medlemslista",
-        "x-oe": {
-          "queryID": "81772",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "hurHarGasternaBjuditsIn": {
-        "type": "string",
-        "title": "Hur har gästerna bjudits in",
-        "x-oe": {
-          "queryID": "81774",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "ovrigaUppgifterGallandeDatum": {
-        "type": "string",
-        "title": "Övriga uppgifter gällande datum",
-        "x-oe": {
-          "queryID": "81767",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
           "defaultQueryState": "HIDDEN"
         }
       },
