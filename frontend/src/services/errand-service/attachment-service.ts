@@ -11,6 +11,24 @@ export interface ErrandAttachmentDTO {
 /** Mirrors the backend's multer limit; checked here so an oversized file never leaves the browser. */
 export const MAX_ATTACHMENT_SIZE_MB = 50;
 
+/** Mirrors ALLOWED_MIME_TYPES in the backend; refuses at the picker what the backend would reject. */
+export const ALLOWED_ATTACHMENT_MIME_TYPES = [
+  'application/msword',
+  'application/pdf',
+  'application/rtf',
+  'application/vnd.ms-excel',
+  'application/vnd.oasis.opendocument.spreadsheet',
+  'application/vnd.oasis.opendocument.text',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'image/bmp',
+  'image/gif',
+  'image/jpeg',
+  'image/png',
+  'image/tiff',
+  'text/plain',
+];
+
 export const getErrandAttachments = async (errandId: string): Promise<ErrandAttachmentDTO[]> =>
   apiService.get<ErrandAttachmentDTO[]>(`supportmanagement/errand/${errandId}/attachments`).then((res) => res.data);
 

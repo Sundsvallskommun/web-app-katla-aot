@@ -7,6 +7,7 @@ import { useIsContentLocked } from '@contexts/errand-content-lock-context';
 import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandFormAttachment, ErrandFormDTO } from '@interfaces/errand-form';
 import {
+  ALLOWED_ATTACHMENT_MIME_TYPES,
   deleteErrandAttachment,
   downloadErrandAttachment,
   getErrandAttachments,
@@ -16,7 +17,6 @@ import { Button, FileUpload, PopupMenu, UploadFile, useSnackbar } from '@sk-web-
 import {
   answersOfErrand,
   attachmentTypesOfSchema,
-  defaultAttachmentCategory,
   missingRequiredAttachments,
   requiredAttachmentTypes,
 } from '@utils/errand-attachments';
@@ -43,7 +43,12 @@ const toUploadFile = (attachment: ErrandFormAttachment, index: number): UploadFi
   meta: { ...fileNameParts(attachment.fileName), category: attachment.category, created: attachment.created },
 });
 
-export const ErrandAttachmentsContent: React.FC = () => {
+/**
+ * The errand type's schema declares which bilagor it asks for — the same schema the
+ * Ärendeuppgifter form renders from. A type that declares none, or whose schema will not load,
+ * still takes bilagor; it just names none of them as required.
+ */
+const AttachmentsForSchema: React.FC<{ schemaName: string }> = ({ schemaName }) => {
   const { t } = useTranslation();
   const toastMessage = useSnackbar();
   const isLocked = useIsContentLocked();
@@ -59,23 +64,22 @@ export const ErrandAttachmentsContent: React.FC = () => {
 
   const [loadError, setLoadError] = useState(false);
 
-  // The errand type's schema declares which bilagor it asks for, so the list is only known once
-  // the schema is loaded — the same schema the Ärendeuppgifter form renders from.
-  const namespace = useMetadataStore((state) => state.metadata?.namespace);
-  const [schemaName] = schemaNamesForErrand(labels, namespace);
-  const { schema } = useFormSchema(schemaName ?? '', { kind: 'new' });
+  const { schema, loading, error } = useFormSchema(schemaName, { kind: 'new' });
 
   const values: ErrandFormDTO = { attachments, labels, errandFormData };
   const attachmentTypes = attachmentTypesOfSchema(schema);
-  const answers = schemaName ? answersOfErrand(values, schemaName) : {};
+  const answers = answersOfErrand(values, schemaName);
   const requiredTypes = requiredAttachmentTypes(attachmentTypes, answers);
   const missingTypes = missingRequiredAttachments(attachmentTypes, answers, attachments);
 
-  const categories = Object.fromEntries(attachmentTypes.map((type) => [type.key, type.label]));
+  // Empty entry first, so an untagged file does not read as the first bilagetyp.
+  const categories = {
+    '': t('errand-information:attachments.choose_category'),
+    ...Object.fromEntries(attachmentTypes.map((type) => [type.key, type.label])),
+  };
 
-  // FileUpload.List copies whatever array it is handed into state on every new identity, so this
-  // has to stay referentially stable between renders — the React compiler's memoization is what
-  // keeps it so.
+  // FileUpload.List copies this into its own state on each new identity. Rebuilding here is safe:
+  // that copy re-renders the list, not this component.
   const files = (attachments ?? []).map(toUploadFile);
 
   // What is already filed upstream is not in form state until it is read back: on opening a saved
@@ -107,21 +111,13 @@ export const ErrandAttachmentsContent: React.FC = () => {
   };
 
   const addFiles = (added: UploadFile[]) => {
-    // Tagged one at a time against the list as it grows, so picking several files at once fills
-    // the missing bilagor in order rather than labelling them all the same.
-    const next = added.reduce<ErrandFormAttachment[]>(
-      (attachmentsSoFar, upload) => [
-        ...attachmentsSoFar,
-        {
-          category: defaultAttachmentCategory(attachmentTypes, answers, attachmentsSoFar),
-          fileName: upload.file.name,
-          mimeType: upload.file.type,
-          file: upload.file,
-        },
-      ],
-      getValues('attachments') ?? []
-    );
-    updateAttachments(next);
+    // Untagged: the bilagetyp is the citizen's to pick.
+    const picked = added.map((upload) => ({
+      fileName: upload.file.name,
+      mimeType: upload.file.type,
+      file: upload.file,
+    }));
+    updateAttachments([...(getValues('attachments') ?? []), ...picked]);
   };
 
   const setCategory = (index: number, category: string) => {
@@ -198,12 +194,18 @@ export const ErrandAttachmentsContent: React.FC = () => {
     </PopupMenu.Panel>
   );
 
-  if (attachmentTypes.length === 0) {
-    return <span className="text-dark-secondary">{t('errand-information:attachments.no_errand_type')}</span>;
+  if (loading) {
+    return <div className="text-gray-500">{t('errand-information:attachments.loading_types')}</div>;
   }
 
   return (
     <div className="flex flex-col gap-24 pb-[2.4rem]">
+      {error && (
+        <div role="alert" className="text-error">
+          {t('errand-information:attachments.types_error')}
+        </div>
+      )}
+
       {requiredTypes.length > 0 && (
         <div data-cy="required-attachments">
           <p className="font-bold">{t('errand-information:attachments.required_heading')}</p>
@@ -240,6 +242,7 @@ export const ErrandAttachmentsContent: React.FC = () => {
           /* The library prints the raw accept list (MIME types) truncated with an ellipsis; hide
              that row and describe the allowed formats in plain language below instead. */
           <FileUpload.Field
+            accept={ALLOWED_ATTACHMENT_MIME_TYPES}
             className="[&_.sk-form-file-upload-field-button-content-restrictions-mimetypes]:hidden"
             data-cy="attachment-upload-field"
             maxFileSizeMB={MAX_ATTACHMENT_SIZE_MB}
@@ -294,6 +297,19 @@ export const ErrandAttachmentsContent: React.FC = () => {
       </FormProvider>
     </div>
   );
+};
+
+export const ErrandAttachmentsContent: React.FC = () => {
+  const { t } = useTranslation();
+  const { watch } = useFormContext<ErrandFormDTO>();
+  const namespace = useMetadataStore((state) => state.metadata?.namespace);
+  const [schemaName] = schemaNamesForErrand(watch('labels'), namespace);
+
+  if (!schemaName) {
+    return <span className="text-dark-secondary">{t('errand-information:attachments.no_errand_type')}</span>;
+  }
+
+  return <AttachmentsForSchema schemaName={schemaName} />;
 };
 
 export const ErrandAttachments: React.FC = () => {

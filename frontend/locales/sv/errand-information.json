@@ -124,6 +124,9 @@
     "load_error": "Bilagorna kunde inte hämtas.",
     "upload_error": "Ärendet sparades, men någon av bilagorna kunde inte skickas in.",
     "remove_error": "Bilagan kunde inte tas bort.",
-    "open_error": "Bilagan kunde inte öppnas."
+    "open_error": "Bilagan kunde inte öppnas.",
+    "choose_category": "Välj bilagetyp",
+    "loading_types": "Laddar bilagor...",
+    "types_error": "Det gick inte att hämta vilka bilagor som krävs."
   }
 }

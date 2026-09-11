@@ -29,6 +29,7 @@
     "type_required": "Välj vilken ärendetyp ärendet gäller."
   },
   "attachments": {
-    "required": "Bilagan \"{{label}}\" saknas."
+    "required": "Bilagan \"{{label}}\" saknas.",
+    "check_failed": "Bilagorna kunde inte kontrolleras. Försök igen."
   }
 }

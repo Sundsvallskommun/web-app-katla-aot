@@ -66,16 +66,6 @@ export const missingRequiredAttachments = (
   requiredAttachmentTypes(types, answers).filter((type) => !hasAttachmentOfType(attachments, type.key));
 
 /**
- * What a newly picked file is tagged as. The select always shows a value, so an attachment always
- * carries one; the first bilaga still missing is the one the citizen is most likely adding.
- */
-export const defaultAttachmentCategory = (
-  types: readonly AttachmentType[],
-  answers: Record<string, unknown>,
-  attachments: ErrandFormAttachment[] | undefined
-): string | undefined => (missingRequiredAttachments(types, answers, attachments)[0] ?? types[0])?.key;
-
-/**
  * Validates against the published schema rather than anything held here, so an errand type whose
  * bilagor changed upstream is judged by the new rule without an app release. An errand type with
  * no schema has no bilagor to demand.
@@ -91,8 +81,9 @@ export async function validateErrandAttachments(
     try {
       ({ schema } = await loadFormSchema(schemaName, t, locale));
     } catch (error) {
+      // With the schema unread the requirement is unknown, so fail closed.
       if (error instanceof SchemaNotFoundError) continue;
-      throw error;
+      return [t('validation:attachments.check_failed')];
     }
 
     const missing = missingRequiredAttachments(

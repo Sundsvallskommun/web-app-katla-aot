@@ -1,13 +1,31 @@
+import { loadFormSchema, SchemaNotFoundError } from '@components/json/utils/schema-utils';
 import { ErrandFormDTO } from '@interfaces/errand-form';
 import type { RJSFSchema } from '@rjsf/utils';
 import {
   answersOfErrand,
   attachmentTypesOfSchema,
-  defaultAttachmentCategory,
   missingRequiredAttachments,
   requiredAttachmentTypes,
+  validateErrandAttachments,
 } from '@utils/errand-attachments';
-import { describe, expect, it } from 'vitest';
+import type { TFunction } from 'i18next';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('@components/json/utils/schema-utils', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@components/json/utils/schema-utils')>()),
+  loadFormSchema: vi.fn(),
+}));
+
+const loadFormSchemaMock = vi.mocked(loadFormSchema);
+
+// Echoes the key back, so an assertion names the message the citizen is shown.
+const t = ((key: string) => key) as unknown as TFunction;
+
+const labels = [
+  { classification: 'CATEGORY', resourceName: 'ALCOHOL' },
+  { classification: 'TYPE', resourceName: 'SERVING_PERMIT_APPLICATION' },
+];
+const schemaName = 'aot_alcohol_serving_permit_application';
 
 /**
  * Shaped like a published schema's own declaration, covering all three condition forms the
@@ -113,14 +131,35 @@ describe('errand attachments', () => {
     expect(keysOf(missing)).toEqual(['laddaUppFullmakt']);
   });
 
-  it('tags a newly picked file as the first bilaga still missing', () => {
-    expect(defaultAttachmentCategory(types, { foretagsform: 'AKTIEBOLAG' }, undefined)).toBe(
-      'bifogaRegisterutdragFranSkatteverket'
-    );
-  });
+  describe('validating before registration', () => {
+    beforeEach(() => {
+      loadFormSchemaMock.mockReset();
+    });
 
-  it('falls back to the first declared bilaga when nothing is required', () => {
-    expect(defaultAttachmentCategory(types, {}, undefined)).toBe('laddaUppFullmakt');
+    it('blocks registration while a required bilaga is missing', async () => {
+      loadFormSchemaMock.mockResolvedValue({ schema, schemaId: 'id' });
+
+      const values: ErrandFormDTO = {
+        labels,
+        errandFormData: [{ schemaName, schemaId: 'id', data: '{"arDuFirmatecknare":"NEJ"}' }],
+      };
+
+      expect(await validateErrandAttachments(values, t, 'sv', 'aot')).toEqual(['validation:attachments.required']);
+    });
+
+    it('lets an errand type without a schema through', async () => {
+      loadFormSchemaMock.mockRejectedValue(new SchemaNotFoundError(schemaName));
+
+      expect(await validateErrandAttachments({ labels }, t, 'sv', 'aot')).toEqual([]);
+    });
+
+    it('reports a failed schema load instead of throwing', async () => {
+      loadFormSchemaMock.mockRejectedValue(new Error('500'));
+
+      expect(await validateErrandAttachments({ labels }, t, 'sv', 'aot')).toEqual([
+        'validation:attachments.check_failed',
+      ]);
+    });
   });
 
   it('reads the answers of the errand type being filled in', () => {

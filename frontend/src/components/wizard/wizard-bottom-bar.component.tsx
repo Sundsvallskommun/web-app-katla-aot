@@ -8,7 +8,6 @@ import {
 import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandFormDTO } from '@interfaces/errand-form';
 import { CenterDiv } from '@layouts/center-div.component';
-import { uploadPendingAttachments } from '@services/errand-service/attachment-service';
 import { createErrand, updateErrand } from '@services/errand-service/errand-service';
 import { Button, Dialog, useSnackbar } from '@sk-web-gui/react';
 import { validateErrandAttachments } from '@utils/errand-attachments';
@@ -21,6 +20,7 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
 import { useActiveWizardSteps } from 'src/hooks/use-active-wizard-steps';
+import { useAttachmentUpload } from 'src/hooks/use-attachment-upload';
 import { useMetadataStore } from 'src/stores/metadata-store';
 import { useWizardStore } from 'src/stores/wizard-store';
 
@@ -39,28 +39,18 @@ export const WizardBottomBar: React.FC = () => {
   const [isCancelOpen, setIsCancelOpen] = useState(false);
 
   const namespace = useMetadataStore((state) => state.metadata?.namespace);
+  const uploadAttachments = useAttachmentUpload();
   const steps = useActiveWizardSteps();
   const errandId = watch('id');
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === steps.length - 1;
   const draftEnabled = appConfig.features.draftEnabled;
 
-  // The errand has to exist before SupportManagement takes an upload, so the files picked during
-  // registration are sent here. A failure leaves the errand saved: it is reported, not thrown.
-  const uploadAttachments = async (errand: ErrandFormDTO) => {
-    if (!errand.id) return;
-    try {
-      await uploadPendingAttachments(errand.id, getValues('attachments'));
-    } catch {
-      toastMessage({ position: 'bottom', status: 'error', message: t('errand-information:attachments.upload_error') });
-    }
-  };
-
   const onSaveDraft = async () => {
     try {
       const errandData = prepareErrandForApi(getValues(), 'DRAFT', namespace);
       const errand = await (errandId ? updateErrand(errandId, errandData) : createErrand(errandData));
-      await uploadAttachments(errand);
+      await uploadAttachments(errand.id, getValues('attachments'));
       const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
       toastMessage({ position: 'bottom', status: 'success', message: t('errand-information:save_message.draft') });
       reset({ ...errand, errandFormData });
@@ -79,7 +69,7 @@ export const WizardBottomBar: React.FC = () => {
     try {
       const errandData = prepareErrandForApi(getValues(), 'NEW', namespace);
       const errand = await (errandId ? updateErrand(errandId, errandData) : createErrand(errandData));
-      await uploadAttachments(errand);
+      await uploadAttachments(errand.id, getValues('attachments'));
       const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
       toastMessage({
         position: 'bottom',

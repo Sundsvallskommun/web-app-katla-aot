@@ -124,6 +124,9 @@
     "load_error": "The attachments could not be loaded.",
     "upload_error": "The errand was saved, but one of the attachments could not be submitted.",
     "remove_error": "The attachment could not be removed.",
-    "open_error": "The attachment could not be opened."
+    "open_error": "The attachment could not be opened.",
+    "choose_category": "Select attachment type",
+    "loading_types": "Loading attachments...",
+    "types_error": "Which attachments are required could not be loaded."
   }
 }

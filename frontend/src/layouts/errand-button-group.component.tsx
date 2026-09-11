@@ -8,7 +8,6 @@ import {
 } from '@components/json/utils/schema-utils';
 import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandFormDTO } from '@interfaces/errand-form';
-import { uploadPendingAttachments } from '@services/errand-service/attachment-service';
 import { createErrand, updateErrand } from '@services/errand-service/errand-service';
 import { Button, Dialog, useSnackbar } from '@sk-web-gui/react';
 import { validateErrandAttachments } from '@utils/errand-attachments';
@@ -21,6 +20,7 @@ import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
+import { useAttachmentUpload } from 'src/hooks/use-attachment-upload';
 import { useMetadataStore } from 'src/stores/metadata-store';
 
 import { CenterDiv } from './center-div.component';
@@ -42,6 +42,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
   const [isCancelOpen, setIsCancelOpen] = useState<boolean>(false);
 
   const namespace = useMetadataStore((state) => state.metadata?.namespace);
+  const uploadAttachments = useAttachmentUpload();
   const errandStatus = watch('status');
   const errandId = watch('id');
 
@@ -49,22 +50,11 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
   const showButtons = isNewErrand || isDraft;
   const draftEnabled = appConfig.features.draftEnabled;
 
-  // The errand has to exist before SupportManagement takes an upload, so the files picked during
-  // registration are sent here. A failure leaves the errand saved: it is reported, not thrown.
-  const uploadAttachments = async (errand: ErrandFormDTO) => {
-    if (!errand.id) return;
-    try {
-      await uploadPendingAttachments(errand.id, getValues('attachments'));
-    } catch {
-      toastMessage({ position: 'bottom', status: 'error', message: t('errand-information:attachments.upload_error') });
-    }
-  };
-
   const onSaveDraft = async () => {
     try {
       const errandData = prepareErrandForApi(getValues(), 'DRAFT', namespace);
       const errand = await (errandId ? updateErrand(errandId, errandData) : createErrand(errandData));
-      await uploadAttachments(errand);
+      await uploadAttachments(errand.id, getValues('attachments'));
       const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
       toastMessage({ position: 'bottom', status: 'success', message: t('errand-information:save_message.draft') });
       reset({ ...errand, errandFormData });
@@ -87,7 +77,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
     try {
       const errandData = prepareErrandForApi(getValues(), 'NEW', namespace);
       const errand = await (errandId ? updateErrand(errandId, errandData) : createErrand(errandData));
-      await uploadAttachments(errand);
+      await uploadAttachments(errand.id, getValues('attachments'));
       const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
       toastMessage({ position: 'bottom', status: 'success', message: t('errand-information:save_message.register') });
       reset({ ...errand, errandFormData });

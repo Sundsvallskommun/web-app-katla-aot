@@ -34,14 +34,7 @@ export const schemaNamesForErrand = (
     .filter((resourceName): resourceName is string => !!resourceName);
 
   // A CATEGORY on its own is not an errand type, so it selects no schema.
-  if (path.length < 2) return [];
-
-  // Metadata gates the errand pages, so the namespace is there by the time this runs. If it ever
-  // is not, the form would silently vanish — say so rather than render an empty section.
-  if (!namespace) {
-    console.warn('No namespace in metadata; cannot derive a schema name for the errand type.');
-    return [];
-  }
+  if (!namespace || path.length < 2) return [];
 
   return [[namespace, ...path].join('_').toLowerCase()];
 };

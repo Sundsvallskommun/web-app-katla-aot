@@ -40,9 +40,8 @@ export class SupportManagementAttachmentController {
     await assertErrandReadableByUser(this.apiService, this.apiBase, id, req);
 
     const res = await this.apiService.get<ErrandAttachment[]>({ baseURL: apiURL(this.apiBase), url: this.attachmentsUrl(id) }, req);
-    if (!res.data) throw new HttpException(502, 'Invalid response when reading attachments');
 
-    return res.data;
+    return res.data ?? [];
   }
 
   @Get('/supportmanagement/errand/:id/attachments/:attachmentId')
@@ -94,6 +93,8 @@ export class SupportManagementAttachmentController {
         data,
         headers: { 'Content-Type': data.getHeaders()['content-type'] as string },
         propagateClientError: true,
+        // Following the Location would pull the whole file back again for nothing.
+        skipLocationFollow: true,
       },
       req,
     );

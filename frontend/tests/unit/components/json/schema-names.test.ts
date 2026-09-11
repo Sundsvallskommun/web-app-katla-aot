@@ -1,6 +1,6 @@
 import { schemaNamesForErrand } from '@components/json/utils/schema-utils';
 import type { ErrandLabelDTO } from '@data-contracts/backend/data-contracts';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 const label = (classification: string, resourceName: string): ErrandLabelDTO => ({ classification, resourceName });
 
@@ -43,13 +43,7 @@ describe('schema names', () => {
     expect(schemaNamesForErrand([CATEGORY], 'AOT')).toEqual([]);
   });
 
-  // Metadata gates the errand pages, so this is a misconfiguration rather than a normal state.
-  it('selects no schema, loudly, when the namespace is missing', () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-
+  it('selects no schema without a namespace to qualify the name', () => {
     expect(schemaNamesForErrand([CATEGORY, TYPE, SUBTYPE], undefined)).toEqual([]);
-    expect(warn).toHaveBeenCalled();
-
-    warn.mockRestore();
   });
 });
