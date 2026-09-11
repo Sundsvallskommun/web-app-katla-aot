@@ -257,6 +257,14 @@ export class PhaseDTO implements Phase {
 }
 
 export class MetadataResponseDTO implements MetadataResponse {
+  /**
+   * The app's SupportManagement namespace. Not part of the upstream metadata — added here because
+   * the frontend needs it to derive schema names, and one config value beats mirroring it into a
+   * second env file.
+   */
+  @IsOptional()
+  @IsString()
+  namespace?: string;
   @IsOptional()
   @ValidateNested({ each: true })
   @TypeTransformer(() => CategoryDTO)

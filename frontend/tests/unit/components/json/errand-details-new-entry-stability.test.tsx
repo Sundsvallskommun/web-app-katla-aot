@@ -5,6 +5,7 @@ import type { RJSFSchema, UiSchema } from '@rjsf/utils';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
+import { useMetadataStore } from 'src/stores/metadata-store';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 /** The errand type chooses the form, so the test errand needs a categorization to render one. */
@@ -78,6 +79,7 @@ function TestForm() {
 
 describe('ErrandDetails new entry schema stability', () => {
   beforeEach(() => {
+    useMetadataStore.setState({ metadata: { namespace: 'AOT' } });
     loadFormSchemaMock.mockReset().mockResolvedValue({ schema, uiSchema, schemaId: 'schema-v1' });
     loadFormSchemaForEntryMock.mockReset().mockResolvedValue({ schema, uiSchema, schemaId: 'schema-v1' });
     translateMock.mockClear();
@@ -94,7 +96,7 @@ describe('ErrandDetails new entry schema stability', () => {
       expect(screen.getByTestId('form-state')).toHaveTextContent(
         JSON.stringify([
           {
-            schemaName: 'aot_test_schema',
+            schemaName: 'aot_alcohol_test_schema',
             schemaId: 'schema-v1',
             data: '{"locationType":"FACILITY"}',
           },

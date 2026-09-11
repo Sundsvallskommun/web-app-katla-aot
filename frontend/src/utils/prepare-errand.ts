@@ -5,8 +5,9 @@ import {
 } from '@components/json/utils/schema-utils';
 import { ErrandFormDTO } from '@interfaces/errand-form';
 
-export const prepareErrandForApi = (values: ErrandFormDTO, status: string) => {
-  const { errandFormData, ...errandWithoutFormData } = values;
+export const prepareErrandForApi = (values: ErrandFormDTO, status: string, namespace: string | undefined) => {
+  // Bilagor are filed straight to SupportManagement, never as part of the errand body.
+  const { attachments: _attachments, errandFormData, ...errandWithoutFormData } = values;
   const labels = errandWithoutFormData.labels ?? [];
 
   return {
@@ -17,7 +18,7 @@ export const prepareErrandForApi = (values: ErrandFormDTO, status: string) => {
     // Only the current ärendetyp's form is filed; a type the citizen changed away from leaves its
     // answers in form state but must not reach the errand.
     jsonParameters: errandFormDataToJsonParameters(
-      errandFormDataForSchemas(errandFormData, schemaNamesForErrand(labels))
+      errandFormDataForSchemas(errandFormData, schemaNamesForErrand(labels, namespace))
     ),
   };
 };

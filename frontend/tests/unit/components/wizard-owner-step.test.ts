@@ -12,18 +12,20 @@ const formValues = (stakeholders?: ErrandFormDTO['stakeholders']): ErrandFormDTO
 
 describe('wizard owner step', () => {
   it('marks the step incomplete while no owner has been chosen', async () => {
-    await expect(validateStep(ownerStep, formValues(), t)).resolves.toEqual(['validation:owner.required']);
+    await expect(validateStep(ownerStep, formValues(), t, 'sv', 'AOT')).resolves.toEqual(['validation:owner.required']);
   });
 
   it('does not accept a contact as the owner', async () => {
     const contact = [{ role: 'CONTACT', firstName: 'Anna', lastName: 'Andersson' }];
 
-    await expect(validateStep(ownerStep, formValues(contact), t)).resolves.toEqual(['validation:owner.required']);
+    await expect(validateStep(ownerStep, formValues(contact), t, 'sv', 'AOT')).resolves.toEqual([
+      'validation:owner.required',
+    ]);
   });
 
   it('accepts the step once an organization is the primary stakeholder', async () => {
     const owner = [{ role: 'PRIMARY', externalId: 'f1e2d3c4-0000-4000-8000-000000000001' }];
 
-    await expect(validateStep(ownerStep, formValues(owner), t)).resolves.toEqual([]);
+    await expect(validateStep(ownerStep, formValues(owner), t, 'sv', 'AOT')).resolves.toEqual([]);
   });
 });

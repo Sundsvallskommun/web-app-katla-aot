@@ -4,6 +4,7 @@ import { ErrandButtonGroup } from '@layouts/errand-button-group.component';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { useMetadataStore } from 'src/stores/metadata-store';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { createErrandMock, routerPushMock, snackbarMock, updateErrandMock } = vi.hoisted(() => ({
@@ -70,7 +71,7 @@ function TestForm() {
       ],
       errandFormData: [
         {
-          schemaName: 'aot_permanent_serving',
+          schemaName: 'aot_alcohol_serving_permit_application_permanent_serving',
           schemaId: 'schema-v1',
           data: '{invalid-json',
         },
@@ -89,6 +90,7 @@ function TestForm() {
 
 describe('ErrandButtonGroup JSON save contract', () => {
   beforeEach(() => {
+    useMetadataStore.setState({ metadata: { namespace: 'AOT' } });
     createErrandMock.mockReset();
     routerPushMock.mockReset();
     snackbarMock.mockReset();

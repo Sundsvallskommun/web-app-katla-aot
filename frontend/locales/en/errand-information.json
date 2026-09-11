@@ -110,5 +110,20 @@
     "title": "Case details",
     "loading_form": "Loading form..."
   },
-  "section_placeholder": "This section will be filled with alcohol serving fields at a later stage."
+  "section_placeholder": "This section will be filled with alcohol serving fields at a later stage.",
+  "attachments": {
+    "title": "Attachments",
+    "required_heading": "This errand type requires the following attachments:",
+    "missing": "missing",
+    "no_errand_type": "Select an errand type to see which attachments are needed.",
+    "allowed_formats": "Allowed file types: images (jpeg, png, gif, tiff, bmp) and documents (pdf, Word, Excel, OpenDocument, txt).",
+    "uploaded_at": "Submitted {{date}}",
+    "not_sent_yet": "Will be submitted when the errand is saved",
+    "open": "Open",
+    "remove": "Remove",
+    "load_error": "The attachments could not be loaded.",
+    "upload_error": "The errand was saved, but one of the attachments could not be submitted.",
+    "remove_error": "The attachment could not be removed.",
+    "open_error": "The attachment could not be opened."
+  }
 }

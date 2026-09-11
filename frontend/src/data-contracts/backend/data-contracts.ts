@@ -270,6 +270,7 @@ export interface PhaseDTO {
 }
 
 export interface MetadataResponseDTO {
+  namespace?: string;
   categories?: CategoryDTO[];
   externalIdTypes?: ExternalIdTypeDTO[];
   labels?: LabelsDTO;

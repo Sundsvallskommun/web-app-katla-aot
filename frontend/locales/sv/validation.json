@@ -27,5 +27,8 @@
   "categorization": {
     "category_required": "Välj vilken kategori ärendet gäller.",
     "type_required": "Välj vilken ärendetyp ärendet gäller."
+  },
+  "attachments": {
+    "required": "Bilagan \"{{label}}\" saknas."
   }
 }

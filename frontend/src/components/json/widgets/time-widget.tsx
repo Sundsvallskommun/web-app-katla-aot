@@ -3,7 +3,7 @@ import type { WidgetProps } from '@rjsf/utils';
 import { Input } from '@sk-web-gui/react';
 import dayjs from 'dayjs';
 
-import { getCommonProps } from './types';
+import { getCommonProps, getWidgetOptions } from './types';
 
 const DEFAULT_CLASS = 'w-full max-w-[40rem]';
 
@@ -23,7 +23,6 @@ function toSchemaValue(value: string, requiresFullTime: boolean): string | undef
     .minute(Number(minute))
     .second(Number(second ?? 0))
     .millisecond(0);
-  console.warn("time:", time)
   return time.isValid() ? time.format('HH:mm:ssZ') : value;
 }
 
@@ -42,12 +41,15 @@ export function TimeWidget(props: WidgetProps) {
   const { id, value, disabled, readonly, required, invalid, describedBy, className, onChange, onBlur, onFocus } =
     getCommonProps(props, DEFAULT_CLASS);
   const requiresFullTime = props.schema.format === 'time';
+  // The schema states the picker's granularity; without it the browser steps in minutes.
+  const { step } = getWidgetOptions(props.options);
 
   return (
     <Input
       id={id}
       className={`${className} min-w-0 max-w-full`}
       type="time"
+      step={step}
       value={toInputValue(value)}
       disabled={disabled}
       readOnly={readonly}
