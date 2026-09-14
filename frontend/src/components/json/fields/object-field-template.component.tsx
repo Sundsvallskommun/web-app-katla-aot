@@ -8,6 +8,9 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
 
+/** Stands in for a dynamic table's row number, which is only known once the row is rendered. */
+export const ROW_INDEX_PLACEHOLDER = '#';
+
 interface RowDefinition {
   fields: string[];
   gap?: string;
@@ -201,6 +204,20 @@ function renderFields(
 }
 
 /**
+ * The sub-schema this object is judged by. A dynamic table's rows are keyed with the row number
+ * replaced by a placeholder, because every row renders from the same item schema.
+ *
+ * Falling back to the root schema would be worse than having none: a row column that shares its
+ * name with a conditional question at the root — `personnummer` does — would be judged by that
+ * question's condition and silently disappear from the row.
+ */
+function schemaForObject(ctx: FormContext | undefined, id: string): RJSFSchema | undefined {
+  const byId = ctx?.schemaById;
+  const rowAgnosticId = id.replace(/_\d+(?=_|$)/g, `_${ROW_INDEX_PLACEHOLDER}`);
+  return byId?.[id] ?? byId?.[rowAgnosticId] ?? (id === 'root' ? ctx?.originalSchema : undefined);
+}
+
+/**
  * ObjectFieldTemplate that hides fields based on if/then conditions in the schema
  * and supports ui:rows for horizontal field grouping and ui:sections for Disclosure grouping
  */
@@ -210,7 +227,7 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
 
   // RJSF strips allOf from the schema prop, so the conditions come from formContext instead.
   const ctx = props.formContext as FormContext | undefined;
-  const objectSchema = ctx?.schemaById?.[props.idSchema.$id] ?? ctx?.originalSchema;
+  const objectSchema = schemaForObject(ctx, props.idSchema.$id);
 
   // Get row and section definitions from uiSchema
   const rows = getRowDefinitions(uiSchema);
