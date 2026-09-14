@@ -16,6 +16,8 @@ export interface WidgetOptions {
   direction?: 'row' | 'column';
   enumOptions?: EnumOption[];
   enumDisabled?: unknown[];
+  /** Picker granularity in seconds, as `<input type="time">` counts it. */
+  step?: number;
 }
 
 export function getWidgetOptions(options: WidgetProps['options']): WidgetOptions {
@@ -28,6 +30,7 @@ export function getWidgetOptions(options: WidgetProps['options']): WidgetOptions
     direction: opts.direction === 'row' || opts.direction === 'column' ? opts.direction : undefined,
     enumOptions: opts.enumOptions as EnumOption[] | undefined,
     enumDisabled: Array.isArray(opts.enumDisabled) ? opts.enumDisabled : undefined,
+    step: typeof opts.step === 'number' ? opts.step : undefined,
   };
 }
 

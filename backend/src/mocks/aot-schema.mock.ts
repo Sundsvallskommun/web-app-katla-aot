@@ -1,27 +1,27 @@
 import { MUNICIPALITY_ID } from '@/config';
 import { JsonSchema } from '@/data-contracts/jsonschema/data-contracts';
 
-import ecigaretteSalesNotification from './aot-ecigarette-sales-notification.schema.json';
-import ecigaretteSalesNotificationUi from './aot-ecigarette-sales-notification.ui-schema.json';
-import farmSales from './aot-farm-sales.schema.json';
-import farmSalesUi from './aot-farm-sales.ui-schema.json';
-import folkolServingNotification from './aot-folkol-serving-notification.schema.json';
-import folkolServingNotificationUi from './aot-folkol-serving-notification.ui-schema.json';
-import permanentCatering from './aot-permanent-catering.schema.json';
-import permanentCateringUi from './aot-permanent-catering.ui-schema.json';
-import permanentServing from './aot-permanent-serving.schema.json';
-import permanentServingUi from './aot-permanent-serving.ui-schema.json';
-import salesPermitApplication from './aot-sales-permit-application.schema.json';
-import salesPermitApplicationUi from './aot-sales-permit-application.ui-schema.json';
+import folkolServingNotification from './aot-alcohol-folkol-serving-notification.schema.json';
+import folkolServingNotificationUi from './aot-alcohol-folkol-serving-notification.ui-schema.json';
+import farmSales from './aot-alcohol-serving-permit-application-farm-sales.schema.json';
+import farmSalesUi from './aot-alcohol-serving-permit-application-farm-sales.ui-schema.json';
+import permanentCatering from './aot-alcohol-serving-permit-application-permanent-catering.schema.json';
+import permanentCateringUi from './aot-alcohol-serving-permit-application-permanent-catering.ui-schema.json';
+import permanentServing from './aot-alcohol-serving-permit-application-permanent-serving.schema.json';
+import permanentServingUi from './aot-alcohol-serving-permit-application-permanent-serving.ui-schema.json';
+import tasting from './aot-alcohol-serving-permit-application-tasting.schema.json';
+import tastingUi from './aot-alcohol-serving-permit-application-tasting.ui-schema.json';
+import temporaryServingPrivate from './aot-alcohol-serving-permit-application-temporary-serving-private.schema.json';
+import temporaryServingPrivateUi from './aot-alcohol-serving-permit-application-temporary-serving-private.ui-schema.json';
+import temporaryServingPublic from './aot-alcohol-serving-permit-application-temporary-serving-public.schema.json';
+import temporaryServingPublicUi from './aot-alcohol-serving-permit-application-temporary-serving-public.ui-schema.json';
 import wholeFlow from './aot-schema.json';
-import tasting from './aot-tasting.schema.json';
-import tastingUi from './aot-tasting.ui-schema.json';
-import temporaryServingPrivate from './aot-temporary-serving-private.schema.json';
-import temporaryServingPrivateUi from './aot-temporary-serving-private.ui-schema.json';
-import temporaryServingPublic from './aot-temporary-serving-public.schema.json';
-import temporaryServingPublicUi from './aot-temporary-serving-public.ui-schema.json';
-import tobaccoFreeNicotineSalesNotification from './aot-tobacco-free-nicotine-sales-notification.schema.json';
-import tobaccoFreeNicotineSalesNotificationUi from './aot-tobacco-free-nicotine-sales-notification.ui-schema.json';
+import ecigaretteSalesNotification from './aot-tobacco-ecigarette-sales-notification.schema.json';
+import ecigaretteSalesNotificationUi from './aot-tobacco-ecigarette-sales-notification.ui-schema.json';
+import salesPermitApplication from './aot-tobacco-sales-permit-application.schema.json';
+import salesPermitApplicationUi from './aot-tobacco-sales-permit-application.ui-schema.json';
+import tobaccoFreeNicotineSalesNotification from './aot-tobacco-tobacco-free-nicotine-sales-notification.schema.json';
+import tobaccoFreeNicotineSalesNotificationUi from './aot-tobacco-tobacco-free-nicotine-sales-notification.ui-schema.json';
 import wholeFlowUi from './aot-ui-schema.json';
 
 /**
@@ -35,8 +35,8 @@ import wholeFlowUi from './aot-ui-schema.json';
  * generator also forces `$schema` to 2020-12; the exports declare draft-07, which Ajv2020 refuses to
  * compile.
  *
- * A schema is named after the label leaf that selects it, lowercased: the SUBTYPE (or leaf TYPE) of
- * the errand's categorization. The frontend derives the name the same way, so no lookup table is
+ * A schema is named after the app's SupportManagement namespace and the whole categorization path
+ * that selects it, lowercased. The frontend derives the name the same way, so no lookup table is
  * needed on either side.
  */
 

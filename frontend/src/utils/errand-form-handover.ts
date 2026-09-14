@@ -24,7 +24,13 @@ export interface ErrandFormHandover {
  */
 export const storeErrandFormHandover = (handover: Omit<ErrandFormHandover, 'storedAt'>): void => {
   try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...handover, storedAt: Date.now() }));
+    // A File does not survive JSON, so a bilaga that has not reached SupportManagement yet cannot
+    // cross the navigation. Dropping it leaves a list that matches what can still be sent.
+    const values = {
+      ...handover.values,
+      attachments: handover.values.attachments?.filter((attachment) => !attachment.file),
+    };
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...handover, values, storedAt: Date.now() }));
   } catch {
     // With no storage, fall back to the old behaviour — an empty form — rather than letting the
     // language switch itself crash.

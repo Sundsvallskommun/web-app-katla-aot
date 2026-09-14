@@ -11,7 +11,9 @@ exporterna i `docs/jsonschemas/`.
 räknas inte här.
 
 Trädet har nu tre nivåer: `CATEGORY_ROOT → CATEGORY → TYPE → SUBTYPE`, med 17 valbara löv. Ett löv
-är ett `TYPE` utan barn eller ett `SUBTYPE`, och det är lövet som blir schemanamn.
+är ett `TYPE` utan barn eller ett `SUBTYPE`. Schemanamnet är appens SM-namespace följt av hela
+vägen ned till lövet, gemener med `_` mellan nivåerna — inte bara lövet, som bara är unikt under
+sin egen förälder.
 
 ## Alkohol — flöde 2181
 

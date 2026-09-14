@@ -833,10 +833,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {
@@ -857,10 +863,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {
@@ -908,10 +920,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {
@@ -932,10 +950,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {
@@ -1295,10 +1319,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {
@@ -1678,10 +1708,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {
@@ -2363,10 +2399,16 @@
           "showObjectFieldset": true
         },
         "startTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "endTime": {
-          "ui:widget": "TimeWidget"
+          "ui:widget": "TimeWidget",
+          "ui:options": {
+            "step": 900
+          }
         },
         "ui:rows": [
           {

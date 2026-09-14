@@ -110,5 +110,23 @@
     "title": "Ärendeuppgifter",
     "loading_form": "Laddar formulär..."
   },
-  "section_placeholder": "Det här avsnittet fylls med fält för alkoholservering i ett senare steg."
+  "section_placeholder": "Det här avsnittet fylls med fält för alkoholservering i ett senare steg.",
+  "attachments": {
+    "title": "Bilagor",
+    "required_heading": "Till den här ärendetypen behöver du bifoga:",
+    "missing": "saknas",
+    "no_errand_type": "Välj ärendetyp först, så visas vilka bilagor som behövs.",
+    "allowed_formats": "Tillåtna filtyper: bilder (jpeg, png, gif, tiff, bmp) samt dokument (pdf, Word, Excel, OpenDocument, txt).",
+    "uploaded_at": "Inskickad {{date}}",
+    "not_sent_yet": "Skickas in när ärendet sparas",
+    "open": "Öppna",
+    "remove": "Ta bort",
+    "load_error": "Bilagorna kunde inte hämtas.",
+    "upload_error": "Ärendet sparades, men någon av bilagorna kunde inte skickas in.",
+    "remove_error": "Bilagan kunde inte tas bort.",
+    "open_error": "Bilagan kunde inte öppnas.",
+    "choose_category": "Välj bilagetyp",
+    "loading_types": "Laddar bilagor...",
+    "types_error": "Det gick inte att hämta vilka bilagor som krävs."
+  }
 }

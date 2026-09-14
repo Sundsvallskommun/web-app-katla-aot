@@ -1,0 +1,251 @@
+{
+  "value": {
+    "ui:order": [
+      "arDuFirmatecknare",
+      "foretagsform",
+      "verksamhetsbeskrivningsval",
+      "fakturaadressSammaSomForetaget",
+      "fakturamottagare",
+      "fakturareferens",
+      "verksamhetsbeskrivning",
+      "forsaljningsstalle",
+      "alkoholdrycker",
+      "forsaljningsperiod",
+      "forsaljningstider",
+      "besoksarrangemang",
+      "beskrivForsaljningsplats",
+      "angePeriodForForsaljning",
+      "beskrivBesoksarrangemanget",
+      "harDuKassaregister",
+      "angeRegistreringskod"
+    ],
+    "ui:sections": [
+      {
+        "id": "foretag",
+        "title": "Företag och fakturering",
+        "icon": "building-2",
+        "defaultOpen": true,
+        "fields": [
+          "arDuFirmatecknare",
+          "foretagsform",
+          "verksamhetsbeskrivningsval",
+          "fakturaadressSammaSomForetaget",
+          "fakturamottagare",
+          "fakturareferens",
+          "verksamhetsbeskrivning"
+        ]
+      },
+      {
+        "id": "ansokan",
+        "title": "Gårdsförsäljning",
+        "icon": "file-text",
+        "defaultOpen": true,
+        "fields": [
+          "forsaljningsstalle",
+          "alkoholdrycker",
+          "forsaljningsperiod",
+          "forsaljningstider",
+          "besoksarrangemang",
+          "beskrivForsaljningsplats",
+          "angePeriodForForsaljning",
+          "beskrivBesoksarrangemanget",
+          "harDuKassaregister",
+          "angeRegistreringskod"
+        ]
+      }
+    ],
+    "arDuFirmatecknare": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "foretagsform": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "verksamhetsbeskrivningsval": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
+    },
+    "fakturaadressSammaSomForetaget": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Kommunen kan komma att ta ut en avgift. Om du vill att fakturan ska gå till den adress som företaget är registrerad på anger du \"Ja\" i fältet nedan. Om du vill att fakturan ska gå till en annan adress anger du \"Nej\" och fyller sedan i den. Du har även möjlighet att ange en fakturareferens.</p>"
+    },
+    "fakturamottagare": {
+      "ui:order": [
+        "cO",
+        "utdelningsadress",
+        "postnummer",
+        "postort"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "cO": {
+        "ui:widget": "TextWidget"
+      },
+      "utdelningsadress": {
+        "ui:widget": "TextWidget"
+      },
+      "postnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "postort": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "postnummer",
+            "postort"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "fakturareferens": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      },
+      "ui:description": "<p>Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.</p>"
+    },
+    "verksamhetsbeskrivning": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "forsaljningsstalle": {
+      "ui:order": [
+        "forsaljningsstalletsNamn",
+        "gatuadress",
+        "postnummer",
+        "postort",
+        "telefonnummer",
+        "ePostadress"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "forsaljningsstalletsNamn": {
+        "ui:widget": "TextWidget"
+      },
+      "gatuadress": {
+        "ui:widget": "TextWidget"
+      },
+      "postnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "postort": {
+        "ui:widget": "TextWidget"
+      },
+      "telefonnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "ePostadress": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "postnummer",
+            "postort"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "alkoholdrycker": {
+      "ui:widget": "checkboxes",
+      "ui:options": {
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
+      }
+    },
+    "forsaljningsperiod": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "forsaljningstider": {
+      "ui:order": [
+        "startTime",
+        "endTime"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "startTime": {
+        "ui:widget": "TimeWidget",
+        "ui:options": {
+          "step": 900
+        }
+      },
+      "endTime": {
+        "ui:widget": "TimeWidget",
+        "ui:options": {
+          "step": 900
+        }
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "startTime",
+            "endTime"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "besoksarrangemang": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "beskrivForsaljningsplats": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "angePeriodForForsaljning": {
+      "ui:order": [
+        "startDate",
+        "endDate"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "startDate": {
+        "ui:widget": "DateWidget"
+      },
+      "endDate": {
+        "ui:widget": "DateWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "startDate",
+            "endDate"
+          ],
+          "gap": "gap-24"
+        }
+      ]
+    },
+    "beskrivBesoksarrangemanget": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "harDuKassaregister": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "angeRegistreringskod": {
+      "ui:order": [
+        "registreringskod"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "registreringskod": {
+        "ui:widget": "TextWidget"
+      }
+    }
+  },
+  "description": "UI schema for Gårdsförsäljning"
+}

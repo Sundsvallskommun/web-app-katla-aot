@@ -3,9 +3,10 @@ import { FormValidationProvider } from '@contexts/form-validation-provider';
 import type { ErrandFormDataItem, ErrandFormDTO } from '@interfaces/errand-form';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
+import { useMetadataStore } from 'src/stores/metadata-store';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-/** The errand type chooses the schema: this categorization derives `aot_test_schema`. */
+/** The errand type chooses the schema: this categorization derives `aot_alcohol_test_schema`. */
 const TEST_LABELS = [
   { classification: 'CATEGORY', resourceName: 'ALCOHOL' },
   { classification: 'TYPE', resourceName: 'TEST_SCHEMA' },
@@ -76,6 +77,7 @@ function TestForm({ errandFormData }: { errandFormData: ErrandFormDataItem[] }) 
 
 describe('ErrandDetails', () => {
   beforeEach(() => {
+    useMetadataStore.setState({ metadata: { namespace: 'AOT' } });
     useFormSchemaMock.mockClear();
   });
 
@@ -86,7 +88,7 @@ describe('ErrandDetails', () => {
       data: '{"untouched":true}',
     };
     const targetEntry: ErrandFormDataItem = {
-      schemaName: 'aot_test_schema',
+      schemaName: 'aot_alcohol_test_schema',
       schemaId: 'schema-v1',
       data: '{"location":"old"}',
     };
@@ -94,7 +96,7 @@ describe('ErrandDetails', () => {
     render(<TestForm errandFormData={[otherEntry, targetEntry]} />);
 
     expect(screen.getByTestId('rendered-json')).toHaveTextContent('{"location":"old"}');
-    expect(useFormSchemaMock).toHaveBeenCalledWith('aot_test_schema', {
+    expect(useFormSchemaMock).toHaveBeenCalledWith('aot_alcohol_test_schema', {
       kind: 'persisted',
       schemaId: targetEntry.schemaId,
     });
@@ -113,7 +115,7 @@ describe('ErrandDetails', () => {
       <TestForm
         errandFormData={[
           {
-            schemaName: 'aot_test_schema',
+            schemaName: 'aot_alcohol_test_schema',
             schemaId: 'schema-v1',
             data: '{invalid-json',
           },
@@ -121,7 +123,7 @@ describe('ErrandDetails', () => {
       />
     );
 
-    expect(screen.getByRole('alert')).toHaveTextContent('Ogiltig JSON för aot_test_schema');
+    expect(screen.getByRole('alert')).toHaveTextContent('Ogiltig JSON för aot_alcohol_test_schema');
     expect(screen.queryByTestId('rendered-json')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Update schema form' })).not.toBeInTheDocument();
     expect(screen.getByTestId('form-state')).toHaveTextContent('{invalid-json');

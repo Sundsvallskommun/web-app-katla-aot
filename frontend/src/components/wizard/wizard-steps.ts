@@ -8,6 +8,7 @@ export const ALL_WIZARD_STEPS: WizardStep[] = [
   { id: 'owner', titleKey: 'errand-information:owner.title' },
   { id: 'other-parties', titleKey: 'errand-information:other_parties.title' },
   { id: 'details', titleKey: 'errand-information:errand_details.title' },
+  { id: 'attachments', titleKey: 'errand-information:attachments.title' },
   { id: 'summary', titleKey: 'errand-information:wizard.summary' },
 ];
 

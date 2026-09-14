@@ -1,4 +1,5 @@
 import { AboutErrandContent } from '@components/errand-sections/about-errand.component';
+import { ErrandAttachmentsContent } from '@components/errand-sections/errand-attachments.component';
 import { ErrandDetails } from '@components/errand-sections/errand-details.component';
 import { ErrandOwnerContent } from '@components/errand-sections/errand-owner.component';
 import { OtherPartiesContent } from '@components/errand-sections/other-parties.component';
@@ -24,6 +25,8 @@ export const WizardStepContent: React.FC = () => {
         return <OtherPartiesContent />;
       case 'details':
         return <ErrandDetails compact />;
+      case 'attachments':
+        return <ErrandAttachmentsContent />;
       case 'summary':
         return <WizardSummary />;
       default:

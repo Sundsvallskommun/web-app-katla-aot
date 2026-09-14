@@ -20,6 +20,20 @@ const read = (name) => JSON.parse(readFileSync(join(here, name), 'utf8'));
 const DIALECT = 'https://json-schema.org/draft/2020-12/schema';
 
 /**
+ * The app's SupportManagement namespace, lower case. The jsonschema service partitions schemas by
+ * municipality alone, so every app in the kommun shares one flat name space and this is the only
+ * collision boundary between them.
+ */
+const NAMESPACE = 'aot';
+
+/**
+ * A schema is named after the namespace and the errand type's whole categorization path — the app
+ * derives the same name from the errand's labels, so neither side needs a lookup table. The whole
+ * path rather than the leaf because a leaf name is only unique under its own parent.
+ */
+const schemaNameFor = (leaf) => `${NAMESPACE}_${leaf.toLowerCase().replaceAll('/', '_')}`;
+
+/**
  * The two migrated OpenE flows. Everything below is written against one flow at a time; `useFlow`
  * sets which, and the flows are built in sequence. Module-level mutation rather than threading a
  * context through twenty functions — this is a build script, not a library.
@@ -577,9 +591,21 @@ function rowsFor(keys) {
   return rows;
 }
 
+/**
+ * OpenE states the picker's granularity as `x-oe-dateRestrictions.timeInterval`, in minutes — the
+ * serveringstider are quarter-hours. Carried into the ui schema as `step`, in the seconds
+ * `<input type="time">` wants, so the rule survives when the x-oe provenance is stripped at
+ * publication.
+ */
+function timeStepSeconds(field) {
+  const minutes = Number(field['x-oe-dateRestrictions']?.timeInterval);
+  return Number.isFinite(minutes) && minutes > 0 ? minutes * 60 : undefined;
+}
+
 function objectUi(field) {
   const keys = Object.keys(field.properties ?? {});
   const ui = { 'ui:order': keys, 'ui:options': { showObjectFieldset: true } };
+  const step = timeStepSeconds(field);
   for (const key of keys) {
     const child = field.properties[key];
     const widget =
@@ -587,6 +613,7 @@ function objectUi(field) {
       : child.format === 'time' ? 'TimeWidget'
       : 'TextWidget';
     ui[key] = { 'ui:widget': widget };
+    if (widget === 'TimeWidget' && step !== undefined) ui[key]['ui:options'] = { step };
     if (child.readOnly) ui[key]['ui:readonly'] = true;
   }
   const dateOrTime = keys.filter((key) => ['date', 'time'].includes(field.properties[key].format ?? ''));
@@ -764,11 +791,10 @@ const selectorQuestions = () => new Set([REPRESENTS_COMPANY, APPLICATION_TYPE].f
  * and `ar_du_firmatecknare`, which is right: without a fetch-or-type choice they are simply asked.
  *
  * Deliberately kept:
- * - `foretagsform_81706` — `OrganizationDTO` carries no company form, and it gates four uploads.
- *   Open question 4 in OUTSTANDING_QUESTIONS.md.
- * - `ar_du_firmatecknare_81703` and its fullmakt upload — `isAuthorizedSignatory` could replace the
- *   question, but the upload would then hang off session data rather than an answer. Left intact
- *   until 4.5 settles where attachments live.
+ * - `foretagsform_81706` — `OrganizationDTO` carries no company form, and it decides which company
+ *   documents the application must carry. Open question 4 in OUTSTANDING_QUESTIONS.md.
+ * - `ar_du_firmatecknare_81703` — `isAuthorizedSignatory` could replace the question, but the
+ *   fullmakt would then be demanded from session data rather than from an answer.
  */
 const REPLACED_BY_SESSION = new Set([
   // Flow 2181
@@ -829,13 +855,130 @@ function excludedBySelector(branch) {
   return excluded;
 }
 
+/**
+ * Bilagor leave the properties: the jsonschema service takes no file uploads, so the files go
+ * straight to SupportManagement from the form's own Bilagor section. What each errand type asks
+ * for is declared on the schema instead, under `x-attachments`, so the app learns it at runtime
+ * along with the rest of the schema and holds no table of its own. Deliberately unprefixed: the
+ * schemas are not Katla's, and any app rendering them reads the same declaration.
+ */
+const isFileUpload = (key) => queryType(questionsByKey[key]) === 'FileUpload';
+
+/**
+ * Bilagetyp labels. OpenE phrases these as instructions to the applicant — "Bifoga aktuellt
+ * registreringsbevis från Bolagsverket" — which reads wrong in a category picker, and its
+ * descriptions carry CKEditor whitespace and repeat the label. Both are rewritten here; anything
+ * not listed falls back to the question's own title and description.
+ */
+const ATTACHMENT_TEXT = {
+  laddaUppFullmakt: { label: 'Fullmakt', description: null },
+  bifogaAktuelltRegistreringsbevisFran: {
+    label: 'Registreringsbevis från Bolagsverket',
+    description: 'Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.',
+  },
+  bifogaUppgifterOmAgarforhallanden: {
+    label: 'Uppgifter om ägarförhållanden',
+    description:
+      'Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen.',
+  },
+  bifogaRegisterutdragFranSkatteverket: {
+    label: 'Registerutdrag från Skatteverket',
+    description:
+      'Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se.',
+  },
+  bifogaVerksamhetsbeskrivning: { label: 'Verksamhetsbeskrivning', description: null },
+  bifogaPlanritning: {
+    label: 'Planritning',
+    description:
+      'Planritningen ska visa vilken del av lokalen som är serveringsyta, inklusive uteservering och samtliga våningsplan där alkohol serveras. Serveringsytan ska vara överblickbar.',
+  },
+  bifogaAvtalGallandeLokalOchMark: {
+    label: 'Avtal gällande lokal och mark',
+    description:
+      'Hyreskontrakt, arrendeavtal eller köpeavtal (inklusive bilagor) för lokalen som verksamheten ska bedrivas i, inklusive platsen för eventuell uteservering.',
+  },
+  bifogaAvtalGallandeVerksamheten: {
+    label: 'Avtal gällande verksamheten',
+    description:
+      'Har ditt företag köpt verksamheten bifogar du köpeavtalet, eller arrendeavtalet om företaget arrenderar den. Bilagor ska följa med.',
+  },
+  bifogaBrandskyddsdokumentation: {
+    label: 'Brandskyddsdokumentation',
+    description: 'Brandskyddsdokumentation från brandkonsult eller motsvarande.',
+  },
+  bifogaMeny: { label: 'Meny', description: null },
+  bifogaKontoutdrag: { label: 'Kontoutdrag för egna medel', description: null },
+  bifogaLanebevisForBanklan: { label: 'Lånebevis för banklån', description: null },
+  bifogaLanebevisForPrivatlan: { label: 'Lånebevis för privatlån', description: null },
+  bifogaLanebevisForAnnanFinansiering: { label: 'Lånebevis för annan finansiering', description: null },
+  bifogaProduktlista: {
+    label: 'Produktlista',
+    description: 'Produkterna som ska säljas är registrerade hos Folkhälsomyndigheten.',
+  },
+  bifogatUnderlagDispositionsratt: {
+    label: 'Underlag som styrker dispositionsrätten',
+    description: 'Underlag som visar att företaget har rätt att nyttja lokalen.',
+  },
+  egenkontrollprogram: {
+    label: 'Egenkontrollprogram',
+    description:
+      'Lagen om tobak och liknande produkter och lagen om tobaksfria nikotinprodukter kräver att ett egenkontrollprogram bifogas anmälan. Folkhälsomyndigheten har en vägledning för näringsidkare.',
+  },
+  bifogaAvtal: { label: 'Avtal med tillverkare eller partihandlare', description: null },
+  bifogadRegistreringLansstyrelsen: { label: 'Registrering från Länsstyrelsen', description: null },
+  laddaUppEgenkontrollprogram: { label: 'Egenkontrollprogram', description: null },
+  ritningForForsaljningslokal: { label: 'Ritning för försäljningslokal', description: null },
+  hyresavtalEllerAgarbevis: { label: 'Hyresavtal eller ägarbevis', description: null },
+  gardsforsaljningstillstand: { label: 'Gårdsförsäljningstillstånd', description: null },
+  bifogadBeskrivningBesoksarrangemang: { label: 'Beskrivning av besöksarrangemanget', description: null },
+  bifogatEgenkontrollprogramFolkol: {
+    label: 'Egenkontrollprogram för servering av folköl (klass 2)',
+    description: null,
+  },
+  laddaUppPolistillstand: { label: 'Polistillstånd', description: null },
+};
+
+/**
+ * One entry per bilaga the branch asks for, in the order the form asked for them. `requiredWhen`
+ * is the `if` of the rule that made the file field required, carried over untouched so the app
+ * evaluates it with the same condition engine it already uses for the schema's own `allOf`.
+ */
+function attachmentsForBranch(branch, keptFields, attachmentFields, properties) {
+  const rules = conditionalsFor(new Set(keptFields));
+
+  return attachmentFields.map((key) => {
+    const name = keyFor(key);
+    const field = propertyFor(key);
+    const text = ATTACHMENT_TEXT[name] ?? {};
+    const rule = rules.find((candidate) => (candidate.then.required ?? []).includes(name));
+
+    // A bilaga gated on a question the schema does not carry could never be evaluated, and would
+    // silently become permanently optional. The generator refuses rather than emit it.
+    for (const source of Object.keys(rule?.if.properties ?? {})) {
+      if (!(source in properties)) {
+        throw new Error(`${branch.id}: bilaga '${name}' is gated on '${source}', which the schema does not have`);
+      }
+    }
+
+    const description = text.description === undefined ? field.description : text.description;
+    return {
+      key: name,
+      label: text.label ?? field.title,
+      ...(description ? { description } : {}),
+      ...(rule ? { requiredWhen: rule.if } : {}),
+    };
+  });
+}
+
 function schemaForBranch(branch) {
   const dropped = excludedBySelector(branch);
-  const fields = [...branch.fields].filter(
+  const kept = [...branch.fields].filter(
     (key) => !selectorQuestions().has(key) && !REPLACED_BY_SESSION.has(key) && !dropped.has(key)
   );
+  const fields = kept.filter((key) => !isFileUpload(key));
   const properties = Object.fromEntries(fields.map((key) => [keyFor(key), propertyFor(key)]));
   const conditionals = conditionalsFor(new Set(fields));
+  const attachments = attachmentsForBranch(branch, kept, kept.filter(isFileUpload), properties);
 
   // Every conditional must point at properties this schema actually has, or the form silently
   // loses a field. Requiredness only ever comes from `then.required`, never from a root `required`.
@@ -857,8 +1000,8 @@ function schemaForBranch(branch) {
     type: 'object',
     properties,
     ...(conditionals.length ? { allOf: conditionals } : {}),
+    ...(attachments.length ? { 'x-attachments': attachments } : {}),
     'x-oe-flow': schema['x-oe-flow'],
-    'x-katla-label-leaf': branch.leaf,
   };
 }
 
@@ -895,7 +1038,7 @@ const COMPANY_SECTION = new Set([
 function uiSchemaForBranch(branch) {
   const dropped = excludedBySelector(branch);
   const fields = [...branch.fields].filter(
-    (key) => !selectorQuestions().has(key) && !REPLACED_BY_SESSION.has(key) && !dropped.has(key)
+    (key) => !selectorQuestions().has(key) && !REPLACED_BY_SESSION.has(key) && !dropped.has(key) && !isFileUpload(key)
   );
   const company = fields.filter((key) => COMPANY_SECTION.has(key));
   const application = fields.filter((key) => !COMPANY_SECTION.has(key));
@@ -939,13 +1082,13 @@ function buildFlow(each) {
   console.log(`\nflow ${each.id}:`);
   for (const branch of reachPerBranch.filter((b) => b.leaf)) {
     const built = schemaForBranch(branch);
-    const name = branch.leaf.split('/').at(-1).toLowerCase();
+    const name = schemaNameFor(branch.leaf);
     writeFileSync(
-      join(here, `aot_${name}.schema-request.json`),
-      `${JSON.stringify({ name: `aot_${name}`, version: '0.1', value: built, description: branch.title }, null, 2)}\n`
+      join(here, `${name}.schema-request.json`),
+      `${JSON.stringify({ name, version: '0.1', value: built, description: branch.title }, null, 2)}\n`
     );
     writeFileSync(
-      join(here, `aot_${name}.ui-schema-request.json`),
+      join(here, `${name}.ui-schema-request.json`),
       `${JSON.stringify({ value: uiSchemaForBranch(branch), description: `UI schema for ${branch.title}` }, null, 2)}\n`
     );
     console.log(

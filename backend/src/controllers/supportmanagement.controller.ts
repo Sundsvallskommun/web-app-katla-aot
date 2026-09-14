@@ -3,7 +3,7 @@ import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 import { MUNICIPALITY_ID, NAMESPACE } from '@/config';
 import { getApiBase } from '@/config/api-config';
-import { Errand, MetadataResponse, PageErrand, Stakeholder } from '@/data-contracts/supportmanagement/data-contracts';
+import { Errand, MetadataResponse, PageErrand } from '@/data-contracts/supportmanagement/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
@@ -11,6 +11,7 @@ import { ErrandCountDTO, ErrandDTO, ErrandsQueryDTO, PageErrandDTO } from '@/res
 import { MetadataResponseDTO } from '@/responses/supportmanagement-metadata.response';
 import ApiService from '@/services/api.service';
 import { withCategorizationSubtree } from '@/utils/categorization-root';
+import { assertErrandOwnedByUser, belongsToOrganizations, requireOrganizationPartyIds } from '@/utils/errand-access';
 import { mapStakeholderDTOToStakeholder, mapStakeholderToStakeholderDTO } from '@/utils/stakeholder-mapping';
 import { apiURL } from '@/utils/util';
 
@@ -33,38 +34,6 @@ const SAFE_FILTER_KEY_PATTERN = /^[A-Za-z][A-Za-z0-9_.]*$/;
 
 // A stakeholder's externalId holds the organisation's party id.
 const ORGANIZATION_FILTER_KEY = 'stakeholders.externalId';
-
-const PRIMARY_STAKEHOLDER_ROLE = 'PRIMARY';
-
-/**
- * Party ids of the organisations the logged-in citizen may see errands for.
- *
- * Read from the session only — never from the request — so a client cannot widen its own scope.
- * Fails closed: no organisations in the session means no errand query at all.
- */
-const requireOrganizationPartyIds = (req: RequestWithUser): string[] => {
-  const partyIds = (req.session.representingBusinessChoices ?? []).map(organization => organization.partyId);
-
-  if (partyIds.length === 0) {
-    throw new HttpException(403, 'No organization in session to scope the errand query to');
-  }
-
-  return partyIds;
-};
-
-const isPrimaryStakeholder = (stakeholder: Stakeholder): boolean => stakeholder.role === PRIMARY_STAKEHOLDER_ROLE;
-
-/**
- * Whether the errand's primary stakeholder is one of the session's organisations.
- *
- * The upstream filter is the belt and this is the braces: a filter that is wrong, dropped or
- * loosened upstream would otherwise hand back another organisation's errand silently.
- */
-const belongsToOrganizations = (errand: Errand, organizationPartyIds: string[]): boolean => {
-  const primaryExternalId = errand.stakeholders?.find(isPrimaryStakeholder)?.externalId;
-
-  return primaryExternalId !== undefined && organizationPartyIds.includes(primaryExternalId);
-};
 
 const toFilterTerm = (key: string, value: string): string => {
   if (!SAFE_FILTER_KEY_PATTERN.test(key)) {
@@ -89,28 +58,6 @@ const toFilterOrGroup = (key: string, values: string[]): string => `(${values.ma
 export class SupportManagementController {
   private apiService = new ApiService();
   private apiBase = getApiBase('supportmanagement');
-
-  /**
-   * Upstream accepts any errand id in the namespace, so knowing an id is enough to patch someone
-   * else's errand. Ownership is enforced here: only the citizen who registered the errand, named
-   * by their party id in reporterUserId, may change it.
-   *
-   * An errand with no reporterUserId (not registered through this app) is owned by nobody and
-   * cannot be edited here.
-   */
-  private async assertErrandOwnedByUser(id: string, req: RequestWithUser): Promise<void> {
-    const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands/${id}`;
-    const baseURL = apiURL(this.apiBase);
-
-    const res = await this.apiService.get<Partial<Errand>>({ baseURL, url, propagateClientError: true }, req);
-    const reporterUserId = res.data?.reporterUserId;
-
-    // Party ids are guids; a casing difference between sources must not lock a citizen out of
-    // their own errand.
-    if (reporterUserId?.toLowerCase() !== req.user.partyId.toLowerCase()) {
-      throw new HttpException(403, 'Errand belongs to another user');
-    }
-  }
 
   @Post('/supportmanagement/errand/create')
   @OpenAPI({ summary: 'Create new errand' })
@@ -151,7 +98,7 @@ export class SupportManagementController {
   async updateErrand(@Req() req: RequestWithUser, @Param('id') id: string, @Body() errand: Partial<Errand>): Promise<Partial<Errand>> {
     if (!id.trim()) throw new HttpException(400, 'Errand id is required when updating an errand');
 
-    await this.assertErrandOwnedByUser(id, req);
+    await assertErrandOwnedByUser(this.apiService, this.apiBase, id, req);
 
     const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands/${id}`;
     const baseURL = apiURL(this.apiBase);
@@ -286,11 +233,11 @@ export class SupportManagementController {
   @OpenAPI({ summary: 'Get all metadata for provided namespace and municipality' })
   @UseBefore(authMiddleware)
   @ResponseSchema(MetadataResponseDTO)
-  async getMetadata(@Req() req: RequestWithUser): Promise<MetadataResponse> {
+  async getMetadata(@Req() req: RequestWithUser): Promise<MetadataResponseDTO> {
     const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/metadata`;
     const res = await this.apiService.get<MetadataResponse>({ url }, req);
     if (!res.data) throw new HttpException(502, 'Invalid response when reading metadata');
 
-    return withCategorizationSubtree(res.data);
+    return { ...withCategorizationSubtree(res.data), namespace: NAMESPACE };
   }
 }

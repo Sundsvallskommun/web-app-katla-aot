@@ -52,7 +52,8 @@ test.describe('Language switching', () => {
       // Step 1 is "Om ärendet", which the wizard will not leave uncategorized.
       await selectCategorization(page);
       await page.getByRole('button', { name: 'Nästa' }).click();
-      await expect(page.getByText('Steg 2/5')).toBeVisible();
+      // Only the position matters here; the total follows the wizard's step list.
+      await expect(page.getByText(/^Steg 2\/\d+$/)).toBeVisible();
 
       await switchLanguageTo(page, 'English');
 
@@ -60,7 +61,7 @@ test.describe('Language switching', () => {
 
       // Still in the wizard, on the same step: switching language must not force the user out of
       // registration.
-      await expect(page.getByText('Step 2/5')).toBeVisible();
+      await expect(page.getByText(/^Step 2\/\d+$/)).toBeVisible();
     });
 
     test('opens the language panel under the button and inside the viewport', async ({ page }) => {
