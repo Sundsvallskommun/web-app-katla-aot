@@ -1,5 +1,8 @@
 # OpenE-grenar mot ärendetyper i etikettträdet
 
+> Historik: OpenE-exporterna och generatorn i `docs/jsonschemas/` togs bort 2026-09-14 (finns i git-historiken). Schemana underhålls nu direkt i `backend/src/mocks/` i väntan på jsonschema-tjänsten; se `docs/schema-control-assumptions.md`.
+
+
 Status: Uppdaterad mot etikettträdet 2026-09-09
 
 Kartan mellan OpenE:s grenar och ärendetyperna i `docs/label-structure.json`, som avgör vilket

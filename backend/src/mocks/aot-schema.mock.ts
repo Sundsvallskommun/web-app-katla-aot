@@ -15,25 +15,22 @@ import temporaryServingPrivate from './aot-alcohol-serving-permit-application-te
 import temporaryServingPrivateUi from './aot-alcohol-serving-permit-application-temporary-serving-private.ui-schema.json';
 import temporaryServingPublic from './aot-alcohol-serving-permit-application-temporary-serving-public.schema.json';
 import temporaryServingPublicUi from './aot-alcohol-serving-permit-application-temporary-serving-public.ui-schema.json';
-import wholeFlow from './aot-schema.json';
 import ecigaretteSalesNotification from './aot-tobacco-ecigarette-sales-notification.schema.json';
 import ecigaretteSalesNotificationUi from './aot-tobacco-ecigarette-sales-notification.ui-schema.json';
 import salesPermitApplication from './aot-tobacco-sales-permit-application.schema.json';
 import salesPermitApplicationUi from './aot-tobacco-sales-permit-application.ui-schema.json';
 import tobaccoFreeNicotineSalesNotification from './aot-tobacco-tobacco-free-nicotine-sales-notification.schema.json';
 import tobaccoFreeNicotineSalesNotificationUi from './aot-tobacco-tobacco-free-nicotine-sales-notification.ui-schema.json';
-import wholeFlowUi from './aot-ui-schema.json';
 
 /**
  * FIXME: temporary stand-in for the jsonschema microservice. The AoT schemas are still being
  * designed and have not been published upstream, so they are served from disk. Delete this module
  * and its three call sites in schema.controller.ts once they exist in the service.
  *
- * Every JSON file here is generated — do not edit them by hand. `docs/jsonschemas/build-ui-schema.mjs`
- * turns the OpenE exports for flows 2181 (alkohol) and 2153 (tobak) into the request bodies the
- * jsonschema service takes, one pair per errand-type leaf plus the whole undivided alcohol flow. The
- * generator also forces `$schema` to 2020-12; the exports declare draft-07, which Ajv2020 refuses to
- * compile.
+ * The JSON files here are the maintained source — the OpenE import that once generated them is
+ * retired. Edit them directly, within the authoring contract in docs/schema-control-assumptions.md;
+ * the frontend contract test in tests/unit verifies every pair against the real renderer. Publishing
+ * follows Draken's convention: POST the schema, then PUT its ui-schema.
  *
  * A schema is named after the app's SupportManagement namespace and the whole categorization path
  * that selects it, lowercased. The frontend derives the name the same way, so no lookup table is
@@ -73,8 +70,6 @@ const pairs: [StoredSchema, StoredUiSchema][] = [
   [salesPermitApplication, salesPermitApplicationUi],
   [ecigaretteSalesNotification, ecigaretteSalesNotificationUi],
   [tobaccoFreeNicotineSalesNotification, tobaccoFreeNicotineSalesNotificationUi],
-  // The undivided alcohol flow, kept while the split is being verified against it.
-  [wholeFlow, wholeFlowUi],
 ];
 
 const mockedSchemas: JsonSchema[] = pairs.map(([schema]) => asJsonSchema(schema));

@@ -11,122 +11,79 @@
         "oneOf": [
           {
             "const": "JA",
-            "title": "Ja",
-            "x-oe-alternativeID": "49636"
+            "title": "Ja"
           },
           {
             "const": "NEJ",
-            "title": "Nej",
-            "x-oe-alternativeID": "49637"
+            "title": "Nej"
           }
         ],
-        "title": "Är du firmatecknare?",
-        "x-oe": {
-          "queryID": "81703",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Är du firmatecknare?"
       },
       "foretagsform": {
         "type": "string",
         "oneOf": [
           {
             "const": "AKTIEBOLAG",
-            "title": "Aktiebolag",
-            "x-oe-alternativeID": "49638"
+            "title": "Aktiebolag"
           },
           {
             "const": "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-            "title": "Enskild firma (registrerad hos Skatteverket och Bolagsverket)",
-            "x-oe-alternativeID": "49639"
+            "title": "Enskild firma (registrerad hos Skatteverket och Bolagsverket)"
           },
           {
             "const": "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-            "title": "Enskild firma (registrerad endast hos Skatteverket)",
-            "x-oe-alternativeID": "49640"
+            "title": "Enskild firma (registrerad endast hos Skatteverket)"
           },
           {
             "const": "FORENING_STIFTELSE",
-            "title": "Förening/stiftelse",
-            "x-oe-alternativeID": "49641"
+            "title": "Förening/stiftelse"
           },
           {
             "const": "HANDELSBOLAG",
-            "title": "Handelsbolag",
-            "x-oe-alternativeID": "49642"
+            "title": "Handelsbolag"
           },
           {
             "const": "KOMMANDITBOLAG",
-            "title": "Kommanditbolag",
-            "x-oe-alternativeID": "49643"
+            "title": "Kommanditbolag"
           }
         ],
-        "title": "Företagsform",
-        "x-oe": {
-          "queryID": "81706",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Företagsform"
       },
       "fakturaadressSammaSomForetaget": {
         "type": "string",
         "oneOf": [
           {
             "const": "JA",
-            "title": "Ja",
-            "x-oe-alternativeID": "49644"
+            "title": "Ja"
           },
           {
             "const": "NEJ",
-            "title": "Nej",
-            "x-oe-alternativeID": "49645"
+            "title": "Nej"
           }
         ],
         "title": "Är fakturaadressen samma som företagets adress?",
-        "description": "Kommunen kan komma att ta ut en avgift. Om du vill att fakturan ska gå till den adress som företaget är registrerad på anger du \"Ja\" i fältet nedan. Om du vill att fakturan ska gå till en annan adress anger du \"Nej\" och fyller sedan i den. Du har även möjlighet att ange en fakturareferens.",
-        "x-oe": {
-          "queryID": "81707",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Kommunen kan komma att ta ut en avgift. Om du vill att fakturan ska gå till den adress som företaget är registrerad på anger du \"Ja\" i fältet nedan. Om du vill att fakturan ska gå till en annan adress anger du \"Nej\" och fyller sedan i den. Du har även möjlighet att ange en fakturareferens."
       },
       "fakturamottagare": {
         "type": "object",
         "properties": {
           "cO": {
             "type": "string",
-            "title": "c/o",
-            "x-oe": {
-              "textFieldID": "50396",
-              "queryID": "81708"
-            }
+            "title": "c/o"
           },
           "utdelningsadress": {
             "type": "string",
-            "title": "Utdelningsadress",
-            "x-oe": {
-              "textFieldID": "50397",
-              "queryID": "81708"
-            }
+            "title": "Utdelningsadress"
           },
           "postnummer": {
             "type": "string",
             "title": "Postnummer",
-            "pattern": "^\\d{3}\\s?\\d{2}$",
-            "x-oe-format": "swedish-postal-code",
-            "x-oe-invalidFormatMessage": "Du måste fylla i ett svenskt postnummer",
-            "x-oe": {
-              "textFieldID": "50398",
-              "queryID": "81708"
-            }
+            "pattern": "^\\d{3}\\s?\\d{2}$"
           },
           "postort": {
             "type": "string",
-            "title": "Postort",
-            "x-oe": {
-              "textFieldID": "50399",
-              "queryID": "81708"
-            }
+            "title": "Postort"
           }
         },
         "required": [
@@ -134,80 +91,50 @@
           "postnummer",
           "postort"
         ],
-        "title": "Fakturamottagare",
-        "x-oe": {
-          "queryID": "81708",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Fakturamottagare"
       },
       "fakturareferens": {
         "type": "string",
         "title": "Fakturareferens",
-        "description": "Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.",
-        "x-oe": {
-          "queryID": "81709",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer."
       },
       "verksamhetsbeskrivningsval": {
         "type": "string",
         "oneOf": [
           {
             "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I",
-            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret",
-            "x-oe-alternativeID": "49646"
+            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret"
           },
           {
             "const": "JAG_VILL_BIFOGA_VERKSAMHETSBESKRIVNINGEN_SOM",
-            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil",
-            "x-oe-alternativeID": "49647"
+            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil"
           }
         ],
         "title": "Verksamhetsbeskrivning",
-        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?",
-        "x-oe": {
-          "queryID": "81713",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?"
       },
       "verksamhetsbeskrivning": {
         "type": "string",
-        "title": "Verksamhetsbeskrivning",
-        "x-oe": {
-          "queryID": "81714",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Verksamhetsbeskrivning"
       },
       "kunskapOmAlkohollagen": {
         "type": "string",
         "oneOf": [
           {
             "const": "HAR_GODKANT_KUNSKAPSPROV",
-            "title": "Jag eller annan person som är ansvarig i företaget har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren",
-            "x-oe-alternativeID": "49695"
+            "title": "Jag eller annan person som är ansvarig i företaget har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren"
           },
           {
             "const": "DRIVER_ANNAT_FORETAG_MED_TILLSTAND",
-            "title": "Jag eller annan person som är ansvarig i företaget driver annat företag med gällande serveringstillstånd idag",
-            "x-oe-alternativeID": "49696"
+            "title": "Jag eller annan person som är ansvarig i företaget driver annat företag med gällande serveringstillstånd idag"
           },
           {
             "const": "BEHOVER_SKRIVA_KUNSKAPSPROV",
-            "title": "Jag eller annan person som är ansvarig i företaget behöver skriva kunskapsprovet",
-            "x-oe-alternativeID": "49697"
+            "title": "Jag eller annan person som är ansvarig i företaget behöver skriva kunskapsprovet"
           }
         ],
         "title": "Kunskap om alkohollagen",
-        "description": "För att få ett serveringstillstånd behöver du eller annan person som är ansvarig i företaget ha kunskap om ansvarsfull alkoholservering och alkohollagen. Denna kunskap kan du visa på flera sätt.",
-        "x-oe": {
-          "queryID": "81839",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "För att få ett serveringstillstånd behöver du eller annan person som är ansvarig i företaget ha kunskap om ansvarsfull alkoholservering och alkohollagen. Denna kunskap kan du visa på flera sätt."
       },
       "personnummer": {
         "type": "object",
@@ -215,22 +142,11 @@
           "personnummer": {
             "type": "string",
             "title": "Personnummer",
-            "pattern": "^(19|20)?\\d{6}[-+]?\\d{4}$",
-            "x-oe-format": "swedish-personal-id",
-            "x-oe-invalidFormatMessage": "Du måste fylla i ett giltigt personnummer",
-            "x-oe": {
-              "textFieldID": "50444",
-              "queryID": "81840"
-            }
+            "pattern": "^(19|20)?\\d{6}[-+]?\\d{4}$"
           }
         },
         "title": "Personnummer",
-        "description": "Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren.",
-        "x-oe": {
-          "queryID": "81840",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren."
       },
       "organisationsnummer": {
         "type": "object",
@@ -238,44 +154,26 @@
           "organisationsnummer": {
             "type": "string",
             "title": "Organisationsnummer",
-            "pattern": "^\\d{6}-?\\d{4}$",
-            "x-oe-format": "swedish-organization-number",
-            "x-oe-invalidFormatMessage": "Du måste fylla i ett giltigt organisationsnummer",
-            "x-oe": {
-              "textFieldID": "50445",
-              "queryID": "81841"
-            }
+            "pattern": "^\\d{6}-?\\d{4}$"
           }
         },
         "title": "Organisationsnummer",
-        "description": "Vilket företag med gällande serveringstillstånd driver du eller annan person som är ansvarig i företaget idag?\n\nOm du eller annan företrädare för organisationen har ett serveringstillstånd idag som minst motsvarar den aktuella ansökan, och det inte finns skäl att ifrågasätta kunskaperna, kan det vara så att kunskaperna inte behöver styrkas med ett kunskapsprov.",
-        "x-oe": {
-          "queryID": "81841",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Vilket företag med gällande serveringstillstånd driver du eller annan person som är ansvarig i företaget idag?\n\nOm du eller annan företrädare för organisationen har ett serveringstillstånd idag som minst motsvarar den aktuella ansökan, och det inte finns skäl att ifrågasätta kunskaperna, kan det vara så att kunskaperna inte behöver styrkas med ett kunskapsprov."
       },
       "anmalPersonerTillKunskapsprovet": {
         "type": "string",
         "oneOf": [
           {
             "const": "VILL_ANMALA_NU",
-            "title": "Vill anmäla nu",
-            "x-oe-alternativeID": "49698"
+            "title": "Vill anmäla nu"
           },
           {
             "const": "VILL_ANMALA_SENARE",
-            "title": "Vill anmäla senare",
-            "x-oe-alternativeID": "49699"
+            "title": "Vill anmäla senare"
           }
         ],
         "title": "Vill du anmäla personer i företaget till kunskapsprovet nu eller senare?",
-        "description": "Om ditt ärende gäller en ansökan om stadigvarande serveringstillstånd så kan inte tillståndet beviljas innan minst en av de personer som du uppger här har genomfört och fått godkänt på kunskapsprovet.",
-        "x-oe": {
-          "queryID": "81842",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Om ditt ärende gäller en ansökan om stadigvarande serveringstillstånd så kan inte tillståndet beviljas innan minst en av de personer som du uppger här har genomfört och fått godkänt på kunskapsprovet."
       },
       "personerTillKunskapsprovet": {
         "type": "array",
@@ -284,52 +182,27 @@
           "properties": {
             "fornamn": {
               "type": "string",
-              "title": "Förnamn",
-              "x-oe": {
-                "columnID": "5780",
-                "columnType": "STRING"
-              }
+              "title": "Förnamn"
             },
             "efternamn": {
               "type": "string",
-              "title": "Efternamn",
-              "x-oe": {
-                "columnID": "5781",
-                "columnType": "STRING"
-              }
+              "title": "Efternamn"
             },
             "personnummer": {
               "type": "string",
-              "title": "Personnummer",
-              "x-oe": {
-                "columnID": "5782",
-                "columnType": "STRING"
-              }
+              "title": "Personnummer"
             },
             "telefonnummer": {
               "type": "string",
-              "title": "Telefonnummer",
-              "x-oe": {
-                "columnID": "5783",
-                "columnType": "STRING"
-              }
+              "title": "Telefonnummer"
             },
             "ePostadress": {
               "type": "string",
-              "title": "E-postadress",
-              "x-oe": {
-                "columnID": "5784",
-                "columnType": "STRING"
-              }
+              "title": "E-postadress"
             }
           }
         },
-        "title": "Härmed anmäler jag följande person/personer till att genomföra kunskapsprovet:",
-        "x-oe": {
-          "queryID": "81844",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.dynamictablequery.DynamicTableQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Härmed anmäler jag följande person/personer till att genomföra kunskapsprovet:"
       },
       "verksamhetensInriktning": {
         "type": "array",
@@ -339,63 +212,48 @@
           "oneOf": [
             {
               "const": "RESTAURANG",
-              "title": "Restaurang",
-              "x-oe-alternativeID": "30903"
+              "title": "Restaurang"
             },
             {
               "const": "NATTKLUBB_DANS",
-              "title": "Nattklubb/dans",
-              "x-oe-alternativeID": "30904"
+              "title": "Nattklubb/dans"
             },
             {
               "const": "SPEL_OBS_KRAVER_TILLSTAND_FRAN",
-              "title": "Spel (OBS! Kräver tillstånd från Lotteriinspektionen)",
-              "x-oe-alternativeID": "30905"
+              "title": "Spel (OBS! Kräver tillstånd från Lotteriinspektionen)"
             },
             {
               "const": "UNDERHALLNING",
-              "title": "Underhållning",
-              "x-oe-alternativeID": "30906"
+              "title": "Underhållning"
             },
             {
               "const": "HOTELL",
-              "title": "Hotell",
-              "x-oe-alternativeID": "30907"
+              "title": "Hotell"
             },
             {
               "const": "CATERING_TILL_SLUTNA_SALLSKAP",
-              "title": "Catering till slutna sällskap",
-              "x-oe-alternativeID": "30908"
+              "title": "Catering till slutna sällskap"
             },
             {
               "const": "EVENEMANG",
-              "title": "Evenemang",
-              "x-oe-alternativeID": "30909"
+              "title": "Evenemang"
             },
             {
               "const": "PAUSSERVERING_ENDAST_STARKOL_VIN_CIDER",
-              "title": "Pausservering (endast starköl, vin, cider eller andra jästa alkoholdrycker)",
-              "x-oe-alternativeID": "30910"
+              "title": "Pausservering (endast starköl, vin, cider eller andra jästa alkoholdrycker)"
             },
             {
               "const": "PROVSMAKNINGSSERVERING_AV_EGENTILLVERKADE_ALKOHOLDRYCKER_FRAN",
-              "title": "Provsmakningsservering av egentillverkade alkoholdrycker från råvaror som produceras på egen gård",
-              "x-oe-alternativeID": "30911"
+              "title": "Provsmakningsservering av egentillverkade alkoholdrycker från råvaror som produceras på egen gård"
             },
             {
               "const": "TRAFIKSERVERING_INRIKES_TRAFIK_PA_FARTYG",
-              "title": "Trafikservering (inrikes trafik på fartyg, luftfartyg eller järnvägståg)",
-              "x-oe-alternativeID": "30912"
+              "title": "Trafikservering (inrikes trafik på fartyg, luftfartyg eller järnvägståg)"
             }
           ]
         },
         "title": "Verksamhetens inriktning",
-        "description": "Här ska du ange vilken inriktning du har med din verksamhet. Du ska också förtydliga din inriktning genom att skriva in ytterligare information om verksamheten nedan. Det är ett underlag för kommunens bedömning av din tillståndsansökan. När det gäller den alkoholpolitiska prövningen kontaktar kommunen även andra instanser för deras synpunkter på verksamheten.",
-        "x-oe": {
-          "queryID": "81846",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.checkboxquery.CheckboxQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Här ska du ange vilken inriktning du har med din verksamhet. Du ska också förtydliga din inriktning genom att skriva in ytterligare information om verksamheten nedan. Det är ett underlag för kommunens bedömning av din tillståndsansökan. När det gäller den alkoholpolitiska prövningen kontaktar kommunen även andra instanser för deras synpunkter på verksamheten."
       },
       "harNi": {
         "type": "array",
@@ -405,32 +263,20 @@
           "oneOf": [
             {
               "const": "RUMSSERVERING",
-              "title": "Rumsservering",
-              "x-oe-alternativeID": "30913"
+              "title": "Rumsservering"
             },
             {
               "const": "MINIBAR",
-              "title": "Minibar",
-              "x-oe-alternativeID": "30914"
+              "title": "Minibar"
             }
           ]
         },
-        "title": "Har ni:",
-        "x-oe": {
-          "queryID": "81847",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.checkboxquery.CheckboxQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Har ni:"
       },
       "beskrivVerksamhetensInriktning": {
         "type": "string",
         "title": "Beskriv verksamhetens inriktning",
-        "description": "Här ska du med egna ord förtydliga inriktningen på din verksamhet.\n\nExempel på information som är viktig att ange är typ av restaurang, vilka öppettider som gäller, eventuella åldersgränser eller särskild \"profil\" på verksamheten (sportbar, live-musik etc). Ange även verksamhetens primära målgrupp.",
-        "x-oe": {
-          "queryID": "81848",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Här ska du med egna ord förtydliga inriktningen på din verksamhet.\n\nExempel på information som är viktig att ange är typ av restaurang, vilka öppettider som gäller, eventuella åldersgränser eller särskild \"profil\" på verksamheten (sportbar, live-musik etc). Ange även verksamhetens primära målgrupp."
       },
       "finansiering": {
         "type": "array",
@@ -440,33 +286,24 @@
           "oneOf": [
             {
               "const": "EGNA_MEDEL",
-              "title": "Egna medel",
-              "x-oe-alternativeID": "30915"
+              "title": "Egna medel"
             },
             {
               "const": "BANKLAN",
-              "title": "Banklån",
-              "x-oe-alternativeID": "30916"
+              "title": "Banklån"
             },
             {
               "const": "PRIVATLAN",
-              "title": "Privatlån",
-              "x-oe-alternativeID": "30917"
+              "title": "Privatlån"
             },
             {
               "const": "ANNAN_FINANSIERING_EXEMPELVIS_ALMILAN_BRYGGERILAN",
-              "title": "Annan finansiering (exempelvis Almilån, Bryggerilån eller Revers)",
-              "x-oe-alternativeID": "30918"
+              "title": "Annan finansiering (exempelvis Almilån, Bryggerilån eller Revers)"
             }
           ]
         },
         "title": "Finansiering",
-        "description": "För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med.",
-        "x-oe": {
-          "queryID": "81849",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.checkboxquery.CheckboxQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med."
       },
       "egnaMedel": {
         "type": "array",
@@ -475,36 +312,19 @@
           "properties": {
             "bank": {
               "type": "string",
-              "title": "Bank",
-              "x-oe": {
-                "columnID": "5785",
-                "columnType": "STRING"
-              }
+              "title": "Bank"
             },
             "kontonummer": {
               "type": "string",
-              "title": "Kontonummer",
-              "x-oe": {
-                "columnID": "5786",
-                "columnType": "STRING"
-              }
+              "title": "Kontonummer"
             },
             "beloppKronor": {
               "type": "string",
-              "title": "Belopp (kronor)",
-              "x-oe": {
-                "columnID": "5787",
-                "columnType": "STRING"
-              }
+              "title": "Belopp (kronor)"
             }
           }
         },
-        "title": "Egna medel",
-        "x-oe": {
-          "queryID": "81850",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.dynamictablequery.DynamicTableQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Egna medel"
       },
       "banklan": {
         "type": "array",
@@ -513,28 +333,15 @@
           "properties": {
             "langivare": {
               "type": "string",
-              "title": "Långivare",
-              "x-oe": {
-                "columnID": "5788",
-                "columnType": "STRING"
-              }
+              "title": "Långivare"
             },
             "beloppKronor": {
               "type": "string",
-              "title": "Belopp (kronor)",
-              "x-oe": {
-                "columnID": "5789",
-                "columnType": "STRING"
-              }
+              "title": "Belopp (kronor)"
             }
           }
         },
-        "title": "Banklån",
-        "x-oe": {
-          "queryID": "81852",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.dynamictablequery.DynamicTableQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Banklån"
       },
       "privatlan": {
         "type": "array",
@@ -543,28 +350,15 @@
           "properties": {
             "langivare": {
               "type": "string",
-              "title": "Långivare",
-              "x-oe": {
-                "columnID": "5790",
-                "columnType": "STRING"
-              }
+              "title": "Långivare"
             },
             "beloppKronor": {
               "type": "string",
-              "title": "Belopp (kronor)",
-              "x-oe": {
-                "columnID": "5791",
-                "columnType": "STRING"
-              }
+              "title": "Belopp (kronor)"
             }
           }
         },
-        "title": "Privatlån",
-        "x-oe": {
-          "queryID": "81854",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.dynamictablequery.DynamicTableQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Privatlån"
       },
       "annanFinansiering": {
         "type": "array",
@@ -573,131 +367,71 @@
           "properties": {
             "lanetyp": {
               "type": "string",
-              "title": "Lånetyp",
-              "x-oe": {
-                "columnID": "5792",
-                "columnType": "STRING"
-              }
+              "title": "Lånetyp"
             },
             "langivare": {
               "type": "string",
-              "title": "Långivare",
-              "x-oe": {
-                "columnID": "5793",
-                "columnType": "STRING"
-              }
+              "title": "Långivare"
             },
             "beloppKronor": {
               "type": "string",
-              "title": "Belopp (kronor)",
-              "x-oe": {
-                "columnID": "5794",
-                "columnType": "STRING"
-              }
+              "title": "Belopp (kronor)"
             }
           }
         },
-        "title": "Annan finansiering",
-        "x-oe": {
-          "queryID": "81856",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.dynamictablequery.DynamicTableQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Annan finansiering"
       },
       "ovrigaUpplysningarFinansiering": {
         "type": "string",
-        "title": "Övriga upplysningar angående finansieringen",
-        "x-oe": {
-          "queryID": "81858",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Övriga upplysningar angående finansieringen"
       },
       "sittplatserILokalen": {
         "type": "object",
         "properties": {
           "antalSittplatserInomhus": {
             "type": "string",
-            "title": "Antal sittplatser inomhus",
-            "x-oe": {
-              "textFieldID": "50446",
-              "queryID": "81859"
-            }
+            "title": "Antal sittplatser inomhus"
           },
           "antalSittplatserPaEventuellUteserver": {
             "type": "string",
-            "title": "Antal sittplatser på eventuell uteservering",
-            "x-oe": {
-              "textFieldID": "50447",
-              "queryID": "81859"
-            }
+            "title": "Antal sittplatser på eventuell uteservering"
           }
         },
-        "title": "Sittplatser i lokalen",
-        "x-oe": {
-          "queryID": "81859",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Sittplatser i lokalen"
       },
       "maximaltAntalPersonerILokalen": {
         "type": "object",
         "properties": {
           "antalPersoner": {
             "type": "string",
-            "title": "Antal personer",
-            "x-oe": {
-              "textFieldID": "50448",
-              "queryID": "81860"
-            }
+            "title": "Antal personer"
           }
         },
-        "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)",
-        "x-oe": {
-          "queryID": "81860",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)"
       },
       "harDuKassaregister": {
         "type": "string",
         "oneOf": [
           {
             "const": "JA",
-            "title": "Ja",
-            "x-oe-alternativeID": "49704"
+            "title": "Ja"
           },
           {
             "const": "NEJ",
-            "title": "Nej",
-            "x-oe-alternativeID": "49705"
+            "title": "Nej"
           }
         ],
-        "title": "Har du kassaregister?",
-        "x-oe": {
-          "queryID": "81883",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Har du kassaregister?"
       },
       "angeRegistreringskod": {
         "type": "object",
         "properties": {
           "registreringskod": {
             "type": "string",
-            "title": "Registreringskod",
-            "x-oe": {
-              "textFieldID": "50456",
-              "queryID": "81884"
-            }
+            "title": "Registreringskod"
           }
         },
-        "title": "Ange registreringskod",
-        "x-oe": {
-          "queryID": "81884",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Ange registreringskod"
       }
     },
     "allOf": [
@@ -1480,16 +1214,7 @@
         "label": "Brandskyddsdokumentation",
         "description": "Brandskyddsdokumentation från brandkonsult eller motsvarande."
       }
-    ],
-    "x-oe-flow": {
-      "flowID": "2181",
-      "name": "AoT ny för draken",
-      "version": "4",
-      "familyID": "621",
-      "requireAuthentication": false,
-      "requireSigning": false,
-      "paymentSupportEnabled": false
-    }
+    ]
   },
   "description": "Provsmakning"
 }
