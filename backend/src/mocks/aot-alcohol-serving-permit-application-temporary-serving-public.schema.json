@@ -11,122 +11,79 @@
         "oneOf": [
           {
             "const": "JA",
-            "title": "Ja",
-            "x-oe-alternativeID": "49636"
+            "title": "Ja"
           },
           {
             "const": "NEJ",
-            "title": "Nej",
-            "x-oe-alternativeID": "49637"
+            "title": "Nej"
           }
         ],
-        "title": "Är du firmatecknare?",
-        "x-oe": {
-          "queryID": "81703",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Är du firmatecknare?"
       },
       "foretagsform": {
         "type": "string",
         "oneOf": [
           {
             "const": "AKTIEBOLAG",
-            "title": "Aktiebolag",
-            "x-oe-alternativeID": "49638"
+            "title": "Aktiebolag"
           },
           {
             "const": "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-            "title": "Enskild firma (registrerad hos Skatteverket och Bolagsverket)",
-            "x-oe-alternativeID": "49639"
+            "title": "Enskild firma (registrerad hos Skatteverket och Bolagsverket)"
           },
           {
             "const": "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-            "title": "Enskild firma (registrerad endast hos Skatteverket)",
-            "x-oe-alternativeID": "49640"
+            "title": "Enskild firma (registrerad endast hos Skatteverket)"
           },
           {
             "const": "FORENING_STIFTELSE",
-            "title": "Förening/stiftelse",
-            "x-oe-alternativeID": "49641"
+            "title": "Förening/stiftelse"
           },
           {
             "const": "HANDELSBOLAG",
-            "title": "Handelsbolag",
-            "x-oe-alternativeID": "49642"
+            "title": "Handelsbolag"
           },
           {
             "const": "KOMMANDITBOLAG",
-            "title": "Kommanditbolag",
-            "x-oe-alternativeID": "49643"
+            "title": "Kommanditbolag"
           }
         ],
-        "title": "Företagsform",
-        "x-oe": {
-          "queryID": "81706",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Företagsform"
       },
       "fakturaadressSammaSomForetaget": {
         "type": "string",
         "oneOf": [
           {
             "const": "JA",
-            "title": "Ja",
-            "x-oe-alternativeID": "49644"
+            "title": "Ja"
           },
           {
             "const": "NEJ",
-            "title": "Nej",
-            "x-oe-alternativeID": "49645"
+            "title": "Nej"
           }
         ],
         "title": "Är fakturaadressen samma som företagets adress?",
-        "description": "Kommunen kan komma att ta ut en avgift. Om du vill att fakturan ska gå till den adress som företaget är registrerad på anger du \"Ja\" i fältet nedan. Om du vill att fakturan ska gå till en annan adress anger du \"Nej\" och fyller sedan i den. Du har även möjlighet att ange en fakturareferens.",
-        "x-oe": {
-          "queryID": "81707",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Kommunen kan komma att ta ut en avgift. Om du vill att fakturan ska gå till den adress som företaget är registrerad på anger du \"Ja\" i fältet nedan. Om du vill att fakturan ska gå till en annan adress anger du \"Nej\" och fyller sedan i den. Du har även möjlighet att ange en fakturareferens."
       },
       "fakturamottagare": {
         "type": "object",
         "properties": {
           "cO": {
             "type": "string",
-            "title": "c/o",
-            "x-oe": {
-              "textFieldID": "50396",
-              "queryID": "81708"
-            }
+            "title": "c/o"
           },
           "utdelningsadress": {
             "type": "string",
-            "title": "Utdelningsadress",
-            "x-oe": {
-              "textFieldID": "50397",
-              "queryID": "81708"
-            }
+            "title": "Utdelningsadress"
           },
           "postnummer": {
             "type": "string",
             "title": "Postnummer",
-            "pattern": "^\\d{3}\\s?\\d{2}$",
-            "x-oe-format": "swedish-postal-code",
-            "x-oe-invalidFormatMessage": "Du måste fylla i ett svenskt postnummer",
-            "x-oe": {
-              "textFieldID": "50398",
-              "queryID": "81708"
-            }
+            "pattern": "^\\d{3}\\s?\\d{2}$"
           },
           "postort": {
             "type": "string",
-            "title": "Postort",
-            "x-oe": {
-              "textFieldID": "50399",
-              "queryID": "81708"
-            }
+            "title": "Postort"
           }
         },
         "required": [
@@ -134,53 +91,31 @@
           "postnummer",
           "postort"
         ],
-        "title": "Fakturamottagare",
-        "x-oe": {
-          "queryID": "81708",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Fakturamottagare"
       },
       "fakturareferens": {
         "type": "string",
         "title": "Fakturareferens",
-        "description": "Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.",
-        "x-oe": {
-          "queryID": "81709",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer."
       },
       "verksamhetsbeskrivningsval": {
         "type": "string",
         "oneOf": [
           {
             "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I",
-            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret",
-            "x-oe-alternativeID": "49646"
+            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret"
           },
           {
             "const": "JAG_VILL_BIFOGA_VERKSAMHETSBESKRIVNINGEN_SOM",
-            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil",
-            "x-oe-alternativeID": "49647"
+            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil"
           }
         ],
         "title": "Verksamhetsbeskrivning",
-        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?",
-        "x-oe": {
-          "queryID": "81713",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?"
       },
       "verksamhetsbeskrivning": {
         "type": "string",
-        "title": "Verksamhetsbeskrivning",
-        "x-oe": {
-          "queryID": "81714",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Verksamhetsbeskrivning"
       },
       "angeMellanVilkaDatumDetTillfalliga": {
         "type": "object",
@@ -200,24 +135,11 @@
           "startDate",
           "endDate"
         ],
-        "x-oe-dateRestrictions": {
-          "startDateRestrictionType": "RESTRICT_FUTURE_DATES"
-        },
-        "title": "Ange mellan vilka datum det tillfälliga tillståndet ska gälla",
-        "x-oe": {
-          "queryID": "81766",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.DateTimeQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Ange mellan vilka datum det tillfälliga tillståndet ska gälla"
       },
       "ovrigaUppgifterGallandeDatum": {
         "type": "string",
-        "title": "Övriga uppgifter gällande datum",
-        "x-oe": {
-          "queryID": "81767",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Övriga uppgifter gällande datum"
       },
       "klockslagForServeringen": {
         "type": "object",
@@ -237,16 +159,8 @@
           "startTime",
           "endTime"
         ],
-        "x-oe-dateRestrictions": {
-          "timeInterval": "15"
-        },
         "title": "Klockslag för serveringen",
-        "description": "Ange när servering önskas påbörjas, samt avslutas (standard är 11:00-01:00 om inte annat beslutas).",
-        "x-oe": {
-          "queryID": "81768",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.DateTimeQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Ange när servering önskas påbörjas, samt avslutas (standard är 11:00-01:00 om inte annat beslutas)."
       },
       "vilkaAlkoholdryckerSkaServeras": {
         "type": "array",
@@ -256,122 +170,69 @@
           "oneOf": [
             {
               "const": "STARKOL",
-              "title": "Starköl",
-              "x-oe-alternativeID": "30883"
+              "title": "Starköl"
             },
             {
               "const": "VIN",
-              "title": "Vin",
-              "x-oe-alternativeID": "30884"
+              "title": "Vin"
             },
             {
               "const": "SPRITDRYCKER",
-              "title": "Spritdrycker",
-              "x-oe-alternativeID": "30885"
+              "title": "Spritdrycker"
             },
             {
               "const": "CIDER_ELLER_ANDRA_JASTA_ALKOHOLDRYCKER",
-              "title": "Cider eller andra jästa alkoholdrycker",
-              "x-oe-alternativeID": "30886"
+              "title": "Cider eller andra jästa alkoholdrycker"
             }
           ]
         },
-        "title": "Vilka alkoholdrycker ska serveras?",
-        "x-oe": {
-          "queryID": "81769",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.checkboxquery.CheckboxQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Vilka alkoholdrycker ska serveras?"
       },
       "meny": {
         "type": "string",
         "title": "Meny",
-        "description": "Vilken mat och dryck kommer att serveras. Ange även alkoholfria alternativ samt prissättning.",
-        "x-oe": {
-          "queryID": "81770",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Vilken mat och dryck kommer att serveras. Ange även alkoholfria alternativ samt prissättning."
       },
       "beraknatAntalGaster": {
         "type": "object",
         "properties": {
           "antal": {
             "type": "string",
-            "title": "Antal",
-            "x-oe": {
-              "textFieldID": "50412",
-              "queryID": "81773"
-            }
+            "title": "Antal"
           }
         },
-        "title": "Beräknat antal gäster",
-        "x-oe": {
-          "queryID": "81773",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Beräknat antal gäster"
       },
       "vadArDetForTypAvTillstallning": {
         "type": "string",
-        "title": "Vad är det för typ av tillställning",
-        "x-oe": {
-          "queryID": "81775",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Vad är det för typ av tillställning"
       },
       "serveringsstalle": {
         "type": "object",
         "properties": {
           "serveringsstalletsNamn": {
             "type": "string",
-            "title": "Serveringsställets namn",
-            "x-oe": {
-              "textFieldID": "50413",
-              "queryID": "81776"
-            }
+            "title": "Serveringsställets namn"
           },
           "gatuadress": {
             "type": "string",
-            "title": "Gatuadress",
-            "x-oe": {
-              "textFieldID": "50414",
-              "queryID": "81776"
-            }
+            "title": "Gatuadress"
           },
           "postnummer": {
             "type": "string",
-            "title": "Postnummer",
-            "x-oe": {
-              "textFieldID": "50415",
-              "queryID": "81776"
-            }
+            "title": "Postnummer"
           },
           "postort": {
             "type": "string",
-            "title": "Postort",
-            "x-oe": {
-              "textFieldID": "50416",
-              "queryID": "81776"
-            }
+            "title": "Postort"
           },
           "telefonnummer": {
             "type": "string",
-            "title": "Telefonnummer",
-            "x-oe": {
-              "textFieldID": "50417",
-              "queryID": "81776"
-            }
+            "title": "Telefonnummer"
           }
         },
         "title": "Serveringsställe",
-        "description": "Om ingen fast telefon finns, lämna mobilnummer till företrädare.",
-        "x-oe": {
-          "queryID": "81776",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Om ingen fast telefon finns, lämna mobilnummer till företrädare."
       },
       "serveringsansvarigPersonal": {
         "type": "array",
@@ -380,141 +241,82 @@
           "properties": {
             "fornamn": {
               "type": "string",
-              "title": "Förnamn",
-              "x-oe": {
-                "columnID": "5762",
-                "columnType": "STRING"
-              }
+              "title": "Förnamn"
             },
             "efternamn": {
               "type": "string",
-              "title": "Efternamn",
-              "x-oe": {
-                "columnID": "5763",
-                "columnType": "STRING"
-              }
+              "title": "Efternamn"
             },
             "personnummer": {
               "type": "string",
-              "title": "Personnummer",
-              "x-oe": {
-                "columnID": "5764",
-                "columnType": "STRING"
-              }
+              "title": "Personnummer"
             }
           }
         },
         "title": "Serveringsansvarig personal",
-        "description": "Nedan anger du namn och personnummer till den person eller de personer som ska vara ansvariga för serveringen av alkohol. En person som är serveringsansvarig måste vara minst 20 år.",
-        "x-oe": {
-          "queryID": "81777",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.dynamictablequery.DynamicTableQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "description": "Nedan anger du namn och personnummer till den person eller de personer som ska vara ansvariga för serveringen av alkohol. En person som är serveringsansvarig måste vara minst 20 år."
       },
       "sittplatserILokalen": {
         "type": "object",
         "properties": {
           "antalSittplatserIBordsavdelningMatsa": {
             "type": "string",
-            "title": "Antal sittplatser i bordsavdelning/matsal",
-            "x-oe": {
-              "textFieldID": "50418",
-              "queryID": "81778"
-            }
+            "title": "Antal sittplatser i bordsavdelning/matsal"
           }
         },
-        "title": "Sittplatser i lokalen",
-        "x-oe": {
-          "queryID": "81778",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Sittplatser i lokalen"
       },
       "maximaltAntalPersonerILokalen": {
         "type": "object",
         "properties": {
           "antalPersoner": {
             "type": "string",
-            "title": "Antal personer",
-            "x-oe": {
-              "textFieldID": "50419",
-              "queryID": "81779"
-            }
+            "title": "Antal personer"
           }
         },
-        "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)",
-        "x-oe": {
-          "queryID": "81779",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)"
       },
       "finnsPolistillstand": {
         "type": "string",
         "oneOf": [
           {
             "const": "JA",
-            "title": "Ja",
-            "x-oe-alternativeID": "49671"
+            "title": "Ja"
           },
           {
             "const": "NEJ",
-            "title": "Nej",
-            "x-oe-alternativeID": "49672"
+            "title": "Nej"
           },
           {
             "const": "EJ_AKTUELLT",
-            "title": "Ej aktuellt",
-            "x-oe-alternativeID": "49673"
+            "title": "Ej aktuellt"
           }
         ],
-        "title": "Finns polistillstånd",
-        "x-oe": {
-          "queryID": "81780",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Finns polistillstånd"
       },
       "harDuKassaregister": {
         "type": "string",
         "oneOf": [
           {
             "const": "JA",
-            "title": "Ja",
-            "x-oe-alternativeID": "49704"
+            "title": "Ja"
           },
           {
             "const": "NEJ",
-            "title": "Nej",
-            "x-oe-alternativeID": "49705"
+            "title": "Nej"
           }
         ],
-        "title": "Har du kassaregister?",
-        "x-oe": {
-          "queryID": "81883",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Har du kassaregister?"
       },
       "angeRegistreringskod": {
         "type": "object",
         "properties": {
           "registreringskod": {
             "type": "string",
-            "title": "Registreringskod",
-            "x-oe": {
-              "textFieldID": "50456",
-              "queryID": "81884"
-            }
+            "title": "Registreringskod"
           }
         },
-        "title": "Ange registreringskod",
-        "x-oe": {
-          "queryID": "81884",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
+        "title": "Ange registreringskod"
       }
     },
     "allOf": [
@@ -680,16 +482,7 @@
         "key": "laddaUppPolistillstand",
         "label": "Polistillstånd"
       }
-    ],
-    "x-oe-flow": {
-      "flowID": "2181",
-      "name": "AoT ny för draken",
-      "version": "4",
-      "familyID": "621",
-      "requireAuthentication": false,
-      "requireSigning": false,
-      "paymentSupportEnabled": false
-    }
+    ]
   },
   "description": "Tillfälligt tillstånd (allmänheten och slutet sällskap)"
 }

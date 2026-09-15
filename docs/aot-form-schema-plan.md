@@ -1,5 +1,8 @@
 # Plan: från OpenE-export till AoT-formulär i Katla
 
+> Historik: OpenE-exporterna och generatorn i `docs/jsonschemas/` togs bort 2026-09-14 (finns i git-historiken). Schemana underhålls nu direkt i `backend/src/mocks/` i väntan på jsonschema-tjänsten; se `docs/schema-control-assumptions.md`.
+
+
 Status: Underlag för beslut
 
 Datum: 2026-09-08

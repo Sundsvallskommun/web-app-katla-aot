@@ -4,6 +4,7 @@ import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 import { MUNICIPALITY_ID } from '@/config';
 import { getApiBase } from '@/config/api-config';
 import { JsonSchema, UiSchema } from '@/data-contracts/jsonschema/data-contracts';
+import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
 import { mockedSchemaById, mockedSchemaByName, mockedUiSchemaById } from '@/mocks/aot-schema.mock';
@@ -38,9 +39,14 @@ export class SchemaController {
         req,
       );
       return localizeUiSchema(mapUiSchema(uiRes.data), locale);
-    } catch {
-      logger.info(`No UI schema found for ${schemaId}, using empty object`);
-      return {};
+    } catch (error) {
+      // Only a missing ui schema is optional. Anything else — upstream failure, malformed body —
+      // must not silently render the form without sections and widgets.
+      if (error instanceof HttpException && error.status === 404) {
+        logger.info(`No UI schema found for ${schemaId}, using empty object`);
+        return {};
+      }
+      throw error;
     }
   }
 
@@ -65,7 +71,13 @@ export class SchemaController {
     const result = mapSchemaResponse(schema, schemaId);
     const uiSchema = await this.fetchUiSchema(result.schemaId, req, locale);
 
-    return { schema: applyUiSchemaTitleToSchema(result.schema, uiSchema), schemaId: result.schemaId, uiSchema };
+    return {
+      schema: applyUiSchemaTitleToSchema(result.schema, uiSchema),
+      schemaId: result.schemaId,
+      name: result.name,
+      version: result.version,
+      uiSchema,
+    };
   }
 
   @Get('/schemas/latest/:schemaName')
@@ -89,6 +101,12 @@ export class SchemaController {
     const result = mapSchemaResponse(latest);
     const uiSchema = await this.fetchUiSchema(result.schemaId, req, locale);
 
-    return { schema: applyUiSchemaTitleToSchema(result.schema, uiSchema), schemaId: result.schemaId, uiSchema };
+    return {
+      schema: applyUiSchemaTitleToSchema(result.schema, uiSchema),
+      schemaId: result.schemaId,
+      name: result.name,
+      version: result.version,
+      uiSchema,
+    };
   }
 }

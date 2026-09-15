@@ -1,5 +1,6 @@
 'use client';
 import { ErrandContentLock } from '@components/errand-content-lock/errand-content-lock.component';
+import { ROW_INDEX_PLACEHOLDER } from '@components/json/utils/row-index-placeholder';
 import { visibleFields as fieldsVisibleIn } from '@components/json/utils/schema-conditions';
 import type { ErrorSchema, ObjectFieldTemplateProps, RJSFSchema, UiSchema } from '@rjsf/utils';
 import { Checkbox, Disclosure, Divider, Label } from '@sk-web-gui/react';
@@ -7,9 +8,6 @@ import { icons } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
-
-/** Stands in for a dynamic table's row number, which is only known once the row is rendered. */
-export const ROW_INDEX_PLACEHOLDER = '#';
 
 interface RowDefinition {
   fields: string[];

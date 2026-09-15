@@ -40,5 +40,10 @@
   "tabs": {
     "basic_information": "Grundinformation"
   },
-  "loading_information": "Laddar information"
+  "loading_information": "Laddar information",
+  "render_error": {
+    "title": "Något gick fel",
+    "description": "Sidan kunde inte visas. Försök igen, och kontakta supporten om felet kvarstår.",
+    "retry": "Försök igen"
+  }
 }

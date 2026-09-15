@@ -88,8 +88,8 @@ const warnedKeywords = new Set<string>();
 /**
  * Schemas are maintained in the jsonschema service, so an unsupported keyword reaches the citizen
  * with no build step in between. Unknown keywords are skipped rather than failing the match — an
- * extra visible field is recoverable, a silently hidden one means the answer is never collected —
- * and this is the only signal that the condition was not understood in full.
+ * extra visible field is recoverable, a silently hidden one means the answer is never collected.
+ * The BFF logs the same gap server side (schema-contract.ts); this warn is the in-browser trace.
  */
 function warnAboutUnsupportedKeywords(condition: SchemaCondition | boolean): void {
   if (typeof condition === 'boolean') return;

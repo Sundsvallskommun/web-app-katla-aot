@@ -1,8 +1,9 @@
 'use client';
 import { ArrayFieldItemTemplate, ArrayFieldTemplate } from '@components/json/fields/array-field-template.component';
 import { FieldTemplate } from '@components/json/fields/field-template.component';
-import { ObjectFieldTemplate, ROW_INDEX_PLACEHOLDER } from '@components/json/fields/object-field-template.component';
+import { ObjectFieldTemplate } from '@components/json/fields/object-field-template.component';
 import { SubmitButtonFieldTemplate } from '@components/json/fields/submit-button-field-template.component';
+import { ROW_INDEX_PLACEHOLDER } from '@components/json/utils/row-index-placeholder';
 import { stripHiddenFields } from '@components/json/utils/schema-conditions';
 import { jsonWidgets } from '@components/json/widgets';
 import Form, { IChangeEvent } from '@rjsf/core';

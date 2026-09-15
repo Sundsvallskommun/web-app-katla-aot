@@ -112,6 +112,7 @@ Backend (`tsconfig.json`): `@/*` → `src/*`, plus `@config`, `@controllers/*`, 
 ## Docs
 
 - `docs/json-schema-localization.md` — kontraktet för flerspråkiga JSON Schema-formulär (ägarskap och invariants; läs innan schemaspråk ändras).
+- `docs/schema-control-assumptions.md` — författarkontraktet för formulärscheman och analysen bakom det; läs innan ett schema i `backend/src/mocks/` redigeras.
 - `docs/wcag-conformance-review.md` — kanonisk förvaltningsrapport för WCAG 2.2 AA-arbetet.
 
 ## Dependency Maintenance
