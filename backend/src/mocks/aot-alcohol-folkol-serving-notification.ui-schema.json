@@ -3,21 +3,21 @@
     "ui:order": [
       "arDuFirmatecknare",
       "foretagsform",
-      "verksamhetsbeskrivningsval",
       "fakturaadressSammaSomForetaget",
       "fakturamottagare",
       "fakturareferens",
+      "verksamhetsbeskrivningsval",
       "verksamhetsbeskrivning",
       "kommerNiAttServeraMat",
+      "beskrivUtbudetAvMat",
+      "meny",
       "egenkontrollprogramFolkol",
       "serveringsstalletsNamn",
       "besoksadressSammaSomForetaget",
+      "serveringsstalletsBesoksadress",
       "kontaktuppgifterTillServeringsstallet",
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen",
-      "beskrivUtbudetAvMat",
-      "meny",
-      "serveringsstalletsBesoksadress",
       "harDuKassaregister",
       "angeRegistreringskod"
     ],
@@ -30,10 +30,10 @@
         "fields": [
           "arDuFirmatecknare",
           "foretagsform",
-          "verksamhetsbeskrivningsval",
           "fakturaadressSammaSomForetaget",
           "fakturamottagare",
           "fakturareferens",
+          "verksamhetsbeskrivningsval",
           "verksamhetsbeskrivning"
         ]
       },
@@ -44,15 +44,15 @@
         "defaultOpen": true,
         "fields": [
           "kommerNiAttServeraMat",
+          "beskrivUtbudetAvMat",
+          "meny",
           "egenkontrollprogramFolkol",
           "serveringsstalletsNamn",
           "besoksadressSammaSomForetaget",
+          "serveringsstalletsBesoksadress",
           "kontaktuppgifterTillServeringsstallet",
           "sittplatserILokalen",
           "maximaltAntalPersonerILokalen",
-          "beskrivUtbudetAvMat",
-          "meny",
-          "serveringsstalletsBesoksadress",
           "harDuKassaregister",
           "angeRegistreringskod"
         ]
@@ -63,10 +63,6 @@
     },
     "foretagsform": {
       "ui:widget": "RadiobuttonWidget"
-    },
-    "verksamhetsbeskrivningsval": {
-      "ui:widget": "RadiobuttonWidget",
-      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
     },
     "fakturaadressSammaSomForetaget": {
       "ui:widget": "RadiobuttonWidget",
@@ -111,6 +107,10 @@
       },
       "ui:description": "<p>Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.</p>"
     },
+    "verksamhetsbeskrivningsval": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
+    },
     "verksamhetsbeskrivning": {
       "ui:widget": "TexteditorWidget",
       "ui:options": {
@@ -119,6 +119,15 @@
     },
     "kommerNiAttServeraMat": {
       "ui:widget": "RadiobuttonWidget"
+    },
+    "beskrivUtbudetAvMat": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "meny": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
     },
     "egenkontrollprogramFolkol": {
       "ui:widget": "RadiobuttonWidget",
@@ -138,6 +147,34 @@
     },
     "besoksadressSammaSomForetaget": {
       "ui:widget": "RadiobuttonWidget"
+    },
+    "serveringsstalletsBesoksadress": {
+      "ui:order": [
+        "gatuadress",
+        "postnummer",
+        "postort"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "gatuadress": {
+        "ui:widget": "TextWidget"
+      },
+      "postnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "postort": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "postnummer",
+            "postort"
+          ],
+          "gap": "gap-24"
+        }
+      ]
     },
     "kontaktuppgifterTillServeringsstallet": {
       "ui:order": [
@@ -196,43 +233,6 @@
       "antalPersoner": {
         "ui:widget": "TextWidget"
       }
-    },
-    "beskrivUtbudetAvMat": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "meny": {
-      "ui:widget": "TexteditorWidget",
-      "ui:options": {
-        "className": "w-full min-h-[14rem]"
-      }
-    },
-    "serveringsstalletsBesoksadress": {
-      "ui:order": [
-        "gatuadress",
-        "postnummer",
-        "postort"
-      ],
-      "ui:options": {
-        "showObjectFieldset": true
-      },
-      "gatuadress": {
-        "ui:widget": "TextWidget"
-      },
-      "postnummer": {
-        "ui:widget": "TextWidget"
-      },
-      "postort": {
-        "ui:widget": "TextWidget"
-      },
-      "ui:rows": [
-        {
-          "fields": [
-            "postnummer",
-            "postort"
-          ],
-          "gap": "gap-24"
-        }
-      ]
     },
     "harDuKassaregister": {
       "ui:widget": "RadiobuttonWidget"

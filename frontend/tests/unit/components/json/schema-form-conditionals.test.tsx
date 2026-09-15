@@ -84,4 +84,48 @@ describe('SchemaForm conditional fields', () => {
     expect(lastData).not.toHaveProperty('egnaMedel');
     expect(lastData.ovrigt).toBe('kvar');
   });
+
+  /**
+   * The schemas state a choice as a `oneOf` of consts. RJSF defaults such a field to the first
+   * const unless told otherwise, which would file an answer the citizen never gave — and reveal
+   * whatever that answer conditions.
+   */
+  it('leaves a choice unanswered until the citizen answers it', () => {
+    const choiceSchema: RJSFSchema = {
+      type: 'object',
+      properties: {
+        foretagsform: {
+          type: 'string',
+          title: 'Företagsform',
+          oneOf: [
+            { const: 'AKTIEBOLAG', title: 'Aktiebolag' },
+            { const: 'HANDELSBOLAG', title: 'Handelsbolag' },
+          ],
+        },
+        organisationsnummer: { type: 'string', title: 'Organisationsnummer' },
+      },
+      allOf: [
+        {
+          if: { properties: { foretagsform: { const: 'AKTIEBOLAG' } }, required: ['foretagsform'] },
+          then: { required: ['organisationsnummer'] },
+        },
+      ],
+    };
+
+    render(
+      <SchemaForm
+        schemaId={SCHEMA_ID}
+        schema={choiceSchema}
+        uiSchema={{
+          foretagsform: { 'ui:widget': 'RadiobuttonWidget' },
+          organisationsnummer: { 'ui:widget': 'TextWidget' },
+        }}
+        hideSubmitButton
+      />
+    );
+
+    expect(screen.getByRole('radio', { name: 'Aktiebolag' })).not.toBeChecked();
+    expect(screen.getByRole('radio', { name: 'Handelsbolag' })).not.toBeChecked();
+    expect(screen.queryByRole('textbox', { name: 'Organisationsnummer' })).not.toBeInTheDocument();
+  });
 });

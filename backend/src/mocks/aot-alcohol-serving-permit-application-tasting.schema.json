@@ -68,28 +68,6 @@
           "defaultQueryState": "HIDDEN"
         }
       },
-      "verksamhetsbeskrivningsval": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I",
-            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret",
-            "x-oe-alternativeID": "49646"
-          },
-          {
-            "const": "JAG_VILL_BIFOGA_VERKSAMHETSBESKRIVNINGEN_SOM",
-            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil",
-            "x-oe-alternativeID": "49647"
-          }
-        ],
-        "title": "Verksamhetsbeskrivning",
-        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?",
-        "x-oe": {
-          "queryID": "81713",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
       "fakturaadressSammaSomForetaget": {
         "type": "string",
         "oneOf": [
@@ -173,6 +151,28 @@
           "defaultQueryState": "HIDDEN"
         }
       },
+      "verksamhetsbeskrivningsval": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I",
+            "title": "Jag vill skriva verksamhetsbeskrivningen i formuläret",
+            "x-oe-alternativeID": "49646"
+          },
+          {
+            "const": "JAG_VILL_BIFOGA_VERKSAMHETSBESKRIVNINGEN_SOM",
+            "title": "Jag vill bifoga verksamhetsbeskrivningen som fil",
+            "x-oe-alternativeID": "49647"
+          }
+        ],
+        "title": "Verksamhetsbeskrivning",
+        "description": "Du måste lämna en detaljerad beskrivning av företagets verksamhet.\n\nHur vill du lämna verksamhetsbeskrivningen?",
+        "x-oe": {
+          "queryID": "81713",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
       "verksamhetsbeskrivning": {
         "type": "string",
         "title": "Verksamhetsbeskrivning",
@@ -206,164 +206,6 @@
         "x-oe": {
           "queryID": "81839",
           "queryTypeID": "com.nordicpeak.flowengine.queries.radiobuttonquery.RadioButtonQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "verksamhetensInriktning": {
-        "type": "array",
-        "uniqueItems": true,
-        "items": {
-          "type": "string",
-          "oneOf": [
-            {
-              "const": "RESTAURANG",
-              "title": "Restaurang",
-              "x-oe-alternativeID": "30903"
-            },
-            {
-              "const": "NATTKLUBB_DANS",
-              "title": "Nattklubb/dans",
-              "x-oe-alternativeID": "30904"
-            },
-            {
-              "const": "SPEL_OBS_KRAVER_TILLSTAND_FRAN",
-              "title": "Spel (OBS! Kräver tillstånd från Lotteriinspektionen)",
-              "x-oe-alternativeID": "30905"
-            },
-            {
-              "const": "UNDERHALLNING",
-              "title": "Underhållning",
-              "x-oe-alternativeID": "30906"
-            },
-            {
-              "const": "HOTELL",
-              "title": "Hotell",
-              "x-oe-alternativeID": "30907"
-            },
-            {
-              "const": "CATERING_TILL_SLUTNA_SALLSKAP",
-              "title": "Catering till slutna sällskap",
-              "x-oe-alternativeID": "30908"
-            },
-            {
-              "const": "EVENEMANG",
-              "title": "Evenemang",
-              "x-oe-alternativeID": "30909"
-            },
-            {
-              "const": "PAUSSERVERING_ENDAST_STARKOL_VIN_CIDER",
-              "title": "Pausservering (endast starköl, vin, cider eller andra jästa alkoholdrycker)",
-              "x-oe-alternativeID": "30910"
-            },
-            {
-              "const": "PROVSMAKNINGSSERVERING_AV_EGENTILLVERKADE_ALKOHOLDRYCKER_FRAN",
-              "title": "Provsmakningsservering av egentillverkade alkoholdrycker från råvaror som produceras på egen gård",
-              "x-oe-alternativeID": "30911"
-            },
-            {
-              "const": "TRAFIKSERVERING_INRIKES_TRAFIK_PA_FARTYG",
-              "title": "Trafikservering (inrikes trafik på fartyg, luftfartyg eller järnvägståg)",
-              "x-oe-alternativeID": "30912"
-            }
-          ]
-        },
-        "title": "Verksamhetens inriktning",
-        "description": "Här ska du ange vilken inriktning du har med din verksamhet. Du ska också förtydliga din inriktning genom att skriva in ytterligare information om verksamheten nedan. Det är ett underlag för kommunens bedömning av din tillståndsansökan. När det gäller den alkoholpolitiska prövningen kontaktar kommunen även andra instanser för deras synpunkter på verksamheten.",
-        "x-oe": {
-          "queryID": "81846",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.checkboxquery.CheckboxQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "beskrivVerksamhetensInriktning": {
-        "type": "string",
-        "title": "Beskriv verksamhetens inriktning",
-        "description": "Här ska du med egna ord förtydliga inriktningen på din verksamhet.\n\nExempel på information som är viktig att ange är typ av restaurang, vilka öppettider som gäller, eventuella åldersgränser eller särskild \"profil\" på verksamheten (sportbar, live-musik etc). Ange även verksamhetens primära målgrupp.",
-        "x-oe": {
-          "queryID": "81848",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "finansiering": {
-        "type": "array",
-        "uniqueItems": true,
-        "items": {
-          "type": "string",
-          "oneOf": [
-            {
-              "const": "EGNA_MEDEL",
-              "title": "Egna medel",
-              "x-oe-alternativeID": "30915"
-            },
-            {
-              "const": "BANKLAN",
-              "title": "Banklån",
-              "x-oe-alternativeID": "30916"
-            },
-            {
-              "const": "PRIVATLAN",
-              "title": "Privatlån",
-              "x-oe-alternativeID": "30917"
-            },
-            {
-              "const": "ANNAN_FINANSIERING_EXEMPELVIS_ALMILAN_BRYGGERILAN",
-              "title": "Annan finansiering (exempelvis Almilån, Bryggerilån eller Revers)",
-              "x-oe-alternativeID": "30918"
-            }
-          ]
-        },
-        "title": "Finansiering",
-        "description": "För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med.",
-        "x-oe": {
-          "queryID": "81849",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.checkboxquery.CheckboxQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "sittplatserILokalen": {
-        "type": "object",
-        "properties": {
-          "antalSittplatserInomhus": {
-            "type": "string",
-            "title": "Antal sittplatser inomhus",
-            "x-oe": {
-              "textFieldID": "50446",
-              "queryID": "81859"
-            }
-          },
-          "antalSittplatserPaEventuellUteserver": {
-            "type": "string",
-            "title": "Antal sittplatser på eventuell uteservering",
-            "x-oe": {
-              "textFieldID": "50447",
-              "queryID": "81859"
-            }
-          }
-        },
-        "title": "Sittplatser i lokalen",
-        "x-oe": {
-          "queryID": "81859",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
-          "defaultQueryState": "HIDDEN"
-        }
-      },
-      "maximaltAntalPersonerILokalen": {
-        "type": "object",
-        "properties": {
-          "antalPersoner": {
-            "type": "string",
-            "title": "Antal personer",
-            "x-oe": {
-              "textFieldID": "50448",
-              "queryID": "81860"
-            }
-          }
-        },
-        "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)",
-        "x-oe": {
-          "queryID": "81860",
-          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
           "defaultQueryState": "HIDDEN"
         }
       },
@@ -489,6 +331,72 @@
           "defaultQueryState": "HIDDEN"
         }
       },
+      "verksamhetensInriktning": {
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "RESTAURANG",
+              "title": "Restaurang",
+              "x-oe-alternativeID": "30903"
+            },
+            {
+              "const": "NATTKLUBB_DANS",
+              "title": "Nattklubb/dans",
+              "x-oe-alternativeID": "30904"
+            },
+            {
+              "const": "SPEL_OBS_KRAVER_TILLSTAND_FRAN",
+              "title": "Spel (OBS! Kräver tillstånd från Lotteriinspektionen)",
+              "x-oe-alternativeID": "30905"
+            },
+            {
+              "const": "UNDERHALLNING",
+              "title": "Underhållning",
+              "x-oe-alternativeID": "30906"
+            },
+            {
+              "const": "HOTELL",
+              "title": "Hotell",
+              "x-oe-alternativeID": "30907"
+            },
+            {
+              "const": "CATERING_TILL_SLUTNA_SALLSKAP",
+              "title": "Catering till slutna sällskap",
+              "x-oe-alternativeID": "30908"
+            },
+            {
+              "const": "EVENEMANG",
+              "title": "Evenemang",
+              "x-oe-alternativeID": "30909"
+            },
+            {
+              "const": "PAUSSERVERING_ENDAST_STARKOL_VIN_CIDER",
+              "title": "Pausservering (endast starköl, vin, cider eller andra jästa alkoholdrycker)",
+              "x-oe-alternativeID": "30910"
+            },
+            {
+              "const": "PROVSMAKNINGSSERVERING_AV_EGENTILLVERKADE_ALKOHOLDRYCKER_FRAN",
+              "title": "Provsmakningsservering av egentillverkade alkoholdrycker från råvaror som produceras på egen gård",
+              "x-oe-alternativeID": "30911"
+            },
+            {
+              "const": "TRAFIKSERVERING_INRIKES_TRAFIK_PA_FARTYG",
+              "title": "Trafikservering (inrikes trafik på fartyg, luftfartyg eller järnvägståg)",
+              "x-oe-alternativeID": "30912"
+            }
+          ]
+        },
+        "title": "Verksamhetens inriktning",
+        "description": "Här ska du ange vilken inriktning du har med din verksamhet. Du ska också förtydliga din inriktning genom att skriva in ytterligare information om verksamheten nedan. Det är ett underlag för kommunens bedömning av din tillståndsansökan. När det gäller den alkoholpolitiska prövningen kontaktar kommunen även andra instanser för deras synpunkter på verksamheten.",
+        "x-oe": {
+          "queryID": "81846",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.checkboxquery.CheckboxQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
       "harNi": {
         "type": "array",
         "uniqueItems": true,
@@ -510,6 +418,52 @@
         "title": "Har ni:",
         "x-oe": {
           "queryID": "81847",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.checkboxquery.CheckboxQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "beskrivVerksamhetensInriktning": {
+        "type": "string",
+        "title": "Beskriv verksamhetens inriktning",
+        "description": "Här ska du med egna ord förtydliga inriktningen på din verksamhet.\n\nExempel på information som är viktig att ange är typ av restaurang, vilka öppettider som gäller, eventuella åldersgränser eller särskild \"profil\" på verksamheten (sportbar, live-musik etc). Ange även verksamhetens primära målgrupp.",
+        "x-oe": {
+          "queryID": "81848",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "finansiering": {
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "EGNA_MEDEL",
+              "title": "Egna medel",
+              "x-oe-alternativeID": "30915"
+            },
+            {
+              "const": "BANKLAN",
+              "title": "Banklån",
+              "x-oe-alternativeID": "30916"
+            },
+            {
+              "const": "PRIVATLAN",
+              "title": "Privatlån",
+              "x-oe-alternativeID": "30917"
+            },
+            {
+              "const": "ANNAN_FINANSIERING_EXEMPELVIS_ALMILAN_BRYGGERILAN",
+              "title": "Annan finansiering (exempelvis Almilån, Bryggerilån eller Revers)",
+              "x-oe-alternativeID": "30918"
+            }
+          ]
+        },
+        "title": "Finansiering",
+        "description": "För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med.",
+        "x-oe": {
+          "queryID": "81849",
           "queryTypeID": "com.nordicpeak.flowengine.queries.checkboxquery.CheckboxQueryProviderModule",
           "defaultQueryState": "HIDDEN"
         }
@@ -656,6 +610,52 @@
         "x-oe": {
           "queryID": "81858",
           "queryTypeID": "com.nordicpeak.flowengine.queries.textareaquery.TextAreaQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "sittplatserILokalen": {
+        "type": "object",
+        "properties": {
+          "antalSittplatserInomhus": {
+            "type": "string",
+            "title": "Antal sittplatser inomhus",
+            "x-oe": {
+              "textFieldID": "50446",
+              "queryID": "81859"
+            }
+          },
+          "antalSittplatserPaEventuellUteserver": {
+            "type": "string",
+            "title": "Antal sittplatser på eventuell uteservering",
+            "x-oe": {
+              "textFieldID": "50447",
+              "queryID": "81859"
+            }
+          }
+        },
+        "title": "Sittplatser i lokalen",
+        "x-oe": {
+          "queryID": "81859",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
+          "defaultQueryState": "HIDDEN"
+        }
+      },
+      "maximaltAntalPersonerILokalen": {
+        "type": "object",
+        "properties": {
+          "antalPersoner": {
+            "type": "string",
+            "title": "Antal personer",
+            "x-oe": {
+              "textFieldID": "50448",
+              "queryID": "81860"
+            }
+          }
+        },
+        "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)",
+        "x-oe": {
+          "queryID": "81860",
+          "queryTypeID": "com.nordicpeak.flowengine.queries.textfieldquery.TextFieldQueryProviderModule",
           "defaultQueryState": "HIDDEN"
         }
       },
@@ -851,6 +851,82 @@
           "properties": {
             "finansiering": {
               "contains": {
+                "const": "EGNA_MEDEL"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "egnaMedel"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "BANKLAN"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "banklan"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "PRIVATLAN"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "privatlan"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "ANNAN_FINANSIERING_EXEMPELVIS_ALMILAN_BRYGGERILAN"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "annanFinansiering"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
                 "enum": [
                   "EGNA_MEDEL",
                   "BANKLAN",
@@ -936,6 +1012,82 @@
           "properties": {
             "personerTillKunskapsprovet": true
           }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "EGNA_MEDEL"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "egnaMedel"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "BANKLAN"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "banklan"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "PRIVATLAN"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "privatlan"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "ANNAN_FINANSIERING_EXEMPELVIS_ALMILAN_BRYGGERILAN"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "annanFinansiering"
+          ]
         }
       },
       {
@@ -1046,6 +1198,82 @@
         "then": {
           "properties": {
             "harNi": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "EGNA_MEDEL"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "egnaMedel"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "BANKLAN"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "required": [
+            "banklan"
+          ]
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "PRIVATLAN"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "properties": {
+            "privatlan": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "finansiering": {
+              "contains": {
+                "const": "ANNAN_FINANSIERING_EXEMPELVIS_ALMILAN_BRYGGERILAN"
+              }
+            }
+          },
+          "required": [
+            "finansiering"
+          ]
+        },
+        "then": {
+          "properties": {
+            "annanFinansiering": true
           }
         }
       },
@@ -1174,21 +1402,6 @@
         "label": "Verksamhetsbeskrivning"
       },
       {
-        "key": "bifogaPlanritning",
-        "label": "Planritning",
-        "description": "Planritningen ska visa vilken del av lokalen som är serveringsyta, inklusive uteservering och samtliga våningsplan där alkohol serveras. Serveringsytan ska vara överblickbar."
-      },
-      {
-        "key": "bifogaAvtalGallandeLokalOchMark",
-        "label": "Avtal gällande lokal och mark",
-        "description": "Hyreskontrakt, arrendeavtal eller köpeavtal (inklusive bilagor) för lokalen som verksamheten ska bedrivas i, inklusive platsen för eventuell uteservering."
-      },
-      {
-        "key": "bifogaBrandskyddsdokumentation",
-        "label": "Brandskyddsdokumentation",
-        "description": "Brandskyddsdokumentation från brandkonsult eller motsvarande."
-      },
-      {
         "key": "bifogaKontoutdrag",
         "label": "Kontoutdrag för egna medel",
         "requiredWhen": {
@@ -1251,6 +1464,21 @@
             "finansiering"
           ]
         }
+      },
+      {
+        "key": "bifogaPlanritning",
+        "label": "Planritning",
+        "description": "Planritningen ska visa vilken del av lokalen som är serveringsyta, inklusive uteservering och samtliga våningsplan där alkohol serveras. Serveringsytan ska vara överblickbar."
+      },
+      {
+        "key": "bifogaAvtalGallandeLokalOchMark",
+        "label": "Avtal gällande lokal och mark",
+        "description": "Hyreskontrakt, arrendeavtal eller köpeavtal (inklusive bilagor) för lokalen som verksamheten ska bedrivas i, inklusive platsen för eventuell uteservering."
+      },
+      {
+        "key": "bifogaBrandskyddsdokumentation",
+        "label": "Brandskyddsdokumentation",
+        "description": "Brandskyddsdokumentation från brandkonsult eller motsvarande."
       }
     ],
     "x-oe-flow": {

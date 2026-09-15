@@ -107,9 +107,17 @@ function useFlow(next) {
   );
   reachPerBranch = (BRANCHES_BY_FLOW[next.id] ?? []).map((branch) => ({
     ...branch,
-    fields: reachable(branch.company ?? COMPANY_ANSWER, branch.answer),
+    fields: inExportOrder(reachable(branch.company ?? COMPANY_ANSWER, branch.answer)),
   }));
 }
+
+/**
+ * `reachable` yields its set in the order the fixed-point happened to discover each question, which
+ * puts every question revealed in one round ahead of the next round's — so a dependent question
+ * lands far from the one that reveals it. The export's own order is the authored one and keeps them
+ * together, and it is what `ui:order` and the property order are built from.
+ */
+const inExportOrder = keys => new Set(Object.keys(questionsByKey).filter(key => keys.has(key)));
 
 const queryType = (field) => (field['x-oe']?.queryTypeID ?? '').split('.').at(-1).replace('QueryProviderModule', '');
 
@@ -551,7 +559,23 @@ function conditionalFor(rule) {
   return null;
 }
 
-/** The conditionals that apply inside one branch: both ends of the rule have to be in it. */
+/** The targets the branch carries; null when the rule reveals nothing in it. */
+function targetsWithin(then, names) {
+  if (then.required) {
+    const required = then.required.filter((name) => names.has(name));
+    return required.length ? { required } : null;
+  }
+
+  const properties = Object.entries(then.properties ?? {}).filter(([name]) => names.has(name));
+  return properties.length ? { properties: Object.fromEntries(properties) } : null;
+}
+
+/**
+ * The conditionals that apply inside one branch. The condition must be evaluable there, so every
+ * source has to be in it; the targets are narrowed to what the branch has rather than dropping
+ * the whole rule, because one OpenE rule commonly reveals both a question and the bilaga that
+ * goes with it, and the bilagor are carried in `x-attachments` instead of in `properties`.
+ */
 function conditionalsFor(fields) {
   const conditionals = [];
   for (const rule of rules) {
@@ -559,15 +583,15 @@ function conditionalsFor(fields) {
     const conditional = conditionalFor(rule);
     if (!conditional) continue;
 
-    const targets = Object.keys(conditional.then.required ? {} : (conditional.then.properties ?? {}));
-    const revealed = conditional.then.required ?? targets;
     const sources = Object.keys(conditional.if.properties ?? {});
     const nested = (conditional.if.allOf ?? []).flatMap((part) => Object.keys(part.properties ?? {}));
     const names = new Set([...fields].map(keyFor));
     if (![...sources, ...nested].every((name) => names.has(name))) continue;
-    if (!revealed.every((name) => names.has(name))) continue;
 
-    conditionals.push(conditional);
+    const then = targetsWithin(conditional.then, names);
+    if (!then) continue;
+
+    conditionals.push({ ...conditional, then });
   }
   return conditionals;
 }
@@ -602,10 +626,18 @@ function timeStepSeconds(field) {
   return Number.isFinite(minutes) && minutes > 0 ? minutes * 60 : undefined;
 }
 
-function objectUi(field) {
+/**
+ * A standalone object is a question built out of sub-fields and needs the fieldset to keep its
+ * title. A dynamic table's row does not: the row already sits in a numbered card, so a second
+ * heading only repeats it.
+ */
+function objectUi(field, { fieldset = true } = {}) {
   const keys = Object.keys(field.properties ?? {});
-  const ui = { 'ui:order': keys, 'ui:options': { showObjectFieldset: true } };
+  const ui = { 'ui:order': keys, ...(fieldset ? { 'ui:options': { showObjectFieldset: true } } : {}) };
   const step = timeStepSeconds(field);
+  // OpenE wraps a lone input in a question of the same name ('Personnummer'), which would print
+  // the word twice. The legend keeps the visible one; the field label stays for screen readers.
+  const duplicatesLegend = (child) => fieldset && keys.length === 1 && child.title === field.title;
   for (const key of keys) {
     const child = field.properties[key];
     const widget =
@@ -613,7 +645,11 @@ function objectUi(field) {
       : child.format === 'time' ? 'TimeWidget'
       : 'TextWidget';
     ui[key] = { 'ui:widget': widget };
-    if (widget === 'TimeWidget' && step !== undefined) ui[key]['ui:options'] = { step };
+    const options = {
+      ...(widget === 'TimeWidget' && step !== undefined ? { step } : {}),
+      ...(duplicatesLegend(child) ? { hideLabel: true } : {}),
+    };
+    if (Object.keys(options).length) ui[key]['ui:options'] = options;
     if (child.readOnly) ui[key]['ui:readonly'] = true;
   }
   const dateOrTime = keys.filter((key) => ['date', 'time'].includes(field.properties[key].format ?? ''));
@@ -654,7 +690,7 @@ function fieldUi(field) {
     case 'DynamicTable':
       return {
         'ui:options': { addable: true, orderable: false, addButtonLabel: 'Lägg till' },
-        items: objectUi(field.items ?? {}),
+        items: objectUi(field.items ?? {}, { fieldset: false }),
       };
     case 'DateTime':
     case 'TextField':

@@ -3,24 +3,24 @@
     "ui:order": [
       "arDuFirmatecknare",
       "foretagsform",
-      "verksamhetsbeskrivningsval",
       "fakturaadressSammaSomForetaget",
       "fakturamottagare",
       "fakturareferens",
+      "verksamhetsbeskrivningsval",
       "verksamhetsbeskrivning",
       "kunskapOmAlkohollagen",
-      "vilkaAlkoholdryckerSkaServeras",
-      "finansiering",
-      "godkannaCateringtillfalle",
       "personnummer",
       "organisationsnummer",
       "anmalPersonerTillKunskapsprovet",
       "personerTillKunskapsprovet",
+      "vilkaAlkoholdryckerSkaServeras",
+      "finansiering",
       "egnaMedel",
       "banklan",
       "privatlan",
       "annanFinansiering",
       "ovrigaUpplysningarFinansiering",
+      "godkannaCateringtillfalle",
       "harDuKassaregister",
       "angeRegistreringskod"
     ],
@@ -33,10 +33,10 @@
         "fields": [
           "arDuFirmatecknare",
           "foretagsform",
-          "verksamhetsbeskrivningsval",
           "fakturaadressSammaSomForetaget",
           "fakturamottagare",
           "fakturareferens",
+          "verksamhetsbeskrivningsval",
           "verksamhetsbeskrivning"
         ]
       },
@@ -47,18 +47,18 @@
         "defaultOpen": true,
         "fields": [
           "kunskapOmAlkohollagen",
-          "vilkaAlkoholdryckerSkaServeras",
-          "finansiering",
-          "godkannaCateringtillfalle",
           "personnummer",
           "organisationsnummer",
           "anmalPersonerTillKunskapsprovet",
           "personerTillKunskapsprovet",
+          "vilkaAlkoholdryckerSkaServeras",
+          "finansiering",
           "egnaMedel",
           "banklan",
           "privatlan",
           "annanFinansiering",
           "ovrigaUpplysningarFinansiering",
+          "godkannaCateringtillfalle",
           "harDuKassaregister",
           "angeRegistreringskod"
         ]
@@ -69,10 +69,6 @@
     },
     "foretagsform": {
       "ui:widget": "RadiobuttonWidget"
-    },
-    "verksamhetsbeskrivningsval": {
-      "ui:widget": "RadiobuttonWidget",
-      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
     },
     "fakturaadressSammaSomForetaget": {
       "ui:widget": "RadiobuttonWidget",
@@ -117,6 +113,10 @@
       },
       "ui:description": "<p>Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.</p>"
     },
+    "verksamhetsbeskrivningsval": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
+    },
     "verksamhetsbeskrivning": {
       "ui:widget": "TexteditorWidget",
       "ui:options": {
@@ -127,28 +127,6 @@
       "ui:widget": "RadiobuttonWidget",
       "ui:description": "<p>För att få ett cateringtillstånd behöver du eller annan person som är ansvarig i företaget ha kunskap om ansvarsfull alkoholservering och alkohollagen. Denna kunskap kan du visa på flera sätt.</p>"
     },
-    "vilkaAlkoholdryckerSkaServeras": {
-      "ui:widget": "checkboxes",
-      "ui:options": {
-        "multiple": true,
-        "className": "w-full max-w-[48rem]"
-      }
-    },
-    "finansiering": {
-      "ui:widget": "checkboxes",
-      "ui:options": {
-        "multiple": true,
-        "className": "w-full max-w-[48rem]"
-      },
-      "ui:description": "<p>För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med.</p>"
-    },
-    "godkannaCateringtillfalle": {
-      "ui:widget": "checkboxes",
-      "ui:options": {
-        "multiple": true,
-        "className": "w-full max-w-[48rem]"
-      }
-    },
     "personnummer": {
       "ui:order": [
         "personnummer"
@@ -157,7 +135,10 @@
         "showObjectFieldset": true
       },
       "personnummer": {
-        "ui:widget": "TextWidget"
+        "ui:widget": "TextWidget",
+        "ui:options": {
+          "hideLabel": true
+        }
       },
       "ui:description": "<p>Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren.</p>"
     },
@@ -169,7 +150,10 @@
         "showObjectFieldset": true
       },
       "organisationsnummer": {
-        "ui:widget": "TextWidget"
+        "ui:widget": "TextWidget",
+        "ui:options": {
+          "hideLabel": true
+        }
       },
       "ui:description": "<p>Vilket företag med gällande serveringstillstånd driver du eller annan person som är ansvarig i företaget idag?<br />\nOm du eller annan företrädare för organisationen har ett serveringstillstånd idag som minst motsvarar den aktuella ansökan, och det inte finns skäl att ifrågasätta kunskaperna, kan det vara så att kunskaperna inte behöver styrkas med ett kunskapsprov.</p>"
     },
@@ -191,9 +175,6 @@
           "telefonnummer",
           "ePostadress"
         ],
-        "ui:options": {
-          "showObjectFieldset": true
-        },
         "fornamn": {
           "ui:widget": "TextWidget"
         },
@@ -211,6 +192,21 @@
         }
       }
     },
+    "vilkaAlkoholdryckerSkaServeras": {
+      "ui:widget": "checkboxes",
+      "ui:options": {
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
+      }
+    },
+    "finansiering": {
+      "ui:widget": "checkboxes",
+      "ui:options": {
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
+      },
+      "ui:description": "<p>För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med.</p>"
+    },
     "egnaMedel": {
       "ui:options": {
         "addable": true,
@@ -223,9 +219,6 @@
           "kontonummer",
           "beloppKronor"
         ],
-        "ui:options": {
-          "showObjectFieldset": true
-        },
         "bank": {
           "ui:widget": "TextWidget"
         },
@@ -248,9 +241,6 @@
           "langivare",
           "beloppKronor"
         ],
-        "ui:options": {
-          "showObjectFieldset": true
-        },
         "langivare": {
           "ui:widget": "TextWidget"
         },
@@ -270,9 +260,6 @@
           "langivare",
           "beloppKronor"
         ],
-        "ui:options": {
-          "showObjectFieldset": true
-        },
         "langivare": {
           "ui:widget": "TextWidget"
         },
@@ -293,9 +280,6 @@
           "langivare",
           "beloppKronor"
         ],
-        "ui:options": {
-          "showObjectFieldset": true
-        },
         "lanetyp": {
           "ui:widget": "TextWidget"
         },
@@ -311,6 +295,13 @@
       "ui:widget": "TexteditorWidget",
       "ui:options": {
         "className": "w-full min-h-[14rem]"
+      }
+    },
+    "godkannaCateringtillfalle": {
+      "ui:widget": "checkboxes",
+      "ui:options": {
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
       }
     },
     "harDuKassaregister": {

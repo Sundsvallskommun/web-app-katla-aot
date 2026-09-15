@@ -15,5 +15,13 @@
   "section_complete": "Komplett",
   "field_description": {
     "new_tab_announcement": "Öppnas i en ny flik"
+  },
+  "array": {
+    "add": "Lägg till",
+    "row": "Rad {{position}}",
+    "remove": "Ta bort rad {{position}}",
+    "copy": "Kopiera rad {{position}}",
+    "move_up": "Flytta rad {{position}} uppåt",
+    "move_down": "Flytta rad {{position}} nedåt"
   }
 }

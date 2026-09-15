@@ -1,6 +1,7 @@
 'use client';
+import { ArrayFieldItemTemplate, ArrayFieldTemplate } from '@components/json/fields/array-field-template.component';
 import { FieldTemplate } from '@components/json/fields/field-template.component';
-import { ObjectFieldTemplate } from '@components/json/fields/object-field-template.component';
+import { ObjectFieldTemplate, ROW_INDEX_PLACEHOLDER } from '@components/json/fields/object-field-template.component';
 import { SubmitButtonFieldTemplate } from '@components/json/fields/submit-button-field-template.component';
 import { stripHiddenFields } from '@components/json/utils/schema-conditions';
 import { jsonWidgets } from '@components/json/widgets';
@@ -20,7 +21,15 @@ function collectSchemasById(schema: RJSFSchema, id = 'root', collected: Record<s
   collected[id] = schema;
   const properties = schema.properties as Record<string, RJSFSchema> | undefined;
   for (const [name, child] of Object.entries(properties ?? {})) {
-    if (child.type === 'object') collectSchemasById(child, `${id}_${name}`, collected);
+    const childId = `${id}_${name}`;
+    if (child.type === 'object') collectSchemasById(child, childId, collected);
+    // Every row of a dynamic table renders from the same item schema, but RJSF numbers the rows in
+    // the id. The row number is not known here, so the schema is stored under the placeholder the
+    // lookup below puts back.
+    const items = child.items as RJSFSchema | undefined;
+    if (child.type === 'array' && items?.type === 'object') {
+      collectSchemasById(items, `${childId}_${ROW_INDEX_PLACEHOLDER}`, collected);
+    }
   }
   return collected;
 }
@@ -102,12 +111,18 @@ export default function SchemaForm({
       validator={validator}
       widgets={jsonWidgets}
       templates={{
+        ArrayFieldTemplate,
+        ArrayFieldItemTemplate,
         FieldTemplate,
         ObjectFieldTemplate,
         ButtonTemplates: {
           SubmitButton: hideSubmitButton ? () => null : SubmitButtonFieldTemplate,
         },
       }}
+      // A `oneOf` of consts is how the schemas state a choice; RJSF would otherwise default every
+      // such question to its first alternative, filing answers the citizen never gave and
+      // revealing the fields that depend on them.
+      experimental_defaultFormStateBehavior={{ constAsDefaults: 'skipOneOf' }}
       transformErrors={errorTransformer}
       noHtml5Validate
       showErrorList={false}

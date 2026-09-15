@@ -15,5 +15,13 @@
   "section_complete": "Complete",
   "field_description": {
     "new_tab_announcement": "Opens in a new tab"
+  },
+  "array": {
+    "add": "Add",
+    "row": "Row {{position}}",
+    "remove": "Remove row {{position}}",
+    "copy": "Copy row {{position}}",
+    "move_up": "Move row {{position}} up",
+    "move_down": "Move row {{position}} down"
   }
 }

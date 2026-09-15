@@ -3,12 +3,13 @@
     "ui:order": [
       "arDuFirmatecknare",
       "foretagsform",
-      "verksamhetsbeskrivningsval",
       "fakturaadressSammaSomForetaget",
       "fakturamottagare",
       "fakturareferens",
+      "verksamhetsbeskrivningsval",
       "verksamhetsbeskrivning",
       "angeMellanVilkaDatumDetTillfalliga",
+      "ovrigaUppgifterGallandeDatum",
       "klockslagForServeringen",
       "vilkaAlkoholdryckerSkaServeras",
       "meny",
@@ -19,7 +20,6 @@
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen",
       "finnsPolistillstand",
-      "ovrigaUppgifterGallandeDatum",
       "harDuKassaregister",
       "angeRegistreringskod"
     ],
@@ -32,10 +32,10 @@
         "fields": [
           "arDuFirmatecknare",
           "foretagsform",
-          "verksamhetsbeskrivningsval",
           "fakturaadressSammaSomForetaget",
           "fakturamottagare",
           "fakturareferens",
+          "verksamhetsbeskrivningsval",
           "verksamhetsbeskrivning"
         ]
       },
@@ -46,6 +46,7 @@
         "defaultOpen": true,
         "fields": [
           "angeMellanVilkaDatumDetTillfalliga",
+          "ovrigaUppgifterGallandeDatum",
           "klockslagForServeringen",
           "vilkaAlkoholdryckerSkaServeras",
           "meny",
@@ -56,7 +57,6 @@
           "sittplatserILokalen",
           "maximaltAntalPersonerILokalen",
           "finnsPolistillstand",
-          "ovrigaUppgifterGallandeDatum",
           "harDuKassaregister",
           "angeRegistreringskod"
         ]
@@ -67,10 +67,6 @@
     },
     "foretagsform": {
       "ui:widget": "RadiobuttonWidget"
-    },
-    "verksamhetsbeskrivningsval": {
-      "ui:widget": "RadiobuttonWidget",
-      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
     },
     "fakturaadressSammaSomForetaget": {
       "ui:widget": "RadiobuttonWidget",
@@ -115,6 +111,10 @@
       },
       "ui:description": "<p>Ange här om du vill att fakturan ska ha någon specifik märkning, exempelvis ett namn eller nummer.</p>"
     },
+    "verksamhetsbeskrivningsval": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
+    },
     "verksamhetsbeskrivning": {
       "ui:widget": "TexteditorWidget",
       "ui:options": {
@@ -144,6 +144,12 @@
           "gap": "gap-24"
         }
       ]
+    },
+    "ovrigaUppgifterGallandeDatum": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
     },
     "klockslagForServeringen": {
       "ui:order": [
@@ -256,9 +262,6 @@
           "efternamn",
           "personnummer"
         ],
-        "ui:options": {
-          "showObjectFieldset": true
-        },
         "fornamn": {
           "ui:widget": "TextWidget"
         },
@@ -295,12 +298,6 @@
     },
     "finnsPolistillstand": {
       "ui:widget": "RadiobuttonWidget"
-    },
-    "ovrigaUppgifterGallandeDatum": {
-      "ui:widget": "TexteditorWidget",
-      "ui:options": {
-        "className": "w-full min-h-[14rem]"
-      }
     },
     "harDuKassaregister": {
       "ui:widget": "RadiobuttonWidget"
