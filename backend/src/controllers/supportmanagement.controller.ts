@@ -95,14 +95,19 @@ export class SupportManagementController {
   @OpenAPI({ summary: 'Update errand' })
   @UseBefore(authMiddleware)
   @ResponseSchema(ErrandDTO)
-  async updateErrand(@Req() req: RequestWithUser, @Param('id') id: string, @Body() errand: Partial<Errand>): Promise<Partial<Errand>> {
+  async updateErrand(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    // process is set upstream but missing from the generated contract
+    @Body() errand: Partial<Errand> & { process?: unknown },
+  ): Promise<Partial<Errand>> {
     if (!id.trim()) throw new HttpException(400, 'Errand id is required when updating an errand');
 
     await assertErrandOwnedByUser(this.apiService, this.apiBase, id, req);
 
     const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands/${id}`;
     const baseURL = apiURL(this.apiBase);
-    // Strip read-only fields that the API does not accept on update
+    // Read-only upstream: sending them, even empty, fails validation with "must be null"
     const {
       id: _id,
       errandNumber: _errandNumber,
@@ -111,13 +116,20 @@ export class SupportManagementController {
       touched: _touched,
       reporterUserId: _reporterUserId,
       activeNotifications: _activeNotifications,
+      actions: _actions,
+      phases: _phases,
+      process: _process,
+      version: _version,
+      classification,
       ...errandData
     } = errand;
 
     // Translate both ways, as on create: the DTO has emails/phoneNumbers/personNumber,
-    // upstream Stakeholder has only contactChannels.
+    // upstream Stakeholder has only contactChannels. An empty classification fails upstream's
+    // not-blank check, so it is only sent when set.
     const errandInformation = {
       ...errandData,
+      ...(classification?.category || classification?.type ? { classification } : {}),
       stakeholders: errandData.stakeholders?.map(mapStakeholderDTOToStakeholder),
     };
 
