@@ -1,4 +1,5 @@
 'use client';
+import { SectionStatus, SectionStatusLabel } from '@components/disclosure/section-status-label.component';
 import { ErrandContentLock } from '@components/errand-content-lock/errand-content-lock.component';
 import { ROW_INDEX_PLACEHOLDER } from '@components/json/utils/row-index-placeholder';
 import { visibleFields as fieldsVisibleIn } from '@components/json/utils/schema-conditions';
@@ -80,12 +81,6 @@ function sectionHasErrors(fieldNames: string[], errorSchema: ErrorSchema | undef
 }
 
 /**
- * Sections only get a status once validation is running. Before that the form cannot tell an
- * empty field that is an error from one the user has simply not reached yet.
- */
-type SectionStatus = 'error' | 'complete';
-
-/**
  * Section component with completion checkbox
  */
 interface SectionDisclosureProps {
@@ -117,17 +112,7 @@ function SectionDisclosure({ section, status, children }: SectionDisclosureProps
         {SectionIcon && <Disclosure.Icon icon={React.createElement(SectionIcon)} />}
         {/* min-w-0 lets the heading shrink instead of pushing the status label off the edge */}
         <Disclosure.Title className="min-w-0">{section.title}</Disclosure.Title>
-        {status && (
-          <Label
-            inverted
-            rounded
-            color={status === 'error' ? 'error' : 'gronsta'}
-            className="sk-disclosure-label whitespace-nowrap"
-            data-cy={`section-status-${section.id}`}
-          >
-            {t(status === 'error' ? 'section_incomplete' : 'section_complete')}
-          </Label>
-        )}
+        {status && <SectionStatusLabel status={status} data-cy={`section-status-${section.id}`} />}
         {doneMark && status !== 'complete' && (
           <Label inverted rounded color="gronsta" className="sk-disclosure-label whitespace-nowrap">
             {t('section_complete')}
