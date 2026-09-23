@@ -88,6 +88,13 @@ test.describe('Register new errand page', () => {
     await expect(page.getByTestId('register-errand')).toBeEnabled();
   });
 
+  test('Is what the application root serves', async ({ appUrl, page }) => {
+    await page.goto(appUrl(''));
+
+    await expect(page).toHaveURL(/\/arende\/registrera$/);
+    await expect(page.getByTestId('register-errand')).toBeEnabled();
+  });
+
   test('Offers the categories the metadata allows, and keeps the type behind that choice', async ({ page }) => {
     const section = aboutErrandSection(page);
 

@@ -6,6 +6,7 @@ import { capitalize } from 'lodash';
 import { Menu } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { REGISTER_ERRAND_PATH } from 'src/constants/routes';
 import { useOverviewErrands } from 'src/hooks/use-overview-errands';
 import { useFilterStore } from 'src/stores/filter-store';
 
@@ -45,7 +46,7 @@ export const MobileOverviewLayout: React.FC = () => {
         }
       >
         <div className="px-24 py-12">
-          <LinkButton href="/arende/registrera" color="vattjom" variant="primary" className="w-full">
+          <LinkButton href={REGISTER_ERRAND_PATH} color="vattjom" variant="primary" className="w-full">
             {t('filtering:new_errand_mobile')}
           </LinkButton>
         </div>

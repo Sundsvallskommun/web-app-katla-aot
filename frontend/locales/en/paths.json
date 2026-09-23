@@ -1,4 +1,8 @@
 {
+  "/arende/registrera": {
+    "title": "New application",
+    "description": "Apply for a serving permit or report sales of tobacco and nicotine products."
+  },
   "/login": {
     "title": "Login page",
     "description": "Description of the login page"

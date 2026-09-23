@@ -15,6 +15,7 @@ import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
+import { REGISTER_ERRAND_PATH } from 'src/constants/routes';
 import { useWizardStore } from 'src/stores/wizard-store';
 
 interface BaseErrandLayoutProps {
@@ -50,7 +51,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
       {registerNewErrand ?
         <Logo variant="symbol" className="h-32 md:h-40" />
       : <a
-          href={`${process.env.NEXT_PUBLIC_BASE_PATH}/oversikt`}
+          href={`${process.env.NEXT_PUBLIC_BASE_PATH}${REGISTER_ERRAND_PATH}`}
           title={t('layout:controls.go_to_start', { app: process.env.NEXT_PUBLIC_APP_NAME })}
         >
           <Logo variant="symbol" className="h-32 md:h-40" />
@@ -89,27 +90,25 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
                   />
                 </div>
 
-                <Divider orientation="vertical" className="mx-24" />
-                <LinkButton
-                  href="/arende/registrera"
-                  data-cy="register-new-errand-button"
-                  color="primary"
-                  variant="tertiary"
-                >
-                  {t('filtering:new_errand')}
-                </LinkButton>
+                {!registerNewErrand && (
+                  <>
+                    <Divider orientation="vertical" className="mx-24" />
+                    <LinkButton
+                      href={REGISTER_ERRAND_PATH}
+                      data-cy="register-new-errand-button"
+                      color="primary"
+                      variant="tertiary"
+                    >
+                      {t('filtering:new_errand')}
+                    </LinkButton>
+                  </>
+                )}
               </div>
             }
             mobileMenu={
-              // The language control sits outside the menu, not in it. Registration deliberately
-              // has no menu — it should not offer ways away from the form — but changing language
-              // must not require leaving the page.
               <div className="flex items-center gap-8">
                 <LanguageSwitchButton onBeforeSwitch={saveFormBeforeLanguageSwitch} />
                 {!registerNewErrand && (
-                  // Its own block, for the same reason as in LanguageSwitchButton: the panel is
-                  // placed from its static position, and the surrounding row is a flex container
-                  // that would otherwise centre it over the button.
                   <div className="relative">
                     <PopupMenu align="end">
                       <PopupMenu.Button iconButton aria-label={t('layout:controls.open_menu')}>
@@ -122,7 +121,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
                         <PopupMenu.Items>
                           <PopupMenu.Group>
                             <PopupMenu.Item>
-                              <Link href={`${process.env.NEXT_PUBLIC_BASE_PATH}/arende/registrera`}>
+                              <Link href={`${process.env.NEXT_PUBLIC_BASE_PATH}${REGISTER_ERRAND_PATH}`}>
                                 {t('filtering:new_errand')}
                               </Link>
                             </PopupMenu.Item>
