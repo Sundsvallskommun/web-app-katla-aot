@@ -42,6 +42,15 @@ yarn type-check             # tsc för src och tsconfig.test.json
 yarn generate:contracts     # Regenerate API data contracts from WSO2 swagger
 ```
 
+### Roten
+
+```bash
+yarn install                # Installerar husky-hooks (pre-commit, commit-msg, pre-push)
+yarn verify                 # type-check, lint:strict, format:check och test i båda paketen
+```
+
+Hooks: `pre-commit` stoppar `console.log` och möjliga personnummer/telefonnummer (kända testvärden i `.husky/pii-allowlist.txt`) och kör lint-staged; `commit-msg` kör commitlint (Conventional Commits); `pre-push` kör strikt lint och formatkontroll.
+
 ### Köra enskilda tester
 
 ```bash

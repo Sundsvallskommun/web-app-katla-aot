@@ -113,6 +113,18 @@ yarn format            # prettier --write
 yarn format:check      # som CI: verifiera formatering
 ```
 
+## Git-hooks och verifiering
+
+Rotens `package.json` installerar [husky](https://typicode.github.io/husky/)-hooks. Kör `yarn install` i roten en gång (i samma miljö som du committar från).
+
+- **pre-commit**: stoppar `console.log`, möjliga personnummer och telefonnummer i stage:ade ändringar och kör prettier + eslint på stage:ade filer (`.lintstagedrc.mjs`). Kända testvärden läggs i `.husky/pii-allowlist.txt`.
+- **commit-msg**: commit-meddelanden ska följa [Conventional Commits](https://www.conventionalcommits.org/) (`commitlint.config.js`).
+- **pre-push**: strikt lint och formatkontroll för båda paketen.
+
+```
+yarn verify            # typkontroll, strikt lint, formatkontroll och enhetstester för båda paketen
+```
+
 ## CI
 
 GitHub Actions-flödet i `.github/workflows/ci.yml` kör strikt lint, formatkontroll, type-check och enhetstester för både frontend och backend samt Playwright e2e-tester vid pull requests och push till `main`/`develop`.
