@@ -1,6 +1,7 @@
 'use client';
 
 import { ErrandDisclosure } from '@components/disclosure/errand-information-disclosure.component';
+import { SectionStatus } from '@components/disclosure/section-status-label.component';
 import { useFormSchema } from '@components/json/hooks/use-form-schema';
 import { schemaNamesForErrand } from '@components/json/utils/schema-utils';
 import { useIsContentLocked } from '@contexts/errand-content-lock-context';
@@ -16,12 +17,13 @@ import {
 import { Button, FileUpload, PopupMenu, UploadFile, useSnackbar } from '@sk-web-gui/react';
 import {
   answersOfErrand,
+  AttachmentType,
   attachmentTypesOfSchema,
   missingRequiredAttachments,
   requiredAttachmentTypes,
 } from '@utils/errand-attachments';
 import { Check, Circle, Eye, FileText, Paperclip, Trash } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useMetadataStore } from 'src/stores/metadata-store';
@@ -43,12 +45,48 @@ const toUploadFile = (attachment: ErrandFormAttachment, index: number): UploadFi
   meta: { ...fileNameParts(attachment.fileName), category: attachment.category, created: attachment.created },
 });
 
+interface AttachmentRequirements {
+  loading: boolean;
+  error: string | null;
+  attachmentTypes: AttachmentType[];
+  requiredTypes: AttachmentType[];
+  missingTypes: AttachmentType[];
+}
+
 /**
  * The errand type's schema declares which bilagor it asks for — the same schema the
  * Ärendeuppgifter form renders from. A type that declares none, or whose schema will not load,
  * still takes bilagor; it just names none of them as required.
  */
-const AttachmentsForSchema: React.FC<{ schemaName: string }> = ({ schemaName }) => {
+const useAttachmentRequirements = (schemaName: string): AttachmentRequirements => {
+  const { watch } = useFormContext<ErrandFormDTO>();
+  const values: ErrandFormDTO = {
+    attachments: watch('attachments'),
+    labels: watch('labels'),
+    errandFormData: watch('errandFormData'),
+  };
+
+  const { schema, loading, error } = useFormSchema(schemaName, { kind: 'new' });
+
+  const attachmentTypes = attachmentTypesOfSchema(schema);
+  const answers = answersOfErrand(values, schemaName);
+
+  return {
+    loading,
+    error,
+    attachmentTypes,
+    requiredTypes: requiredAttachmentTypes(attachmentTypes, answers),
+    missingTypes: missingRequiredAttachments(attachmentTypes, answers, values.attachments),
+  };
+};
+
+/** Fails closed like validateErrandAttachments: an unread schema leaves the requirement unknown. */
+const attachmentsStatus = (requirements: AttachmentRequirements): SectionStatus | undefined => {
+  if (requirements.loading) return undefined;
+  return requirements.error || requirements.missingTypes.length > 0 ? 'error' : 'complete';
+};
+
+const AttachmentsForSchema: React.FC<{ requirements: AttachmentRequirements }> = ({ requirements }) => {
   const { t } = useTranslation();
   const toastMessage = useSnackbar();
   const isLocked = useIsContentLocked();
@@ -59,18 +97,10 @@ const AttachmentsForSchema: React.FC<{ schemaName: string }> = ({ schemaName }) 
 
   const errandId = watch('id');
   const attachments = watch('attachments');
-  const labels = watch('labels');
-  const errandFormData = watch('errandFormData');
 
   const [loadError, setLoadError] = useState(false);
 
-  const { schema, loading, error } = useFormSchema(schemaName, { kind: 'new' });
-
-  const values: ErrandFormDTO = { attachments, labels, errandFormData };
-  const attachmentTypes = attachmentTypesOfSchema(schema);
-  const answers = answersOfErrand(values, schemaName);
-  const requiredTypes = requiredAttachmentTypes(attachmentTypes, answers);
-  const missingTypes = missingRequiredAttachments(attachmentTypes, answers, attachments);
+  const { loading, error, attachmentTypes, requiredTypes, missingTypes } = requirements;
 
   // Empty entry first, so an untagged file does not read as the first bilagetyp.
   const categories = {
@@ -299,25 +329,58 @@ const AttachmentsForSchema: React.FC<{ schemaName: string }> = ({ schemaName }) 
   );
 };
 
-export const ErrandAttachmentsContent: React.FC = () => {
-  const { t } = useTranslation();
+const useSchemaName = (): string | undefined => {
   const { watch } = useFormContext<ErrandFormDTO>();
   const namespace = useMetadataStore((state) => state.metadata?.namespace);
-  const [schemaName] = schemaNamesForErrand(watch('labels'), namespace);
-
-  if (!schemaName) {
-    return <span className="text-dark-secondary">{t('errand-information:attachments.no_errand_type')}</span>;
-  }
-
-  return <AttachmentsForSchema schemaName={schemaName} />;
+  return schemaNamesForErrand(watch('labels'), namespace)[0];
 };
 
-export const ErrandAttachments: React.FC = () => {
+const NoErrandType: React.FC = () => {
+  const { t } = useTranslation();
+  return <span className="text-dark-secondary">{t('errand-information:attachments.no_errand_type')}</span>;
+};
+
+const SchemaAttachments: React.FC<{ schemaName: string }> = ({ schemaName }) => (
+  <AttachmentsForSchema requirements={useAttachmentRequirements(schemaName)} />
+);
+
+export const ErrandAttachmentsContent: React.FC = () => {
+  const schemaName = useSchemaName();
+  return schemaName ? <SchemaAttachments schemaName={schemaName} /> : <NoErrandType />;
+};
+
+const AttachmentsDisclosure: React.FC<{ status?: SectionStatus; children: ReactNode }> = ({ status, children }) => {
   const { t } = useTranslation();
 
   return (
-    <ErrandDisclosure header={t('errand-information:attachments.title')} icon={<Paperclip />}>
-      <ErrandAttachmentsContent />
+    <ErrandDisclosure
+      header={t('errand-information:attachments.title')}
+      icon={<Paperclip />}
+      status={status}
+      statusDataCy="section-status-attachments"
+    >
+      {children}
     </ErrandDisclosure>
   );
+};
+
+const SchemaAttachmentsDisclosure: React.FC<{ schemaName: string }> = ({ schemaName }) => {
+  const { showValidation } = useFormValidation();
+  const requirements = useAttachmentRequirements(schemaName);
+
+  return (
+    <AttachmentsDisclosure status={showValidation ? attachmentsStatus(requirements) : undefined}>
+      <AttachmentsForSchema requirements={requirements} />
+    </AttachmentsDisclosure>
+  );
+};
+
+export const ErrandAttachments: React.FC = () => {
+  const schemaName = useSchemaName();
+
+  return schemaName ?
+      <SchemaAttachmentsDisclosure schemaName={schemaName} />
+    : <AttachmentsDisclosure>
+        <NoErrandType />
+      </AttachmentsDisclosure>;
 };
