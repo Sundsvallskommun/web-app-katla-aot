@@ -54,6 +54,9 @@ test.describe('Overview page', () => {
     await expect(headerCells.nth(2).locator('span').first()).toHaveText('Ärendetyp');
     await expect(headerCells.nth(3).locator('span').first()).toHaveText('Rapporterat');
 
+    const firstRowCells = table.locator('.sk-table-tbody-tr').first().locator('td');
+    await expect(firstRowCells.nth(2)).toHaveText('Stadigvarande servering');
+
     await expect(table.locator('.sk-table-tbody-tr')).toHaveCount(mockErrands?.content?.length ?? 0);
   });
 

@@ -1,7 +1,8 @@
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
+import { getSelectedLabels } from '@utils/label-tree';
 
-/**
- * The errand type shown in the overview. It comes from the classification, which is only set
- * once the errand type selection exists.
- */
-export const getTypeDisplayName = (errand: ErrandDTO) => errand.classification?.type ?? '—';
+/** Most specific label, same text as the detail view; classification code for errands without labels. */
+export const getTypeDisplayName = (errand: ErrandDTO) => {
+  const selected = getSelectedLabels(errand.labels);
+  return (selected.SUBTYPE ?? selected.TYPE)?.displayName ?? errand.classification?.type ?? '—';
+};
