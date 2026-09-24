@@ -77,6 +77,34 @@ describe('errand update ownership', () => {
     expect(patch).toHaveBeenCalledTimes(1);
   });
 
+  it('strips fields upstream rejects on update', async () => {
+    upstreamReturnsReporter(mockCitizenPartyId);
+
+    await new SupportManagementController().updateErrand(requestAs(mockCitizenPartyId), mockErrandId, {
+      title: 'ny titel',
+      actions: [],
+      phases: [],
+      process: { id: 'p' },
+      version: 0,
+      classification: {},
+    });
+
+    const sent = (patch.mock.calls[0]?.[0] as { data: Record<string, unknown> }).data;
+    expect(sent).toMatchObject({ title: 'ny titel' });
+    for (const field of ['actions', 'phases', 'process', 'version', 'classification']) {
+      expect(sent).not.toHaveProperty(field);
+    }
+  });
+
+  it('keeps a classification that is set', async () => {
+    upstreamReturnsReporter(mockCitizenPartyId);
+    const classification = { category: 'ALCOHOL', type: 'SERVING_PERMIT_APPLICATION' };
+
+    await new SupportManagementController().updateErrand(requestAs(mockCitizenPartyId), mockErrandId, { classification });
+
+    expect((patch.mock.calls[0]?.[0] as { data: Record<string, unknown> }).data).toMatchObject({ classification });
+  });
+
   it('checks ownership before spending a request on the update', async () => {
     upstreamReturnsReporter(mockCitizenPartyId);
 
