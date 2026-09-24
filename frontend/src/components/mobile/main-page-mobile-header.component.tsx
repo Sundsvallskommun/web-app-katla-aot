@@ -5,6 +5,7 @@ import { Logo } from '@sk-web-gui/react';
 import NextLink from 'next/link';
 import { ReactElement, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { REGISTER_ERRAND_PATH } from 'src/constants/routes';
 
 interface MainPageMobileHeaderProps {
   // Override the left-side icon.
@@ -17,7 +18,10 @@ interface MainPageMobileHeaderProps {
 export const MainPageMobileHeader: React.FC<MainPageMobileHeaderProps> = ({ icon, actions, children }) => {
   const { t } = useTranslation();
   const headerIcon = icon ?? (
-    <NextLink href="/oversikt" title={t('layout:controls.go_to_start', { app: process.env.NEXT_PUBLIC_APP_NAME })}>
+    <NextLink
+      href={REGISTER_ERRAND_PATH}
+      title={t('layout:controls.go_to_start', { app: process.env.NEXT_PUBLIC_APP_NAME })}
+    >
       <Logo variant="symbol" className="h-32" />
     </NextLink>
   );

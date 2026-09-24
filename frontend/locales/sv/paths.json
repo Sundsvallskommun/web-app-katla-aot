@@ -1,4 +1,8 @@
 {
+  "/arende/registrera": {
+    "title": "Ny ansökan",
+    "description": "Ansök om serveringstillstånd eller anmäl försäljning av tobak och nikotinprodukter."
+  },
   "/login": {
     "title": "Inloggningssida",
     "description": "Beskrivning utav inloggningssidan"

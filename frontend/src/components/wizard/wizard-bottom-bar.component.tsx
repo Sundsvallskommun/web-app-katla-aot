@@ -10,6 +10,7 @@ import { ErrandFormDTO } from '@interfaces/errand-form';
 import { CenterDiv } from '@layouts/center-div.component';
 import { createErrand, updateErrand } from '@services/errand-service/errand-service';
 import { Button, Dialog, useSnackbar } from '@sk-web-gui/react';
+import { appURL } from '@utils/app-url';
 import { validateErrandAttachments } from '@utils/errand-attachments';
 import { prepareErrandForApi } from '@utils/prepare-errand';
 import { getPrimaryStakeholder } from '@utils/stakeholder';
@@ -19,6 +20,7 @@ import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
+import { REGISTER_ERRAND_PATH } from 'src/constants/routes';
 import { useActiveWizardSteps } from 'src/hooks/use-active-wizard-steps';
 import { useAttachmentUpload } from 'src/hooks/use-attachment-upload';
 import { useMetadataStore } from 'src/stores/metadata-store';
@@ -212,7 +214,7 @@ export const WizardBottomBar: React.FC = () => {
           setIsCancelOpen(false);
         }}
         onConfirm={() => {
-          router.push('/oversikt');
+          window.location.assign(appURL(`${process.env.NEXT_PUBLIC_BASE_PATH}${REGISTER_ERRAND_PATH}`));
         }}
       />
 
