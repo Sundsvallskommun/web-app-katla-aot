@@ -209,6 +209,7 @@ describe('JSON schema adapter contracts', () => {
       'aot_alcohol_serving_permit_application_temporary_serving_public',
       'aot_alcohol_serving_permit_application_temporary_serving_private',
       'aot_alcohol_folkol_serving_notification',
+      'aot_alcohol_folkol_sales_notification',
       'aot_alcohol_serving_permit_application_farm_sales',
       'aot_alcohol_serving_permit_application_permanent_catering',
       'aot_alcohol_serving_permit_application_tasting',

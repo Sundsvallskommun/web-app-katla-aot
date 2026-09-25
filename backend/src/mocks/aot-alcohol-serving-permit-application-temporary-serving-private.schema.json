@@ -164,6 +164,7 @@
       },
       "vilkaAlkoholdryckerSkaServeras": {
         "type": "array",
+        "minItems": 1,
         "uniqueItems": true,
         "items": {
           "type": "string",
@@ -195,6 +196,7 @@
       },
       "gaster": {
         "type": "array",
+        "minItems": 1,
         "uniqueItems": true,
         "items": {
           "type": "string",
@@ -227,6 +229,9 @@
             "title": "Antal"
           }
         },
+        "required": [
+          "antal"
+        ],
         "title": "Beräknat antal gäster"
       },
       "hurHarGasternaBjuditsIn": {
@@ -261,11 +266,19 @@
             "title": "Telefonnummer"
           }
         },
+        "required": [
+          "serveringsstalletsNamn",
+          "gatuadress",
+          "postnummer",
+          "postort",
+          "telefonnummer"
+        ],
         "title": "Serveringsställe",
         "description": "Om ingen fast telefon finns, lämna mobilnummer till företrädare."
       },
       "serveringsansvarigPersonal": {
         "type": "array",
+        "minItems": 1,
         "items": {
           "type": "object",
           "properties": {
@@ -281,7 +294,12 @@
               "type": "string",
               "title": "Personnummer"
             }
-          }
+          },
+          "required": [
+            "fornamn",
+            "efternamn",
+            "personnummer"
+          ]
         },
         "title": "Serveringsansvarig personal",
         "description": "Nedan anger du namn och personnummer till den person eller de personer som ska vara ansvariga för serveringen av alkohol. En person som är serveringsansvarig måste vara minst 20 år."
@@ -294,6 +312,9 @@
             "title": "Antal sittplatser i bordsavdelning/matsal"
           }
         },
+        "required": [
+          "antalSittplatserIBordsavdelningMatsa"
+        ],
         "title": "Sittplatser i lokalen"
       },
       "maximaltAntalPersonerILokalen": {
@@ -304,6 +325,9 @@
             "title": "Antal personer"
           }
         },
+        "required": [
+          "antalPersoner"
+        ],
         "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)"
       },
       "finnsPolistillstand": {
@@ -349,6 +373,24 @@
         "title": "Ange registreringskod"
       }
     },
+    "required": [
+      "arDuFirmatecknare",
+      "foretagsform",
+      "fakturaadressSammaSomForetaget",
+      "harDuKassaregister",
+      "vilkaAlkoholdryckerSkaServeras",
+      "serveringsansvarigPersonal",
+      "sittplatserILokalen",
+      "maximaltAntalPersonerILokalen",
+      "angeMellanVilkaDatumDetTillfalliga",
+      "klockslagForServeringen",
+      "beraknatAntalGaster",
+      "vadArDetForTypAvTillstallning",
+      "serveringsstalle",
+      "finnsPolistillstand",
+      "gaster",
+      "hurHarGasternaBjuditsIn"
+    ],
     "allOf": [
       {
         "if": {

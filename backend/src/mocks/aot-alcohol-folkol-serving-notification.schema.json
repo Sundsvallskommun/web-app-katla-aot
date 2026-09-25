@@ -173,6 +173,9 @@
             "title": "Namn"
           }
         },
+        "required": [
+          "namn"
+        ],
         "title": "Serveringsställets namn",
         "description": "Det namn som du skyltar med till kund."
       },
@@ -242,6 +245,9 @@
             "title": "Antal sittplatser på eventuell uteservering"
           }
         },
+        "required": [
+          "antalSittplatserInomhus"
+        ],
         "title": "Sittplatser i lokalen"
       },
       "maximaltAntalPersonerILokalen": {
@@ -252,6 +258,9 @@
             "title": "Antal personer"
           }
         },
+        "required": [
+          "antalPersoner"
+        ],
         "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)"
       },
       "harDuKassaregister": {
@@ -279,6 +288,18 @@
         "title": "Ange registreringskod"
       }
     },
+    "required": [
+      "arDuFirmatecknare",
+      "foretagsform",
+      "fakturaadressSammaSomForetaget",
+      "harDuKassaregister",
+      "serveringsstalletsNamn",
+      "besoksadressSammaSomForetaget",
+      "sittplatserILokalen",
+      "maximaltAntalPersonerILokalen",
+      "kommerNiAttServeraMat",
+      "egenkontrollprogramFolkol"
+    ],
     "allOf": [
       {
         "if": {

@@ -206,6 +206,7 @@
       },
       "verksamhetensInriktning": {
         "type": "array",
+        "minItems": 1,
         "uniqueItems": true,
         "items": {
           "type": "string",
@@ -446,6 +447,7 @@
       },
       "vilkaAlkoholdryckerSkaServeras": {
         "type": "array",
+        "minItems": 1,
         "uniqueItems": true,
         "items": {
           "type": "string",
@@ -492,6 +494,7 @@
       },
       "finansiering": {
         "type": "array",
+        "minItems": 1,
         "uniqueItems": true,
         "items": {
           "type": "string",
@@ -623,6 +626,9 @@
             "title": "Namn"
           }
         },
+        "required": [
+          "namn"
+        ],
         "title": "Serveringsställets namn"
       },
       "besoksadressSammaSomForetaget": {
@@ -693,7 +699,12 @@
               "type": "string",
               "title": "Personnummer"
             }
-          }
+          },
+          "required": [
+            "fornamn",
+            "efternamn",
+            "personnummer"
+          ]
         },
         "title": "Serveringsansvarig personal",
         "description": "Under öppettider måste det alltid finnas en serveringsansvarig person på plats i verksamheten. Om inte någon av företagets företrädare är på plats måste en annan utsedd och anmäld serveringsansvarig vara på plats. Nedan anger du namn och personnummer till den person eller de personer som är ansvariga för servering av alkohol. En person som är serveringsansvarig måste vara minst 20 år.\n\nHar du inte anställt personal ännu kan du fylla i serveringsansvarig personal vid ett senare tillfälle."
@@ -710,6 +721,9 @@
             "title": "Antal sittplatser på eventuell uteservering"
           }
         },
+        "required": [
+          "antalSittplatserInomhus"
+        ],
         "title": "Sittplatser i lokalen"
       },
       "maximaltAntalPersonerILokalen": {
@@ -720,6 +734,9 @@
             "title": "Antal personer"
           }
         },
+        "required": [
+          "antalPersoner"
+        ],
         "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)"
       },
       "harDuKassaregister": {
@@ -747,6 +764,21 @@
         "title": "Ange registreringskod"
       }
     },
+    "required": [
+      "arDuFirmatecknare",
+      "foretagsform",
+      "fakturaadressSammaSomForetaget",
+      "harDuKassaregister",
+      "kunskapOmAlkohollagen",
+      "vilkaAlkoholdryckerSkaServeras",
+      "finansiering",
+      "verksamhetensInriktning",
+      "serveringTillAllmanhetenEllerSlutetSallskap",
+      "serveringsstalletsNamn",
+      "besoksadressSammaSomForetaget",
+      "sittplatserILokalen",
+      "maximaltAntalPersonerILokalen"
+    ],
     "allOf": [
       {
         "if": {

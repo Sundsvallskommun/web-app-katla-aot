@@ -1,6 +1,8 @@
 import { MUNICIPALITY_ID } from '@/config';
 import { JsonSchema } from '@/data-contracts/jsonschema/data-contracts';
 
+import folkolSalesNotification from './aot-alcohol-folkol-sales-notification.schema.json';
+import folkolSalesNotificationUi from './aot-alcohol-folkol-sales-notification.ui-schema.json';
 import folkolServingNotification from './aot-alcohol-folkol-serving-notification.schema.json';
 import folkolServingNotificationUi from './aot-alcohol-folkol-serving-notification.ui-schema.json';
 import farmSales from './aot-alcohol-serving-permit-application-farm-sales.schema.json';
@@ -62,6 +64,7 @@ const pairs: [StoredSchema, StoredUiSchema][] = [
   [temporaryServingPublic, temporaryServingPublicUi],
   [temporaryServingPrivate, temporaryServingPrivateUi],
   [folkolServingNotification, folkolServingNotificationUi],
+  [folkolSalesNotification, folkolSalesNotificationUi],
   [farmSales, farmSalesUi],
   [permanentCatering, permanentCateringUi],
   [tasting, tastingUi],
