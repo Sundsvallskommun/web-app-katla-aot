@@ -3,6 +3,8 @@ import { JsonSchema } from '@/data-contracts/jsonschema/data-contracts';
 
 import folkolSalesNotification from './aot-alcohol-folkol-sales-notification.schema.json';
 import folkolSalesNotificationUi from './aot-alcohol-folkol-sales-notification.ui-schema.json';
+import folkolServingNotification from './aot-alcohol-folkol-serving-notification.schema.json';
+import folkolServingNotificationUi from './aot-alcohol-folkol-serving-notification.ui-schema.json';
 import farmSales from './aot-alcohol-serving-permit-application-farm-sales.schema.json';
 import farmSalesUi from './aot-alcohol-serving-permit-application-farm-sales.ui-schema.json';
 import permanentCatering from './aot-alcohol-serving-permit-application-permanent-catering.schema.json';
@@ -61,7 +63,7 @@ const pairs: [StoredSchema, StoredUiSchema][] = [
   [permanentServing, permanentServingUi],
   [temporaryServingPublic, temporaryServingPublicUi],
   [temporaryServingPrivate, temporaryServingPrivateUi],
-  [folkolSalesNotification, folkolSalesNotificationUi],
+  [folkolServingNotification, folkolServingNotificationUi],
   [folkolSalesNotification, folkolSalesNotificationUi],
   [farmSales, farmSalesUi],
   [permanentCatering, permanentCateringUi],
