@@ -10,12 +10,13 @@ import {
   mockTypeFolkol,
   mockTypeServering,
 } from '../fixtures/mockMetadata';
-import { mockManualEditStakeholder, mockStakeholder } from '../fixtures/mockStakeholder';
+import { mockManualEditStakeholder, mockSelfStakeholder, mockStakeholder } from '../fixtures/mockStakeholder';
 import { aboutErrandSection, selectCategorization } from '../utils/categorization';
 import { MOCK_COUNTRY_CODE_PHONE_NUMBER, MOCK_EMAIL, MOCK_HYPHEN_PERSON_NUMBER } from '../utils/constants';
 import { errandOwnerSection, selectErrandOwner } from '../utils/errand-owner';
 import { emptyRoute, jsonRoute } from '../utils/routes';
 import {
+  addSelfAsStakeholder,
   addStakeholder,
   disclosureByTitle,
   manuallyAddStakeholder,
@@ -73,6 +74,7 @@ const registerErrandAndExpectDraft = async (page: Page, expectedStakeholderCount
   expect(body.jsonParameters).toEqual([]);
   expect(body.stakeholders?.length).toBe(expectedStakeholderCount);
   expect(body.labels).toEqual([mockCategoryAlkohol, mockTypeServering, mockSubTypeStadigvarande].map(asErrandLabel));
+  return body;
 };
 
 test.describe('Register new errand page', () => {
@@ -318,7 +320,40 @@ test.describe('Register new errand page', () => {
 
     await selectCategorization(page);
     await selectErrandOwner(page);
-    await registerErrandAndExpectDraft(page, 2);
+    const body = await registerErrandAndExpectDraft(page, 2);
+
+    expect(body.stakeholders).toContainEqual(
+      expect.objectContaining({ role: 'CONTACT', externalIdType: 'PRIVATE', externalId: mockStakeholder.externalId })
+    );
+  });
+
+  test('Adds the logged in citizen as a stakeholder and registers the errand', async ({ page }) => {
+    const ovrigaParter = disclosureByTitle(page, 'Övriga parter');
+    await addSelfAsStakeholder(page, ovrigaParter);
+
+    const card = ovrigaParter.getByTestId('stakeholder-card');
+    await expect(card).toHaveCount(1);
+    await expect(card.getByTestId('stakeholder-role')).toHaveText('Kontaktperson');
+    await expect(card.getByTestId('stakeholder-name')).toContainText('Förnamn Efternamn');
+    await expect(card.getByTestId('stakeholder-personNumber')).toContainText(MOCK_HYPHEN_PERSON_NUMBER);
+    await expect(card.getByTestId('stakeholder-email')).toHaveText('E-postadress saknas');
+    await expect(card.getByTestId('edit-card-button')).toBeVisible();
+    await expect(ovrigaParter.getByTestId('add-manual-person-button')).toBeVisible();
+
+    await selectCategorization(page);
+    await selectErrandOwner(page);
+    const body = await registerErrandAndExpectDraft(page, 2);
+
+    expect(body.stakeholders).toContainEqual(
+      expect.objectContaining({
+        role: 'CONTACT',
+        externalIdType: 'PRIVATE',
+        externalId: mockSelfStakeholder.externalId,
+        firstName: 'Förnamn',
+        lastName: 'Efternamn',
+        personNumber: MOCK_HYPHEN_PERSON_NUMBER,
+      })
+    );
   });
 
   test('Preserves entered data and stays on the form when registration fails', async ({ page }) => {
@@ -367,7 +402,11 @@ test.describe('Register new errand page', () => {
 
     await selectCategorization(page);
     await selectErrandOwner(page);
-    await registerErrandAndExpectDraft(page, 2);
+    const body = await registerErrandAndExpectDraft(page, 2);
+
+    expect(body.stakeholders).toContainEqual(
+      expect.objectContaining({ role: 'CONTACT', externalIdType: 'PRIVATE', firstName: 'Test', lastName: 'Testsson' })
+    );
   });
 
   test('Manually edits and removes a stakeholder', async ({ page }) => {
