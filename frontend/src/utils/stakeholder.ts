@@ -7,6 +7,14 @@ export const PRIMARY_STAKEHOLDER_ROLE = 'PRIMARY';
 
 /** SupportManagement's externalIdType for an organisation, as opposed to a private person. */
 export const ORGANIZATION_EXTERNAL_ID_TYPE = 'COMPANY';
+/** SupportManagement's externalIdType for a private person. */
+export const PERSON_EXTERNAL_ID_TYPE = 'PRIVATE';
+
+/** Every non-owner stakeholder this app files is a private person, however they were added. */
+export const asPersonStakeholder = (stakeholder: StakeholderDTO): StakeholderDTO => ({
+  ...stakeholder,
+  externalIdType: PERSON_EXTERNAL_ID_TYPE,
+});
 
 export const isOrganizationStakeholder = (stakeholder: StakeholderDTO): boolean =>
   stakeholder.externalIdType === ORGANIZATION_EXTERNAL_ID_TYPE;
@@ -39,7 +47,7 @@ export const withPrimaryStakeholder = (
 ): StakeholderDTO[] => [...withoutPrimaryStakeholder(stakeholders), organizationAsPrimaryStakeholder(organization)];
 
 export const emptyStakeholder: StakeholderDTO = {
-  externalIdType: 'PERSON',
+  externalIdType: PERSON_EXTERNAL_ID_TYPE,
   externalId: '',
   personNumber: '',
   firstName: '',

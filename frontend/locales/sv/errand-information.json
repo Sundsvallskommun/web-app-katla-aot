@@ -45,6 +45,8 @@
     "person_role": "Personens roll",
     "add_person": "Lägg till person",
     "add_manually": "Lägg till manuellt",
+    "add_self": "Lägg till mig själv",
+    "self_lookup_failed": "Dina uppgifter kunde inte hämtas. Försök igen eller lägg till dig manuellt.",
     "edit_details": "Redigera uppgifter",
     "remove": "Ta bort",
     "modal": {
