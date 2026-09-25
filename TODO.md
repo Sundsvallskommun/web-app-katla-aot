@@ -42,6 +42,7 @@
 
 - Tillsyn ska hanteras lite annorlunda. Det får en egen kategori INSPECTION med under-TYPEs Tillsyn/INSPECTION och Åtgärdsärende/MEASURES. Typen av tillsyn kan sedan specificeras med fria etiketter (under rot TAG_ROOT t ex), såsom "Inre tillsyn", "Yttre tillsyn", "Alkoholtillsyn", "Tobakstillsyn". Varje INSPECTION_OR_MEASURE/MEASURE-ärende kan ha en eller flera av dessa etiketter. Så dessa fria etiketter ska finnas valbara för ärendetyp INSPECTION_OR_MEASURE/MEASURE, och åtminstone "Alkoholtillsyn" och "Tobakstillsynd" ska innebära att motsvarande schema/formulär visas. Var detta ska visas är dock en senare fråga som vi måste återvända till.
 - Tillsynsärenden ska inte kunna initieras ifrån Katla. Ifrån handläggaregränssnittet i Draken, som ska använda samma labels-metadata etc, ska det däremot gå.
+  - Löst via label-attributet `internalOnly=true` (DRAKEN-4906): märkta etiketter med underträd filtreras bort ur `/metadata` och avvisas vid skapa/uppdatera. Attributet måste sättas i varje miljö.
 
 - For a user with no organization, the errand list should be empty, not show "Ärendena kunde inte hämtas. Försök igen senare."
 - A logged in citizen can only register new errand or update draft errands they have previously registered but that are not yet handled by admins.

@@ -3,15 +3,16 @@ import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 import { MUNICIPALITY_ID, NAMESPACE } from '@/config';
 import { getApiBase } from '@/config/api-config';
-import { Errand, MetadataResponse, PageErrand } from '@/data-contracts/supportmanagement/data-contracts';
+import { Errand, Label, MetadataResponse, PageErrand } from '@/data-contracts/supportmanagement/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
 import { ErrandCountDTO, ErrandDTO, ErrandsQueryDTO, PageErrandDTO } from '@/responses/supportmanagement.response';
 import { MetadataResponseDTO } from '@/responses/supportmanagement-metadata.response';
 import ApiService from '@/services/api.service';
-import { withCategorizationSubtree } from '@/utils/categorization-root';
+import { selectCategorizationSubtree, withCategorizationSubtree } from '@/utils/categorization-root';
 import { assertErrandOwnedByUser, belongsToOrganizations, requireOrganizationPartyIds } from '@/utils/errand-access';
+import { assertLabelsOffered, labelsChanged } from '@/utils/internal-labels';
 import { mapStakeholderDTOToStakeholder, mapStakeholderToStakeholderDTO } from '@/utils/stakeholder-mapping';
 import { apiURL } from '@/utils/util';
 
@@ -71,6 +72,8 @@ export class SupportManagementController {
     // send them. id and errandNumber are assigned upstream and must not exist on a new errand.
     const { id: _id, errandNumber: _errandNumber, ...newErrand } = errand;
 
+    if (newErrand.labels?.length) assertLabelsOffered(newErrand.labels, await this.fetchOfferedLabels(req));
+
     const errandInformation = {
       ...(newErrand as Errand),
       reporterUserId: req.user.partyId,
@@ -103,7 +106,10 @@ export class SupportManagementController {
   ): Promise<Partial<Errand>> {
     if (!id.trim()) throw new HttpException(400, 'Errand id is required when updating an errand');
 
-    await assertErrandOwnedByUser(this.apiService, this.apiBase, id, req);
+    const storedErrand = await assertErrandOwnedByUser(this.apiService, this.apiBase, id, req);
+    if (errand.labels?.length && labelsChanged(errand.labels, storedErrand.labels)) {
+      assertLabelsOffered(errand.labels, await this.fetchOfferedLabels(req));
+    }
 
     const url = `${MUNICIPALITY_ID}/${NAMESPACE}/errands/${id}`;
     const baseURL = apiURL(this.apiBase);
@@ -246,10 +252,18 @@ export class SupportManagementController {
   @UseBefore(authMiddleware)
   @ResponseSchema(MetadataResponseDTO)
   async getMetadata(@Req() req: RequestWithUser): Promise<MetadataResponseDTO> {
+    return { ...withCategorizationSubtree(await this.fetchMetadata(req)), namespace: NAMESPACE };
+  }
+
+  private async fetchMetadata(req: RequestWithUser): Promise<MetadataResponse> {
     const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/metadata`;
     const res = await this.apiService.get<MetadataResponse>({ url }, req);
     if (!res.data) throw new HttpException(502, 'Invalid response when reading metadata');
 
-    return { ...withCategorizationSubtree(res.data), namespace: NAMESPACE };
+    return res.data;
+  }
+
+  private async fetchOfferedLabels(req: RequestWithUser): Promise<Label[]> {
+    return selectCategorizationSubtree((await this.fetchMetadata(req)).labels?.labelStructure);
   }
 }
