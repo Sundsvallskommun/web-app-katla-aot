@@ -34,7 +34,7 @@ export function FieldTemplate(props: FieldTemplateProps) {
 
   const renderDescription = (position: 'above' | 'below') => {
     if (!sanitizedDescription.html || hideDescription) return null;
-    const marginClass = position === 'above' ? 'my-8' : 'my-8';
+    const marginClass = position === 'above' ? 'my-10' : 'my-8';
     return (
       <>
         <div
