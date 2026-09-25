@@ -1,5 +1,6 @@
 import { Label, MetadataResponse } from '@/data-contracts/supportmanagement/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
+import { withoutInternalOnly } from '@/utils/internal-labels';
 
 /**
  * SupportManagement's label structure holds several trees side by side, each under its own root.
@@ -10,6 +11,8 @@ import { HttpException } from '@/exceptions/HttpException';
  * The root itself is deliberately not part of what the frontend sees or of what ends up in
  * `errand.labels`: an errand label is self-identifying and keeps the full `resourcePath` it was
  * given upstream, so the stored value is unaffected by where the offered tree starts.
+ *
+ * Internal-only labels are pruned from the offered tree; see `internal-labels.ts`.
  */
 /**
  * Every tree in the label structure hangs off a node with this classification, so it marks "a root"
@@ -52,7 +55,7 @@ export const selectCategorizationSubtree = (labelStructure: Label[] | undefined)
     );
   }
 
-  const subtree = root.labels ?? [];
+  const subtree = withoutInternalOnly(root.labels);
   const depth = depthOf(subtree);
   if (depth > MAX_DEPTH_BELOW_ROOT) {
     // The categorization UI walks a fixed three levels, so a deeper tree would lose its lowest

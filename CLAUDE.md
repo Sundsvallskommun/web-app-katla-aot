@@ -82,6 +82,7 @@ yarn e2e -g "namn på scenariot"         # Playwright: filter på testnamn
 - **Sessionskaka**: `SESSION_COOKIE_PATH` måste täcka hela appens monteringsrot, inte bara API-prefixet — Next-middlewaren läser samma kaka på UI-vägar. Fel path ger en oändlig loop tillbaka till `/login` trots giltig session (se kommentaren i `src/app.ts`).
 - **Utgående anrop**: `src/services/api.service.ts` är enda vägen ut. Den hämtar WSO2-token via `api-token.service.ts` och validerar att den slutliga URL:en ligger innanför den konfigurerade servicebasen (skydd mot punktsegmentsflykt, inklusive flerlagers-URL-avkodning). Uppströms 4xx propageras bara med `propagateClientError` och aldrig med upstream-bodyn.
 - **Externa APIer**: listade med version i `src/config/api-config.ts` — det är källan, inte README. Innehåller även en tillfällig alias-routing `supportmanagement` → `supportmanagement-sprint` som ska tas bort när sprint-API:et pensioneras.
+- **Interna etiketter**: etiketter med attributet `internalOnly=true` (plus underträd) rensas ur kategoriträdet i `src/utils/categorization-root.ts` och avvisas med 400 på create/PATCH (`src/utils/internal-labels.ts`). Oförändrade etiketter på ett befintligt utkast släpps igenom.
 - **Response mapping**: DTOs in `src/responses/` transform external API data. JSON Schema-texter lokaliseras serverside (`x-i18n` i ui-schemat löses upp i `schema.controller.ts` utifrån `Accept-Language`) så att frontend aldrig ser övriga språk.
 
 ### Data Contracts

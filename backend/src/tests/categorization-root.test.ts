@@ -133,3 +133,26 @@ describe('categorization root', () => {
     expect(result.labels?.labelStructure).toHaveLength(2);
   });
 });
+
+describe('internal-only labels in the categorization tree', () => {
+  it('leaves internal-only labels out of the offered tree', () => {
+    const structure = labelStructure();
+    const inspection = structure[0]?.labels?.[0]?.labels?.[1];
+    if (!inspection) throw new Error('fixture lost its inspection label');
+    inspection.attributes = [{ key: 'internalOnly', value: 'true' }];
+
+    const [alcohol] = selectCategorizationSubtree(structure);
+
+    expect(alcohol?.labels?.map(label => label.resourceName)).toEqual(['SERVING_PERMIT_APPLICATION']);
+  });
+
+  it('checks depth on the offered tree, so a too deep internal branch does not fail the metadata', () => {
+    const structure = labelStructure();
+    const inspection = structure[0]?.labels?.[0]?.labels?.[1];
+    if (!inspection) throw new Error('fixture lost its inspection label');
+    inspection.attributes = [{ key: 'internalOnly', value: 'true' }];
+    inspection.labels = [{ classification: 'SUBTYPE', resourceName: 'A', labels: [{ classification: 'SUBTYPE', resourceName: 'B', labels: [] }] }];
+
+    expect(() => selectCategorizationSubtree(structure)).not.toThrow();
+  });
+});

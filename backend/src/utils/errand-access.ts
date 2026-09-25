@@ -52,7 +52,7 @@ const fetchErrandById = (apiService: ApiService, apiBase: string, id: string, re
  * An errand with no reporterUserId (not registered through this app) is owned by nobody and
  * cannot be edited here.
  */
-export async function assertErrandOwnedByUser(apiService: ApiService, apiBase: string, id: string, req: RequestWithUser): Promise<void> {
+export async function assertErrandOwnedByUser(apiService: ApiService, apiBase: string, id: string, req: RequestWithUser): Promise<Partial<Errand>> {
   const errand = await fetchErrandById(apiService, apiBase, id, req);
 
   // Party ids are guids; a casing difference between sources must not lock a citizen out of
@@ -60,6 +60,8 @@ export async function assertErrandOwnedByUser(apiService: ApiService, apiBase: s
   if (errand?.reporterUserId?.toLowerCase() !== req.user.partyId.toLowerCase()) {
     throw new HttpException(403, 'Errand belongs to another user');
   }
+
+  return errand;
 }
 
 /**
