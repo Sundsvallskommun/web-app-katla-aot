@@ -164,6 +164,9 @@
             "title": "Försäljningsställets namn"
           }
         },
+        "required": [
+          "forsaljningsstalletsNamn"
+        ],
         "title": "Försäljningsstället",
         "description": ".cke{visibility:hidden;}"
       },
@@ -244,6 +247,7 @@
       },
       "finansiering": {
         "type": "array",
+        "minItems": 1,
         "uniqueItems": true,
         "items": {
           "type": "string",
@@ -382,6 +386,17 @@
         "title": "Finns avtal med tillverkare, partihandlare eller importör"
       }
     },
+    "required": [
+      "arDuFirmatecknare",
+      "foretagsform",
+      "fakturaadressSammaSomForetaget",
+      "finansiering",
+      "besoksadressSammaSomForetaget",
+      "tidsperiodForForsaljningen",
+      "forsaljningsstallet",
+      "bedriverAvenDistansforsaljning",
+      "avtalMedTillverkareEllerPartihandlare"
+    ],
     "allOf": [
       {
         "if": {

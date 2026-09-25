@@ -1,9 +1,9 @@
 {
-  "name": "aot_alcohol_serving_permit_application_temporary_serving_public",
+  "name": "aot_alcohol_folkol_sales_notification",
   "version": "0.1",
   "value": {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "title": "Tillfälligt tillstånd (allmänheten och slutet sällskap)",
+    "title": "Försäljning av folköl (klass 2)",
     "type": "object",
     "properties": {
       "arDuFirmatecknare": {
@@ -86,11 +86,7 @@
             "title": "Postort"
           }
         },
-        "required": [
-          "utdelningsadress",
-          "postnummer",
-          "postort"
-        ],
+        "required": ["utdelningsadress", "postnummer", "postort"],
         "title": "Fakturamottagare"
       },
       "fakturareferens": {
@@ -117,107 +113,83 @@
         "type": "string",
         "title": "Verksamhetsbeskrivning"
       },
-      "angeMellanVilkaDatumDetTillfalliga": {
-        "type": "object",
-        "properties": {
-          "startDate": {
-            "type": "string",
-            "format": "date",
-            "title": "Från och med"
-          },
-          "endDate": {
-            "type": "string",
-            "format": "date",
-            "title": "Till och med"
-          }
-        },
-        "required": [
-          "startDate",
-          "endDate"
-        ],
-        "title": "Ange mellan vilka datum det tillfälliga tillståndet ska gälla"
-      },
-      "ovrigaUppgifterGallandeDatum": {
+      "kommerNiAttServeraMat": {
         "type": "string",
-        "title": "Övriga uppgifter gällande datum"
-      },
-      "klockslagForServeringen": {
-        "type": "object",
-        "properties": {
-          "startTime": {
-            "type": "string",
-            "format": "time",
-            "title": "Från klockan"
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja"
           },
-          "endTime": {
-            "type": "string",
-            "format": "time",
-            "title": "Till klockan"
+          {
+            "const": "NEJ",
+            "title": "Nej"
           }
-        },
-        "required": [
-          "startTime",
-          "endTime"
         ],
-        "title": "Klockslag för serveringen",
-        "description": "Ange när servering önskas påbörjas, samt avslutas (standard är 11:00-01:00 om inte annat beslutas)."
+        "title": "Kommer ni att servera mat"
       },
-      "vilkaAlkoholdryckerSkaServeras": {
-        "type": "array",
-        "minItems": 1,
-        "uniqueItems": true,
-        "items": {
-          "type": "string",
-          "oneOf": [
-            {
-              "const": "STARKOL",
-              "title": "Starköl"
-            },
-            {
-              "const": "VIN",
-              "title": "Vin"
-            },
-            {
-              "const": "SPRITDRYCKER",
-              "title": "Spritdrycker"
-            },
-            {
-              "const": "CIDER_ELLER_ANDRA_JASTA_ALKOHOLDRYCKER",
-              "title": "Cider eller andra jästa alkoholdrycker"
-            }
-          ]
-        },
-        "title": "Vilka alkoholdrycker ska serveras?"
+      "beskrivUtbudetAvMat": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JAG_VILL_BIFOGA_MENY_SOM",
+            "title": "Jag vill bifoga meny som bilaga"
+          },
+          {
+            "const": "JAG_VILL_SKRIVA_IN_MENYN",
+            "title": "Jag vill skriva in menyn i formuläret"
+          }
+        ],
+        "title": "Beskriv utbudet av mat",
+        "description": "\"En förutsättning för att få servera alkoholdrycker är att det även serveras mat. Utbudet av mat ska vara tillrett, tillräckligt och tillgängligt. Detta innebär att du ska ha mat som du har kapacitet att tillreda på plats i restaurangen och matutbudet ska även alltid vara tillgängligt för gästerna i verksamheten. Du kan välja att bifoga en meny om du har en sådan. Annars kan du välja att skriva in denna i formuläret. Om du har en annan, enklare meny efter kl. 23 ska du även bifoga den eller skriva in denna i formuläret nedan. Exempel på rätter i en enklare meny är hamburgare, sallad, paj, varma smörgåsar och bakad potatis.\" detta stod tidigare i beskrivning"
       },
       "meny": {
         "type": "string",
-        "title": "Meny",
-        "description": "Vilken mat och dryck kommer att serveras. Ange även alkoholfria alternativ samt prissättning."
+        "title": "Meny"
       },
-      "beraknatAntalGaster": {
+      "egenkontrollprogramFolkol": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja"
+          },
+          {
+            "const": "NEJ_JAG_FYLLER_I_DOKUMENTET",
+            "title": "Nej, jag fyller i dokumentet och kan visa upp det vid tillsyn"
+          }
+        ],
+        "title": "Egenkontrollprogram vid servering av folköl (klass 2)",
+        "description": "Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".\n\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.\n\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig serveringsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.\n\n${serveringfolkolegenkontrollprogram}\n\nVill du bifoga ifyllt egenkontrollprogram i denna anmälan?"
+      },
+      "serveringsstalletsNamn": {
         "type": "object",
         "properties": {
-          "antal": {
+          "namn": {
             "type": "string",
-            "title": "Antal"
+            "title": "Namn"
           }
         },
-        "required": [
-          "antal"
-        ],
-        "title": "Beräknat antal gäster"
+        "required": ["namn"],
+        "title": "Serveringsställets namn",
+        "description": "Det namn som du skyltar med till kund."
       },
-      "vadArDetForTypAvTillstallning": {
+      "besoksadressSammaSomForetaget": {
         "type": "string",
-        "title": "Vad är det för typ av tillställning"
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej"
+          }
+        ],
+        "title": "Är serveringsställets besöksadress samma som företagets adress?"
       },
-      "serveringsstalle": {
+      "serveringsstalletsBesoksadress": {
         "type": "object",
         "properties": {
-          "serveringsstalletsNamn": {
-            "type": "string",
-            "title": "Serveringsställets namn"
-          },
           "gatuadress": {
             "type": "string",
             "title": "Gatuadress"
@@ -229,61 +201,45 @@
           "postort": {
             "type": "string",
             "title": "Postort"
-          },
+          }
+        },
+        "title": "Serveringsställets besöksadress"
+      },
+      "kontaktuppgifterTillServeringsstallet": {
+        "type": "object",
+        "properties": {
           "telefonnummer": {
             "type": "string",
             "title": "Telefonnummer"
+          },
+          "ePostadress": {
+            "type": "string",
+            "title": "E-postadress"
+          },
+          "hemsida": {
+            "type": "string",
+            "title": "Hemsida"
+          },
+          "telefon": {
+            "type": "string",
+            "title": "Telefon"
           }
         },
-        "required": [
-          "serveringsstalletsNamn",
-          "gatuadress",
-          "postnummer",
-          "postort",
-          "telefonnummer"
-        ],
-        "title": "Serveringsställe",
-        "description": "Om ingen fast telefon finns, lämna mobilnummer till företrädare."
-      },
-      "serveringsansvarigPersonal": {
-        "type": "array",
-        "minItems": 1,
-        "items": {
-          "type": "object",
-          "properties": {
-            "fornamn": {
-              "type": "string",
-              "title": "Förnamn"
-            },
-            "efternamn": {
-              "type": "string",
-              "title": "Efternamn"
-            },
-            "personnummer": {
-              "type": "string",
-              "title": "Personnummer"
-            }
-          },
-          "required": [
-            "fornamn",
-            "efternamn",
-            "personnummer"
-          ]
-        },
-        "title": "Serveringsansvarig personal",
-        "description": "Nedan anger du namn och personnummer till den person eller de personer som ska vara ansvariga för serveringen av alkohol. En person som är serveringsansvarig måste vara minst 20 år."
+        "title": "Kontaktuppgifter till serveringsstället"
       },
       "sittplatserILokalen": {
         "type": "object",
         "properties": {
-          "antalSittplatserIBordsavdelningMatsa": {
+          "antalSittplatserInomhus": {
             "type": "string",
-            "title": "Antal sittplatser i bordsavdelning/matsal"
+            "title": "Antal sittplatser inomhus"
+          },
+          "antalSittplatserPaEventuellUteserver": {
+            "type": "string",
+            "title": "Antal sittplatser på eventuell uteservering"
           }
         },
-        "required": [
-          "antalSittplatserIBordsavdelningMatsa"
-        ],
+        "required": ["antalSittplatserInomhus"],
         "title": "Sittplatser i lokalen"
       },
       "maximaltAntalPersonerILokalen": {
@@ -294,28 +250,8 @@
             "title": "Antal personer"
           }
         },
-        "required": [
-          "antalPersoner"
-        ],
+        "required": ["antalPersoner"],
         "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)"
-      },
-      "finnsPolistillstand": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "JA",
-            "title": "Ja"
-          },
-          {
-            "const": "NEJ",
-            "title": "Nej"
-          },
-          {
-            "const": "EJ_AKTUELLT",
-            "title": "Ej aktuellt"
-          }
-        ],
-        "title": "Finns polistillstånd"
       },
       "harDuKassaregister": {
         "type": "string",
@@ -347,16 +283,12 @@
       "foretagsform",
       "fakturaadressSammaSomForetaget",
       "harDuKassaregister",
-      "vilkaAlkoholdryckerSkaServeras",
-      "serveringsansvarigPersonal",
+      "serveringsstalletsNamn",
+      "besoksadressSammaSomForetaget",
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen",
-      "angeMellanVilkaDatumDetTillfalliga",
-      "klockslagForServeringen",
-      "beraknatAntalGaster",
-      "vadArDetForTypAvTillstallning",
-      "serveringsstalle",
-      "finnsPolistillstand"
+      "kommerNiAttServeraMat",
+      "egenkontrollprogramFolkol"
     ],
     "allOf": [
       {
@@ -373,14 +305,10 @@
               ]
             }
           },
-          "required": [
-            "foretagsform"
-          ]
+          "required": ["foretagsform"]
         },
         "then": {
-          "required": [
-            "verksamhetsbeskrivningsval"
-          ]
+          "required": ["verksamhetsbeskrivningsval"]
         }
       },
       {
@@ -390,9 +318,7 @@
               "const": "NEJ"
             }
           },
-          "required": [
-            "fakturaadressSammaSomForetaget"
-          ]
+          "required": ["fakturaadressSammaSomForetaget"]
         },
         "then": {
           "properties": {
@@ -407,9 +333,7 @@
               "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I"
             }
           },
-          "required": [
-            "verksamhetsbeskrivningsval"
-          ]
+          "required": ["verksamhetsbeskrivningsval"]
         },
         "then": {
           "properties": {
@@ -420,13 +344,86 @@
       {
         "if": {
           "properties": {
+            "beskrivUtbudetAvMat": {
+              "const": "JAG_VILL_SKRIVA_IN_MENYN"
+            }
+          },
+          "required": ["beskrivUtbudetAvMat"]
+        },
+        "then": {
+          "properties": {
+            "meny": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "besoksadressSammaSomForetaget": {
+              "const": "NEJ"
+            }
+          },
+          "required": ["besoksadressSammaSomForetaget"]
+        },
+        "then": {
+          "properties": {
+            "serveringsstalletsBesoksadress": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "kommerNiAttServeraMat": {
+              "const": "JA"
+            }
+          },
+          "required": ["kommerNiAttServeraMat"]
+        },
+        "then": {
+          "properties": {
+            "beskrivUtbudetAvMat": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "beskrivUtbudetAvMat": {
+              "const": "JAG_VILL_SKRIVA_IN_MENYN"
+            }
+          },
+          "required": ["beskrivUtbudetAvMat"]
+        },
+        "then": {
+          "properties": {
+            "meny": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "besoksadressSammaSomForetaget": {
+              "const": "NEJ"
+            }
+          },
+          "required": ["besoksadressSammaSomForetaget"]
+        },
+        "then": {
+          "properties": {
+            "serveringsstalletsBesoksadress": true
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
             "harDuKassaregister": {
               "const": "JA"
             }
           },
-          "required": [
-            "harDuKassaregister"
-          ]
+          "required": ["harDuKassaregister"]
         },
         "then": {
           "properties": {
@@ -445,9 +442,7 @@
               "const": "NEJ"
             }
           },
-          "required": [
-            "arDuFirmatecknare"
-          ]
+          "required": ["arDuFirmatecknare"]
         }
       },
       {
@@ -457,18 +452,10 @@
         "requiredWhen": {
           "properties": {
             "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
+              "enum": ["AKTIEBOLAG", "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET", "FORENING_STIFTELSE", "HANDELSBOLAG", "KOMMANDITBOLAG"]
             }
           },
-          "required": [
-            "foretagsform"
-          ]
+          "required": ["foretagsform"]
         }
       },
       {
@@ -478,17 +465,10 @@
         "requiredWhen": {
           "properties": {
             "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
+              "enum": ["AKTIEBOLAG", "FORENING_STIFTELSE", "HANDELSBOLAG", "KOMMANDITBOLAG"]
             }
           },
-          "required": [
-            "foretagsform"
-          ]
+          "required": ["foretagsform"]
         }
       },
       {
@@ -508,9 +488,7 @@
               ]
             }
           },
-          "required": [
-            "foretagsform"
-          ]
+          "required": ["foretagsform"]
         }
       },
       {
@@ -518,10 +496,14 @@
         "label": "Verksamhetsbeskrivning"
       },
       {
-        "key": "laddaUppPolistillstand",
-        "label": "Polistillstånd"
+        "key": "bifogaMeny",
+        "label": "Meny"
+      },
+      {
+        "key": "bifogatEgenkontrollprogramFolkol",
+        "label": "Egenkontrollprogram för servering av folköl (klass 2)"
       }
     ]
   },
-  "description": "Tillfälligt tillstånd (allmänheten och slutet sällskap)"
+  "description": "Servering av folköl (klass 2)"
 }

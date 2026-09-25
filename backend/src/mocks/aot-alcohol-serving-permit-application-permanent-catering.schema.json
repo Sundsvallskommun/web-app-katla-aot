@@ -206,6 +206,7 @@
       },
       "vilkaAlkoholdryckerSkaServeras": {
         "type": "array",
+        "minItems": 1,
         "uniqueItems": true,
         "items": {
           "type": "string",
@@ -232,6 +233,7 @@
       },
       "finansiering": {
         "type": "array",
+        "minItems": 1,
         "uniqueItems": true,
         "items": {
           "type": "string",
@@ -394,6 +396,15 @@
         "title": "Ange registreringskod"
       }
     },
+    "required": [
+      "arDuFirmatecknare",
+      "foretagsform",
+      "fakturaadressSammaSomForetaget",
+      "harDuKassaregister",
+      "kunskapOmAlkohollagen",
+      "vilkaAlkoholdryckerSkaServeras",
+      "finansiering"
+    ],
     "allOf": [
       {
         "if": {
