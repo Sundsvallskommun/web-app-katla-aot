@@ -34,12 +34,12 @@ export function FieldTemplate(props: FieldTemplateProps) {
 
   const renderDescription = (position: 'above' | 'below') => {
     if (!sanitizedDescription.html || hideDescription) return null;
-    const marginClass = position === 'above' ? 'mb-2' : 'mt-2';
+    const marginClass = position === 'above' ? 'my-8' : 'my-8';
     return (
       <>
         <div
           id={descriptionId(id)}
-          className={`text-xs text-muted-foreground ${marginClass} [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4`}
+          className={`text-small leading-22 text-muted-foreground ${marginClass} [&_p]:my-8 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4`}
           dangerouslySetInnerHTML={{ __html: sanitizedDescription.html }}
         />
         {sanitizedDescription.hasNewTabLink && (
