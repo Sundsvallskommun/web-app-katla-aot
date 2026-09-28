@@ -1,4 +1,5 @@
 import { ErrandLifecycle } from '@interfaces/errand-form';
+import { appConfig } from 'src/config/appconfig';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -22,6 +23,10 @@ export const useFilterStore = create<FilterState>()(
     }),
     {
       name: 'filter-storage',
+      merge: (persisted, current) => {
+        const state = { ...current, ...(persisted as Partial<FilterState>) };
+        return state.lifecycle === 'DRAFT' && !appConfig.features.draftEnabled ? current : state;
+      },
     }
   )
 );

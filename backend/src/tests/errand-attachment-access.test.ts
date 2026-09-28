@@ -44,7 +44,7 @@ const upstreamErrand = (reporterUserId: string, organizationPartyId: string) => 
 const FLOOR_PLAN_PURPOSE_ID = '5f79a808-0ef3-4985-99b9-b12f23e202a7';
 const ATTACHMENTS_URL = `2281/test/errands/${mockErrandId}/attachments`;
 
-/** The errand, then the metadata: the order the controller reads them in when a bilagetyp is given. */
+/** The errand, then the metadata: the order the controller starts the reads in when a bilagetyp is given. */
 const upstreamErrandAndPurposes = (reporterUserId: string) => {
   get
     .mockResolvedValueOnce({

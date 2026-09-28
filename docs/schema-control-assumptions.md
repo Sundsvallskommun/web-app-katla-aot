@@ -215,7 +215,7 @@ positiva formuleringen av allt ovan; adaptern och kontraktstestet kontrollerar d
 7. **Bilagor**: `x-attachments`-poster har formen `{key, label, description?, requiredWhen?}`;
    `requiredWhen` följer villkorsreglerna i punkt 4 och pekar bara på egenskaper schemat har.
    `key` är engelsk `UPPER_SNAKE_CASE` och identisk med namnet på motsvarande attachment purpose i
-   SupportManagement (`attachment-purposes.json` i repots rot); samma dokument har samma `key` i
-   alla scheman, medan `label` får skilja sig per schema.
+   SupportManagements namnrymdsmetadata; samma dokument har samma `key` i alla scheman, medan
+   `label` får skilja sig per schema.
 8. **Text och språk**: placering och `x-i18n` enligt `json-schema-localization.md`; maskinvärden
    översätts aldrig.

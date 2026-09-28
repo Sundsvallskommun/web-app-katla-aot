@@ -273,6 +273,16 @@ export interface PhaseDTO {
   modified?: string;
 }
 
+export interface AttachmentPurposeDTO {
+  id?: string;
+  name: string;
+  displayName?: string;
+  sortOrder?: number;
+  deprecated?: boolean;
+  created?: string;
+  modified?: string;
+}
+
 export interface MetadataResponseDTO {
   namespace?: string;
   categories?: CategoryDTO[];
@@ -280,8 +290,15 @@ export interface MetadataResponseDTO {
   labels?: LabelsDTO;
   statuses?: StatusDTO[];
   roles?: RoleDTO[];
+  attachmentPurposes?: AttachmentPurposeDTO[];
   contactReasons?: ContactReasonDTO[];
   phases?: PhaseDTO[];
+}
+
+export interface ErrandAttachmentPurposeDTO {
+  id?: string;
+  name?: string;
+  displayName?: string;
 }
 
 export interface ErrandAttachmentDTO {
@@ -289,10 +306,16 @@ export interface ErrandAttachmentDTO {
   fileName: string;
   mimeType?: string;
   created?: string;
+  purpose?: ErrandAttachmentPurposeDTO;
 }
 
 export interface CreateErrandAttachmentDTO {
   category?: string;
+}
+
+export interface UpdateErrandAttachmentDTO {
+  /** @minLength 1 */
+  category: string;
 }
 
 export interface User {

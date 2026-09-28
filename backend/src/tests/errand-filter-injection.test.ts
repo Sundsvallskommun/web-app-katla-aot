@@ -33,6 +33,7 @@ const req = {
 // client put in the query string.
 const asQuery = (query: Record<string, unknown>): ErrandsQueryDTO => query;
 const requestedUrl = (): string => get.mock.calls[0]?.[0].url ?? '';
+const requestedFilter = (): string | null => new URL(requestedUrl(), 'https://api.example').searchParams.get('filter');
 
 describe('errand filter injection', () => {
   beforeEach(() => {
@@ -64,10 +65,25 @@ describe('errand filter injection', () => {
     await expect(new SupportManagementController().getErrands(req, asQuery({ status: "NEW' or '1'='1" }))).rejects.toMatchObject({ status: 400 });
   });
 
-  it('passes the lifecycle filter through', async () => {
-    await new SupportManagementController().getErrands(req, asQuery({ lifecycle: 'DRAFT' }));
+  // Upstream includes drafts only when the lifecycle term leads the filter, as getErrand builds it.
+  it('puts the draft lifecycle term first in the list filter', async () => {
+    await new SupportManagementController().getErrands(req, asQuery({ status: 'NEW', lifecycle: 'DRAFT' }));
 
-    expect(decodeURIComponent(requestedUrl())).toContain("lifecycle:'DRAFT'");
+    expect(requestedFilter()).toBe(`lifecycle:'DRAFT' and (stakeholders.externalId:'${mockOrganizationPartyId}') and status:'NEW'`);
+  });
+
+  it('puts the draft lifecycle term first in the count filter', async () => {
+    get.mockResolvedValue({ data: { count: 0 } });
+
+    await new SupportManagementController().getNumberOfErrands(req, asQuery({ lifecycle: 'DRAFT' }));
+
+    expect(requestedFilter()).toBe(`lifecycle:'DRAFT' and (stakeholders.externalId:'${mockOrganizationPartyId}')`);
+  });
+
+  it('leaves the organisation group first when no draft is asked for', async () => {
+    await new SupportManagementController().getErrands(req, asQuery({ lifecycle: 'ACTIVE' }));
+
+    expect(requestedFilter()).toBe(`(stakeholders.externalId:'${mockOrganizationPartyId}') and lifecycle:'ACTIVE'`);
   });
 });
 

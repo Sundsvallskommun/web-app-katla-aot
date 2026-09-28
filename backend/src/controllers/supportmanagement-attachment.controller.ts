@@ -74,12 +74,10 @@ export class SupportManagementAttachmentController {
     @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
     @Body() attachment: CreateErrandAttachmentDTO,
   ): Promise<{ message: string }> {
-    await assertErrandOwnedByUser(this.apiService, this.apiBase, id, req);
+    const purpose = await this.resolvePurposeOnOwnedErrand(id, attachment.category, req);
 
     const file = files?.[0];
     if (!file) throw new HttpException(400, 'No file of an accepted type in the request');
-
-    const purpose = attachment.category ? await this.resolvePurpose(attachment.category, req) : undefined;
 
     const data = new FormData();
     data.append('errandAttachment', file.buffer, { filename: file.originalname });
@@ -115,15 +113,30 @@ export class SupportManagementAttachmentController {
     @Param('attachmentId') attachmentId: string,
     @Body() attachment: UpdateErrandAttachmentDTO,
   ): Promise<{ message: string }> {
-    await assertErrandOwnedByUser(this.apiService, this.apiBase, id, req);
+    const purpose = await this.resolvePurposeOnOwnedErrand(id, attachment.category, req);
 
-    await this.setPurpose(id, attachmentId, await this.resolvePurpose(attachment.category, req), req);
+    await this.setPurpose(id, attachmentId, purpose, req);
 
     return { message: 'success' };
   }
 
   private async resolvePurpose(category: string, req: RequestWithUser): Promise<AttachmentPurpose> {
     return resolveAttachmentPurpose(await fetchMetadata(this.apiService, this.apiBase, req), category);
+  }
+
+  /** The ownership check and the purpose lookup are independent reads and run together; when both fail, ownership answers. */
+  private resolvePurposeOnOwnedErrand(id: string, category: string, req: RequestWithUser): Promise<AttachmentPurpose>;
+  private resolvePurposeOnOwnedErrand(id: string, category: string | undefined, req: RequestWithUser): Promise<AttachmentPurpose | undefined>;
+  private async resolvePurposeOnOwnedErrand(id: string, category: string | undefined, req: RequestWithUser): Promise<AttachmentPurpose | undefined> {
+    const [ownership, purpose] = await Promise.allSettled([
+      assertErrandOwnedByUser(this.apiService, this.apiBase, id, req),
+      category === undefined ? undefined : this.resolvePurpose(category, req),
+    ]);
+
+    if (ownership.status === 'rejected') throw ownership.reason;
+    if (purpose.status === 'rejected') throw purpose.reason;
+
+    return purpose.value;
   }
 
   private async setPurpose(id: string, attachmentId: string, purpose: AttachmentPurpose, req: RequestWithUser): Promise<void> {

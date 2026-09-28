@@ -1,14 +1,6 @@
+import type { ErrandAttachmentDTO } from '@data-contracts/backend/data-contracts';
 import type { ErrandFormAttachment } from '@interfaces/errand-form';
 import { apiService } from '@services/api-service';
-
-export interface ErrandAttachmentDTO {
-  id: string;
-  fileName: string;
-  mimeType?: string;
-  created?: string;
-  /** The attachment purpose upstream; its name is the schema's attachment key. */
-  purpose?: { id?: string; name?: string; displayName?: string };
-}
 
 /** The purpose name is the bilagetyp the citizen picked, so a reopened errand validates as it did. */
 const toFormAttachment = ({ purpose, ...attachment }: ErrandAttachmentDTO): ErrandFormAttachment => ({

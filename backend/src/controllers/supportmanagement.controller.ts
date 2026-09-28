@@ -37,9 +37,6 @@ const SAFE_FILTER_KEY_PATTERN = /^[A-Za-z][A-Za-z0-9_.]*$/;
 // A stakeholder's externalId holds the organisation's party id.
 const ORGANIZATION_FILTER_KEY = 'stakeholders.externalId';
 
-// Upstream leaves drafts out of a search unless the filter asks for lifecycle DRAFT itself; an
-// or-group over both lifecycles does not count, so a draft takes a search of its own, with the
-// term first as in the query known to work against the gateway.
 const DRAFT_FILTER_TERM = `lifecycle:'${ErrandLifecycleEnum.DRAFT}'`;
 
 const toFilterTerm = (key: string, value: string): string => {
@@ -54,12 +51,16 @@ const toFilterTerm = (key: string, value: string): string => {
   return `${key}:'${value}'`;
 };
 
-// SupportManagement uses the Spring filter grammar: terms are joined with `and`, alternatives are
-// an `or` group in parentheses. Commas are not an operator — joining with one silently produces a
-// filter that does not mean what it reads like.
 const FILTER_AND = ' and ';
 
 const toFilterOrGroup = (key: string, values: string[]): string => `(${values.map(value => toFilterTerm(key, value)).join(' or ')})`;
+
+const toFilter = (filterParts: string[]): string => {
+  const otherParts = filterParts.filter(part => part !== DRAFT_FILTER_TERM);
+  const orderedParts = otherParts.length < filterParts.length ? [DRAFT_FILTER_TERM, ...otherParts] : otherParts;
+
+  return orderedParts.join(FILTER_AND);
+};
 
 @Controller()
 export class SupportManagementController {
@@ -159,7 +160,7 @@ export class SupportManagementController {
     const organizationPartyIds = requireOrganizationPartyIds(req);
 
     const scope = [toFilterTerm('errandNumber', errandNumber), toFilterOrGroup(ORGANIZATION_FILTER_KEY, organizationPartyIds)];
-    const matchedErrand = (await this.findErrand(scope, req)) ?? (await this.findErrand([DRAFT_FILTER_TERM, ...scope], req));
+    const matchedErrand = (await this.findErrand(scope, req)) ?? (await this.findErrand([...scope, DRAFT_FILTER_TERM], req));
 
     // 404, not 403: errand numbers are enumerable, so another organisation's errand must be
     // indistinguishable from one that does not exist.
@@ -176,7 +177,7 @@ export class SupportManagementController {
   }
 
   private async findErrand(filterParts: string[], req: RequestWithUser): Promise<Errand | undefined> {
-    const params = new URLSearchParams({ filter: filterParts.join(FILTER_AND) });
+    const params = new URLSearchParams({ filter: toFilter(filterParts) });
     const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands?${params.toString()}`;
 
     const res = await this.apiService.get<PageErrand>({ url }, req);
@@ -211,7 +212,7 @@ export class SupportManagementController {
       }
     }
 
-    params.append('filter', filterParts.join(FILTER_AND));
+    params.append('filter', toFilter(filterParts));
 
     const finalUrl = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
 
@@ -242,7 +243,7 @@ export class SupportManagementController {
       }
     }
 
-    params.append('filter', filterParts.join(FILTER_AND));
+    params.append('filter', toFilter(filterParts));
 
     const finalUrl = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
 

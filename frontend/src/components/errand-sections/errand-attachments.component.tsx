@@ -151,15 +151,21 @@ const AttachmentsForSchema: React.FC<{ requirements: AttachmentRequirements }> =
     updateAttachments([...(getValues('attachments') ?? []), ...picked]);
   };
 
-  const setCategory = async (index: number, category: string) => {
+  const findAttachment = (index: number, attachment: ErrandFormAttachment) => {
     const current = getValues('attachments') ?? [];
-    const attachment = current[index];
+    const currentIndex = attachment.id ? current.findIndex((candidate) => candidate.id === attachment.id) : index;
+    return { current, currentIndex };
+  };
+
+  const setCategory = async (index: number, category: string) => {
+    const attachment = (getValues('attachments') ?? [])[index];
 
     try {
       if (attachment.id && errandId) {
         await updateErrandAttachmentCategory(errandId, attachment.id, category);
       }
-      updateAttachments(current.map((candidate, i) => (i === index ? { ...candidate, category } : candidate)));
+      const { current, currentIndex } = findAttachment(index, attachment);
+      updateAttachments(current.map((candidate, i) => (i === currentIndex ? { ...candidate, category } : candidate)));
     } catch {
       toastMessage({
         position: 'bottom',
@@ -170,14 +176,14 @@ const AttachmentsForSchema: React.FC<{ requirements: AttachmentRequirements }> =
   };
 
   const removeAttachment = async (index: number) => {
-    const current = getValues('attachments') ?? [];
-    const attachment = current[index];
+    const attachment = (getValues('attachments') ?? [])[index];
 
     try {
       if (attachment.id && errandId) {
         await deleteErrandAttachment(errandId, attachment.id);
       }
-      updateAttachments(current.filter((_, i) => i !== index));
+      const { current, currentIndex } = findAttachment(index, attachment);
+      updateAttachments(current.filter((_, i) => i !== currentIndex));
     } catch {
       toastMessage({ position: 'bottom', status: 'error', message: t('errand-information:attachments.remove_error') });
     }

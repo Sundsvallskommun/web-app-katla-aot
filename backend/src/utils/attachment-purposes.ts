@@ -3,8 +3,8 @@ import { HttpException } from '@/exceptions/HttpException';
 
 /**
  * The bilagetyp the citizen picks is the schema's attachment key, which is also the name of an
- * attachment purpose in the namespace (see attachment-purposes.json in the repo root). Purpose ids
- * differ between environments, so the name is the contract and the id is looked up per call.
+ * attachment purpose in the namespace metadata. Purpose ids differ between environments, so the
+ * name is the contract and the id is looked up per call.
  */
 export const resolveAttachmentPurpose = (metadata: MetadataResponse, key: string): AttachmentPurpose => {
   const purpose = metadata.attachmentPurposes?.find(candidate => candidate.name === key && !candidate.deprecated);
