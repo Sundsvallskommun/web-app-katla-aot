@@ -1,4 +1,4 @@
-import { ContactChannel, Parameter, Stakeholder } from '@/data-contracts/supportmanagement/data-contracts';
+import { ContactChannel, Parameter, Stakeholder } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { StakeholderDTO } from '@/responses/supportmanagement.response';
 

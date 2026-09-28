@@ -3,7 +3,7 @@ import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 import { MUNICIPALITY_ID, NAMESPACE } from '@/config';
 import { getApiBase } from '@/config/api-config';
-import { Errand, Label, MetadataResponse, PageErrand } from '@/data-contracts/supportmanagement/data-contracts';
+import { Errand, Label, MetadataResponse, PageErrand } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
@@ -98,12 +98,7 @@ export class SupportManagementController {
   @OpenAPI({ summary: 'Update errand' })
   @UseBefore(authMiddleware)
   @ResponseSchema(ErrandDTO)
-  async updateErrand(
-    @Req() req: RequestWithUser,
-    @Param('id') id: string,
-    // process is set upstream but missing from the generated contract
-    @Body() errand: Partial<Errand> & { process?: unknown },
-  ): Promise<Partial<Errand>> {
+  async updateErrand(@Req() req: RequestWithUser, @Param('id') id: string, @Body() errand: Partial<Errand>): Promise<Partial<Errand>> {
     if (!id.trim()) throw new HttpException(400, 'Errand id is required when updating an errand');
 
     const storedErrand = await assertErrandOwnedByUser(this.apiService, this.apiBase, id, req);

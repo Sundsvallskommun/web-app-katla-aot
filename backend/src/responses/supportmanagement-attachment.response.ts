@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 
-import { ErrandAttachment } from '@/data-contracts/supportmanagement/data-contracts';
+import { ErrandAttachment } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 
 export class ErrandAttachmentDTO implements ErrandAttachment {
   @IsString()

@@ -14,7 +14,7 @@ import {
   Role,
   Status,
   Type,
-} from '@/data-contracts/supportmanagement/data-contracts';
+} from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 
 export class TypeDTO implements Type {
   @IsString()

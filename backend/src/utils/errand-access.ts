@@ -1,5 +1,5 @@
 import { MUNICIPALITY_ID, NAMESPACE } from '@/config';
-import { Errand, Stakeholder } from '@/data-contracts/supportmanagement/data-contracts';
+import { Errand, Stakeholder } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import ApiService from '@/services/api.service';

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { ErrandLabel, Label, LabelAttribute } from '@/data-contracts/supportmanagement/data-contracts';
+import { ErrandLabel, Label, LabelAttribute } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { assertLabelsOffered, labelsChanged, withoutInternalOnly } from '@/utils/internal-labels';
 

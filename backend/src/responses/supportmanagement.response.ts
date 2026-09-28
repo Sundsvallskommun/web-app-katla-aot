@@ -1,14 +1,13 @@
 import { Type } from 'class-transformer';
 import { Allow, IsArray, IsBoolean, IsEnum, IsInt, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 
-// lifecycle exists only in the sprint API (16.1), which is what the alias in api-config routes to.
-import { ErrandLifecycleEnum } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import {
   Classification,
   CountResponse,
   Errand,
   ErrandAction,
   ErrandLabel,
+  ErrandLifecycleEnum,
   ErrandPhase,
   ExternalTag,
   JsonNode,
@@ -19,7 +18,7 @@ import {
   Priority,
   SortObject,
   Stakeholder,
-} from '@/data-contracts/supportmanagement/data-contracts';
+} from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 
 export class ErrandCountDTO implements CountResponse {
   @IsNumber()

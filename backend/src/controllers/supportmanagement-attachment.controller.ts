@@ -5,7 +5,7 @@ import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 import { MUNICIPALITY_ID, NAMESPACE } from '@/config';
 import { getApiBase } from '@/config/api-config';
-import { ErrandAttachment, ErrandAttachmentChannelEnum } from '@/data-contracts/supportmanagement/data-contracts';
+import { ErrandAttachment, ErrandAttachmentChannelEnum } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
