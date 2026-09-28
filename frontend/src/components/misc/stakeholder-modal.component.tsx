@@ -1,7 +1,12 @@
 import { ErrandDTO, StakeholderDTO } from '@data-contracts/backend/data-contracts';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, FormControl, FormErrorMessage, FormLabel, Input, Modal, Select } from '@sk-web-gui/react';
-import { createStakeholderSchema, phoneNumberFormatter, shouldShowContactDetails } from '@utils/stakeholder';
+import {
+  asPersonStakeholder,
+  createStakeholderSchema,
+  phoneNumberFormatter,
+  shouldShowContactDetails,
+} from '@utils/stakeholder';
 import { useEffect, useMemo } from 'react';
 import { Resolver, useFieldArray, useForm, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -61,7 +66,7 @@ export const StakeholderFormModal: React.FC<{
     if (edit && index !== undefined) {
       update(index, stakeholder);
     } else {
-      append(stakeholder);
+      append(asPersonStakeholder(stakeholder));
     }
     onClose();
   };

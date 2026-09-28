@@ -2,7 +2,7 @@ import type { StakeholderDTO } from '@data-contracts/backend/data-contracts';
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-import { mockManualEditStakeholder, mockStakeholder } from '../fixtures/mockStakeholder';
+import { mockManualEditStakeholder, mockSelfStakeholder, mockStakeholder } from '../fixtures/mockStakeholder';
 import {
   MOCK_COUNTRY_CODE_PHONE_NUMBER,
   MOCK_EMAIL,
@@ -68,6 +68,18 @@ export const addStakeholder = async (page: Page, scope: Locator, role: string) =
   await expect(scope.getByTestId('phone-number-input-error')).toBeVisible();
   await phoneInput.fill(MOCK_PHONE_NUMBER);
   await syntheticClick(scope.locator('button', { hasText: 'Lägg till person' }));
+};
+
+/** Adds the logged in citizen in one click; contact details are edited on the card afterwards. */
+export const addSelfAsStakeholder = async (page: Page, scope: Locator) => {
+  await page.route('**/citizen/me', jsonRoute(mockSelfStakeholder));
+
+  const selfResponse = page.waitForResponse('**/citizen/me');
+  await scope.getByTestId('add-self-button').dispatchEvent('click');
+  await selfResponse;
+
+  await expect(scope.getByTestId('search-result')).toHaveCount(0);
+  await expect(scope.getByTestId('add-self-button')).toHaveCount(0);
 };
 
 export const manuallyAddStakeholder = async (page: Page) => {

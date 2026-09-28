@@ -45,6 +45,8 @@
     "person_role": "The person's role",
     "add_person": "Add person",
     "add_manually": "Add manually",
+    "add_self": "Add myself",
+    "self_lookup_failed": "Your details could not be retrieved. Try again or add yourself manually.",
     "edit_details": "Edit details",
     "remove": "Remove",
     "modal": {
