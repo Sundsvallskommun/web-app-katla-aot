@@ -25,6 +25,8 @@ export interface SchemaResponseDTO {
   schema: object;
   uiSchema: object;
   schemaId: string;
+  name?: string;
+  version?: string;
 }
 
 export interface ErrandCountDTO {
@@ -36,6 +38,7 @@ export interface ErrandsQueryDTO {
   size?: number;
   sort?: string;
   status?: string;
+  lifecycle?: "DRAFT" | "ACTIVE";
 }
 
 export interface StakeholderDTO {
@@ -117,6 +120,7 @@ export interface ErrandDTO {
   jsonParameters?: JsonParameterDTO[];
   classification?: ClassificationDTO;
   status?: string;
+  lifecycle?: "DRAFT" | "ACTIVE";
   resolution?: string;
   description?: string;
   channel?: string;
@@ -278,6 +282,17 @@ export interface MetadataResponseDTO {
   roles?: RoleDTO[];
   contactReasons?: ContactReasonDTO[];
   phases?: PhaseDTO[];
+}
+
+export interface ErrandAttachmentDTO {
+  id: string;
+  fileName: string;
+  mimeType?: string;
+  created?: string;
+}
+
+export interface CreateErrandAttachmentDTO {
+  category?: string;
 }
 
 export interface User {
