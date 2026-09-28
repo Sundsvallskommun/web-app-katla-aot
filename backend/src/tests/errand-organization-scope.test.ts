@@ -136,7 +136,7 @@ describe('errand organization scope', () => {
       expect(get).toHaveBeenCalledTimes(2);
       expect(requestedFilter(0)).not.toContain('lifecycle');
       expect(requestedFilter(1)).toBe(
-        `lifecycle:'DRAFT' and errandNumber:'${mockErrandNumber}' and (stakeholders.externalId:'${mockOrganizationPartyId}')`,
+        `errandNumber:'${mockErrandNumber}' and (stakeholders.externalId:'${mockOrganizationPartyId}') and lifecycle:'DRAFT'`,
       );
     });
 

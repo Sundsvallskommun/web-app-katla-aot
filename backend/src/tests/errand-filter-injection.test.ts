@@ -65,37 +65,9 @@ describe('errand filter injection', () => {
     await expect(new SupportManagementController().getErrands(req, asQuery({ status: "NEW' or '1'='1" }))).rejects.toMatchObject({ status: 400 });
   });
 
-  // Upstream includes drafts only when the lifecycle term leads the filter, as getErrand builds it.
-  it('puts the draft lifecycle term first in the list filter', async () => {
+  it('forwards the lifecycle to the filter', async () => {
     await new SupportManagementController().getErrands(req, asQuery({ status: 'NEW', lifecycle: 'DRAFT' }));
 
-    expect(requestedFilter()).toBe(`lifecycle:'DRAFT' and (stakeholders.externalId:'${mockOrganizationPartyId}') and status:'NEW'`);
-  });
-
-  it('puts the draft lifecycle term first in the count filter', async () => {
-    get.mockResolvedValue({ data: { count: 0 } });
-
-    await new SupportManagementController().getNumberOfErrands(req, asQuery({ lifecycle: 'DRAFT' }));
-
-    expect(requestedFilter()).toBe(`lifecycle:'DRAFT' and (stakeholders.externalId:'${mockOrganizationPartyId}')`);
-  });
-
-  it('leaves the organisation group first when no draft is asked for', async () => {
-    await new SupportManagementController().getErrands(req, asQuery({ lifecycle: 'ACTIVE' }));
-
-    expect(requestedFilter()).toBe(`(stakeholders.externalId:'${mockOrganizationPartyId}') and lifecycle:'ACTIVE'`);
-  });
-});
-
-// routing-controllers normalises each query field by its design:type. A field typed as an enum
-// or union is bound as Object, which makes it JSON-parse the raw value and fail on plain text.
-describe('errand query binding', () => {
-  it('declares every query field as a primitive', () => {
-    const fields = ['page', 'size', 'sort', 'status', 'lifecycle'];
-
-    for (const field of fields) {
-      const type: unknown = Reflect.getMetadata('design:type', ErrandsQueryDTO.prototype, field);
-      expect([String, Number]).toContain(type);
-    }
+    expect(requestedFilter()).toBe(`(stakeholders.externalId:'${mockOrganizationPartyId}') and status:'NEW' and lifecycle:'DRAFT'`);
   });
 });

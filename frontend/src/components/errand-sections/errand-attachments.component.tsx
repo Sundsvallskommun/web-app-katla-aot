@@ -151,11 +151,9 @@ const AttachmentsForSchema: React.FC<{ requirements: AttachmentRequirements }> =
     updateAttachments([...(getValues('attachments') ?? []), ...picked]);
   };
 
-  const findAttachment = (index: number, attachment: ErrandFormAttachment) => {
-    const current = getValues('attachments') ?? [];
-    const currentIndex = attachment.id ? current.findIndex((candidate) => candidate.id === attachment.id) : index;
-    return { current, currentIndex };
-  };
+  // The list may have changed while the backend answered, so a stored file is found again by id.
+  const indexAfterAwait = (current: ErrandFormAttachment[], attachment: ErrandFormAttachment, index: number) =>
+    attachment.id ? current.findIndex((candidate) => candidate.id === attachment.id) : index;
 
   const setCategory = async (index: number, category: string) => {
     const attachment = (getValues('attachments') ?? [])[index];
@@ -164,7 +162,8 @@ const AttachmentsForSchema: React.FC<{ requirements: AttachmentRequirements }> =
       if (attachment.id && errandId) {
         await updateErrandAttachmentCategory(errandId, attachment.id, category);
       }
-      const { current, currentIndex } = findAttachment(index, attachment);
+      const current = getValues('attachments') ?? [];
+      const currentIndex = indexAfterAwait(current, attachment, index);
       updateAttachments(current.map((candidate, i) => (i === currentIndex ? { ...candidate, category } : candidate)));
     } catch {
       toastMessage({
@@ -182,8 +181,8 @@ const AttachmentsForSchema: React.FC<{ requirements: AttachmentRequirements }> =
       if (attachment.id && errandId) {
         await deleteErrandAttachment(errandId, attachment.id);
       }
-      const { current, currentIndex } = findAttachment(index, attachment);
-      updateAttachments(current.filter((_, i) => i !== currentIndex));
+      const current = getValues('attachments') ?? [];
+      updateAttachments(current.filter((_, i) => i !== indexAfterAwait(current, attachment, index)));
     } catch {
       toastMessage({ position: 'bottom', status: 'error', message: t('errand-information:attachments.remove_error') });
     }

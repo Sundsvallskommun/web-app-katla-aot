@@ -37,6 +37,7 @@ const SAFE_FILTER_KEY_PATTERN = /^[A-Za-z][A-Za-z0-9_.]*$/;
 // A stakeholder's externalId holds the organisation's party id.
 const ORGANIZATION_FILTER_KEY = 'stakeholders.externalId';
 
+// Upstream leaves drafts out of a search unless the filter names lifecycle.
 const DRAFT_FILTER_TERM = `lifecycle:'${ErrandLifecycleEnum.DRAFT}'`;
 
 const toFilterTerm = (key: string, value: string): string => {
@@ -54,13 +55,6 @@ const toFilterTerm = (key: string, value: string): string => {
 const FILTER_AND = ' and ';
 
 const toFilterOrGroup = (key: string, values: string[]): string => `(${values.map(value => toFilterTerm(key, value)).join(' or ')})`;
-
-const toFilter = (filterParts: string[]): string => {
-  const otherParts = filterParts.filter(part => part !== DRAFT_FILTER_TERM);
-  const orderedParts = otherParts.length < filterParts.length ? [DRAFT_FILTER_TERM, ...otherParts] : otherParts;
-
-  return orderedParts.join(FILTER_AND);
-};
 
 @Controller()
 export class SupportManagementController {
@@ -177,7 +171,7 @@ export class SupportManagementController {
   }
 
   private async findErrand(filterParts: string[], req: RequestWithUser): Promise<Errand | undefined> {
-    const params = new URLSearchParams({ filter: toFilter(filterParts) });
+    const params = new URLSearchParams({ filter: filterParts.join(FILTER_AND) });
     const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands?${params.toString()}`;
 
     const res = await this.apiService.get<PageErrand>({ url }, req);
@@ -212,7 +206,7 @@ export class SupportManagementController {
       }
     }
 
-    params.append('filter', toFilter(filterParts));
+    params.append('filter', filterParts.join(FILTER_AND));
 
     const finalUrl = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
 
@@ -243,7 +237,7 @@ export class SupportManagementController {
       }
     }
 
-    params.append('filter', toFilter(filterParts));
+    params.append('filter', filterParts.join(FILTER_AND));
 
     const finalUrl = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
 
