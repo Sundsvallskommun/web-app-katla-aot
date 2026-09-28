@@ -1,6 +1,8 @@
 import { Type } from 'class-transformer';
 import { Allow, IsArray, IsBoolean, IsEnum, IsInt, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 
+// lifecycle exists only in the sprint API (16.1), which is what the alias in api-config routes to.
+import { ErrandLifecycleEnum } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import {
   Classification,
   CountResponse,
@@ -39,6 +41,10 @@ export class ErrandsQueryDTO {
   @IsOptional()
   @IsString()
   status?: string;
+  // Upstream omits drafts unless the filter names lifecycle.
+  @IsOptional()
+  @IsEnum(ErrandLifecycleEnum)
+  lifecycle?: ErrandLifecycleEnum;
 }
 
 export class StakeholderDTO implements Partial<Stakeholder> {
@@ -242,6 +248,9 @@ export class ErrandDTO implements Errand {
   @IsString()
   @IsOptional()
   status?: string;
+  @IsEnum(ErrandLifecycleEnum)
+  @IsOptional()
+  lifecycle?: ErrandLifecycleEnum;
   @IsString()
   @IsOptional()
   resolution?: string;
