@@ -58,7 +58,7 @@ const currentStakeholders = (): ErrandFormDTO['stakeholders'] => {
 
 const renderOwner = (defaultValues: Partial<ErrandFormDTO> = {}) => {
   const TestForm: React.FC = () => {
-    const methods = useForm<ErrandFormDTO>({ defaultValues: { status: 'DRAFT', ...defaultValues } });
+    const methods = useForm<ErrandFormDTO>({ defaultValues });
 
     return (
       <FormProvider {...methods}>
@@ -142,7 +142,7 @@ describe('ErrandOwner', () => {
 
   it('leaves a submitted errand alone rather than preselecting into it', async () => {
     getMyOrganizationsMock.mockResolvedValue([ACME]);
-    renderOwner({ status: 'NEW' });
+    renderOwner({ id: 'id-1', status: 'NEW' });
 
     await waitFor(() => {
       expect(getMyOrganizationsMock).toHaveBeenCalled();

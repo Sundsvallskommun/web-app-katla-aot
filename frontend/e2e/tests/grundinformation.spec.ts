@@ -36,11 +36,11 @@ const measure = async (locator: Locator, name: string) => {
   return { ...box, right: box.x + box.width };
 };
 
-/** mockErrand has status NEW, i.e. a submitted errand. */
-const openErrand = async (page: Page, appUrl: (path: string) => string, status?: string) => {
+/** mockErrand is a filed errand: status NEW and no draft lifecycle. */
+const openErrand = async (page: Page, appUrl: (path: string) => string, lifecycle?: 'DRAFT' | 'ACTIVE') => {
   await page.route(
     `**/supportmanagement/errand/${mockErrand.errandNumber}`,
-    jsonRoute({ ...mockErrand, stakeholders: [longContact], ...(status === undefined ? {} : { status }) })
+    jsonRoute({ ...mockErrand, stakeholders: [longContact], ...(lifecycle === undefined ? {} : { lifecycle }) })
   );
   await page.route('**/supportmanagement/metadata', jsonRoute(mockMetadata));
   await page.goto(appUrl(errandPath));

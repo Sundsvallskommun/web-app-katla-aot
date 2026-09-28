@@ -61,7 +61,7 @@ const ShowValidation: React.FC = () => {
 
 const renderAttachments = (defaultValues: Partial<ErrandFormDTO>) => {
   const TestForm: React.FC = () => {
-    const methods = useForm<ErrandFormDTO>({ defaultValues: { status: 'DRAFT', labels: LABELS, ...defaultValues } });
+    const methods = useForm<ErrandFormDTO>({ defaultValues: { labels: LABELS, ...defaultValues } });
     return (
       <FormProvider {...methods}>
         <FormValidationProvider>

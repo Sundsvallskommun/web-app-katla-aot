@@ -40,10 +40,11 @@ export class ErrandsQueryDTO {
   @IsOptional()
   @IsString()
   status?: string;
-  // Upstream omits drafts unless the filter names lifecycle.
+  // Upstream omits drafts unless the filter names lifecycle. Declared as string: routing-controllers
+  // binds query fields by design:type, and an enum type makes it JSON-parse the raw value.
   @IsOptional()
   @IsEnum(ErrandLifecycleEnum)
-  lifecycle?: ErrandLifecycleEnum;
+  lifecycle?: string;
 }
 
 export class StakeholderDTO implements Partial<Stakeholder> {

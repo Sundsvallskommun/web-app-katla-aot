@@ -18,7 +18,7 @@ interface RequestTracker {
 export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptions = {}) {
   const { t } = useTranslation();
   const { sortColumn, sortOrder, page, size } = useSortStore();
-  const { statuses } = useFilterStore();
+  const { statuses, lifecycle } = useFilterStore();
   const { metadataError } = useLoadMetadata();
 
   const [rows, setRows] = useState<ErrandDTO[]>([]);
@@ -71,7 +71,7 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
     setErrandsError(null);
     beginRequest(generation);
     let active = true;
-    void getErrands({ sortColumn, sortOrder, page: effectivePage, size, statuses })
+    void getErrands({ sortColumn, sortOrder, page: effectivePage, size, statuses, lifecycle })
       .then((data) => {
         if (!active || requestGenerationRef.current !== generation) return;
         setRows(data.content ?? []);
@@ -94,7 +94,7 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
         requestTrackerRef.current = { generation: invalidatedGeneration, pending: 0 };
       }
     };
-  }, [beginRequest, finishRequest, sortColumn, sortOrder, effectivePage, size, statuses, t]);
+  }, [beginRequest, finishRequest, sortColumn, sortOrder, effectivePage, size, statuses, lifecycle, t]);
 
   const hasMore = mode === 'mobile' ? mobilePage + 1 < totalPages : page + 1 < totalPages;
 
@@ -111,7 +111,7 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
 
     mobilePageRef.current = nextPage;
     setMobilePage(nextPage);
-    void getErrands({ sortColumn, sortOrder, page: nextPage, size, statuses })
+    void getErrands({ sortColumn, sortOrder, page: nextPage, size, statuses, lifecycle })
       .then((data) => {
         if (requestGenerationRef.current !== generation) return;
         setRows((prev) => [...prev, ...(data.content ?? [])]);
@@ -129,7 +129,7 @@ export function useOverviewErrands({ mode = 'desktop' }: UseOverviewErrandsOptio
       .finally(() => {
         finishRequest(generation);
       });
-  }, [beginRequest, finishRequest, mode, totalPages, sortColumn, sortOrder, size, statuses, t]);
+  }, [beginRequest, finishRequest, mode, totalPages, sortColumn, sortOrder, size, statuses, lifecycle, t]);
 
   return { rows, isLoading, totalPages, totalElements, hasMore, loadMore, page, errandsError, metadataError };
 }

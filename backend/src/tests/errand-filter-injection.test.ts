@@ -63,4 +63,23 @@ describe('errand filter injection', () => {
   it('still rejects an injected value', async () => {
     await expect(new SupportManagementController().getErrands(req, asQuery({ status: "NEW' or '1'='1" }))).rejects.toMatchObject({ status: 400 });
   });
+
+  it('passes the lifecycle filter through', async () => {
+    await new SupportManagementController().getErrands(req, asQuery({ lifecycle: 'DRAFT' }));
+
+    expect(decodeURIComponent(requestedUrl())).toContain("lifecycle:'DRAFT'");
+  });
+});
+
+// routing-controllers normalises each query field by its design:type. A field typed as an enum
+// or union is bound as Object, which makes it JSON-parse the raw value and fail on plain text.
+describe('errand query binding', () => {
+  it('declares every query field as a primitive', () => {
+    const fields = ['page', 'size', 'sort', 'status', 'lifecycle'];
+
+    for (const field of fields) {
+      const type: unknown = Reflect.getMetadata('design:type', ErrandsQueryDTO.prototype, field);
+      expect([String, Number]).toContain(type);
+    }
+  });
 });

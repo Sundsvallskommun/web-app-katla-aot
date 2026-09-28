@@ -69,7 +69,7 @@ export const WizardBottomBar: React.FC = () => {
   const onRegister = async (logout?: boolean) => {
     setIsOpen(false);
     try {
-      const errandData = prepareErrandForApi(getValues(), 'NEW', namespace);
+      const errandData = prepareErrandForApi(getValues(), 'ACTIVE', namespace);
       const errand = await (errandId ? updateErrand(errandId, errandData) : createErrand(errandData));
       await uploadAttachments(errand.id, getValues('attachments'));
       const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);

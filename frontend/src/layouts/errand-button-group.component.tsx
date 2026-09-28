@@ -45,10 +45,9 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
 
   const namespace = useMetadataStore((state) => state.metadata?.namespace);
   const uploadAttachments = useAttachmentUpload();
-  const errandStatus = watch('status');
   const errandId = watch('id');
 
-  const isDraft = errandStatus === 'DRAFT';
+  const isDraft = watch('lifecycle') === 'DRAFT';
   const showButtons = isNewErrand || isDraft;
   const draftEnabled = appConfig.features.draftEnabled;
 
@@ -77,7 +76,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
     setIsOpen(false);
 
     try {
-      const errandData = prepareErrandForApi(getValues(), 'NEW', namespace);
+      const errandData = prepareErrandForApi(getValues(), 'ACTIVE', namespace);
       const errand = await (errandId ? updateErrand(errandId, errandData) : createErrand(errandData));
       await uploadAttachments(errand.id, getValues('attachments'));
       const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);

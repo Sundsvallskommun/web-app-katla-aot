@@ -15,7 +15,7 @@ test.describe('Overview page', () => {
       jsonRoute(mockCountNewErrands)
     );
     await page.route(
-      (url) => url.pathname.endsWith('/supportmanagement/count') && url.searchParams.get('status') === 'DRAFT',
+      (url) => url.pathname.endsWith('/supportmanagement/count') && url.searchParams.get('lifecycle') === 'DRAFT',
       jsonRoute(mockCountDraftErrands)
     );
     await page.route(
@@ -31,10 +31,6 @@ test.describe('Overview page', () => {
     const openErrandsButton = page.locator('[aria-label="status-button-öppna ärenden"]');
     await expect(openErrandsButton).toBeEnabled();
     await expect(openErrandsButton).toContainText(`Öppna ärenden${mockCountNewErrands.count}`);
-    //Note: Not in use right now
-    // const draftsButton = page.locator('[aria-label="status-button-utkast"]');
-    // await expect(draftsButton).toBeEnabled();
-    // await expect(draftsButton).toContainText(`Utkast${mockCountDraftErrands.count}`);
     const solvedErrandsButton = page.locator('[aria-label="status-button-avslutade ärenden"]');
     await expect(solvedErrandsButton).toBeEnabled();
     await expect(solvedErrandsButton).toContainText(`Avslutade ärenden${mockCountSolvedErrands.count}`);

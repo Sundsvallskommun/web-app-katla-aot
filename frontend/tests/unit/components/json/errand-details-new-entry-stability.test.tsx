@@ -61,7 +61,6 @@ function FormState() {
 function TestForm() {
   const methods = useForm<ErrandFormDTO>({
     defaultValues: {
-      status: 'DRAFT',
       labels: TEST_LABELS,
       errandFormData: [],
     },

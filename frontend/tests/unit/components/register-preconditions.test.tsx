@@ -37,10 +37,6 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key, i18n: { resolvedLanguage: 'sv' } }),
 }));
 
-vi.mock('src/config/appconfig', () => ({
-  appConfig: { features: { draftEnabled: true } },
-}));
-
 vi.mock('@sk-web-gui/react', () => {
   const Button = ({ children, onClick }: ButtonHTMLAttributes<HTMLButtonElement>) => (
     <button type="button" onClick={onClick}>
@@ -74,7 +70,7 @@ const CLASSIFICATION: ErrandFormDTO['labels'] = [
 
 const renderButtons = (defaultValues: Partial<ErrandFormDTO> = {}) => {
   const TestForm: React.FC = () => {
-    const methods = useForm<ErrandFormDTO>({ defaultValues: { status: 'DRAFT', ...defaultValues } });
+    const methods = useForm<ErrandFormDTO>({ defaultValues });
 
     return (
       <FormProvider {...methods}>

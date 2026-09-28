@@ -3,7 +3,7 @@ import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 import { MUNICIPALITY_ID, NAMESPACE } from '@/config';
 import { getApiBase } from '@/config/api-config';
-import { Errand, Label, MetadataResponse, PageErrand } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
+import { Errand, ErrandLifecycleEnum, Label, MetadataResponse, PageErrand } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
@@ -35,6 +35,10 @@ const SAFE_FILTER_KEY_PATTERN = /^[A-Za-z][A-Za-z0-9_.]*$/;
 
 // A stakeholder's externalId holds the organisation's party id.
 const ORGANIZATION_FILTER_KEY = 'stakeholders.externalId';
+
+// Upstream leaves drafts out of a search unless its filter names the lifecycle.
+const LIFECYCLE_FILTER_KEY = 'lifecycle';
+const ALL_LIFECYCLES = [ErrandLifecycleEnum.DRAFT, ErrandLifecycleEnum.ACTIVE];
 
 const toFilterTerm = (key: string, value: string): string => {
   if (!SAFE_FILTER_KEY_PATTERN.test(key)) {
@@ -152,7 +156,11 @@ export class SupportManagementController {
   async getErrand(@Req() req: RequestWithUser, @Param('errandNumber') errandNumber: string): Promise<ErrandDTO> {
     const organizationPartyIds = requireOrganizationPartyIds(req);
 
-    const filter = [toFilterTerm('errandNumber', errandNumber), toFilterOrGroup(ORGANIZATION_FILTER_KEY, organizationPartyIds)].join(FILTER_AND);
+    const filter = [
+      toFilterTerm('errandNumber', errandNumber),
+      toFilterOrGroup(ORGANIZATION_FILTER_KEY, organizationPartyIds),
+      toFilterOrGroup(LIFECYCLE_FILTER_KEY, ALL_LIFECYCLES),
+    ].join(FILTER_AND);
     const params = new URLSearchParams({ filter });
     const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands?${params.toString()}`;
 

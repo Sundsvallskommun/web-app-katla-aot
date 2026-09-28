@@ -21,7 +21,7 @@ export const MobileErrandCard: React.FC<MobileErrandCardProps> = ({ errand }) =>
       <div className="flex min-h-[8rem] items-end self-stretch rounded-[20px] border border-opacity-30 pt-[2.0rem] pb-[1.2rem] pl-[2.0rem] pr-[0.8rem] gap-4">
         <div className="flex flex-1 min-w-0 flex-col overflow-hidden">
           <div className="w-fit">
-            <StatusLabel status={errand.status} />
+            <StatusLabel status={errand.status} lifecycle={errand.lifecycle} />
           </div>
 
           <div className="text-xl font-bold lining-nums proportional-nums leading-[2.8rem] pt-[1.2rem] break-words">

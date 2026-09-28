@@ -110,7 +110,7 @@ describe('errand organization scope', () => {
       data: { content: [{ errandNumber: mockErrandNumber, stakeholders: [{ role: 'PRIMARY', externalId: partyId }] }] },
     });
 
-    it('returns a draft whose primary stakeholder is one of the session organisations', async () => {
+    it('returns an errand whose primary stakeholder is one of the session organisations', async () => {
       get.mockResolvedValue(errandOwnedBy(mockOrganizationPartyId));
 
       const errand = await new SupportManagementController().getErrand(requestWithOrganizations([mockOrganizationPartyId]), mockErrandNumber);
@@ -124,6 +124,15 @@ describe('errand organization scope', () => {
       await new SupportManagementController().getErrand(requestWithOrganizations([mockOrganizationPartyId]), mockErrandNumber);
 
       expect(requestedFilter()).toContain(`errandNumber:'${mockErrandNumber}' and (stakeholders.externalId:'${mockOrganizationPartyId}')`);
+    });
+
+    // Upstream leaves drafts out of a search that does not name the lifecycle.
+    it('names every lifecycle so a draft can be opened', async () => {
+      get.mockResolvedValue(errandOwnedBy(mockOrganizationPartyId));
+
+      await new SupportManagementController().getErrand(requestWithOrganizations([mockOrganizationPartyId]), mockErrandNumber);
+
+      expect(requestedFilter()).toContain("(lifecycle:'DRAFT' or lifecycle:'ACTIVE')");
     });
 
     // The upstream filter should already exclude this. The check must not depend on that.
