@@ -35,7 +35,7 @@ const requestWithOrganizations = (organizationPartyIds?: string[]) =>
 const asQuery = (query: Record<string, unknown>): ErrandsQueryDTO => query;
 // Read the param back rather than decoding the raw URL: URLSearchParams encodes the spaces in
 // `and`/`or` as '+', which decodeURIComponent leaves alone.
-const requestedFilter = (): string => new URLSearchParams(get.mock.calls[0]?.[0].url.split('?')[1] ?? '').get('filter') ?? '';
+const requestedFilter = (call = 0): string => new URLSearchParams(get.mock.calls[call]?.[0].url.split('?')[1] ?? '').get('filter') ?? '';
 
 describe('errand organization scope', () => {
   beforeEach(() => {
@@ -126,13 +126,35 @@ describe('errand organization scope', () => {
       expect(requestedFilter()).toContain(`errandNumber:'${mockErrandNumber}' and (stakeholders.externalId:'${mockOrganizationPartyId}')`);
     });
 
-    // Upstream leaves drafts out of a search that does not name the lifecycle.
-    it('names every lifecycle so a draft can be opened', async () => {
+    // Upstream leaves drafts out of a search unless the filter asks for lifecycle DRAFT itself.
+    it('searches the drafts when no filed errand carries the number', async () => {
+      get.mockResolvedValueOnce({ data: { content: [] } }).mockResolvedValueOnce(errandOwnedBy(mockOrganizationPartyId));
+
+      const errand = await new SupportManagementController().getErrand(requestWithOrganizations([mockOrganizationPartyId]), mockErrandNumber);
+
+      expect(errand.errandNumber).toBe(mockErrandNumber);
+      expect(get).toHaveBeenCalledTimes(2);
+      expect(requestedFilter(0)).not.toContain('lifecycle');
+      expect(requestedFilter(1)).toBe(
+        `lifecycle:'DRAFT' and errandNumber:'${mockErrandNumber}' and (stakeholders.externalId:'${mockOrganizationPartyId}')`,
+      );
+    });
+
+    it('leaves the drafts alone once a filed errand matches', async () => {
       get.mockResolvedValue(errandOwnedBy(mockOrganizationPartyId));
 
       await new SupportManagementController().getErrand(requestWithOrganizations([mockOrganizationPartyId]), mockErrandNumber);
 
-      expect(requestedFilter()).toContain("(lifecycle:'DRAFT' or lifecycle:'ACTIVE')");
+      expect(get).toHaveBeenCalledTimes(1);
+    });
+
+    it('answers 404 when neither search matches', async () => {
+      get.mockResolvedValue({ data: { content: [] } });
+
+      await expect(
+        new SupportManagementController().getErrand(requestWithOrganizations([mockOrganizationPartyId]), mockErrandNumber),
+      ).rejects.toMatchObject({ status: 404 });
+      expect(get).toHaveBeenCalledTimes(2);
     });
 
     // The upstream filter should already exclude this. The check must not depend on that.

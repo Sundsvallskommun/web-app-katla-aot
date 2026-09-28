@@ -3,7 +3,7 @@ import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 import { MUNICIPALITY_ID, NAMESPACE } from '@/config';
 import { getApiBase } from '@/config/api-config';
-import { Errand, ErrandLifecycleEnum, Label, MetadataResponse, PageErrand } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
+import { Errand, ErrandLifecycleEnum, Label, PageErrand } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
@@ -12,6 +12,7 @@ import { MetadataResponseDTO } from '@/responses/supportmanagement-metadata.resp
 import ApiService from '@/services/api.service';
 import { selectCategorizationSubtree, withCategorizationSubtree } from '@/utils/categorization-root';
 import { assertErrandOwnedByUser, belongsToOrganizations, requireOrganizationPartyIds } from '@/utils/errand-access';
+import { fetchMetadata } from '@/utils/fetch-metadata';
 import { assertLabelsOffered, labelsChanged } from '@/utils/internal-labels';
 import { mapStakeholderDTOToStakeholder, mapStakeholderToStakeholderDTO } from '@/utils/stakeholder-mapping';
 import { apiURL } from '@/utils/util';
@@ -36,9 +37,10 @@ const SAFE_FILTER_KEY_PATTERN = /^[A-Za-z][A-Za-z0-9_.]*$/;
 // A stakeholder's externalId holds the organisation's party id.
 const ORGANIZATION_FILTER_KEY = 'stakeholders.externalId';
 
-// Upstream leaves drafts out of a search unless its filter names the lifecycle.
-const LIFECYCLE_FILTER_KEY = 'lifecycle';
-const ALL_LIFECYCLES = [ErrandLifecycleEnum.DRAFT, ErrandLifecycleEnum.ACTIVE];
+// Upstream leaves drafts out of a search unless the filter asks for lifecycle DRAFT itself; an
+// or-group over both lifecycles does not count, so a draft takes a search of its own, with the
+// term first as in the query known to work against the gateway.
+const DRAFT_FILTER_TERM = `lifecycle:'${ErrandLifecycleEnum.DRAFT}'`;
 
 const toFilterTerm = (key: string, value: string): string => {
   if (!SAFE_FILTER_KEY_PATTERN.test(key)) {
@@ -156,18 +158,8 @@ export class SupportManagementController {
   async getErrand(@Req() req: RequestWithUser, @Param('errandNumber') errandNumber: string): Promise<ErrandDTO> {
     const organizationPartyIds = requireOrganizationPartyIds(req);
 
-    const filter = [
-      toFilterTerm('errandNumber', errandNumber),
-      toFilterOrGroup(ORGANIZATION_FILTER_KEY, organizationPartyIds),
-      toFilterOrGroup(LIFECYCLE_FILTER_KEY, ALL_LIFECYCLES),
-    ].join(FILTER_AND);
-    const params = new URLSearchParams({ filter });
-    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands?${params.toString()}`;
-
-    const res = await this.apiService.get<PageErrand>({ url }, req);
-    if (!res.data) throw new HttpException(502, 'Invalid response when reading errand');
-
-    const matchedErrand = res.data.content?.[0];
+    const scope = [toFilterTerm('errandNumber', errandNumber), toFilterOrGroup(ORGANIZATION_FILTER_KEY, organizationPartyIds)];
+    const matchedErrand = (await this.findErrand(scope, req)) ?? (await this.findErrand([DRAFT_FILTER_TERM, ...scope], req));
 
     // 404, not 403: errand numbers are enumerable, so another organisation's errand must be
     // indistinguishable from one that does not exist.
@@ -181,6 +173,16 @@ export class SupportManagementController {
       ...matchedErrand,
       stakeholders,
     };
+  }
+
+  private async findErrand(filterParts: string[], req: RequestWithUser): Promise<Errand | undefined> {
+    const params = new URLSearchParams({ filter: filterParts.join(FILTER_AND) });
+    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands?${params.toString()}`;
+
+    const res = await this.apiService.get<PageErrand>({ url }, req);
+    if (!res.data) throw new HttpException(502, 'Invalid response when reading errand');
+
+    return res.data.content?.[0];
   }
 
   @Get('/supportmanagement/errands')
@@ -255,18 +257,10 @@ export class SupportManagementController {
   @UseBefore(authMiddleware)
   @ResponseSchema(MetadataResponseDTO)
   async getMetadata(@Req() req: RequestWithUser): Promise<MetadataResponseDTO> {
-    return { ...withCategorizationSubtree(await this.fetchMetadata(req)), namespace: NAMESPACE };
-  }
-
-  private async fetchMetadata(req: RequestWithUser): Promise<MetadataResponse> {
-    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/metadata`;
-    const res = await this.apiService.get<MetadataResponse>({ url }, req);
-    if (!res.data) throw new HttpException(502, 'Invalid response when reading metadata');
-
-    return res.data;
+    return { ...withCategorizationSubtree(await fetchMetadata(this.apiService, this.apiBase, req)), namespace: NAMESPACE };
   }
 
   private async fetchOfferedLabels(req: RequestWithUser): Promise<Label[]> {
-    return selectCategorizationSubtree((await this.fetchMetadata(req)).labels?.labelStructure);
+    return selectCategorizationSubtree((await fetchMetadata(this.apiService, this.apiBase, req)).labels?.labelStructure);
   }
 }

@@ -15,14 +15,14 @@ import {
   mockOtherCitizenPartyId,
 } from './helpers/mock-data';
 
-const { get, post, deleteRequest } = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), deleteRequest: vi.fn() }));
+const { get, post, patch, deleteRequest } = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), patch: vi.fn(), deleteRequest: vi.fn() }));
 
 vi.mock('@/services/api.service', () => ({
   default: class {
     get = get;
     post = post;
     delete = deleteRequest;
-    patch = vi.fn();
+    patch = patch;
     put = vi.fn();
   },
 }));
@@ -39,6 +39,25 @@ const upstreamErrand = (reporterUserId: string, organizationPartyId: string) => 
   get.mockResolvedValue({
     data: { id: mockErrandId, reporterUserId, stakeholders: [{ role: 'PRIMARY', externalId: organizationPartyId }] },
   });
+};
+
+const FLOOR_PLAN_PURPOSE_ID = '5f79a808-0ef3-4985-99b9-b12f23e202a7';
+const ATTACHMENTS_URL = `2281/test/errands/${mockErrandId}/attachments`;
+
+/** The errand, then the metadata: the order the controller reads them in when a bilagetyp is given. */
+const upstreamErrandAndPurposes = (reporterUserId: string) => {
+  get
+    .mockResolvedValueOnce({
+      data: { id: mockErrandId, reporterUserId, stakeholders: [{ role: 'PRIMARY', externalId: mockOrganizationPartyId }] },
+    })
+    .mockResolvedValueOnce({
+      data: {
+        attachmentPurposes: [
+          { id: FLOOR_PLAN_PURPOSE_ID, name: 'FLOOR_PLAN', displayName: 'Planritning' },
+          { id: 'retired', name: 'MENU', displayName: 'Meny', deprecated: true },
+        ],
+      },
+    });
 };
 
 const pdf = (): Express.Multer.File => ({ originalname: 'planritning.pdf', buffer: Buffer.from('%PDF') }) as Express.Multer.File;
@@ -73,7 +92,8 @@ const uploadedHeaders = (): string => {
 describe('errand attachment access', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    post.mockResolvedValue({ data: {} });
+    post.mockResolvedValue({ data: {}, location: `https://api.example/${ATTACHMENTS_URL}/attachment-id` });
+    patch.mockResolvedValue({ data: {} });
     deleteRequest.mockResolvedValue({ data: {} });
   });
 
@@ -112,22 +132,101 @@ describe('errand attachment access', () => {
     expect(post).not.toHaveBeenCalled();
   });
 
-  // The bilagetyp is collected and validated in the client, but SupportManagement has no field for
-  // it yet. Sending one anyway is what this guards against; see UPSTREAM_CATEGORY_FIELD.
+  // The upload takes no purpose field; the bilagetyp is set on the created attachment afterwards.
   it('sends the file and the channel upstream, and not the category', async () => {
-    upstreamErrand(mockCitizenPartyId, mockOrganizationPartyId);
+    upstreamErrandAndPurposes(mockCitizenPartyId);
 
     await new SupportManagementAttachmentController().createAttachment(
       requestAs(mockCitizenPartyId),
       mockErrandId,
       [pdf()],
-      attachmentDto('bifogaPlanritning'),
+      attachmentDto('FLOOR_PLAN'),
     );
 
     const fields = uploadedFields();
     expect(Object.keys(fields)).toEqual(['errandAttachment', 'channel']);
     expect(uploadedHeaders()).toContain('filename="planritning.pdf"');
     expect(fields.channel).toBe('ESERVICE');
+  });
+
+  it('sets the purpose named by the bilagetyp on the attachment the upload created', async () => {
+    upstreamErrandAndPurposes(mockCitizenPartyId);
+
+    await new SupportManagementAttachmentController().createAttachment(
+      requestAs(mockCitizenPartyId),
+      mockErrandId,
+      [pdf()],
+      attachmentDto('FLOOR_PLAN'),
+    );
+
+    expect(patch).toHaveBeenCalledTimes(1);
+    expect(patch.mock.calls[0]?.[0]).toMatchObject({
+      url: `${ATTACHMENTS_URL}/attachment-id`,
+      data: { purpose: { id: FLOOR_PLAN_PURPOSE_ID } },
+      propagateClientError: true,
+    });
+  });
+
+  it('refuses an unknown bilagetyp before anything is uploaded', async () => {
+    upstreamErrandAndPurposes(mockCitizenPartyId);
+
+    await expect(
+      new SupportManagementAttachmentController().createAttachment(
+        requestAs(mockCitizenPartyId),
+        mockErrandId,
+        [pdf()],
+        attachmentDto('bifogaPlanritning'),
+      ),
+    ).rejects.toMatchObject({ status: 400 });
+    expect(post).not.toHaveBeenCalled();
+  });
+
+  it('does not offer a deprecated purpose', async () => {
+    upstreamErrandAndPurposes(mockCitizenPartyId);
+
+    await expect(
+      new SupportManagementAttachmentController().createAttachment(requestAs(mockCitizenPartyId), mockErrandId, [pdf()], attachmentDto('MENU')),
+    ).rejects.toMatchObject({ status: 400 });
+    expect(post).not.toHaveBeenCalled();
+  });
+
+  it('uploads an untyped file without reading the metadata or setting a purpose', async () => {
+    upstreamErrand(mockCitizenPartyId, mockOrganizationPartyId);
+
+    await new SupportManagementAttachmentController().createAttachment(requestAs(mockCitizenPartyId), mockErrandId, [pdf()], attachmentDto());
+
+    expect(get).toHaveBeenCalledTimes(1);
+    expect(patch).not.toHaveBeenCalled();
+  });
+
+  it('answers 502 when the upload gives no Location to set the purpose on', async () => {
+    upstreamErrandAndPurposes(mockCitizenPartyId);
+    post.mockResolvedValue({ data: {} });
+
+    await expect(
+      new SupportManagementAttachmentController().createAttachment(requestAs(mockCitizenPartyId), mockErrandId, [pdf()], attachmentDto('FLOOR_PLAN')),
+    ).rejects.toMatchObject({ status: 502 });
+  });
+
+  it('changes the bilagetyp of a stored attachment', async () => {
+    upstreamErrandAndPurposes(mockCitizenPartyId);
+
+    await new SupportManagementAttachmentController().updateAttachment(requestAs(mockCitizenPartyId), mockErrandId, 'attachment-id', {
+      category: 'FLOOR_PLAN',
+    });
+
+    expect(patch.mock.calls[0]?.[0]).toMatchObject({ url: `${ATTACHMENTS_URL}/attachment-id`, data: { purpose: { id: FLOOR_PLAN_PURPOSE_ID } } });
+  });
+
+  it('refuses to retype an attachment on an errand another citizen registered', async () => {
+    upstreamErrand(mockOtherCitizenPartyId, mockOrganizationPartyId);
+
+    await expect(
+      new SupportManagementAttachmentController().updateAttachment(requestAs(mockCitizenPartyId), mockErrandId, 'attachment-id', {
+        category: 'FLOOR_PLAN',
+      }),
+    ).rejects.toMatchObject({ status: 403 });
+    expect(patch).not.toHaveBeenCalled();
   });
 
   it('lists the attachments of an errand belonging to a session organisation', async () => {

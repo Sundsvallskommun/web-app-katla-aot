@@ -97,8 +97,7 @@ Kod som tål saker den inte längre behöver tåla när innehållet författas m
 - **Radindexregexen** `id.replace(/_\d+(?=_|$)/g, '_#')` i `schema-form.component.tsx` felnycklar
   varje egenskapsnamn som slutar på `_<siffror>` — exakt OpenE:s nyckelstil. Kontraktsregel:
   egenskapsnamn slutar aldrig på `_<siffror>`.
-- **Frysta trunkeringsartefakter.** Namn som `bifogaAktuelltRegistreringsbevisFran` (40-teckens
-  slug-kap) och konstanter som `ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET` och
+- **Frysta trunkeringsartefakter.** Konstanter som `ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET` och
   `JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I` (femordsgränsen, kapade mitt i meningen) fryser i
   samma stund det första ärendet sparas. Under kontroll kan de döpas om — men bara **före
   lansering**. Hänger ihop med öppen fråga 5 i `aot-form-schema-plan.md` §7 (svenska eller engelska
@@ -215,5 +214,8 @@ positiva formuleringen av allt ovan; adaptern och kontraktstestet kontrollerar d
    `aot-form-schema-plan.md` §5.
 7. **Bilagor**: `x-attachments`-poster har formen `{key, label, description?, requiredWhen?}`;
    `requiredWhen` följer villkorsreglerna i punkt 4 och pekar bara på egenskaper schemat har.
+   `key` är engelsk `UPPER_SNAKE_CASE` och identisk med namnet på motsvarande attachment purpose i
+   SupportManagement (`attachment-purposes.json` i repots rot); samma dokument har samma `key` i
+   alla scheman, medan `label` får skilja sig per schema.
 8. **Text och språk**: placering och `x-i18n` enligt `json-schema-localization.md`; maskinvärden
    översätts aldrig.

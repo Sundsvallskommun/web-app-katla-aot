@@ -13,6 +13,7 @@ import {
   downloadErrandAttachment,
   getErrandAttachments,
   MAX_ATTACHMENT_SIZE_MB,
+  updateErrandAttachmentCategory,
 } from '@services/errand-service/attachment-service';
 import { Button, FileUpload, PopupMenu, UploadFile, useSnackbar } from '@sk-web-gui/react';
 import {
@@ -150,9 +151,22 @@ const AttachmentsForSchema: React.FC<{ requirements: AttachmentRequirements }> =
     updateAttachments([...(getValues('attachments') ?? []), ...picked]);
   };
 
-  const setCategory = (index: number, category: string) => {
+  const setCategory = async (index: number, category: string) => {
     const current = getValues('attachments') ?? [];
-    updateAttachments(current.map((attachment, i) => (i === index ? { ...attachment, category } : attachment)));
+    const attachment = current[index];
+
+    try {
+      if (attachment.id && errandId) {
+        await updateErrandAttachmentCategory(errandId, attachment.id, category);
+      }
+      updateAttachments(current.map((candidate, i) => (i === index ? { ...candidate, category } : candidate)));
+    } catch {
+      toastMessage({
+        position: 'bottom',
+        status: 'error',
+        message: t('errand-information:attachments.category_error'),
+      });
+    }
   };
 
   const removeAttachment = async (index: number) => {
@@ -307,11 +321,12 @@ const AttachmentsForSchema: React.FC<{ requirements: AttachmentRequirements }> =
                   : t('errand-information:attachments.not_sent_yet'),
               }}
               categoryProps={{
+                className: 'min-w-0 [&_.sk-form-control]:w-full [&_.sk-form-select]:w-full',
                 categories,
                 selectProps: {
                   value: file.meta.category ?? '',
                   onChange: (event) => {
-                    setCategory(index, event.target.value);
+                    void setCategory(index, event.target.value);
                   },
                 },
               }}

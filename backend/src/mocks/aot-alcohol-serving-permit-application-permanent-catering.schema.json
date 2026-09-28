@@ -988,7 +988,7 @@
     ],
     "x-attachments": [
       {
-        "key": "laddaUppFullmakt",
+        "key": "POWER_OF_ATTORNEY",
         "label": "Fullmakt",
         "requiredWhen": {
           "properties": {
@@ -1002,7 +1002,7 @@
         }
       },
       {
-        "key": "bifogaAktuelltRegistreringsbevisFran",
+        "key": "CERTIFICATE_OF_REGISTRATION",
         "label": "Registreringsbevis från Bolagsverket",
         "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.",
         "requiredWhen": {
@@ -1023,7 +1023,7 @@
         }
       },
       {
-        "key": "bifogaUppgifterOmAgarforhallanden",
+        "key": "OWNERSHIP_INFORMATION",
         "label": "Uppgifter om ägarförhållanden",
         "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen.",
         "requiredWhen": {
@@ -1043,7 +1043,7 @@
         }
       },
       {
-        "key": "bifogaRegisterutdragFranSkatteverket",
+        "key": "TAX_AGENCY_EXTRACT",
         "label": "Registerutdrag från Skatteverket",
         "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se.",
         "requiredWhen": {
@@ -1065,11 +1065,11 @@
         }
       },
       {
-        "key": "bifogaVerksamhetsbeskrivning",
+        "key": "BUSINESS_DESCRIPTION",
         "label": "Verksamhetsbeskrivning"
       },
       {
-        "key": "bifogaKontoutdrag",
+        "key": "BANK_STATEMENT",
         "label": "Kontoutdrag för egna medel",
         "requiredWhen": {
           "properties": {
@@ -1085,7 +1085,7 @@
         }
       },
       {
-        "key": "bifogaLanebevisForBanklan",
+        "key": "BANK_LOAN_CERTIFICATE",
         "label": "Lånebevis för banklån",
         "requiredWhen": {
           "properties": {
@@ -1101,7 +1101,7 @@
         }
       },
       {
-        "key": "bifogaLanebevisForPrivatlan",
+        "key": "PRIVATE_LOAN_CERTIFICATE",
         "label": "Lånebevis för privatlån",
         "requiredWhen": {
           "properties": {
@@ -1117,7 +1117,7 @@
         }
       },
       {
-        "key": "bifogaLanebevisForAnnanFinansiering",
+        "key": "OTHER_FINANCING_CERTIFICATE",
         "label": "Lånebevis för annan finansiering",
         "requiredWhen": {
           "properties": {
@@ -1131,6 +1131,18 @@
             "finansiering"
           ]
         }
+      },
+      {
+        "key": "KITCHEN_FLOOR_PLAN",
+        "label": "Planritning kök"
+      },
+      {
+        "key": "KITCHEN_FIRE_SAFETY_DOCUMENTATION",
+        "label": "Brandskydd kök"
+      },
+      {
+        "key": "KITCHEN_LEASE_AGREEMENT",
+        "label": "Hyresavtal eller upplåtelseavtal kök"
       }
     ]
   },

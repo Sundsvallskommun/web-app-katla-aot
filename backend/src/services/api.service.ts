@@ -15,7 +15,7 @@ import ApiTokenService from './api-token.service';
 export interface ApiRequestConfig extends AxiosRequestConfig {
   /** Keep an upstream 4xx status without exposing its untrusted response body. */
   propagateClientError?: boolean;
-  /** Leave a Location header unfollowed, for a created resource the caller does not want back. */
+  /** Leave a Location header unfollowed, for a created resource the caller does not want back. The bounded Location is returned instead. */
   skipLocationFollow?: boolean;
 }
 
@@ -263,11 +263,11 @@ class ApiService {
       const res = authenticatedResponse.response;
 
       const location = res.headers.location as string | undefined;
-      if (!location || skipLocationFollow) {
-        return { data: res.data, message: 'success' };
-      }
+      if (!location) return { data: res.data, message: 'success' };
 
       const responseUrl = getBoundedLocation(location, requestUrl, boundaryUrl);
+      if (skipLocationFollow) return { data: res.data, message: 'success', location: responseUrl };
+
       const redirectConfig: AuthenticatedRequestConfig = {
         headers: {
           ...preparedConfig.headers,

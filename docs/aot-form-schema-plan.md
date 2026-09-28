@@ -442,7 +442,7 @@ avsnittet alltid tänkt sig, under `x-attachments` i schemaroten:
 
 ```json
 "x-attachments": [
-  { "key": "laddaUppFullmakt", "label": "Fullmakt",
+  { "key": "POWER_OF_ATTORNEY", "label": "Fullmakt",
     "requiredWhen": { "properties": { "arDuFirmatecknare": { "const": "NEJ" } },
                       "required": ["arDuFirmatecknare"] } }
 ]

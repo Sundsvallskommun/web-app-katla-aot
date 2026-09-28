@@ -52,6 +52,12 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
   const draftEnabled = appConfig.features.draftEnabled;
 
   const onSaveDraft = async () => {
+    if (!getPrimaryStakeholder(getValues('stakeholders'))) {
+      setShowValidation(true);
+      reportValidationError(t('validation:owner.required'));
+      return;
+    }
+
     try {
       const errandData = prepareErrandForApi(getValues(), 'DRAFT', namespace);
       const errand = await (errandId ? updateErrand(errandId, errandData) : createErrand(errandData));

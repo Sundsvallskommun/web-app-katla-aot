@@ -642,7 +642,7 @@
     ],
     "x-attachments": [
       {
-        "key": "laddaUppFullmakt",
+        "key": "POWER_OF_ATTORNEY",
         "label": "Fullmakt",
         "requiredWhen": {
           "properties": {
@@ -656,7 +656,7 @@
         }
       },
       {
-        "key": "bifogaAktuelltRegistreringsbevisFran",
+        "key": "CERTIFICATE_OF_REGISTRATION",
         "label": "Registreringsbevis från Bolagsverket",
         "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.",
         "requiredWhen": {
@@ -677,7 +677,7 @@
         }
       },
       {
-        "key": "bifogaUppgifterOmAgarforhallanden",
+        "key": "OWNERSHIP_INFORMATION",
         "label": "Uppgifter om ägarförhållanden",
         "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen.",
         "requiredWhen": {
@@ -697,7 +697,7 @@
         }
       },
       {
-        "key": "bifogaRegisterutdragFranSkatteverket",
+        "key": "TAX_AGENCY_EXTRACT",
         "label": "Registerutdrag från Skatteverket",
         "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se.",
         "requiredWhen": {
@@ -719,11 +719,11 @@
         }
       },
       {
-        "key": "bifogaVerksamhetsbeskrivning",
+        "key": "BUSINESS_DESCRIPTION",
         "label": "Verksamhetsbeskrivning"
       },
       {
-        "key": "bifogaKontoutdrag",
+        "key": "BANK_STATEMENT",
         "label": "Kontoutdrag för egna medel",
         "requiredWhen": {
           "properties": {
@@ -739,7 +739,7 @@
         }
       },
       {
-        "key": "bifogaLanebevisForBanklan",
+        "key": "BANK_LOAN_CERTIFICATE",
         "label": "Lånebevis för banklån",
         "requiredWhen": {
           "properties": {
@@ -755,7 +755,7 @@
         }
       },
       {
-        "key": "bifogaLanebevisForPrivatlan",
+        "key": "PRIVATE_LOAN_CERTIFICATE",
         "label": "Lånebevis för privatlån",
         "requiredWhen": {
           "properties": {
@@ -771,7 +771,7 @@
         }
       },
       {
-        "key": "bifogaLanebevisForAnnanFinansiering",
+        "key": "OTHER_FINANCING_CERTIFICATE",
         "label": "Lånebevis för annan finansiering",
         "requiredWhen": {
           "properties": {
@@ -787,7 +787,7 @@
         }
       },
       {
-        "key": "bifogadRegistreringLansstyrelsen",
+        "key": "COUNTY_BOARD_REGISTRATION",
         "label": "Registrering från Länsstyrelsen",
         "requiredWhen": {
           "properties": {
@@ -801,7 +801,7 @@
         }
       },
       {
-        "key": "bifogaAvtal",
+        "key": "SUPPLIER_AGREEMENT",
         "label": "Avtal med tillverkare eller partihandlare",
         "requiredWhen": {
           "properties": {
@@ -815,17 +815,17 @@
         }
       },
       {
-        "key": "bifogaProduktlista",
+        "key": "PRODUCT_LIST",
         "label": "Produktlista",
         "description": "Produkterna som ska säljas är registrerade hos Folkhälsomyndigheten."
       },
       {
-        "key": "bifogatUnderlagDispositionsratt",
+        "key": "RIGHT_OF_DISPOSAL",
         "label": "Underlag som styrker dispositionsrätten",
         "description": "Underlag som visar att företaget har rätt att nyttja lokalen."
       },
       {
-        "key": "egenkontrollprogram",
+        "key": "SELF_MONITORING_PROGRAM",
         "label": "Egenkontrollprogram",
         "description": "Lagen om tobak och liknande produkter och lagen om tobaksfria nikotinprodukter kräver att ett egenkontrollprogram bifogas anmälan. Folkhälsomyndigheten har en vägledning för näringsidkare."
       }

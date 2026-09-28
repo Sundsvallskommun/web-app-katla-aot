@@ -200,9 +200,10 @@ describe('ApiService effective URL boundary', () => {
     const serviceBaseUrl = `http://127.0.0.1:${redirectPort}/gateway`;
 
     try {
-      await new ApiService().post({ baseURL: serviceBaseUrl, url: '/resource', skipLocationFollow: true }, citizenSender);
+      const res = await new ApiService().post({ baseURL: serviceBaseUrl, url: '/resource', skipLocationFollow: true }, citizenSender);
 
       expect(followed).toBe(false);
+      expect(res.location).toBe(`${serviceBaseUrl}/2281/CONTACTCENTER/errands/errand-id/attachments/attachment-id`);
     } finally {
       await close(redirectServer);
     }

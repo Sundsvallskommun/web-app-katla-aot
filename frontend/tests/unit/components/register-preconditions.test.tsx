@@ -37,6 +37,10 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key, i18n: { resolvedLanguage: 'sv' } }),
 }));
 
+vi.mock('src/config/appconfig', () => ({
+  appConfig: { features: { draftEnabled: true } },
+}));
+
 vi.mock('@sk-web-gui/react', () => {
   const Button = ({ children, onClick }: ButtonHTMLAttributes<HTMLButtonElement>) => (
     <button type="button" onClick={onClick}>
@@ -134,5 +138,33 @@ describe('What registration requires before it will submit', () => {
 
     expect(await screen.findByRole('button', { name: 'errand-information:submit_confirm.submit' })).toBeInTheDocument();
     expect(snackbarMock).not.toHaveBeenCalled();
+  });
+
+  const clickSaveDraft = () => {
+    fireEvent.click(screen.getByRole('button', { name: 'errand-information:save_draft' }));
+  };
+
+  // Reading is scoped by the owner's organisation, so a draft saved without one would be lost.
+  it('refuses to save a draft with no owner', async () => {
+    renderButtons({ labels: CLASSIFICATION });
+
+    clickSaveDraft();
+
+    await expectReported('validation:owner.required');
+    expect(createErrandMock).not.toHaveBeenCalled();
+  });
+
+  it('saves a draft that has an owner, before anything else is filled in', async () => {
+    createErrandMock.mockResolvedValue({ id: 'id-1', errandNumber: 'AOT-1', jsonParameters: [] });
+    renderButtons({ stakeholders: OWNER });
+
+    clickSaveDraft();
+
+    await waitFor(() => {
+      expect(createErrandMock).toHaveBeenCalledWith(
+        expect.objectContaining({ lifecycle: 'DRAFT', stakeholders: OWNER })
+      );
+    });
+    expect(snackbarMock).toHaveBeenCalledWith(expect.objectContaining({ status: 'success' }));
   });
 });
