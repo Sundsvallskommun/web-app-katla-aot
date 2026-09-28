@@ -5,10 +5,6 @@ export const APIS = [
     version: '2.0',
   },
   {
-    name: 'supportmanagement',
-    version: '15.2',
-  },
-  {
     name: 'support-management-alkt-sprint',
     version: '16.1',
   },
@@ -31,7 +27,7 @@ export const APIS = [
 ] as const;
 
 // Temporary routing for the Support Management development sprint.
-// Remove this alias and rename the APIS entry when the sprint API is retired.
+// Remove this alias and rename the APIS entry to supportmanagement when the sprint API is retired.
 const API_SERVICE_ALIASES: Readonly<Record<string, string>> = {
   supportmanagement: 'support-management-alkt-sprint',
 };

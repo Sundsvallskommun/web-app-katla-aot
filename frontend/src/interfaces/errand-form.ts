@@ -1,5 +1,7 @@
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
 
+export type ErrandLifecycle = NonNullable<ErrandDTO['lifecycle']>;
+
 export interface ErrandFormDataItem {
   schemaName: string;
   schemaId?: string;

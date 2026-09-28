@@ -1,14 +1,14 @@
-import { ErrandDTO } from '@data-contracts/backend/data-contracts';
+import { ErrandLifecycle } from '@interfaces/errand-form';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface FilterState {
   activeStatus: string | null;
   statuses: string[];
-  lifecycle?: ErrandDTO['lifecycle'];
+  lifecycle?: ErrandLifecycle;
   setActiveStatus: (status: string) => void;
   setStatuses: (statuses: string[]) => void;
-  setLifecycle: (lifecycle?: ErrandDTO['lifecycle']) => void;
+  setLifecycle: (lifecycle?: ErrandLifecycle) => void;
 }
 
 export const useFilterStore = create<FilterState>()(

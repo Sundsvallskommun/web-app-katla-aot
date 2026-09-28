@@ -1,4 +1,5 @@
 import { ErrandDTO, MetadataResponseDTO, PageErrandDTO } from '@data-contracts/backend/data-contracts';
+import { ErrandLifecycle } from '@interfaces/errand-form';
 import { apiService } from '@services/api-service';
 
 export interface ErrandQuery {
@@ -8,7 +9,7 @@ export interface ErrandQuery {
   sortOrder?: 'asc' | 'desc';
   statuses?: string[];
   // Upstream leaves drafts out of every search that does not name the lifecycle.
-  lifecycle?: ErrandDTO['lifecycle'];
+  lifecycle?: ErrandLifecycle;
 }
 
 export const getErrandUsingErrandNumber = async (errandNumber: string): Promise<ErrandDTO> => {

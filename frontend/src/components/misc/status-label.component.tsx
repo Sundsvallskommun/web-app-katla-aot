@@ -1,11 +1,11 @@
-import { ErrandDTO } from '@data-contracts/backend/data-contracts';
+import { ErrandLifecycle } from '@interfaces/errand-form';
 import { Label, LabelProps } from '@sk-web-gui/react';
 import { Check, CirclePause, Clock10, Pen, SquarePen } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 interface StatusLabelProps {
   status?: string;
-  lifecycle?: ErrandDTO['lifecycle'];
+  lifecycle?: ErrandLifecycle;
 }
 
 export const StatusLabel: React.FC<StatusLabelProps> = ({ status, lifecycle }) => {

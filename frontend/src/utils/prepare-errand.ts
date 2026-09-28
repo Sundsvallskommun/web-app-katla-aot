@@ -3,10 +3,7 @@ import {
   errandFormDataToJsonParameters,
   schemaNamesForErrand,
 } from '@components/json/utils/schema-utils';
-import { ErrandDTO } from '@data-contracts/backend/data-contracts';
-import { ErrandFormDTO } from '@interfaces/errand-form';
-
-export type ErrandLifecycle = NonNullable<ErrandDTO['lifecycle']>;
+import { ErrandFormDTO, ErrandLifecycle } from '@interfaces/errand-form';
 
 // Status is the same for a draft and a filed errand: what sets them apart is the lifecycle.
 const INITIAL_STATUS = 'NEW';

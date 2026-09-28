@@ -1,5 +1,6 @@
 'use client';
 
+import { ErrandLifecycle } from '@interfaces/errand-form';
 import { ErrandQuery, getErrandsCount } from '@services/errand-service/errand-service';
 import { CircleCheckBig, ClipboardPen, SquarePen } from 'lucide-react';
 import { createElement, ReactElement, useEffect, useState } from 'react';
@@ -12,7 +13,7 @@ import { useSortStore } from 'src/stores/sort-store';
 export interface StatusButton {
   label: string;
   statuses: string[];
-  lifecycle?: ErrandQuery['lifecycle'];
+  lifecycle?: ErrandLifecycle;
   icon: ReactElement;
   errandsCount: number;
 }
