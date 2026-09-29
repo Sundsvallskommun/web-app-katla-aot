@@ -1,13 +1,10 @@
 import i18nConfig from '@app/i18nConfig';
 import { CancelErrandDialog } from '@components/cancel-errand-dialog.component';
-import { validateErrandFormData } from '@components/json/utils/schema-utils';
 import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandFormDTO } from '@interfaces/errand-form';
 import { CenterDiv } from '@layouts/center-div.component';
-import { Button, Dialog, useSnackbar } from '@sk-web-gui/react';
+import { Button, Dialog } from '@sk-web-gui/react';
 import { appURL } from '@utils/app-url';
-import { validateErrandAttachments } from '@utils/errand-attachments';
-import { getPrimaryStakeholder } from '@utils/stakeholder';
 import { ChevronLeft, ChevronRight, Inbox } from 'lucide-react';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -15,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
 import { REGISTER_ERRAND_PATH } from 'src/constants/routes';
 import { useActiveWizardSteps } from 'src/hooks/use-active-wizard-steps';
+import { useReportValidationError } from 'src/hooks/use-report-validation-error';
 import { useSaveErrand } from 'src/hooks/use-save-errand';
 import { useMetadataStore } from 'src/stores/metadata-store';
 import { useWizardStore } from 'src/stores/wizard-store';
@@ -25,10 +23,10 @@ export const WizardBottomBar: React.FC = () => {
   const { t } = useTranslation();
   const { t: tForms, i18n } = useTranslation('forms');
   const locale = i18n.resolvedLanguage ?? i18nConfig.defaultLocale;
-  const toastMessage = useSnackbar();
   const { getValues } = useFormContext<ErrandFormDTO>();
-  const { setShowValidation, focusFirstError } = useFormValidation();
-  const { saveDraft, register } = useSaveErrand();
+  const { setShowValidation } = useFormValidation();
+  const reportValidationError = useReportValidationError();
+  const { validate, saveDraft, register } = useSaveErrand();
   const { currentStep, goNext, goBack, setStepErrors } = useWizardStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
@@ -47,20 +45,12 @@ export const WizardBottomBar: React.FC = () => {
     return register({ logout });
   };
 
-  // The message says what is missing and focus moves to the field, so it can be fixed at once
-  // even when the field is far down the step.
-  const reportValidationError = (message: string) => {
-    toastMessage({ position: 'bottom', status: 'error', message });
-    focusFirstError();
-  };
-
   const handleNext = async () => {
     const step = steps[currentStep];
-    const errors = await validateStep(step, getValues(), step.id === 'deviation' ? tForms : t, locale, namespace);
+    const errors = await validateStep(step, getValues(), { t, tForms, locale, namespace });
     setStepErrors(currentStep, errors);
 
     if (errors.length > 0) {
-      setShowValidation(true);
       reportValidationError(errors[0]);
       return;
     }
@@ -70,30 +60,7 @@ export const WizardBottomBar: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    setShowValidation(true);
-
-    const values = getValues();
-
-    // Same rule as the desktop button group: an errand with no owner is outside every
-    // organisation the session scopes by, so its filer could not read it back.
-    if (!getPrimaryStakeholder(values.stakeholders)) {
-      reportValidationError(t('validation:owner.required'));
-      return;
-    }
-
-    const formDataErrors = await validateErrandFormData(values.errandFormData, tForms, locale);
-    if (formDataErrors.length > 0) {
-      reportValidationError(formDataErrors[0]);
-      return;
-    }
-
-    const attachmentErrors = await validateErrandAttachments(values, t, locale, namespace);
-    if (attachmentErrors.length > 0) {
-      reportValidationError(attachmentErrors[0]);
-      return;
-    }
-
-    setIsOpen(true);
+    if (await validate('register')) setIsOpen(true);
   };
 
   return (

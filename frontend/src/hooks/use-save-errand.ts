@@ -3,41 +3,48 @@
 import i18nConfig from '@app/i18nConfig';
 import {
   errandFormDataContractErrorMessage,
-  errandFormDataForSchemas,
   jsonParametersToErrandFormData,
-  schemaNamesForErrand,
-  validateErrandFormData,
 } from '@components/json/utils/schema-utils';
-import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandDTO } from '@data-contracts/backend/data-contracts';
 import { ErrandFormDTO, ErrandLifecycle } from '@interfaces/errand-form';
 import { createErrand, updateErrand } from '@services/errand-service/errand-service';
 import { useSnackbar } from '@sk-web-gui/react';
+import { SaveIntent, validateErrandForSave } from '@utils/errand-preconditions';
 import { prepareErrandForApi } from '@utils/prepare-errand';
-import { getPrimaryStakeholder } from '@utils/stakeholder';
 import { useRouter } from 'next/navigation';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useAttachmentUpload } from 'src/hooks/use-attachment-upload';
+import { useReportValidationError } from 'src/hooks/use-report-validation-error';
 import { useMetadataStore } from 'src/stores/metadata-store';
 
 const errandPath = (errand: ErrandDTO): string => `/arende/${errand.errandNumber}/grundinformation`;
 
 /**
- * Saving is the same sequence for the desktop button group and the wizard: prepare, create or
- * update, send the pending bilagor, then reset the form to what upstream answered.
+ * Saving is the same sequence for the desktop button group and the wizard: check the
+ * preconditions, prepare, create or update, send the pending bilagor, then reset the form to what
+ * upstream answered. `saveDraft` validates on its own. Registration is confirmed in a dialog
+ * first, so the surface calls `validate('register')` before opening it and `register` only saves.
  */
 export const useSaveErrand = () => {
   const { t } = useTranslation();
   const { t: tForms, i18n } = useTranslation('forms');
   const locale = i18n.resolvedLanguage ?? i18nConfig.defaultLocale;
   const toastMessage = useSnackbar();
+  const reportValidationError = useReportValidationError();
   const router = useRouter();
   const { getValues, reset, watch } = useFormContext<ErrandFormDTO>();
-  const { setShowValidation, focusFirstError } = useFormValidation();
   const namespace = useMetadataStore((state) => state.metadata?.namespace);
   const uploadAttachments = useAttachmentUpload();
   const errandId = watch('id');
+
+  const validate = async (intent: SaveIntent): Promise<boolean> => {
+    const errors = await validateErrandForSave(getValues(), intent, { t, tForms, locale, namespace });
+    if (errors.length === 0) return true;
+
+    reportValidationError(errors[0]);
+    return false;
+  };
 
   const save = async (lifecycle: ErrandLifecycle, successMessage: string): Promise<ErrandDTO | undefined> => {
     try {
@@ -58,42 +65,9 @@ export const useSaveErrand = () => {
     }
   };
 
-  // The message says what is missing and the fields show it, so it can be fixed at once.
-  const reportValidationError = (message: string) => {
-    setShowValidation(true);
-    toastMessage({ position: 'bottom', status: 'error', message });
-    focusFirstError();
-  };
-
-  /**
-   * A draft is held to the same checks as registration for what it files: without an owner it
-   * would fall outside every organisation the session scopes by, and upstream validates the filed
-   * answers against the schema, so an invalid form is shown here rather than answered with 400.
-   * A form not yet opened is not filed and passes. `navigate` opens the saved errand; a draft
-   * reopened from the list stays where it is.
-   */
+  /** `navigate` opens the saved errand; a draft reopened from the list stays where it is. */
   const saveDraft = async ({ navigate }: { navigate: boolean }): Promise<void> => {
-    const values = getValues();
-
-    if (!getPrimaryStakeholder(values.stakeholders)) {
-      reportValidationError(t('validation:owner.required'));
-      return;
-    }
-
-    const filedFormData = errandFormDataForSchemas(
-      values.errandFormData,
-      schemaNamesForErrand(values.labels, namespace)
-    );
-    const formDataErrors = await validateErrandFormData(
-      filedFormData,
-      tForms,
-      locale,
-      filedFormData.map((entry) => entry.schemaName)
-    );
-    if (formDataErrors.length > 0) {
-      reportValidationError(formDataErrors[0]);
-      return;
-    }
+    if (!(await validate('draft'))) return;
 
     const errand = await save('DRAFT', t('errand-information:save_message.draft'));
     if (errand && navigate) router.push(errandPath(errand));
@@ -104,5 +78,5 @@ export const useSaveErrand = () => {
     if (errand) router.push(logout ? '/logout' : errandPath(errand));
   };
 
-  return { saveDraft, register };
+  return { validate, saveDraft, register };
 };

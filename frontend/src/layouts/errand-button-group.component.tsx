@@ -1,13 +1,7 @@
-import i18nConfig from '@app/i18nConfig';
 import { CancelErrandDialog } from '@components/cancel-errand-dialog.component';
-import { schemaNamesForErrand, validateErrandFormData } from '@components/json/utils/schema-utils';
-import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandFormDTO } from '@interfaces/errand-form';
-import { Button, Dialog, useSnackbar } from '@sk-web-gui/react';
+import { Button, Dialog } from '@sk-web-gui/react';
 import { appURL } from '@utils/app-url';
-import { validateErrandAttachments } from '@utils/errand-attachments';
-import { getSelectedLabels } from '@utils/label-tree';
-import { getPrimaryStakeholder } from '@utils/stakeholder';
 import { Inbox } from 'lucide-react';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
@@ -15,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
 import { REGISTER_ERRAND_PATH } from 'src/constants/routes';
 import { useSaveErrand } from 'src/hooks/use-save-errand';
-import { useMetadataStore } from 'src/stores/metadata-store';
 
 import { CenterDiv } from './center-div.component';
 
@@ -25,16 +18,10 @@ interface ErrandButtonGroupProps {
 
 export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErrand }) => {
   const { t } = useTranslation();
-  const { t: tForms, i18n } = useTranslation('forms');
-  const locale = i18n.resolvedLanguage ?? i18nConfig.defaultLocale;
-  const toastMessage = useSnackbar();
-  const { getValues, watch } = useFormContext<ErrandFormDTO>();
-  const { setShowValidation, focusFirstError } = useFormValidation();
-  const { saveDraft, register } = useSaveErrand();
+  const { watch } = useFormContext<ErrandFormDTO>();
+  const { validate, saveDraft, register } = useSaveErrand();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isCancelOpen, setIsCancelOpen] = useState<boolean>(false);
-
-  const namespace = useMetadataStore((state) => state.metadata?.namespace);
 
   const isDraft = watch('lifecycle') === 'DRAFT';
   const showButtons = isNewErrand || isDraft;
@@ -47,55 +34,8 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
     return register({ logout });
   };
 
-  // The message says what is missing and focus moves to the field, so it can be fixed at once
-  // even when the field is far down or inside a collapsed section.
-  const reportValidationError = (message: string) => {
-    toastMessage({ position: 'bottom', status: 'error', message });
-    focusFirstError();
-  };
-
   const onValidateBeforeRegister = async () => {
-    // Turn on validation for the JSON forms.
-    setShowValidation(true);
-
-    const values = getValues();
-
-    const { CATEGORY, TYPE } = getSelectedLabels(values.labels);
-    if (!CATEGORY) {
-      reportValidationError(t('validation:categorization.category_required'));
-      return;
-    }
-    if (!TYPE) {
-      reportValidationError(t('validation:categorization.type_required'));
-      return;
-    }
-
-    // Without an owner the errand falls outside every organisation the session scopes by, so the
-    // citizen who filed it could not read it back.
-    if (!getPrimaryStakeholder(values.stakeholders)) {
-      reportValidationError(t('validation:owner.required'));
-      return;
-    }
-
-    const formDataErrors = await validateErrandFormData(
-      values.errandFormData,
-      tForms,
-      locale,
-      schemaNamesForErrand(values.labels, namespace)
-    );
-
-    if (formDataErrors.length > 0) {
-      reportValidationError(formDataErrors[0]);
-      return;
-    }
-
-    const attachmentErrors = await validateErrandAttachments(values, t, locale, namespace);
-    if (attachmentErrors.length > 0) {
-      reportValidationError(attachmentErrors[0]);
-      return;
-    }
-
-    setIsOpen(true);
+    if (await validate('register')) setIsOpen(true);
   };
 
   if (!showButtons) {

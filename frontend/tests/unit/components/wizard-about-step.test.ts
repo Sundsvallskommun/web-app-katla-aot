@@ -5,6 +5,7 @@ import type { TFunction } from 'i18next';
 import { describe, expect, it } from 'vitest';
 
 const t = ((key: string) => key) as unknown as TFunction;
+const context = { t, tForms: t, locale: 'sv', namespace: 'AOT' };
 const aboutStep = ALL_WIZARD_STEPS.find((step) => step.id === 'about');
 if (!aboutStep) throw new Error('The wizard has no about step');
 
@@ -12,7 +13,7 @@ const formValues = (labels?: ErrandFormDTO['labels']): ErrandFormDTO => ({ label
 
 describe('wizard about step', () => {
   it('asks for a category while nothing has been chosen', async () => {
-    await expect(validateStep(aboutStep, formValues(), t, 'sv', 'AOT')).resolves.toEqual([
+    await expect(validateStep(aboutStep, formValues(), context)).resolves.toEqual([
       'validation:categorization.category_required',
     ]);
   });
@@ -20,7 +21,7 @@ describe('wizard about step', () => {
   it('asks for a type once the category is chosen', async () => {
     const labels = [{ id: 'alkohol', classification: 'CATEGORY' }];
 
-    await expect(validateStep(aboutStep, formValues(labels), t, 'sv', 'AOT')).resolves.toEqual([
+    await expect(validateStep(aboutStep, formValues(labels), context)).resolves.toEqual([
       'validation:categorization.type_required',
     ]);
   });
@@ -31,7 +32,7 @@ describe('wizard about step', () => {
       { id: 'folkol', classification: 'TYPE' },
     ];
 
-    await expect(validateStep(aboutStep, formValues(labels), t, 'sv', 'AOT')).resolves.toEqual([]);
+    await expect(validateStep(aboutStep, formValues(labels), context)).resolves.toEqual([]);
   });
 
   it('accepts the full three-level path', async () => {
@@ -41,6 +42,6 @@ describe('wizard about step', () => {
       { id: 'stadigvarande', classification: 'SUBTYPE' },
     ];
 
-    await expect(validateStep(aboutStep, formValues(labels), t, 'sv', 'AOT')).resolves.toEqual([]);
+    await expect(validateStep(aboutStep, formValues(labels), context)).resolves.toEqual([]);
   });
 });
