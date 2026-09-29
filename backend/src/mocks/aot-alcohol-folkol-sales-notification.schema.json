@@ -187,7 +187,7 @@
         ],
         "title": "Är serveringsställets besöksadress samma som företagets adress?"
       },
-      "serveringsstalletsBesoksadress": {
+      "besoksadress": {
         "type": "object",
         "properties": {
           "gatuadress": {
@@ -203,6 +203,7 @@
             "title": "Postort"
           }
         },
+        "required": ["gatuadress", "postnummer", "postort"],
         "title": "Serveringsställets besöksadress"
       },
       "kontaktuppgifterTillServeringsstallet": {
@@ -366,9 +367,7 @@
           "required": ["besoksadressSammaSomForetaget"]
         },
         "then": {
-          "properties": {
-            "serveringsstalletsBesoksadress": true
-          }
+          "required": ["besoksadress"]
         }
       },
       {
@@ -398,21 +397,6 @@
         "then": {
           "properties": {
             "meny": true
-          }
-        }
-      },
-      {
-        "if": {
-          "properties": {
-            "besoksadressSammaSomForetaget": {
-              "const": "NEJ"
-            }
-          },
-          "required": ["besoksadressSammaSomForetaget"]
-        },
-        "then": {
-          "properties": {
-            "serveringsstalletsBesoksadress": true
           }
         }
       },

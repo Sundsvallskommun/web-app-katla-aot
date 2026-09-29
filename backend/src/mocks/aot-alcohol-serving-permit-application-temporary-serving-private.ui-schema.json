@@ -19,6 +19,7 @@
       "hurHarGasternaBjuditsIn",
       "vadArDetForTypAvTillstallning",
       "serveringsstalle",
+      "besoksadress",
       "serveringsansvarigPersonal",
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen",
@@ -59,6 +60,7 @@
           "hurHarGasternaBjuditsIn",
           "vadArDetForTypAvTillstallning",
           "serveringsstalle",
+          "besoksadress",
           "serveringsansvarigPersonal",
           "sittplatserILokalen",
           "maximaltAntalPersonerILokalen",
@@ -241,9 +243,6 @@
     "serveringsstalle": {
       "ui:order": [
         "serveringsstalletsNamn",
-        "gatuadress",
-        "postnummer",
-        "postort",
         "telefonnummer"
       ],
       "ui:options": {
@@ -251,6 +250,20 @@
       },
       "serveringsstalletsNamn": {
         "ui:widget": "TextWidget"
+      },
+      "telefonnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:description": "<p>Om ingen fast telefon finns, lämna mobilnummer till företrädare.</p>"
+    },
+    "besoksadress": {
+      "ui:order": [
+        "gatuadress",
+        "postnummer",
+        "postort"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
       },
       "gatuadress": {
         "ui:widget": "TextWidget"
@@ -261,9 +274,6 @@
       "postort": {
         "ui:widget": "TextWidget"
       },
-      "telefonnummer": {
-        "ui:widget": "TextWidget"
-      },
       "ui:rows": [
         {
           "fields": [
@@ -272,8 +282,7 @@
           ],
           "gap": "gap-24"
         }
-      ],
-      "ui:description": "<p>Om ingen fast telefon finns, lämna mobilnummer till företrädare.</p>"
+      ]
     },
     "serveringsansvarigPersonal": {
       "ui:options": {

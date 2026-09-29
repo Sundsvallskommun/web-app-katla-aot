@@ -219,3 +219,8 @@ positiva formuleringen av allt ovan; adaptern och kontraktstestet kontrollerar d
    `label` får skilja sig per schema.
 8. **Text och språk**: placering och `x-i18n` enligt `json-schema-localization.md`; maskinvärden
    översätts aldrig.
+9. **Besöksadress**: serverings- eller försäljningsställets adress ligger alltid i rotegenskapen
+   `besoksadress` med `gatuadress`, `postnummer` och `postort` — ingen annan egenskap bär de
+   fälten. Draken läser adressen därifrån, utom när `besoksadressSammaSomForetaget` är `JA`; då
+   gäller adressen på ärendets PRIMARY-intressent. Finns frågan krävs `besoksadress` vid `NEJ`,
+   saknas frågan är `besoksadress` alltid obligatorisk. Kontrolleras i kontraktstestet.

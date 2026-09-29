@@ -9,6 +9,7 @@
       "verksamhetsbeskrivningsval",
       "verksamhetsbeskrivning",
       "forsaljningsstalle",
+      "besoksadress",
       "alkoholdrycker",
       "forsaljningsperiod",
       "angePeriodForForsaljning",
@@ -42,6 +43,7 @@
         "defaultOpen": true,
         "fields": [
           "forsaljningsstalle",
+          "besoksadress",
           "alkoholdrycker",
           "forsaljningsperiod",
           "angePeriodForForsaljning",
@@ -116,9 +118,6 @@
     "forsaljningsstalle": {
       "ui:order": [
         "forsaljningsstalletsNamn",
-        "gatuadress",
-        "postnummer",
-        "postort",
         "telefonnummer",
         "ePostadress"
       ],
@@ -128,6 +127,22 @@
       "forsaljningsstalletsNamn": {
         "ui:widget": "TextWidget"
       },
+      "telefonnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "ePostadress": {
+        "ui:widget": "TextWidget"
+      }
+    },
+    "besoksadress": {
+      "ui:order": [
+        "gatuadress",
+        "postnummer",
+        "postort"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
       "gatuadress": {
         "ui:widget": "TextWidget"
       },
@@ -135,12 +150,6 @@
         "ui:widget": "TextWidget"
       },
       "postort": {
-        "ui:widget": "TextWidget"
-      },
-      "telefonnummer": {
-        "ui:widget": "TextWidget"
-      },
-      "ePostadress": {
         "ui:widget": "TextWidget"
       },
       "ui:rows": [

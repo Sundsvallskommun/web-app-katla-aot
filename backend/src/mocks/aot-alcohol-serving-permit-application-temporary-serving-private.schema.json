@@ -249,6 +249,21 @@
             "type": "string",
             "title": "Serveringsställets namn"
           },
+          "telefonnummer": {
+            "type": "string",
+            "title": "Telefonnummer"
+          }
+        },
+        "required": [
+          "serveringsstalletsNamn",
+          "telefonnummer"
+        ],
+        "title": "Serveringsställe",
+        "description": "Om ingen fast telefon finns, lämna mobilnummer till företrädare."
+      },
+      "besoksadress": {
+        "type": "object",
+        "properties": {
           "gatuadress": {
             "type": "string",
             "title": "Gatuadress"
@@ -260,21 +275,14 @@
           "postort": {
             "type": "string",
             "title": "Postort"
-          },
-          "telefonnummer": {
-            "type": "string",
-            "title": "Telefonnummer"
           }
         },
         "required": [
-          "serveringsstalletsNamn",
           "gatuadress",
           "postnummer",
-          "postort",
-          "telefonnummer"
+          "postort"
         ],
-        "title": "Serveringsställe",
-        "description": "Om ingen fast telefon finns, lämna mobilnummer till företrädare."
+        "title": "Serveringsställets besöksadress"
       },
       "serveringsansvarigPersonal": {
         "type": "array",
@@ -387,6 +395,7 @@
       "beraknatAntalGaster",
       "vadArDetForTypAvTillstallning",
       "serveringsstalle",
+      "besoksadress",
       "finnsPolistillstand",
       "gaster",
       "hurHarGasternaBjuditsIn"

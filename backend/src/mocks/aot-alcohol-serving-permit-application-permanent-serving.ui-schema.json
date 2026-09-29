@@ -36,7 +36,7 @@
       "ovrigaUpplysningarFinansiering",
       "serveringsstalletsNamn",
       "besoksadressSammaSomForetaget",
-      "serveringsstalletsBesoksadress",
+      "besoksadress",
       "kontaktuppgifterTillServeringsstallet",
       "serveringsansvarigPersonal",
       "sittplatserILokalen",
@@ -94,7 +94,7 @@
           "ovrigaUpplysningarFinansiering",
           "serveringsstalletsNamn",
           "besoksadressSammaSomForetaget",
-          "serveringsstalletsBesoksadress",
+          "besoksadress",
           "kontaktuppgifterTillServeringsstallet",
           "serveringsansvarigPersonal",
           "sittplatserILokalen",
@@ -561,7 +561,7 @@
     "besoksadressSammaSomForetaget": {
       "ui:widget": "RadiobuttonWidget"
     },
-    "serveringsstalletsBesoksadress": {
+    "besoksadress": {
       "ui:order": [
         "gatuadress",
         "postnummer",

@@ -387,6 +387,43 @@
         "type": "string",
         "title": "Övriga upplysningar angående finansieringen"
       },
+      "besoksadressSammaSomForetaget": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej"
+          }
+        ],
+        "title": "Är serveringsställets besöksadress samma som företagets adress?"
+      },
+      "besoksadress": {
+        "type": "object",
+        "properties": {
+          "gatuadress": {
+            "type": "string",
+            "title": "Gatuadress"
+          },
+          "postnummer": {
+            "type": "string",
+            "title": "Postnummer"
+          },
+          "postort": {
+            "type": "string",
+            "title": "Postort"
+          }
+        },
+        "required": [
+          "gatuadress",
+          "postnummer",
+          "postort"
+        ],
+        "title": "Serveringsställets besöksadress"
+      },
       "sittplatserILokalen": {
         "type": "object",
         "properties": {
@@ -450,6 +487,7 @@
       "kunskapOmAlkohollagen",
       "finansiering",
       "verksamhetensInriktning",
+      "besoksadressSammaSomForetaget",
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen"
     ],
@@ -1052,6 +1090,23 @@
           "properties": {
             "ovrigaUpplysningarFinansiering": true
           }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "besoksadressSammaSomForetaget": {
+              "const": "NEJ"
+            }
+          },
+          "required": [
+            "besoksadressSammaSomForetaget"
+          ]
+        },
+        "then": {
+          "required": [
+            "besoksadress"
+          ]
         }
       },
       {
