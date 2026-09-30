@@ -12,7 +12,7 @@ import BaseErrandLayout from '@layouts/base-errand-layout/base-errand-layout.com
 import { ErrandButtonGroup } from '@layouts/errand-button-group.component';
 import Main from '@layouts/main/main.component';
 import { getErrandUsingErrandNumber } from '@services/errand-service/errand-service';
-import { Spinner, Tabs } from '@sk-web-gui/react';
+import { cx, Spinner, Tabs } from '@sk-web-gui/react';
 import { ErrandFormHandover, takeErrandFormHandover } from '@utils/errand-form-handover';
 import { default as NextLink } from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
@@ -153,6 +153,8 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
   // interface built for narrow screens. Without this condition a resumed draft switched to the
   // tab view on mobile.
   const showMobileWizard = isMobile && (registerNewErrand || isDraft);
+  // Mirrors ErrandButtonGroup's visibility; keeps the submit action reachable while scrolling.
+  const showSubmitBar = registerNewErrand || isDraft;
 
   const getHeaderTitle = () => {
     if (registerNewErrand) {
@@ -198,12 +200,16 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
         <BaseErrandLayout registerNewErrand={registerNewErrand}>
           {showMobileWizard ?
             <MobileWizard />
-          : <div className="grow shrink overflow-y-auto">
+          : <div
+              className={cx('grow shrink overflow-y-auto', showSubmitBar && 'scroll-pt-[16rem] md:scroll-pt-[12rem]')}
+            >
               <div className="bg-transparent">
                 <div className="mb-xl">
-                  <div className="mx-auto max-w-[108rem] flex flex-col md:flex-row justify-between pt-16 md:pt-32 pb-12 px-16 md:px-0 gap-12">
-                    <h1 className="text-h2-sm md:text-h2-lg">{getHeaderTitle()}</h1>
-                    <ErrandButtonGroup isNewErrand={registerNewErrand} />
+                  <div className={cx(showSubmitBar && 'sticky top-0 z-10 bg-background-100')}>
+                    <div className="mx-auto max-w-[108rem] flex flex-col md:flex-row justify-between pt-16 md:pt-32 pb-12 px-16 md:px-0 gap-12">
+                      <h1 className="text-h2-sm md:text-h2-lg">{getHeaderTitle()}</h1>
+                      <ErrandButtonGroup isNewErrand={registerNewErrand} />
+                    </div>
                   </div>
                   <Main>
                     <Tabs
