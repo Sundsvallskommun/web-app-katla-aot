@@ -13,6 +13,7 @@ import ApiService from '@/services/api.service';
 import { selectCategorizationSubtree, withCategorizationSubtree } from '@/utils/categorization-root';
 import { assertErrandOwnedByUser, belongsToOrganizations, requireOrganizationPartyIds } from '@/utils/errand-access';
 import { assertLabelsOffered, labelsChanged } from '@/utils/internal-labels';
+import { completePrimaryStakeholders } from '@/utils/primary-stakeholder';
 import { mapStakeholderDTOToStakeholder, mapStakeholderToStakeholderDTO } from '@/utils/stakeholder-mapping';
 import { apiURL } from '@/utils/util';
 
@@ -77,7 +78,7 @@ export class SupportManagementController {
     const errandInformation = {
       ...(newErrand as Errand),
       reporterUserId: req.user.partyId,
-      stakeholders: newErrand.stakeholders?.map(mapStakeholderDTOToStakeholder),
+      stakeholders: await completePrimaryStakeholders(newErrand.stakeholders?.map(mapStakeholderDTOToStakeholder), req),
     };
 
     const res = await this.apiService.post<Partial<Errand>>({ baseURL, url, data: errandInformation, propagateClientError: true }, req);
@@ -86,7 +87,7 @@ export class SupportManagementController {
     const resStakeholders = res.data.stakeholders;
     if (!resStakeholders) throw new HttpException(502, 'No stakeholders in response when creating errand');
 
-    const stakeholders = resStakeholders.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req));
+    const stakeholders = resStakeholders.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder));
 
     return {
       ...res.data,
@@ -136,13 +137,13 @@ export class SupportManagementController {
     const errandInformation = {
       ...errandData,
       ...(classification?.category || classification?.type ? { classification } : {}),
-      stakeholders: errandData.stakeholders?.map(mapStakeholderDTOToStakeholder),
+      stakeholders: await completePrimaryStakeholders(errandData.stakeholders?.map(mapStakeholderDTOToStakeholder), req),
     };
 
     const res = await this.apiService.patch<Partial<Errand>>({ baseURL, url, data: errandInformation, propagateClientError: true }, req);
     if (!res.data) throw new HttpException(502, 'Invalid response when updating errand');
 
-    const stakeholders = res.data.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? [];
+    const stakeholders = res.data.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder)) ?? [];
 
     return {
       ...res.data,
@@ -172,7 +173,7 @@ export class SupportManagementController {
       throw new HttpException(404, 'Errand not found');
     }
 
-    const stakeholders = matchedErrand.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder, req)) ?? [];
+    const stakeholders = matchedErrand.stakeholders?.map(stakeholder => mapStakeholderToStakeholderDTO(stakeholder)) ?? [];
 
     return {
       ...matchedErrand,

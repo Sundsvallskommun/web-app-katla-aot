@@ -30,6 +30,26 @@ export const getOrganizationPartyId = async (organizationNumber: string, req: Se
   return res.data;
 };
 
+export interface OrganizationAddress {
+  address: string;
+  zipCode: string;
+  city: string;
+}
+
+export const getOrganizationAddress = async (
+  partyId: string,
+  req: Sender,
+  api: LegalEntityApi = defaultApi,
+): Promise<OrganizationAddress | undefined> => {
+  const url = `${legalEntityBase}/${MUNICIPALITY_ID}/${partyId}`;
+  const res = await api.get<LegalEntity2>({ url }, req);
+  const address = res.data?.address;
+
+  if (!address?.addressArea || !address.postalCode || !address.city) return undefined;
+
+  return { address: address.addressArea, zipCode: address.postalCode, city: address.city };
+};
+
 /** Organisations the citizen is registered in directly. */
 export const getPersonEngagements = async (personNumber: string, req: Sender, api: LegalEntityApi = defaultApi): Promise<PersonEngagement[]> => {
   const url = `${legalEntityBase}/${MUNICIPALITY_ID}/engagements/person/${personNumber}`;

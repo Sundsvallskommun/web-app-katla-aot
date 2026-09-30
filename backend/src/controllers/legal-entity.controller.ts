@@ -1,10 +1,13 @@
-import { Controller, Get, Req, UseBefore } from 'routing-controllers';
+import { Controller, Get, Param, Req, UseBefore } from 'routing-controllers';
 import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
 import { MyOrganizationsDTO } from '@/responses/legal-entity.response';
+import { StakeholderDTO } from '@/responses/supportmanagement.response';
+import { completePrimaryStakeholders, primaryStakeholderFor } from '@/utils/primary-stakeholder';
+import { mapStakeholderToStakeholderDTO } from '@/utils/stakeholder-mapping';
 
 @Controller()
 export class LegalEntityController {
@@ -28,5 +31,23 @@ export class LegalEntityController {
     }
 
     return { organizations };
+  }
+
+  /** Preview of the organisation as errand owner; every write completes it again. */
+  @Get('/my-organizations/:partyId/stakeholder')
+  @OpenAPI({ summary: 'One of the citizen organizations as a primary stakeholder' })
+  @UseBefore(authMiddleware)
+  @ResponseSchema(StakeholderDTO)
+  async ownerStakeholder(@Req() req: RequestWithUser, @Param('partyId') partyId: string): Promise<StakeholderDTO> {
+    const organization = req.session.representingBusinessChoices?.find(candidate => candidate.partyId.toLowerCase() === partyId.toLowerCase());
+
+    if (!organization) {
+      throw new HttpException(404, 'Organization not found');
+    }
+
+    const [stakeholder] = (await completePrimaryStakeholders([primaryStakeholderFor(organization)], req)) ?? [];
+    if (!stakeholder) throw new HttpException(500, 'Could not build the stakeholder');
+
+    return mapStakeholderToStakeholderDTO(stakeholder);
   }
 }
