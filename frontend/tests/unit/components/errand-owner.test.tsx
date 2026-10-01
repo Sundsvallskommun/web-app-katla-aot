@@ -1,17 +1,21 @@
 import { ErrandContentLock } from '@components/errand-content-lock/errand-content-lock.component';
 import { ErrandOwnerContent } from '@components/errand-sections/errand-owner.component';
 import { FormValidationProvider } from '@contexts/form-validation-provider';
-import { OrganizationDTO } from '@data-contracts/backend/data-contracts';
+import { OrganizationDTO, StakeholderDTO } from '@data-contracts/backend/data-contracts';
 import { ErrandFormDTO } from '@interfaces/errand-form';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { useMetadataStore } from 'src/stores/metadata-store';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { getMyOrganizationsMock } = vi.hoisted(() => ({ getMyOrganizationsMock: vi.fn() }));
+const { getMyOrganizationsMock, getOwnerStakeholderMock } = vi.hoisted(() => ({
+  getMyOrganizationsMock: vi.fn(),
+  getOwnerStakeholderMock: vi.fn(),
+}));
 
 vi.mock('@services/organization-service/organization-service', () => ({
   getMyOrganizations: getMyOrganizationsMock,
+  getOwnerStakeholder: getOwnerStakeholderMock,
 }));
 
 vi.mock('react-i18next', () => ({
@@ -24,15 +28,27 @@ vi.mock('src/config/appconfig', () => ({
 
 const ACME: OrganizationDTO = {
   partyId: 'f1e2d3c4-0000-4000-8000-000000000001',
-  organizationNumber: '5560000001',
+  organizationNumber: '1111112222',
   organizationName: 'Acme Restaurang AB',
 };
 
 const BOLAGET: OrganizationDTO = {
   partyId: 'f1e2d3c4-0000-4000-8000-000000000002',
-  organizationNumber: '5560000002',
+  organizationNumber: '2222223333',
   organizationName: 'Bolaget Krog HB',
 };
+
+const ownerDetails = (organization: OrganizationDTO): StakeholderDTO => ({
+  role: 'PRIMARY',
+  externalId: organization.partyId,
+  externalIdType: 'COMPANY',
+  organizationName: organization.organizationName,
+  organizationNumber: `${organization.organizationNumber.slice(0, 6)}-${organization.organizationNumber.slice(6)}`,
+  address: 'Registrerad gata 5',
+  zipCode: '85100',
+  city: 'Sundsvall',
+  country: 'SVERIGE',
+});
 
 // Rendered rather than captured in a variable: reassigning during render is a side effect, and
 // the DOM is what the assertions can wait on anyway.
@@ -78,6 +94,8 @@ const renderOwner = (defaultValues: Partial<ErrandFormDTO> = {}) => {
 describe('ErrandOwner', () => {
   beforeEach(() => {
     getMyOrganizationsMock.mockReset();
+    // Details unavailable unless a test says otherwise.
+    getOwnerStakeholderMock.mockReset().mockRejectedValue(new Error('unavailable'));
     // The owner card labels itself rather than looking the role up in metadata, which does not
     // name PRIMARY in this namespace. Seeded with a wrong label so a regression to the lookup shows.
     useMetadataStore.setState({ metadata: { roles: [{ name: 'PRIMARY', displayName: 'Fel etikett' }] } });
@@ -95,7 +113,7 @@ describe('ErrandOwner', () => {
     ).toEqual(['errand-information:owner.select_placeholder', 'Acme Restaurang AB', 'Bolaget Krog HB']);
   });
 
-  it('files the chosen organization as the primary stakeholder', async () => {
+  it('files the chosen organization as the primary stakeholder even when its details cannot be read', async () => {
     getMyOrganizationsMock.mockResolvedValue([ACME, BOLAGET]);
     renderOwner();
 
@@ -111,6 +129,45 @@ describe('ErrandOwner', () => {
         },
       ]);
     });
+    expect(getOwnerStakeholderMock).toHaveBeenCalledWith(BOLAGET.partyId);
+  });
+
+  it('completes the chosen organization with the number and address the backend resolves', async () => {
+    getMyOrganizationsMock.mockResolvedValue([ACME, BOLAGET]);
+    getOwnerStakeholderMock.mockResolvedValue(ownerDetails(BOLAGET));
+    renderOwner();
+
+    fireEvent.change(await screen.findByRole('combobox'), { target: { value: BOLAGET.partyId } });
+
+    await waitFor(() => {
+      expect(currentStakeholders()).toEqual([ownerDetails(BOLAGET)]);
+    });
+    expect(queryCy('stakeholder-organizationNumber')).toHaveTextContent('222222-3333');
+    expect(queryCy('stakeholder-address')).toHaveTextContent('Registrerad gata 5 85100 Sundsvall');
+  });
+
+  it('drops details that arrive after the owner was changed', async () => {
+    let resolveAcme: (details: StakeholderDTO) => void = () => undefined;
+    getMyOrganizationsMock.mockResolvedValue([ACME, BOLAGET]);
+    getOwnerStakeholderMock.mockImplementation((partyId: string) =>
+      partyId === ACME.partyId ?
+        new Promise<StakeholderDTO>((resolve) => {
+          resolveAcme = resolve;
+        })
+      : Promise.reject(new Error('unavailable'))
+    );
+    renderOwner();
+
+    const select = await screen.findByRole('combobox');
+    fireEvent.change(select, { target: { value: ACME.partyId } });
+    fireEvent.change(select, { target: { value: BOLAGET.partyId } });
+    resolveAcme(ownerDetails(ACME));
+
+    await waitFor(() => {
+      expect(getOwnerStakeholderMock).toHaveBeenCalledTimes(2);
+    });
+    expect(currentStakeholders()).toEqual([expect.objectContaining({ externalId: BOLAGET.partyId })]);
+    expect(currentStakeholders()?.[0]).not.toHaveProperty('address');
   });
 
   it('replaces the owner rather than adding a second one, keeping other stakeholders', async () => {

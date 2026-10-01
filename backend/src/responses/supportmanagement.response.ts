@@ -105,6 +105,10 @@ export class StakeholderDTO implements Partial<Stakeholder> {
   @IsString()
   @IsOptional()
   serveringsstalle?: string;
+  /** Read only: resolved server side on write. */
+  @IsString()
+  @IsOptional()
+  organizationNumber?: string;
   // /** Parameters for the stakeholder */
   // parameters?: Parameter[];
 }

@@ -21,14 +21,6 @@ export interface MyOrganizationsDTO {
   organizations: OrganizationDTO[];
 }
 
-export interface SchemaResponseDTO {
-  schema: object;
-  uiSchema: object;
-  schemaId: string;
-  name?: string;
-  version?: string;
-}
-
 export interface ErrandCountDTO {
   count: number;
 }
@@ -59,6 +51,7 @@ export interface StakeholderDTO {
   title?: string;
   department?: string;
   serveringsstalle?: string;
+  organizationNumber?: string;
 }
 
 export interface ClassificationDTO {
@@ -168,6 +161,14 @@ export interface PageErrandDTO {
   first?: boolean;
   last?: boolean;
   empty?: boolean;
+}
+
+export interface SchemaResponseDTO {
+  schema: object;
+  uiSchema: object;
+  schemaId: string;
+  name?: string;
+  version?: string;
 }
 
 export interface TypeDTO {

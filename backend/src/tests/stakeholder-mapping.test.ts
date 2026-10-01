@@ -4,11 +4,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { Stakeholder } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
-import { RequestWithUser } from '@/interfaces/auth.interface';
 import { StakeholderDTO } from '@/responses/supportmanagement.response';
 import { mapStakeholderDTOToStakeholder, mapStakeholderToStakeholderDTO } from '@/utils/stakeholder-mapping';
-
-const req = {} as RequestWithUser;
 
 const owner = (overrides: Partial<StakeholderDTO> = {}): StakeholderDTO => ({
   role: 'PRIMARY',
@@ -32,7 +29,7 @@ describe('stakeholder serveringsstalle mapping', () => {
       parameters: [{ key: 'serveringsstalle', values: ['Selånger Padelcenter'] }],
     };
 
-    expect(mapStakeholderToStakeholderDTO(upstream, req).serveringsstalle).toBe('Selånger Padelcenter');
+    expect(mapStakeholderToStakeholderDTO(upstream).serveringsstalle).toBe('Selånger Padelcenter');
   });
 
   it('survives a round trip', () => {
@@ -40,7 +37,7 @@ describe('stakeholder serveringsstalle mapping', () => {
     // deletes personNumber from what it is handed.
     const details = { serveringsstalle: 'Kustbryggan', emails: ['a@b.se'], phoneNumbers: ['+46701234567'] };
 
-    const returned = mapStakeholderToStakeholderDTO(mapStakeholderDTOToStakeholder(owner(details)), req);
+    const returned = mapStakeholderToStakeholderDTO(mapStakeholderDTOToStakeholder(owner(details)));
 
     expect(returned.serveringsstalle).toBe('Kustbryggan');
     expect(returned.emails).toEqual(['a@b.se']);
@@ -53,6 +50,22 @@ describe('stakeholder serveringsstalle mapping', () => {
     const mapped = mapStakeholderDTOToStakeholder(owner());
 
     expect(mapped.parameters?.some(parameter => parameter.key === 'serveringsstalle')).toBe(false);
-    expect(mapStakeholderToStakeholderDTO({ role: 'PRIMARY' }, req).serveringsstalle).toBeUndefined();
+    expect(mapStakeholderToStakeholderDTO({ role: 'PRIMARY' }).serveringsstalle).toBeUndefined();
+  });
+
+  it('reads the organisation number back off the parameters', () => {
+    const upstream: Stakeholder = {
+      role: 'PRIMARY',
+      parameters: [{ key: 'organizationNumber', displayName: 'Organisationsnummer', values: ['111111-2222'] }],
+    };
+
+    expect(mapStakeholderToStakeholderDTO(upstream).organizationNumber).toBe('111111-2222');
+  });
+
+  it('drops a client-sent organisation number', () => {
+    const mapped = mapStakeholderDTOToStakeholder(owner({ organizationNumber: '111111-2222' }));
+
+    expect(mapped).not.toHaveProperty('organizationNumber');
+    expect(mapped.parameters).toEqual([]);
   });
 });

@@ -135,6 +135,7 @@ vi.mock('@sk-web-gui/react', () => {
 
   return {
     Alert,
+    cx: (...classes: unknown[]) => classes.filter(Boolean).join(' '),
     Spinner: ({ 'aria-label': ariaLabel }: { 'aria-label': string }) => <div aria-label={ariaLabel} />,
     Tabs,
   };
