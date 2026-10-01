@@ -118,7 +118,7 @@ describe('mocked schema pairs against the renderer contract', () => {
       const holders = objectSchemas(schema.value).filter((object) => object.properties?.gatuadress !== undefined);
       const address = root.besoksadress;
 
-      if (root.besoksadressSammaSomForetaget !== undefined) expect(address).toBeDefined();
+      if (root.besoksadressSammaSomArendeagare !== undefined) expect(address).toBeDefined();
       if (typeof address !== 'object') {
         expect(holders).toEqual([]);
         return;
@@ -127,13 +127,13 @@ describe('mocked schema pairs against the renderer contract', () => {
       expect(holders).toEqual([address]);
       expect(address.required).toEqual(expect.arrayContaining(['gatuadress', 'postnummer', 'postort']));
 
-      if (root.besoksadressSammaSomForetaget === undefined) {
+      if (root.besoksadressSammaSomArendeagare === undefined) {
         expect(schema.value.required).toContain('besoksadress');
       } else {
         expect(schema.value.allOf).toContainEqual({
           if: {
-            properties: { besoksadressSammaSomForetaget: { const: 'NEJ' } },
-            required: ['besoksadressSammaSomForetaget'],
+            properties: { besoksadressSammaSomArendeagare: { const: 'NEJ' } },
+            required: ['besoksadressSammaSomArendeagare'],
           },
           then: { required: ['besoksadress'] },
         });

@@ -221,6 +221,6 @@ positiva formuleringen av allt ovan; adaptern och kontraktstestet kontrollerar d
    översätts aldrig.
 9. **Besöksadress**: serverings- eller försäljningsställets adress ligger alltid i rotegenskapen
    `besoksadress` med `gatuadress`, `postnummer` och `postort` — ingen annan egenskap bär de
-   fälten. Draken läser adressen därifrån, utom när `besoksadressSammaSomForetaget` är `JA`; då
+   fälten. Draken läser adressen därifrån, utom när `besoksadressSammaSomArendeagare` är `JA`; då
    gäller adressen på ärendets PRIMARY-intressent. Finns frågan krävs `besoksadress` vid `NEJ`,
    saknas frågan är `besoksadress` alltid obligatorisk. Kontrolleras i kontraktstestet.

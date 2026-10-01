@@ -22,7 +22,7 @@
       "privatlan",
       "annanFinansiering",
       "ovrigaUpplysningarFinansiering",
-      "besoksadressSammaSomForetaget",
+      "besoksadressSammaSomArendeagare",
       "besoksadress",
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen",
@@ -65,7 +65,7 @@
           "privatlan",
           "annanFinansiering",
           "ovrigaUpplysningarFinansiering",
-          "besoksadressSammaSomForetaget",
+          "besoksadressSammaSomArendeagare",
           "besoksadress",
           "sittplatserILokalen",
           "maximaltAntalPersonerILokalen",
@@ -322,7 +322,7 @@
         "className": "w-full min-h-[14rem]"
       }
     },
-    "besoksadressSammaSomForetaget": {
+    "besoksadressSammaSomArendeagare": {
       "ui:widget": "RadiobuttonWidget"
     },
     "besoksadress": {

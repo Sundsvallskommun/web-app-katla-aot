@@ -387,7 +387,7 @@
         "type": "string",
         "title": "Övriga upplysningar angående finansieringen"
       },
-      "besoksadressSammaSomForetaget": {
+      "besoksadressSammaSomArendeagare": {
         "type": "string",
         "oneOf": [
           {
@@ -399,7 +399,7 @@
             "title": "Nej"
           }
         ],
-        "title": "Är serveringsställets besöksadress samma som företagets adress?"
+        "title": "Är serveringsställets besöksadress samma som ärendeägarens adress?"
       },
       "besoksadress": {
         "type": "object",
@@ -487,7 +487,7 @@
       "kunskapOmAlkohollagen",
       "finansiering",
       "verksamhetensInriktning",
-      "besoksadressSammaSomForetaget",
+      "besoksadressSammaSomArendeagare",
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen"
     ],
@@ -1095,12 +1095,12 @@
       {
         "if": {
           "properties": {
-            "besoksadressSammaSomForetaget": {
+            "besoksadressSammaSomArendeagare": {
               "const": "NEJ"
             }
           },
           "required": [
-            "besoksadressSammaSomForetaget"
+            "besoksadressSammaSomArendeagare"
           ]
         },
         "then": {

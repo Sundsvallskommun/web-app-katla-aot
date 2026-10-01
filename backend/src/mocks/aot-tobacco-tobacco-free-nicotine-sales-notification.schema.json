@@ -170,7 +170,7 @@
         "title": "Försäljningsstället",
         "description": ".cke{visibility:hidden;}"
       },
-      "besoksadressSammaSomForetaget": {
+      "besoksadressSammaSomArendeagare": {
         "type": "string",
         "oneOf": [
           {
@@ -182,7 +182,7 @@
             "title": "Nej"
           }
         ],
-        "title": "Är försäljningsställets besöksadress samma som bolagets adress?"
+        "title": "Är försäljningsställets besöksadress samma som ärendeägarens adress?"
       },
       "besoksadress": {
         "type": "object",
@@ -391,7 +391,7 @@
       "foretagsform",
       "fakturaadressSammaSomForetaget",
       "finansiering",
-      "besoksadressSammaSomForetaget",
+      "besoksadressSammaSomArendeagare",
       "tidsperiodForForsaljningen",
       "forsaljningsstallet",
       "bedriverAvenDistansforsaljning",
@@ -493,12 +493,12 @@
       {
         "if": {
           "properties": {
-            "besoksadressSammaSomForetaget": {
+            "besoksadressSammaSomArendeagare": {
               "const": "NEJ"
             }
           },
           "required": [
-            "besoksadressSammaSomForetaget"
+            "besoksadressSammaSomArendeagare"
           ]
         },
         "then": {
