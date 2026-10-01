@@ -35,8 +35,8 @@
       "annanFinansiering",
       "ovrigaUpplysningarFinansiering",
       "serveringsstalletsNamn",
-      "besoksadressSammaSomForetaget",
-      "serveringsstalletsBesoksadress",
+      "besoksadressSammaSomArendeagare",
+      "besoksadress",
       "kontaktuppgifterTillServeringsstallet",
       "serveringsansvarigPersonal",
       "sittplatserILokalen",
@@ -93,8 +93,8 @@
           "annanFinansiering",
           "ovrigaUpplysningarFinansiering",
           "serveringsstalletsNamn",
-          "besoksadressSammaSomForetaget",
-          "serveringsstalletsBesoksadress",
+          "besoksadressSammaSomArendeagare",
+          "besoksadress",
           "kontaktuppgifterTillServeringsstallet",
           "serveringsansvarigPersonal",
           "sittplatserILokalen",
@@ -558,10 +558,10 @@
         "ui:widget": "TextWidget"
       }
     },
-    "besoksadressSammaSomForetaget": {
+    "besoksadressSammaSomArendeagare": {
       "ui:widget": "RadiobuttonWidget"
     },
-    "serveringsstalletsBesoksadress": {
+    "besoksadress": {
       "ui:order": [
         "gatuadress",
         "postnummer",

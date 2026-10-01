@@ -124,6 +124,23 @@
             "type": "string",
             "title": "Försäljningsställets namn"
           },
+          "telefonnummer": {
+            "type": "string",
+            "title": "Telefonnummer"
+          },
+          "ePostadress": {
+            "type": "string",
+            "title": "E-postadress"
+          }
+        },
+        "required": [
+          "forsaljningsstalletsNamn"
+        ],
+        "title": "Försäljningsställe"
+      },
+      "besoksadress": {
+        "type": "object",
+        "properties": {
           "gatuadress": {
             "type": "string",
             "title": "Gatuadress"
@@ -135,23 +152,14 @@
           "postort": {
             "type": "string",
             "title": "Postort"
-          },
-          "telefonnummer": {
-            "type": "string",
-            "title": "Telefonnummer"
-          },
-          "ePostadress": {
-            "type": "string",
-            "title": "E-postadress"
           }
         },
         "required": [
-          "forsaljningsstalletsNamn",
           "gatuadress",
           "postnummer",
           "postort"
         ],
-        "title": "Försäljningsställe"
+        "title": "Försäljningsställets besöksadress"
       },
       "alkoholdrycker": {
         "type": "array",
@@ -287,6 +295,7 @@
       "fakturaadressSammaSomForetaget",
       "harDuKassaregister",
       "forsaljningsstalle",
+      "besoksadress",
       "alkoholdrycker",
       "forsaljningsperiod",
       "forsaljningstider",

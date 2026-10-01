@@ -13,8 +13,8 @@
       "meny",
       "egenkontrollprogramFolkol",
       "serveringsstalletsNamn",
-      "besoksadressSammaSomForetaget",
-      "serveringsstalletsBesoksadress",
+      "besoksadressSammaSomArendeagare",
+      "besoksadress",
       "kontaktuppgifterTillServeringsstallet",
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen",
@@ -48,8 +48,8 @@
           "meny",
           "egenkontrollprogramFolkol",
           "serveringsstalletsNamn",
-          "besoksadressSammaSomForetaget",
-          "serveringsstalletsBesoksadress",
+          "besoksadressSammaSomArendeagare",
+          "besoksadress",
           "kontaktuppgifterTillServeringsstallet",
           "sittplatserILokalen",
           "maximaltAntalPersonerILokalen",
@@ -135,10 +135,10 @@
       },
       "ui:description": "<p>Det namn som du skyltar med till kund.</p>"
     },
-    "besoksadressSammaSomForetaget": {
+    "besoksadressSammaSomArendeagare": {
       "ui:widget": "RadiobuttonWidget"
     },
-    "serveringsstalletsBesoksadress": {
+    "besoksadress": {
       "ui:order": ["gatuadress", "postnummer", "postort"],
       "ui:options": {
         "showObjectFieldset": true

@@ -179,7 +179,7 @@
         "title": "Serveringsställets namn",
         "description": "Det namn som du skyltar med till kund."
       },
-      "besoksadressSammaSomForetaget": {
+      "besoksadressSammaSomArendeagare": {
         "type": "string",
         "oneOf": [
           {
@@ -191,9 +191,9 @@
             "title": "Nej"
           }
         ],
-        "title": "Är serveringsställets besöksadress samma som företagets adress?"
+        "title": "Är serveringsställets besöksadress samma som ärendeägarens adress?"
       },
-      "serveringsstalletsBesoksadress": {
+      "besoksadress": {
         "type": "object",
         "properties": {
           "gatuadress": {
@@ -209,6 +209,11 @@
             "title": "Postort"
           }
         },
+        "required": [
+          "gatuadress",
+          "postnummer",
+          "postort"
+        ],
         "title": "Serveringsställets besöksadress"
       },
       "kontaktuppgifterTillServeringsstallet": {
@@ -294,7 +299,7 @@
       "fakturaadressSammaSomForetaget",
       "harDuKassaregister",
       "serveringsstalletsNamn",
-      "besoksadressSammaSomForetaget",
+      "besoksadressSammaSomArendeagare",
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen",
       "kommerNiAttServeraMat",
@@ -379,18 +384,18 @@
       {
         "if": {
           "properties": {
-            "besoksadressSammaSomForetaget": {
+            "besoksadressSammaSomArendeagare": {
               "const": "NEJ"
             }
           },
           "required": [
-            "besoksadressSammaSomForetaget"
+            "besoksadressSammaSomArendeagare"
           ]
         },
         "then": {
-          "properties": {
-            "serveringsstalletsBesoksadress": true
-          }
+          "required": [
+            "besoksadress"
+          ]
         }
       },
       {
@@ -424,23 +429,6 @@
         "then": {
           "properties": {
             "meny": true
-          }
-        }
-      },
-      {
-        "if": {
-          "properties": {
-            "besoksadressSammaSomForetaget": {
-              "const": "NEJ"
-            }
-          },
-          "required": [
-            "besoksadressSammaSomForetaget"
-          ]
-        },
-        "then": {
-          "properties": {
-            "serveringsstalletsBesoksadress": true
           }
         }
       },
