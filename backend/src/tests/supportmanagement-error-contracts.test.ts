@@ -15,7 +15,6 @@ import {
   mockOrganizationNumber,
   mockOrganizationPartyId,
   mockPersonNumber,
-  mockPersonNumberHyphenated,
   mockPhoneNumber,
 } from './helpers/mock-data';
 
@@ -62,49 +61,6 @@ describe('SupportManagement HTTP error contracts', () => {
 
     expect(response.body).toEqual({ id: 'errand-id', errandNumber: 'ERRAND-1', stakeholders: [] });
     expect(postSpy).toHaveBeenCalledWith(expect.objectContaining({ propagateClientError: true }), expect.anything());
-  });
-
-  // Skipped, not deleted: these cover the Citizen person-number lookup that is disabled in
-  // utils/stakeholder-mapping.ts. Un-skip together with the FIXME there.
-  it.skip('maps a numeric person number returned by Citizen after creating an errand', async () => {
-    vi.spyOn(ApiService.prototype, 'post').mockResolvedValue({
-      data: {
-        id: 'errand-id',
-        errandNumber: 'ERRAND-1',
-        stakeholders: [{ externalId: 'd09ed58d-680d-4473-9b8b-5d4b17884c9c' }],
-      },
-      message: 'success',
-    });
-    vi.spyOn(ApiService.prototype, 'get').mockResolvedValue({ data: Number(mockPersonNumber), message: 'success' });
-
-    const response = await request(app).post('/api/supportmanagement/errand/create').send({}).expect(200);
-
-    expect(response.body).toEqual({
-      id: 'errand-id',
-      errandNumber: 'ERRAND-1',
-      stakeholders: [
-        {
-          externalId: 'd09ed58d-680d-4473-9b8b-5d4b17884c9c',
-          personNumber: mockPersonNumberHyphenated,
-        },
-      ],
-    });
-  });
-
-  it.skip('fails explicitly when Citizen returns an unsupported person number shape', async () => {
-    vi.spyOn(ApiService.prototype, 'post').mockResolvedValue({
-      data: {
-        id: 'errand-id',
-        errandNumber: 'ERRAND-1',
-        stakeholders: [{ externalId: 'd09ed58d-680d-4473-9b8b-5d4b17884c9c' }],
-      },
-      message: 'success',
-    });
-    vi.spyOn(ApiService.prototype, 'get').mockResolvedValue({ data: { personNumber: mockPersonNumber }, message: 'success' });
-
-    const response = await request(app).post('/api/supportmanagement/errand/create').send({}).expect(502);
-
-    expect(response.body).toEqual({ message: 'Invalid person number response from Citizen API' });
   });
 
   it('propagates a typed upstream error when creating an errand', async () => {

@@ -2,6 +2,7 @@ import type { LabelDTO } from '@data-contracts/backend/data-contracts';
 import type { Page } from '@playwright/test';
 
 import { mockOrganization, mockSecondOrganization } from '../fixtures/getMyOrganizations';
+import { ownerStakeholderFor } from '../fixtures/getOwnerStakeholder';
 import { mockErrand } from '../fixtures/mockErrand';
 import {
   mockCategoryAlkohol,
@@ -169,12 +170,14 @@ test.describe('Register new errand page', () => {
 
     await selectErrandOwner(page, mockOrganization);
     await expect(owner.getByTestId('stakeholder-role')).toHaveText('Ärendeägare');
-    await expect(owner.getByTestId('stakeholder-organizationNumber')).toHaveText(mockOrganization.organizationNumber);
+    await expect(owner.getByTestId('stakeholder-organizationNumber')).toHaveText(
+      ownerStakeholderFor(mockOrganization).organizationNumber ?? ''
+    );
 
     await selectErrandOwner(page, mockSecondOrganization);
     await expect(owner.getByTestId('stakeholder-card')).toHaveCount(1);
     await expect(owner.getByTestId('stakeholder-organizationNumber')).toHaveText(
-      mockSecondOrganization.organizationNumber
+      ownerStakeholderFor(mockSecondOrganization).organizationNumber ?? ''
     );
   });
 
@@ -206,7 +209,9 @@ test.describe('Register new errand page', () => {
     await expect(page.getByTestId('errand-owner-modal')).toBeVisible();
 
     // Identity comes from the citizen's engagement and is not theirs to change.
-    await expect(page.getByTestId('owner-organizationNumber')).toHaveValue(mockOrganization.organizationNumber);
+    await expect(page.getByTestId('owner-organizationNumber')).toHaveValue(
+      ownerStakeholderFor(mockOrganization).organizationNumber ?? ''
+    );
     await expect(page.getByTestId('owner-organizationNumber')).toHaveAttribute('readonly', '');
 
     await page.getByTestId('owner-serveringsstalle-input').fill('Acme Krogen');
@@ -299,14 +304,7 @@ test.describe('Register new errand page', () => {
     await submitButton.click();
     const body = (await createRequest).postDataJSON() as CreateErrandRequestBody;
 
-    expect(body.stakeholders).toEqual([
-      {
-        role: 'PRIMARY',
-        externalId: mockSecondOrganization.partyId,
-        externalIdType: 'COMPANY',
-        organizationName: mockSecondOrganization.organizationName,
-      },
-    ]);
+    expect(body.stakeholders).toEqual([ownerStakeholderFor(mockSecondOrganization)]);
   });
 
   test('Adds a stakeholder using personnumber and registers the errand', async ({ page }) => {

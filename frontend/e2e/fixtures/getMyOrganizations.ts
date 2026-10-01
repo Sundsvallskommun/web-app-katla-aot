@@ -2,14 +2,14 @@ import type { MyOrganizationsDTO, OrganizationDTO } from '@data-contracts/backen
 
 export const mockOrganization: OrganizationDTO = {
   partyId: 'f1e2d3c4-0000-4000-8000-000000000001',
-  organizationNumber: '5560000001',
+  organizationNumber: '1111112222',
   organizationName: 'Acme Restaurang AB',
   isAuthorizedSignatory: true,
 };
 
 export const mockSecondOrganization: OrganizationDTO = {
   partyId: 'f1e2d3c4-0000-4000-8000-000000000002',
-  organizationNumber: '5560000002',
+  organizationNumber: '2222223333',
   organizationName: 'Bolaget Krog HB',
   isAuthorizedSignatory: false,
 };

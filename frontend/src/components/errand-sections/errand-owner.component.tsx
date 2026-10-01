@@ -6,8 +6,9 @@ import { ErrandOwnerModal } from '@components/errand-sections/errand-owner-modal
 import { ErrorAlert } from '@components/misc/error-alert.component';
 import { useIsContentLocked } from '@contexts/errand-content-lock-context';
 import { useFormValidation } from '@contexts/form-validation-context';
-import { StakeholderDTO } from '@data-contracts/backend/data-contracts';
+import { OrganizationDTO, StakeholderDTO } from '@data-contracts/backend/data-contracts';
 import { ErrandFormDTO } from '@interfaces/errand-form';
+import { getOwnerStakeholder } from '@services/organization-service/organization-service';
 import { Button, FormControl, FormErrorMessage, FormLabel, Select, Spinner } from '@sk-web-gui/react';
 import { INVALID_FIELD_ATTRIBUTE } from '@utils/focus-first-error';
 import {
@@ -17,7 +18,7 @@ import {
   withPrimaryStakeholder,
 } from '@utils/stakeholder';
 import { Building2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useMyOrganizations } from 'src/hooks/use-my-organizations';
@@ -29,24 +30,44 @@ export const ErrandOwnerContent: React.FC = () => {
   const { organizations, organizationsError, organizationsLoadState } = useMyOrganizations();
   const { showValidation } = useFormValidation();
   const isLocked = useIsContentLocked();
-  const { setValue, watch } = useFormContext<ErrandFormDTO>();
+  const { getValues, setValue, watch } = useFormContext<ErrandFormDTO>();
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const stakeholders = watch('stakeholders');
   const owner = getPrimaryStakeholder(stakeholders);
   const selectedPartyId = owner?.externalId;
-  // The organisation number is not part of the stakeholder, so the card gets it from the
-  // organisation the party id belongs to.
+  // Owners filed before the number was written carry none.
   const selectedOrganization = organizations.find((organization) => organization.partyId === selectedPartyId);
+  const organizationNumber = owner?.organizationNumber ?? selectedOrganization?.organizationNumber;
+
+  const loadOwnerDetails = useCallback(
+    (partyId: string) =>
+      getOwnerStakeholder(partyId)
+        .then((details) => {
+          const current = getValues('stakeholders');
+          const currentOwner = getPrimaryStakeholder(current);
+          if (currentOwner?.externalId !== partyId) return;
+          setValue('stakeholders', [...withoutPrimaryStakeholder(current), { ...details, ...currentOwner }], {
+            shouldDirty: true,
+          });
+        })
+        .catch(() => undefined),
+    [getValues, setValue]
+  );
+
+  const selectOrganization = useCallback(
+    (organization: OrganizationDTO) => {
+      setValue('stakeholders', withPrimaryStakeholder(getValues('stakeholders'), organization), { shouldDirty: true });
+      void loadOwnerDetails(organization.partyId);
+    },
+    [getValues, loadOwnerDetails, setValue]
+  );
 
   const selectPartyId = (partyId: string) => {
     const organization = organizations.find((candidate) => candidate.partyId === partyId);
 
-    setValue(
-      'stakeholders',
-      organization ? withPrimaryStakeholder(stakeholders, organization) : withoutPrimaryStakeholder(stakeholders),
-      { shouldDirty: true }
-    );
+    if (organization) selectOrganization(organization);
+    else setValue('stakeholders', withoutPrimaryStakeholder(stakeholders), { shouldDirty: true });
   };
 
   // A citizen with a single engagement has nothing to choose between, so the one option is
@@ -54,8 +75,8 @@ export const ErrandOwnerContent: React.FC = () => {
   // whatever was filed.
   useEffect(() => {
     if (isLocked || selectedPartyId !== undefined || organizations.length !== 1) return;
-    setValue('stakeholders', withPrimaryStakeholder(stakeholders, organizations[0]), { shouldDirty: true });
-  }, [isLocked, organizations, selectedPartyId, setValue, stakeholders]);
+    selectOrganization(organizations[0]);
+  }, [isLocked, organizations, selectedPartyId, selectOrganization]);
 
   const replaceOwner = (updated: StakeholderDTO) => {
     setValue('stakeholders', [...withoutPrimaryStakeholder(stakeholders), updated], { shouldDirty: true });
@@ -115,7 +136,7 @@ export const ErrandOwnerContent: React.FC = () => {
               <StakeholderCard
                 stakeholder={owner}
                 roles={[PRIMARY_STAKEHOLDER_ROLE]}
-                organizationNumber={selectedOrganization?.organizationNumber}
+                organizationNumber={organizationNumber}
                 roleLabel={t('errand-information:owner.title')}
                 headerActions={
                   <>
@@ -142,7 +163,7 @@ export const ErrandOwnerContent: React.FC = () => {
               />
               <ErrandOwnerModal
                 owner={owner}
-                organizationNumber={selectedOrganization?.organizationNumber}
+                organizationNumber={organizationNumber}
                 show={isEditOpen}
                 onClose={() => {
                   setIsEditOpen(false);

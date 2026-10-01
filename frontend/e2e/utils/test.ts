@@ -2,6 +2,7 @@ import { test as base } from '@playwright/test';
 
 import { getMe } from '../fixtures/getMe';
 import { getMyOrganizations } from '../fixtures/getMyOrganizations';
+import { ownerStakeholderFor } from '../fixtures/getOwnerStakeholder';
 import { jsonRoute } from './routes';
 
 // The same value as CookieConsentUtils.defaultCookieConsentName in @sk-web-gui/react.
@@ -33,6 +34,11 @@ export const test = base.extend<AppFixtures>({
     ]);
     await page.route('**/api/me', jsonRoute(getMe));
     await page.route('**/api/my-organizations', jsonRoute(getMyOrganizations));
+    await page.route('**/api/my-organizations/*/stakeholder', (route) => {
+      const partyId = new URL(route.request().url()).pathname.split('/').at(-2);
+      const organization = getMyOrganizations.organizations.find((candidate) => candidate.partyId === partyId);
+      return organization ? jsonRoute(ownerStakeholderFor(organization))(route) : jsonRoute({}, 404)(route);
+    });
     await page.route('**/supportmanagement/errand/*/attachments', jsonRoute([]));
     await run(page);
   },
