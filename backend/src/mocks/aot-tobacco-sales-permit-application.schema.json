@@ -715,17 +715,34 @@
       {
         "key": "PRODUCT_LIST",
         "label": "Produktlista",
-        "description": "Produkterna som ska säljas är registrerade hos Folkhälsomyndigheten."
+        "description": "Produkterna som ska säljas är registrerade hos Folkhälsomyndigheten.",
+        "requiredWhen": {}
       },
       {
         "key": "RIGHT_OF_DISPOSAL",
-        "label": "Underlag som styrker dispositionsrätten",
-        "description": "Underlag som visar att företaget har rätt att nyttja lokalen."
+        "label": "Hyresavtal eller markupplåtelse",
+        "description": "Underlag som visar att företaget har rätt att nyttja lokalen. Vid tillfälligt arrangemang även avtal med arrangören, till exempel sponsring.",
+        "requiredWhen": {}
+      },
+      {
+        "key": "SALES_SITE_PHOTO",
+        "label": "Bild på försäljningsplatsen",
+        "requiredWhen": {
+          "properties": {
+            "tidsperiodForForsaljningen": {
+              "const": "TIDSBEGRANSAD_FORSALJNING"
+            }
+          },
+          "required": [
+            "tidsperiodForForsaljningen"
+          ]
+        }
       },
       {
         "key": "SELF_MONITORING_PROGRAM",
         "label": "Egenkontrollprogram",
-        "description": "Lagen om tobak och liknande produkter och lagen om tobaksfria nikotinprodukter kräver att ett egenkontrollprogram bifogas anmälan. Folkhälsomyndigheten har en vägledning för näringsidkare."
+        "description": "Lagen om tobak och liknande produkter och lagen om tobaksfria nikotinprodukter kräver att ett egenkontrollprogram bifogas anmälan. Folkhälsomyndigheten har en vägledning för näringsidkare.",
+        "requiredWhen": {}
       }
     ]
   },
