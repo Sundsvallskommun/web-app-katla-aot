@@ -20,36 +20,6 @@
         ],
         "title": "Är du firmatecknare?"
       },
-      "foretagsform": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "AKTIEBOLAG",
-            "title": "Aktiebolag"
-          },
-          {
-            "const": "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-            "title": "Enskild firma (registrerad hos Skatteverket och Bolagsverket)"
-          },
-          {
-            "const": "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-            "title": "Enskild firma (registrerad endast hos Skatteverket)"
-          },
-          {
-            "const": "FORENING_STIFTELSE",
-            "title": "Förening/stiftelse"
-          },
-          {
-            "const": "HANDELSBOLAG",
-            "title": "Handelsbolag"
-          },
-          {
-            "const": "KOMMANDITBOLAG",
-            "title": "Kommanditbolag"
-          }
-        ],
-        "title": "Företagsform"
-      },
       "fakturaadressSammaSomForetaget": {
         "type": "string",
         "oneOf": [
@@ -402,7 +372,7 @@
     },
     "required": [
       "arDuFirmatecknare",
-      "foretagsform",
+      "verksamhetsbeskrivningsval",
       "fakturaadressSammaSomForetaget",
       "finansiering",
       "besoksadressSammaSomArendeagare",
@@ -413,30 +383,6 @@
       "omfattarSarskiltFarligaProdukter"
     ],
     "allOf": [
-      {
-        "if": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        },
-        "then": {
-          "required": [
-            "verksamhetsbeskrivningsval"
-          ]
-        }
-      },
       {
         "if": {
           "properties": {
@@ -658,65 +604,17 @@
       {
         "key": "CERTIFICATE_OF_REGISTRATION",
         "label": "Registreringsbevis från Bolagsverket",
-        "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        }
+        "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se."
       },
       {
         "key": "OWNERSHIP_INFORMATION",
         "label": "Uppgifter om ägarförhållanden",
-        "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        }
+        "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen."
       },
       {
         "key": "TAX_AGENCY_EXTRACT",
         "label": "Registerutdrag från Skatteverket",
-        "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        }
+        "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se."
       },
       {
         "key": "BUSINESS_DESCRIPTION",

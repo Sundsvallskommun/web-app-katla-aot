@@ -2,7 +2,6 @@
   "value": {
     "ui:order": [
       "arDuFirmatecknare",
-      "foretagsform",
       "fakturaadressSammaSomForetaget",
       "fakturamottagare",
       "fakturareferens",
@@ -33,7 +32,6 @@
         "defaultOpen": true,
         "fields": [
           "arDuFirmatecknare",
-          "foretagsform",
           "fakturaadressSammaSomForetaget",
           "fakturamottagare",
           "fakturareferens",
@@ -67,9 +65,6 @@
       }
     ],
     "arDuFirmatecknare": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "foretagsform": {
       "ui:widget": "RadiobuttonWidget"
     },
     "fakturaadressSammaSomForetaget": {

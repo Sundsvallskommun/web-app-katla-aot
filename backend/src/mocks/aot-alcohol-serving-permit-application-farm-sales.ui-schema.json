@@ -2,7 +2,6 @@
   "value": {
     "ui:order": [
       "arDuFirmatecknare",
-      "foretagsform",
       "fakturaadressSammaSomForetaget",
       "fakturamottagare",
       "fakturareferens",
@@ -16,9 +15,7 @@
       "forsaljningstider",
       "besoksarrangemang",
       "beskrivBesoksarrangemanget",
-      "beskrivForsaljningsplats",
-      "harDuKassaregister",
-      "angeRegistreringskod"
+      "beskrivForsaljningsplats"
     ],
     "ui:sections": [
       {
@@ -28,7 +25,6 @@
         "defaultOpen": true,
         "fields": [
           "arDuFirmatecknare",
-          "foretagsform",
           "fakturaadressSammaSomForetaget",
           "fakturamottagare",
           "fakturareferens",
@@ -50,16 +46,11 @@
           "forsaljningstider",
           "besoksarrangemang",
           "beskrivBesoksarrangemanget",
-          "beskrivForsaljningsplats",
-          "harDuKassaregister",
-          "angeRegistreringskod"
+          "beskrivForsaljningsplats"
         ]
       }
     ],
     "arDuFirmatecknare": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "foretagsform": {
       "ui:widget": "RadiobuttonWidget"
     },
     "fakturaadressSammaSomForetaget": {
@@ -239,20 +230,6 @@
       "ui:widget": "TexteditorWidget",
       "ui:options": {
         "className": "w-full min-h-[14rem]"
-      }
-    },
-    "harDuKassaregister": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "angeRegistreringskod": {
-      "ui:order": [
-        "registreringskod"
-      ],
-      "ui:options": {
-        "showObjectFieldset": true
-      },
-      "registreringskod": {
-        "ui:widget": "TextWidget"
       }
     }
   },

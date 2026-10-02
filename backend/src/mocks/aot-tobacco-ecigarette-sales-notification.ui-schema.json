@@ -2,7 +2,6 @@
   "value": {
     "ui:order": [
       "arDuFirmatecknare",
-      "foretagsform",
       "fakturaadressSammaSomForetaget",
       "fakturamottagare",
       "fakturareferens",
@@ -17,12 +16,6 @@
       "bedriverAvenDistansforsaljning",
       "hemsida",
       "omfattarSarskiltFarligaProdukter",
-      "finansiering",
-      "egnaMedel",
-      "banklan",
-      "privatlan",
-      "annanFinansiering",
-      "ovrigaUpplysningarFinansiering",
       "avtalMedTillverkareEllerPartihandlare"
     ],
     "ui:sections": [
@@ -33,7 +26,6 @@
         "defaultOpen": true,
         "fields": [
           "arDuFirmatecknare",
-          "foretagsform",
           "fakturaadressSammaSomForetaget",
           "fakturamottagare",
           "fakturareferens",
@@ -56,20 +48,11 @@
           "bedriverAvenDistansforsaljning",
           "hemsida",
           "omfattarSarskiltFarligaProdukter",
-          "finansiering",
-          "egnaMedel",
-          "banklan",
-          "privatlan",
-          "annanFinansiering",
-          "ovrigaUpplysningarFinansiering",
           "avtalMedTillverkareEllerPartihandlare"
         ]
       }
     ],
     "arDuFirmatecknare": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "foretagsform": {
       "ui:widget": "RadiobuttonWidget"
     },
     "fakturaadressSammaSomForetaget": {
@@ -228,104 +211,6 @@
     },
     "omfattarSarskiltFarligaProdukter": {
       "ui:widget": "RadiobuttonWidget"
-    },
-    "finansiering": {
-      "ui:widget": "checkboxes",
-      "ui:options": {
-        "multiple": true,
-        "className": "w-full max-w-[48rem]"
-      },
-      "ui:description": "<p>För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med.</p>"
-    },
-    "egnaMedel": {
-      "ui:options": {
-        "addable": true,
-        "orderable": false,
-        "addButtonLabel": "Lägg till"
-      },
-      "items": {
-        "ui:order": [
-          "bank",
-          "kontonummer",
-          "beloppKronor"
-        ],
-        "bank": {
-          "ui:widget": "TextWidget"
-        },
-        "kontonummer": {
-          "ui:widget": "TextWidget"
-        },
-        "beloppKronor": {
-          "ui:widget": "TextWidget"
-        }
-      }
-    },
-    "banklan": {
-      "ui:options": {
-        "addable": true,
-        "orderable": false,
-        "addButtonLabel": "Lägg till"
-      },
-      "items": {
-        "ui:order": [
-          "langivare",
-          "beloppKronor"
-        ],
-        "langivare": {
-          "ui:widget": "TextWidget"
-        },
-        "beloppKronor": {
-          "ui:widget": "TextWidget"
-        }
-      }
-    },
-    "privatlan": {
-      "ui:options": {
-        "addable": true,
-        "orderable": false,
-        "addButtonLabel": "Lägg till"
-      },
-      "items": {
-        "ui:order": [
-          "langivare",
-          "beloppKronor"
-        ],
-        "langivare": {
-          "ui:widget": "TextWidget"
-        },
-        "beloppKronor": {
-          "ui:widget": "TextWidget"
-        }
-      }
-    },
-    "annanFinansiering": {
-      "ui:options": {
-        "addable": true,
-        "orderable": false,
-        "addButtonLabel": "Lägg till"
-      },
-      "items": {
-        "ui:order": [
-          "lanetyp",
-          "langivare",
-          "beloppKronor"
-        ],
-        "lanetyp": {
-          "ui:widget": "TextWidget"
-        },
-        "langivare": {
-          "ui:widget": "TextWidget"
-        },
-        "beloppKronor": {
-          "ui:widget": "TextWidget"
-        }
-      }
-    },
-    "ovrigaUpplysningarFinansiering": {
-      "ui:widget": "TexteditorWidget",
-      "ui:options": {
-        "className": "w-full min-h-[14rem]"
-      }
     },
     "avtalMedTillverkareEllerPartihandlare": {
       "ui:widget": "RadiobuttonWidget"

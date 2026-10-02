@@ -2,7 +2,6 @@
   "value": {
     "ui:order": [
       "arDuFirmatecknare",
-      "foretagsform",
       "fakturaadressSammaSomForetaget",
       "fakturamottagare",
       "fakturareferens",
@@ -20,9 +19,7 @@
       "privatlan",
       "annanFinansiering",
       "ovrigaUpplysningarFinansiering",
-      "godkannaCateringtillfalle",
-      "harDuKassaregister",
-      "angeRegistreringskod"
+      "godkannaCateringtillfalle"
     ],
     "ui:sections": [
       {
@@ -32,7 +29,6 @@
         "defaultOpen": true,
         "fields": [
           "arDuFirmatecknare",
-          "foretagsform",
           "fakturaadressSammaSomForetaget",
           "fakturamottagare",
           "fakturareferens",
@@ -58,16 +54,11 @@
           "privatlan",
           "annanFinansiering",
           "ovrigaUpplysningarFinansiering",
-          "godkannaCateringtillfalle",
-          "harDuKassaregister",
-          "angeRegistreringskod"
+          "godkannaCateringtillfalle"
         ]
       }
     ],
     "arDuFirmatecknare": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "foretagsform": {
       "ui:widget": "RadiobuttonWidget"
     },
     "fakturaadressSammaSomForetaget": {
@@ -140,7 +131,7 @@
           "hideLabel": true
         }
       },
-      "ui:description": "<p>Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren.</p>"
+      "ui:description": "<p>Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 5 åren.</p>"
     },
     "organisationsnummer": {
       "ui:order": [
@@ -302,20 +293,6 @@
       "ui:options": {
         "multiple": true,
         "className": "w-full max-w-[48rem]"
-      }
-    },
-    "harDuKassaregister": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "angeRegistreringskod": {
-      "ui:order": [
-        "registreringskod"
-      ],
-      "ui:options": {
-        "showObjectFieldset": true
-      },
-      "registreringskod": {
-        "ui:widget": "TextWidget"
       }
     }
   },

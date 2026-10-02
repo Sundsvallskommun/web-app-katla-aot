@@ -2,7 +2,6 @@
   "value": {
     "ui:order": [
       "arDuFirmatecknare",
-      "foretagsform",
       "fakturaadressSammaSomForetaget",
       "fakturamottagare",
       "fakturareferens",
@@ -20,9 +19,7 @@
       "serveringsansvarigPersonal",
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen",
-      "finnsPolistillstand",
-      "harDuKassaregister",
-      "angeRegistreringskod"
+      "finnsPolistillstand"
     ],
     "ui:sections": [
       {
@@ -32,7 +29,6 @@
         "defaultOpen": true,
         "fields": [
           "arDuFirmatecknare",
-          "foretagsform",
           "fakturaadressSammaSomForetaget",
           "fakturamottagare",
           "fakturareferens",
@@ -58,16 +54,11 @@
           "serveringsansvarigPersonal",
           "sittplatserILokalen",
           "maximaltAntalPersonerILokalen",
-          "finnsPolistillstand",
-          "harDuKassaregister",
-          "angeRegistreringskod"
+          "finnsPolistillstand"
         ]
       }
     ],
     "arDuFirmatecknare": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "foretagsform": {
       "ui:widget": "RadiobuttonWidget"
     },
     "fakturaadressSammaSomForetaget": {
@@ -307,20 +298,6 @@
     },
     "finnsPolistillstand": {
       "ui:widget": "RadiobuttonWidget"
-    },
-    "harDuKassaregister": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "angeRegistreringskod": {
-      "ui:order": [
-        "registreringskod"
-      ],
-      "ui:options": {
-        "showObjectFieldset": true
-      },
-      "registreringskod": {
-        "ui:widget": "TextWidget"
-      }
     }
   },
   "description": "UI schema for Tillfälligt tillstånd (allmänheten och slutet sällskap)"
