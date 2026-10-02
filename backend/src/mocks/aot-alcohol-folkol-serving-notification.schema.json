@@ -87,7 +87,7 @@
         "type": "string",
         "title": "Verksamhetsbeskrivning"
       },
-      "kommerNiAttServeraMat": {
+      "livsmedelsregistrerad": {
         "type": "string",
         "oneOf": [
           {
@@ -99,26 +99,22 @@
             "title": "Nej"
           }
         ],
-        "title": "Kommer ni att servera mat"
+        "title": "Är verksamheten livsmedelsregistrerad hos kommunen?"
       },
-      "beskrivUtbudetAvMat": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "JAG_VILL_BIFOGA_MENY_SOM",
-            "title": "Jag vill bifoga meny som bilaga"
-          },
-          {
-            "const": "JAG_VILL_SKRIVA_IN_MENYN",
-            "title": "Jag vill skriva in menyn i formuläret"
-          }
-        ],
-        "title": "Beskriv utbudet av mat",
-        "description": "\"En förutsättning för att få servera alkoholdrycker är att det även serveras mat. Utbudet av mat ska vara tillrett, tillräckligt och tillgängligt. Detta innebär att du ska ha mat som du har kapacitet att tillreda på plats i restaurangen och matutbudet ska även alltid vara tillgängligt för gästerna i verksamheten. Du kan välja att bifoga en meny om du har en sådan. Annars kan du välja att skriva in denna i formuläret. Om du har en annan, enklare meny efter kl. 23 ska du även bifoga den eller skriva in denna i formuläret nedan. Exempel på rätter i en enklare meny är hamburgare, sallad, paj, varma smörgåsar och bakad potatis.\" detta stod tidigare i beskrivning"
-      },
-      "meny": {
-        "type": "string",
-        "title": "Meny"
+      "livsmedelsregistreringKanVisasVidTillsyn": {
+        "type": "array",
+        "uniqueItems": true,
+        "minItems": 1,
+        "items": {
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "JAG_KAN_VISA_LIVSMEDELSREGISTRERINGEN",
+              "title": "Jag kan visa livsmedelsregistreringen vid tillsyn"
+            }
+          ]
+        },
+        "title": "Livsmedelsregistrering vid tillsyn"
       },
       "egenkontrollprogramFolkol": {
         "type": "string",
@@ -129,7 +125,7 @@
           },
           {
             "const": "NEJ_JAG_FYLLER_I_DOKUMENTET",
-            "title": "Nej, jag fyller i dokumentet och kan visa upp det vid tillsyn"
+            "title": "Nej, det finns ett egenkontrollprogram och det kan visas vid tillsyn"
           }
         ],
         "title": "Egenkontrollprogram vid servering av folköl (klass 2)",
@@ -207,36 +203,6 @@
           }
         },
         "title": "Kontaktuppgifter till serveringsstället"
-      },
-      "sittplatserILokalen": {
-        "type": "object",
-        "properties": {
-          "antalSittplatserInomhus": {
-            "type": "string",
-            "title": "Antal sittplatser inomhus"
-          },
-          "antalSittplatserPaEventuellUteserver": {
-            "type": "string",
-            "title": "Antal sittplatser på eventuell uteservering"
-          }
-        },
-        "required": [
-          "antalSittplatserInomhus"
-        ],
-        "title": "Sittplatser i lokalen"
-      },
-      "maximaltAntalPersonerILokalen": {
-        "type": "object",
-        "properties": {
-          "antalPersoner": {
-            "type": "string",
-            "title": "Antal personer"
-          }
-        },
-        "required": [
-          "antalPersoner"
-        ],
-        "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)"
       }
     },
     "required": [
@@ -245,9 +211,7 @@
       "fakturaadressSammaSomForetaget",
       "serveringsstalletsNamn",
       "besoksadressSammaSomArendeagare",
-      "sittplatserILokalen",
-      "maximaltAntalPersonerILokalen",
-      "kommerNiAttServeraMat",
+      "livsmedelsregistrerad",
       "egenkontrollprogramFolkol"
     ],
     "allOf": [
@@ -288,23 +252,6 @@
       {
         "if": {
           "properties": {
-            "beskrivUtbudetAvMat": {
-              "const": "JAG_VILL_SKRIVA_IN_MENYN"
-            }
-          },
-          "required": [
-            "beskrivUtbudetAvMat"
-          ]
-        },
-        "then": {
-          "properties": {
-            "meny": true
-          }
-        }
-      },
-      {
-        "if": {
-          "properties": {
             "besoksadressSammaSomArendeagare": {
               "const": "NEJ"
             }
@@ -322,35 +269,18 @@
       {
         "if": {
           "properties": {
-            "kommerNiAttServeraMat": {
+            "livsmedelsregistrerad": {
               "const": "JA"
             }
           },
           "required": [
-            "kommerNiAttServeraMat"
+            "livsmedelsregistrerad"
           ]
         },
         "then": {
-          "properties": {
-            "beskrivUtbudetAvMat": true
-          }
-        }
-      },
-      {
-        "if": {
-          "properties": {
-            "beskrivUtbudetAvMat": {
-              "const": "JAG_VILL_SKRIVA_IN_MENYN"
-            }
-          },
           "required": [
-            "beskrivUtbudetAvMat"
+            "livsmedelsregistreringKanVisasVidTillsyn"
           ]
-        },
-        "then": {
-          "properties": {
-            "meny": true
-          }
         }
       }
     ],
@@ -374,16 +304,27 @@
         "label": "Verksamhetsbeskrivning"
       },
       {
-        "key": "MENU",
-        "label": "Meny"
-      },
-      {
         "key": "SELF_MONITORING_PROGRAM",
-        "label": "Egenkontrollprogram för servering av folköl (klass 2)"
+        "label": "Egenkontrollprogram"
       },
       {
         "key": "FOOD_BUSINESS_REGISTRATION",
         "label": "Livsmedelsregistrering från miljökontoret"
+      }
+    ],
+    "x-stops": [
+      {
+        "when": {
+          "properties": {
+            "livsmedelsregistrerad": {
+              "const": "NEJ"
+            }
+          },
+          "required": [
+            "livsmedelsregistrerad"
+          ]
+        },
+        "text": "[TEXT SAKNAS: varför anmälan inte kan göras när verksamheten inte är livsmedelsregistrerad]"
       }
     ]
   },

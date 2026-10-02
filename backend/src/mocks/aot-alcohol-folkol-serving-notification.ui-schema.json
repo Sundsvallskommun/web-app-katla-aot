@@ -7,16 +7,13 @@
       "fakturareferens",
       "verksamhetsbeskrivningsval",
       "verksamhetsbeskrivning",
-      "kommerNiAttServeraMat",
-      "beskrivUtbudetAvMat",
-      "meny",
+      "livsmedelsregistrerad",
+      "livsmedelsregistreringKanVisasVidTillsyn",
       "egenkontrollprogramFolkol",
       "serveringsstalletsNamn",
       "besoksadressSammaSomArendeagare",
       "besoksadress",
-      "kontaktuppgifterTillServeringsstallet",
-      "sittplatserILokalen",
-      "maximaltAntalPersonerILokalen"
+      "kontaktuppgifterTillServeringsstallet"
     ],
     "ui:sections": [
       {
@@ -39,16 +36,13 @@
         "icon": "file-text",
         "defaultOpen": true,
         "fields": [
-          "kommerNiAttServeraMat",
-          "beskrivUtbudetAvMat",
-          "meny",
+          "livsmedelsregistrerad",
+          "livsmedelsregistreringKanVisasVidTillsyn",
           "egenkontrollprogramFolkol",
           "serveringsstalletsNamn",
           "besoksadressSammaSomArendeagare",
           "besoksadress",
-          "kontaktuppgifterTillServeringsstallet",
-          "sittplatserILokalen",
-          "maximaltAntalPersonerILokalen"
+          "kontaktuppgifterTillServeringsstallet"
         ]
       }
     ],
@@ -103,18 +97,6 @@
       "ui:description": "<p>Du måste lämna en detaljerad beskrivning av företagets verksamhet.</p>\n\n<p><strong>Hur vill du lämna verksamhetsbeskrivningen?</strong></p>"
     },
     "verksamhetsbeskrivning": {
-      "ui:widget": "TexteditorWidget",
-      "ui:options": {
-        "className": "w-full min-h-[14rem]"
-      }
-    },
-    "kommerNiAttServeraMat": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "beskrivUtbudetAvMat": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "meny": {
       "ui:widget": "TexteditorWidget",
       "ui:options": {
         "className": "w-full min-h-[14rem]"
@@ -190,39 +172,14 @@
         "ui:widget": "TextWidget"
       }
     },
-    "sittplatserILokalen": {
-      "ui:order": [
-        "antalSittplatserInomhus",
-        "antalSittplatserPaEventuellUteserver"
-      ],
-      "ui:options": {
-        "showObjectFieldset": true
-      },
-      "antalSittplatserInomhus": {
-        "ui:widget": "TextWidget"
-      },
-      "antalSittplatserPaEventuellUteserver": {
-        "ui:widget": "TextWidget"
-      },
-      "ui:rows": [
-        {
-          "fields": [
-            "antalSittplatserInomhus",
-            "antalSittplatserPaEventuellUteserver"
-          ],
-          "gap": "gap-24"
-        }
-      ]
+    "livsmedelsregistrerad": {
+      "ui:widget": "RadiobuttonWidget"
     },
-    "maximaltAntalPersonerILokalen": {
-      "ui:order": [
-        "antalPersoner"
-      ],
+    "livsmedelsregistreringKanVisasVidTillsyn": {
+      "ui:widget": "checkboxes",
       "ui:options": {
-        "showObjectFieldset": true
-      },
-      "antalPersoner": {
-        "ui:widget": "TextWidget"
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
       }
     }
   },
