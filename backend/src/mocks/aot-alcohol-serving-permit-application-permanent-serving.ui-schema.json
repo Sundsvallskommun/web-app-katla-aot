@@ -2,7 +2,6 @@
   "value": {
     "ui:order": [
       "arDuFirmatecknare",
-      "foretagsform",
       "fakturaadressSammaSomForetaget",
       "fakturamottagare",
       "fakturareferens",
@@ -38,11 +37,12 @@
       "besoksadressSammaSomArendeagare",
       "besoksadress",
       "kontaktuppgifterTillServeringsstallet",
+      "forfoganderattLokal",
+      "harSamarbetsavtal",
       "serveringsansvarigPersonal",
+      "ordningOchNykterhet",
       "sittplatserILokalen",
-      "maximaltAntalPersonerILokalen",
-      "harDuKassaregister",
-      "angeRegistreringskod"
+      "maximaltAntalPersonerILokalen"
     ],
     "ui:sections": [
       {
@@ -52,7 +52,6 @@
         "defaultOpen": true,
         "fields": [
           "arDuFirmatecknare",
-          "foretagsform",
           "fakturaadressSammaSomForetaget",
           "fakturamottagare",
           "fakturareferens",
@@ -96,18 +95,16 @@
           "besoksadressSammaSomArendeagare",
           "besoksadress",
           "kontaktuppgifterTillServeringsstallet",
+          "forfoganderattLokal",
+          "harSamarbetsavtal",
           "serveringsansvarigPersonal",
+          "ordningOchNykterhet",
           "sittplatserILokalen",
-          "maximaltAntalPersonerILokalen",
-          "harDuKassaregister",
-          "angeRegistreringskod"
+          "maximaltAntalPersonerILokalen"
         ]
       }
     ],
     "arDuFirmatecknare": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "foretagsform": {
       "ui:widget": "RadiobuttonWidget"
     },
     "fakturaadressSammaSomForetaget": {
@@ -180,7 +177,7 @@
           "hideLabel": true
         }
       },
-      "ui:description": "<p>Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren.</p>"
+      "ui:description": "<p>Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 5 åren.</p>"
     },
     "organisationsnummer": {
       "ui:order": [
@@ -667,18 +664,20 @@
         "ui:widget": "TextWidget"
       }
     },
-    "harDuKassaregister": {
+    "forfoganderattLokal": {
+      "ui:widget": "checkboxes",
+      "ui:options": {
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
+      }
+    },
+    "harSamarbetsavtal": {
       "ui:widget": "RadiobuttonWidget"
     },
-    "angeRegistreringskod": {
-      "ui:order": [
-        "registreringskod"
-      ],
+    "ordningOchNykterhet": {
+      "ui:widget": "TexteditorWidget",
       "ui:options": {
-        "showObjectFieldset": true
-      },
-      "registreringskod": {
-        "ui:widget": "TextWidget"
+        "className": "w-full min-h-[14rem]"
       }
     }
   },

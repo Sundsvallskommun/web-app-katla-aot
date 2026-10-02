@@ -91,6 +91,15 @@ describe('errand attachments', () => {
     expect(requiredAttachmentTypes(types, {})).toEqual([]);
   });
 
+  it('always requires a bilaga with an empty requiredWhen', () => {
+    const always = attachmentTypesOfSchema({
+      'x-attachments': [{ key: 'BUDGET', label: 'Budget', requiredWhen: {} }],
+    });
+
+    expect(keysOf(requiredAttachmentTypes(always, {}))).toEqual(['BUDGET']);
+    expect(keysOf(requiredAttachmentTypes(always, { arDuFirmatecknare: 'JA' }))).toEqual(['BUDGET']);
+  });
+
   it('requires the fullmakt only when the applicant is not a firmatecknare', () => {
     expect(keysOf(requiredAttachmentTypes(types, { arDuFirmatecknare: 'JA' }))).not.toContain('POWER_OF_ATTORNEY');
     expect(keysOf(requiredAttachmentTypes(types, { arDuFirmatecknare: 'NEJ' }))).toContain('POWER_OF_ATTORNEY');

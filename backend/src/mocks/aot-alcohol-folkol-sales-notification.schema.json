@@ -20,36 +20,6 @@
         ],
         "title": "Är du firmatecknare?"
       },
-      "foretagsform": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "AKTIEBOLAG",
-            "title": "Aktiebolag"
-          },
-          {
-            "const": "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-            "title": "Enskild firma (registrerad hos Skatteverket och Bolagsverket)"
-          },
-          {
-            "const": "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-            "title": "Enskild firma (registrerad endast hos Skatteverket)"
-          },
-          {
-            "const": "FORENING_STIFTELSE",
-            "title": "Förening/stiftelse"
-          },
-          {
-            "const": "HANDELSBOLAG",
-            "title": "Handelsbolag"
-          },
-          {
-            "const": "KOMMANDITBOLAG",
-            "title": "Kommanditbolag"
-          }
-        ],
-        "title": "Företagsform"
-      },
       "fakturaadressSammaSomForetaget": {
         "type": "string",
         "oneOf": [
@@ -113,7 +83,7 @@
         "type": "string",
         "title": "Verksamhetsbeskrivning"
       },
-      "kommerNiAttServeraMat": {
+      "stadigvarandeForsaljningAvLivsmedel": {
         "type": "string",
         "oneOf": [
           {
@@ -125,26 +95,37 @@
             "title": "Nej"
           }
         ],
-        "title": "Kommer ni att servera mat"
+        "title": "Kommer du att ha stadigvarande försäljning av livsmedel?",
+        "description": "Exempelvis mejerivaror, grönsaker och frukt. [TEXT SAKNAS: slutlig hjälptext]"
       },
-      "beskrivUtbudetAvMat": {
+      "tillverkarFolkolPaForsaljningsstallet": {
         "type": "string",
         "oneOf": [
           {
-            "const": "JAG_VILL_BIFOGA_MENY_SOM",
-            "title": "Jag vill bifoga meny som bilaga"
+            "const": "JA",
+            "title": "Ja"
           },
           {
-            "const": "JAG_VILL_SKRIVA_IN_MENYN",
-            "title": "Jag vill skriva in menyn i formuläret"
+            "const": "NEJ",
+            "title": "Nej"
           }
         ],
-        "title": "Beskriv utbudet av mat",
-        "description": "\"En förutsättning för att få servera alkoholdrycker är att det även serveras mat. Utbudet av mat ska vara tillrett, tillräckligt och tillgängligt. Detta innebär att du ska ha mat som du har kapacitet att tillreda på plats i restaurangen och matutbudet ska även alltid vara tillgängligt för gästerna i verksamheten. Du kan välja att bifoga en meny om du har en sådan. Annars kan du välja att skriva in denna i formuläret. Om du har en annan, enklare meny efter kl. 23 ska du även bifoga den eller skriva in denna i formuläret nedan. Exempel på rätter i en enklare meny är hamburgare, sallad, paj, varma smörgåsar och bakad potatis.\" detta stod tidigare i beskrivning"
+        "title": "Kommer du att tillverka folköl på försäljningsstället?"
       },
-      "meny": {
-        "type": "string",
-        "title": "Meny"
+      "dokumentationKanVisasVidTillsyn": {
+        "type": "array",
+        "uniqueItems": true,
+        "minItems": 1,
+        "items": {
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "JAG_KAN_VISA_DOKUMENTATION",
+              "title": "Jag kan visa dokumentation om detta vid tillsyn"
+            }
+          ]
+        },
+        "title": "Dokumentation vid tillsyn"
       },
       "egenkontrollprogramFolkol": {
         "type": "string",
@@ -158,8 +139,8 @@
             "title": "Nej, jag fyller i dokumentet och kan visa upp det vid tillsyn"
           }
         ],
-        "title": "Egenkontrollprogram vid servering av folköl (klass 2)",
-        "description": "Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".\n\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.\n\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig serveringsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.\n\n${serveringfolkolegenkontrollprogram}\n\nVill du bifoga ifyllt egenkontrollprogram i denna anmälan?"
+        "title": "Egenkontrollprogram vid försäljning av folköl (klass 2)",
+        "description": "Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".\n\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.\n\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig försäljningsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.\n\n${serveringfolkolegenkontrollprogram}\n\nVill du bifoga ifyllt egenkontrollprogram i denna anmälan?"
       },
       "serveringsstalletsNamn": {
         "type": "object",
@@ -170,7 +151,7 @@
           }
         },
         "required": ["namn"],
-        "title": "Serveringsställets namn",
+        "title": "Försäljningsställets namn",
         "description": "Det namn som du skyltar med till kund."
       },
       "besoksadressSammaSomArendeagare": {
@@ -185,7 +166,7 @@
             "title": "Nej"
           }
         ],
-        "title": "Är serveringsställets besöksadress samma som ärendeägarens adress?"
+        "title": "Är försäljningsställets besöksadress samma som ärendeägarens adress?"
       },
       "besoksadress": {
         "type": "object",
@@ -204,7 +185,7 @@
           }
         },
         "required": ["gatuadress", "postnummer", "postort"],
-        "title": "Serveringsställets besöksadress"
+        "title": "Försäljningsställets besöksadress"
       },
       "kontaktuppgifterTillServeringsstallet": {
         "type": "object",
@@ -226,92 +207,20 @@
             "title": "Telefon"
           }
         },
-        "title": "Kontaktuppgifter till serveringsstället"
-      },
-      "sittplatserILokalen": {
-        "type": "object",
-        "properties": {
-          "antalSittplatserInomhus": {
-            "type": "string",
-            "title": "Antal sittplatser inomhus"
-          },
-          "antalSittplatserPaEventuellUteserver": {
-            "type": "string",
-            "title": "Antal sittplatser på eventuell uteservering"
-          }
-        },
-        "required": ["antalSittplatserInomhus"],
-        "title": "Sittplatser i lokalen"
-      },
-      "maximaltAntalPersonerILokalen": {
-        "type": "object",
-        "properties": {
-          "antalPersoner": {
-            "type": "string",
-            "title": "Antal personer"
-          }
-        },
-        "required": ["antalPersoner"],
-        "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)"
-      },
-      "harDuKassaregister": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "JA",
-            "title": "Ja"
-          },
-          {
-            "const": "NEJ",
-            "title": "Nej"
-          }
-        ],
-        "title": "Har du kassaregister?"
-      },
-      "angeRegistreringskod": {
-        "type": "object",
-        "properties": {
-          "registreringskod": {
-            "type": "string",
-            "title": "Registreringskod"
-          }
-        },
-        "title": "Ange registreringskod"
+        "title": "Kontaktuppgifter till försäljningsstället"
       }
     },
     "required": [
       "arDuFirmatecknare",
-      "foretagsform",
+      "verksamhetsbeskrivningsval",
       "fakturaadressSammaSomForetaget",
-      "harDuKassaregister",
       "serveringsstalletsNamn",
       "besoksadressSammaSomArendeagare",
-      "sittplatserILokalen",
-      "maximaltAntalPersonerILokalen",
-      "kommerNiAttServeraMat",
+      "stadigvarandeForsaljningAvLivsmedel",
+      "tillverkarFolkolPaForsaljningsstallet",
       "egenkontrollprogramFolkol"
     ],
     "allOf": [
-      {
-        "if": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": ["foretagsform"]
-        },
-        "then": {
-          "required": ["verksamhetsbeskrivningsval"]
-        }
-      },
       {
         "if": {
           "properties": {
@@ -345,21 +254,6 @@
       {
         "if": {
           "properties": {
-            "beskrivUtbudetAvMat": {
-              "const": "JAG_VILL_SKRIVA_IN_MENYN"
-            }
-          },
-          "required": ["beskrivUtbudetAvMat"]
-        },
-        "then": {
-          "properties": {
-            "meny": true
-          }
-        }
-      },
-      {
-        "if": {
-          "properties": {
             "besoksadressSammaSomArendeagare": {
               "const": "NEJ"
             }
@@ -373,46 +267,27 @@
       {
         "if": {
           "properties": {
-            "kommerNiAttServeraMat": {
+            "stadigvarandeForsaljningAvLivsmedel": {
               "const": "JA"
             }
           },
-          "required": ["kommerNiAttServeraMat"]
+          "required": ["stadigvarandeForsaljningAvLivsmedel"]
         },
         "then": {
-          "properties": {
-            "beskrivUtbudetAvMat": true
-          }
+          "required": ["dokumentationKanVisasVidTillsyn"]
         }
       },
       {
         "if": {
           "properties": {
-            "beskrivUtbudetAvMat": {
-              "const": "JAG_VILL_SKRIVA_IN_MENYN"
-            }
-          },
-          "required": ["beskrivUtbudetAvMat"]
-        },
-        "then": {
-          "properties": {
-            "meny": true
-          }
-        }
-      },
-      {
-        "if": {
-          "properties": {
-            "harDuKassaregister": {
+            "tillverkarFolkolPaForsaljningsstallet": {
               "const": "JA"
             }
           },
-          "required": ["harDuKassaregister"]
+          "required": ["tillverkarFolkolPaForsaljningsstallet"]
         },
         "then": {
-          "properties": {
-            "angeRegistreringskod": true
-          }
+          "required": ["dokumentationKanVisasVidTillsyn"]
         }
       }
     ],
@@ -430,68 +305,34 @@
         }
       },
       {
-        "key": "CERTIFICATE_OF_REGISTRATION",
-        "label": "Registreringsbevis från Bolagsverket",
-        "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": ["AKTIEBOLAG", "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET", "FORENING_STIFTELSE", "HANDELSBOLAG", "KOMMANDITBOLAG"]
-            }
-          },
-          "required": ["foretagsform"]
-        }
-      },
-      {
-        "key": "OWNERSHIP_INFORMATION",
-        "label": "Uppgifter om ägarförhållanden",
-        "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": ["AKTIEBOLAG", "FORENING_STIFTELSE", "HANDELSBOLAG", "KOMMANDITBOLAG"]
-            }
-          },
-          "required": ["foretagsform"]
-        }
-      },
-      {
-        "key": "TAX_AGENCY_EXTRACT",
-        "label": "Registerutdrag från Skatteverket",
-        "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": ["foretagsform"]
-        }
-      },
-      {
         "key": "BUSINESS_DESCRIPTION",
         "label": "Verksamhetsbeskrivning"
       },
       {
-        "key": "MENU",
-        "label": "Meny"
-      },
-      {
         "key": "SELF_MONITORING_PROGRAM",
-        "label": "Egenkontrollprogram för servering av folköl (klass 2)"
+        "label": "Egenkontrollprogram"
       },
       {
         "key": "FOOD_BUSINESS_REGISTRATION",
         "label": "Livsmedelsregistrering från miljökontoret"
       }
+    ],
+    "x-stops": [
+      {
+        "when": {
+          "properties": {
+            "stadigvarandeForsaljningAvLivsmedel": {
+              "const": "NEJ"
+            },
+            "tillverkarFolkolPaForsaljningsstallet": {
+              "const": "NEJ"
+            }
+          },
+          "required": ["stadigvarandeForsaljningAvLivsmedel", "tillverkarFolkolPaForsaljningsstallet"]
+        },
+        "text": "[TEXT SAKNAS: varför anmälan inte kan göras utan stadigvarande försäljning av livsmedel eller egen tillverkning av folköl]"
+      }
     ]
   },
-  "description": "Servering av folköl (klass 2)"
+  "description": "Försäljning av folköl (klass 2)"
 }

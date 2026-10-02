@@ -214,6 +214,8 @@ positiva formuleringen av allt ovan; adaptern och kontraktstestet kontrollerar d
    `aot-form-schema-plan.md` §5.
 7. **Bilagor**: `x-attachments`-poster har formen `{key, label, description?, requiredWhen?}`;
    `requiredWhen` följer villkorsreglerna i punkt 4 och pekar bara på egenskaper schemat har.
+   En bilaga som alltid krävs har `"requiredWhen": {}` (ett villkor utan krav matchar alltid);
+   saknas `requiredWhen` är bilagan frivillig.
    `key` är engelsk `UPPER_SNAKE_CASE` och identisk med namnet på motsvarande attachment purpose i
    SupportManagements namnrymdsmetadata; samma dokument har samma `key` i alla scheman, medan
    `label` får skilja sig per schema.
@@ -224,3 +226,10 @@ positiva formuleringen av allt ovan; adaptern och kontraktstestet kontrollerar d
    fälten. Draken läser adressen därifrån, utom när `besoksadressSammaSomArendeagare` är `JA`; då
    gäller adressen på ärendets PRIMARY-intressent. Finns frågan krävs `besoksadress` vid `NEJ`,
    saknas frågan är `besoksadress` alltid obligatorisk. Kontrolleras i kontraktstestet.
+10. **Stopp**: ett svar som utesluter ansökan uttrycks på roten som
+    `x-stops: [{when, text}]`. `when` följer villkorsreglerna i punkt 4, pekar bara på
+    rotegenskaper och har alltid `required`; texten visas under den sista egenskapen i
+    `when.required`. Så länge villkoret matchar nekas registrering med `text` som felmeddelande,
+    efter formulärets egna fel; utkast kan fortfarande sparas. `text` lokaliseras inte, precis som
+    bilagornas etiketter. Ett villkor som pekar på en egenskap som saknas stoppas i adaptern; en
+    post utan `text` eller `when.required` släpps och loggas.
