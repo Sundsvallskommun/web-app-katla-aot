@@ -6,6 +6,7 @@ import {
 import { ErrandFormDTO } from '@interfaces/errand-form';
 import { validateErrandAttachments } from '@utils/errand-attachments';
 import { getSelectedLabels } from '@utils/label-tree';
+import { validateErrandStops } from '@utils/schema-stops';
 import { getPrimaryStakeholder } from '@utils/stakeholder';
 import type { TFunction } from 'i18next';
 
@@ -62,6 +63,7 @@ export async function validateErrandForSave(
         () => validateCategorization(values, t),
         () => validateOwner(values, t),
         () => validateFormData(values, intent, tForms, locale, namespace),
+        () => validateErrandStops(values, t, locale, namespace),
         () => validateErrandAttachments(values, t, locale, namespace),
       ]
     : [() => validateOwner(values, t), () => validateFormData(values, intent, tForms, locale, namespace)];

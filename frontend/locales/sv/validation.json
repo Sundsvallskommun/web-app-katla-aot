@@ -31,5 +31,8 @@
   "attachments": {
     "required": "Bilagan \"{{label}}\" saknas.",
     "check_failed": "Bilagorna kunde inte kontrolleras. Försök igen."
+  },
+  "stops": {
+    "check_failed": "Svaren kunde inte kontrolleras. Försök igen."
   }
 }

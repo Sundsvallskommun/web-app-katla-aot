@@ -31,5 +31,8 @@
   "attachments": {
     "required": "The attachment \"{{label}}\" is missing.",
     "check_failed": "The attachments could not be checked. Please try again."
+  },
+  "stops": {
+    "check_failed": "The answers could not be checked. Please try again."
   }
 }
