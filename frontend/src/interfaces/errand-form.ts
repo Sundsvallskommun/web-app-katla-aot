@@ -16,7 +16,7 @@ export interface ErrandFormDataItem {
  */
 export interface ErrandFormAttachment {
   id?: string;
-  /** Key from ATTACHMENT_TYPES, chosen by the user. */
+  /** The bilagetyp: a key in the schema's `x-attachments`, chosen by the user. */
   category?: string;
   fileName: string;
   mimeType?: string;

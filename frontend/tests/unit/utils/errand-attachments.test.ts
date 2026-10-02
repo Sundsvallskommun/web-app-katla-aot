@@ -116,6 +116,15 @@ describe('errand attachments', () => {
     ).toEqual([]);
   });
 
+  it('accepts several files of the same category', () => {
+    expect(
+      missingRequiredAttachments(types, { arDuFirmatecknare: 'NEJ' }, [
+        { category: 'POWER_OF_ATTORNEY', fileName: 'fullmakt-1.pdf' },
+        { category: 'POWER_OF_ATTORNEY', fileName: 'fullmakt-2.pdf' },
+      ])
+    ).toEqual([]);
+  });
+
   it('a file of another category does not satisfy the requirement', () => {
     const missing = missingRequiredAttachments(types, { arDuFirmatecknare: 'NEJ' }, [
       { category: 'FLOOR_PLAN', fileName: 'ritning.pdf' },
