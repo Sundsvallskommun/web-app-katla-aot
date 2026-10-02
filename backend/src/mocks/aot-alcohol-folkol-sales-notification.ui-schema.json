@@ -7,16 +7,14 @@
       "fakturareferens",
       "verksamhetsbeskrivningsval",
       "verksamhetsbeskrivning",
-      "kommerNiAttServeraMat",
-      "beskrivUtbudetAvMat",
-      "meny",
+      "stadigvarandeForsaljningAvLivsmedel",
+      "tillverkarFolkolPaForsaljningsstallet",
+      "dokumentationKanVisasVidTillsyn",
       "egenkontrollprogramFolkol",
       "serveringsstalletsNamn",
       "besoksadressSammaSomArendeagare",
       "besoksadress",
-      "kontaktuppgifterTillServeringsstallet",
-      "sittplatserILokalen",
-      "maximaltAntalPersonerILokalen"
+      "kontaktuppgifterTillServeringsstallet"
     ],
     "ui:sections": [
       {
@@ -39,16 +37,14 @@
         "icon": "file-text",
         "defaultOpen": true,
         "fields": [
-          "kommerNiAttServeraMat",
-          "beskrivUtbudetAvMat",
-          "meny",
+          "stadigvarandeForsaljningAvLivsmedel",
+          "tillverkarFolkolPaForsaljningsstallet",
+          "dokumentationKanVisasVidTillsyn",
           "egenkontrollprogramFolkol",
           "serveringsstalletsNamn",
           "besoksadressSammaSomArendeagare",
           "besoksadress",
-          "kontaktuppgifterTillServeringsstallet",
-          "sittplatserILokalen",
-          "maximaltAntalPersonerILokalen"
+          "kontaktuppgifterTillServeringsstallet"
         ]
       }
     ],
@@ -100,21 +96,9 @@
         "className": "w-full min-h-[14rem]"
       }
     },
-    "kommerNiAttServeraMat": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "beskrivUtbudetAvMat": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "meny": {
-      "ui:widget": "TexteditorWidget",
-      "ui:options": {
-        "className": "w-full min-h-[14rem]"
-      }
-    },
     "egenkontrollprogramFolkol": {
       "ui:widget": "RadiobuttonWidget",
-      "ui:description": "<p>Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".<br />\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.<br />\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig serveringsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.</p>\n\n<p>${serveringfolkolegenkontrollprogram}</p>\n\n<p><strong>Vill du bifoga ifyllt egenkontrollprogram i denna anmälan?</strong></p>"
+      "ui:description": "<p>Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".<br />\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.<br />\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig försäljningsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.</p>\n\n<p>${serveringfolkolegenkontrollprogram}</p>\n\n<p><strong>Vill du bifoga ifyllt egenkontrollprogram i denna anmälan?</strong></p>"
     },
     "serveringsstalletsNamn": {
       "ui:order": ["namn"],
@@ -168,33 +152,19 @@
         "ui:widget": "TextWidget"
       }
     },
-    "sittplatserILokalen": {
-      "ui:order": ["antalSittplatserInomhus", "antalSittplatserPaEventuellUteserver"],
-      "ui:options": {
-        "showObjectFieldset": true
-      },
-      "antalSittplatserInomhus": {
-        "ui:widget": "TextWidget"
-      },
-      "antalSittplatserPaEventuellUteserver": {
-        "ui:widget": "TextWidget"
-      },
-      "ui:rows": [
-        {
-          "fields": ["antalSittplatserInomhus", "antalSittplatserPaEventuellUteserver"],
-          "gap": "gap-24"
-        }
-      ]
+    "stadigvarandeForsaljningAvLivsmedel": {
+      "ui:widget": "RadiobuttonWidget"
     },
-    "maximaltAntalPersonerILokalen": {
-      "ui:order": ["antalPersoner"],
+    "tillverkarFolkolPaForsaljningsstallet": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "dokumentationKanVisasVidTillsyn": {
+      "ui:widget": "checkboxes",
       "ui:options": {
-        "showObjectFieldset": true
-      },
-      "antalPersoner": {
-        "ui:widget": "TextWidget"
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
       }
     }
   },
-  "description": "UI schema for Servering av folköl (klass 2)"
+  "description": "UI schema for Försäljning av folköl (klass 2)"
 }
