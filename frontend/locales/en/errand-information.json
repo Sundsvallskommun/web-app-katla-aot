@@ -20,7 +20,8 @@
     "error": "Something went wrong while saving the case"
   },
   "about": {
-    "title": "About the case",
+    "title": "What do you want to apply for or report?",
+    "description": "First choose the category of your case, Alcohol or Tobacco, and then what the case concerns. You can search or browse the list of case types.",
     "category_label": "Category",
     "category_placeholder": "Select a category…",
     "type_label": "Case type",
@@ -30,7 +31,7 @@
   },
   "other_parties": {
     "title": "Other parties",
-    "description": "An other party can be a person or organisation affected by the case."
+    "description": "Enter contact persons or other people who are relevant to the case."
   },
   "stakeholder": {
     "no_person_found": "No person was found",
@@ -92,9 +93,10 @@
     "incomplete": "Incomplete"
   },
   "owner": {
-    "title": "Case owner",
+    "title": "Contact details",
+    "role_label": "Case owner",
     "description": "The case owner is the company or organisation that is applying and our primary contact while the case is processed.",
-    "select_label": "Select case owner",
+    "select_label": "Select the company you represent",
     "no_organizations": "You have no companies or organisations to register the case for.",
     "select_placeholder": "Select a company or organisation",
     "serveringsstalle": "Serving location",

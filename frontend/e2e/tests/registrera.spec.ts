@@ -141,7 +141,7 @@ test.describe('Register new errand page', () => {
   test('Shows the section scaffolding while the AoT fields are not built yet', async ({ page }) => {
     await expect(page.locator('main').first()).toBeVisible();
 
-    for (const title of ['Om ärendet', 'Ärendeägare', 'Övriga parter']) {
+    for (const title of ['Vad vill du ansöka/anmäla om?', 'Kontaktuppgifter', 'Övriga parter']) {
       await expect(disclosureByTitle(page, title)).toBeVisible();
     }
 
