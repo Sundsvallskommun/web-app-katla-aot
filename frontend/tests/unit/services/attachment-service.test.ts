@@ -33,6 +33,21 @@ describe('attachment service', () => {
     ]);
   });
 
+  it('reads back every file of a bilagetyp', async () => {
+    const purpose = { id: 'p-1', name: 'POWER_OF_ATTORNEY', displayName: 'Fullmakt' };
+    apiMocks.get.mockResolvedValue({
+      data: [
+        { id: 'a-1', fileName: 'fullmakt-1.pdf', purpose },
+        { id: 'a-2', fileName: 'fullmakt-2.pdf', purpose },
+      ],
+    });
+
+    await expect(getErrandAttachments('errand-id')).resolves.toEqual([
+      { id: 'a-1', fileName: 'fullmakt-1.pdf', category: 'POWER_OF_ATTORNEY' },
+      { id: 'a-2', fileName: 'fullmakt-2.pdf', category: 'POWER_OF_ATTORNEY' },
+    ]);
+  });
+
   it('retypes a stored attachment through the backend', async () => {
     apiMocks.patch.mockResolvedValue({ data: {} });
 
