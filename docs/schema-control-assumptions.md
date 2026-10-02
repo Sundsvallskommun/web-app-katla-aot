@@ -214,6 +214,8 @@ positiva formuleringen av allt ovan; adaptern och kontraktstestet kontrollerar d
    `aot-form-schema-plan.md` §5.
 7. **Bilagor**: `x-attachments`-poster har formen `{key, label, description?, requiredWhen?}`;
    `requiredWhen` följer villkorsreglerna i punkt 4 och pekar bara på egenskaper schemat har.
+   En bilaga som alltid krävs har `"requiredWhen": {}` (ett villkor utan krav matchar alltid);
+   saknas `requiredWhen` är bilagan frivillig.
    `key` är engelsk `UPPER_SNAKE_CASE` och identisk med namnet på motsvarande attachment purpose i
    SupportManagements namnrymdsmetadata; samma dokument har samma `key` i alla scheman, medan
    `label` får skilja sig per schema.

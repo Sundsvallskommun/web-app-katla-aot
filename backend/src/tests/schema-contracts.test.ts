@@ -309,6 +309,16 @@ describe('JSON schema adapter contracts', () => {
       expect((response.body as { message: string }).message).toContain("bilaga 'bevis' is gated on missing property 'ghost'");
     });
 
+    it('serves a bilaga that is always required', async () => {
+      upstream({
+        type: 'object',
+        properties: { source: { type: 'string' } },
+        'x-attachments': [{ key: 'BUDGET', label: 'Budget', requiredWhen: {} }],
+      });
+
+      await request(app).get('/api/schemas/schema-v1').expect(200);
+    });
+
     it('serves a schema with an unsupported condition keyword but logs the gap', async () => {
       const warnSpy = vi.spyOn(logger, 'warn');
       upstream({
