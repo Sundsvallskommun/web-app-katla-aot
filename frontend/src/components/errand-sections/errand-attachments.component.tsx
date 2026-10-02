@@ -15,7 +15,7 @@ import {
   MAX_ATTACHMENT_SIZE_MB,
   updateErrandAttachmentCategory,
 } from '@services/errand-service/attachment-service';
-import { Button, FileUpload, PopupMenu, UploadFile, useSnackbar } from '@sk-web-gui/react';
+import { Button, FileUpload, Icon, PopupMenu, UploadFile, useSnackbar } from '@sk-web-gui/react';
 import {
   answersOfErrand,
   AttachmentType,
@@ -315,7 +315,7 @@ const AttachmentsForSchema: React.FC<{ requirements: AttachmentRequirements }> =
               file={file}
               index={index}
               isEdit={!isLocked}
-              iconProps={{ icon: <FileText /> }}
+              iconProps={{ icon: <Icon icon={<FileText />} /> }}
               nameProps={{
                 isEdit: false,
                 description:
