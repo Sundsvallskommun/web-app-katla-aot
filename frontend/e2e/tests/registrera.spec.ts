@@ -40,6 +40,7 @@ const asErrandLabel = ({ classification, displayName, id, resourceName, resource
 interface CreateErrandRequestBody {
   jsonParameters?: { key: string; value: unknown; schemaId: string }[];
   labels?: Record<string, unknown>[];
+  lifecycle?: string;
   parameters?: { key: string; values: string[] }[];
   stakeholders?: Record<string, unknown>[];
 }
@@ -59,7 +60,7 @@ const openRegistrationConfirmation = async (page: Page) => {
 };
 
 // The owner counts as a stakeholder: it is the errand's PRIMARY one.
-const registerErrandAndExpectDraft = async (page: Page, expectedStakeholderCount: number) => {
+const registerErrand = async (page: Page, expectedStakeholderCount: number) => {
   const submitButton = await openRegistrationConfirmation(page);
   const createRequest = page.waitForRequest(
     (request) => request.url().includes('/supportmanagement/errand/create') && request.method() === 'POST'
@@ -74,6 +75,7 @@ const registerErrandAndExpectDraft = async (page: Page, expectedStakeholderCount
   expect(body.parameters ?? []).toEqual([]);
   expect(body.jsonParameters).toEqual([]);
   expect(body.stakeholders?.length).toBe(expectedStakeholderCount);
+  expect(body.lifecycle).toBe('ACTIVE');
   expect(body.labels).toEqual([mockCategoryAlkohol, mockTypeServering, mockSubTypeStadigvarande].map(asErrandLabel));
   return body;
 };
@@ -290,7 +292,7 @@ test.describe('Register new errand page', () => {
     await selectCategorization(page);
     await selectErrandOwner(page);
 
-    await registerErrandAndExpectDraft(page, 1);
+    await registerErrand(page, 1);
   });
 
   test('Files the chosen organization as the errand owner', async ({ page }) => {
@@ -318,7 +320,7 @@ test.describe('Register new errand page', () => {
 
     await selectCategorization(page);
     await selectErrandOwner(page);
-    const body = await registerErrandAndExpectDraft(page, 2);
+    const body = await registerErrand(page, 2);
 
     expect(body.stakeholders).toContainEqual(
       expect.objectContaining({ role: 'CONTACT', externalIdType: 'PRIVATE', externalId: mockStakeholder.externalId })
@@ -340,7 +342,7 @@ test.describe('Register new errand page', () => {
 
     await selectCategorization(page);
     await selectErrandOwner(page);
-    const body = await registerErrandAndExpectDraft(page, 2);
+    const body = await registerErrand(page, 2);
 
     expect(body.stakeholders).toContainEqual(
       expect.objectContaining({
@@ -400,7 +402,7 @@ test.describe('Register new errand page', () => {
 
     await selectCategorization(page);
     await selectErrandOwner(page);
-    const body = await registerErrandAndExpectDraft(page, 2);
+    const body = await registerErrand(page, 2);
 
     expect(body.stakeholders).toContainEqual(
       expect.objectContaining({ role: 'CONTACT', externalIdType: 'PRIVATE', firstName: 'Test', lastName: 'Testsson' })
@@ -445,6 +447,6 @@ test.describe('Register new errand page', () => {
 
     await selectCategorization(page);
     await selectErrandOwner(page);
-    await registerErrandAndExpectDraft(page, 2);
+    await registerErrand(page, 2);
   });
 });

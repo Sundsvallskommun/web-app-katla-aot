@@ -3,7 +3,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { Stakeholder } from '@/data-contracts/supportmanagement/data-contracts';
+import { Stakeholder } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { StakeholderDTO } from '@/responses/supportmanagement.response';
 import { mapStakeholderDTOToStakeholder, mapStakeholderToStakeholderDTO } from '@/utils/stakeholder-mapping';
 

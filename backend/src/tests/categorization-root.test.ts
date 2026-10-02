@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { Label } from '@/data-contracts/supportmanagement/data-contracts';
+import { Label } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { selectCategorizationSubtree, withCategorizationSubtree } from '@/utils/categorization-root';
 

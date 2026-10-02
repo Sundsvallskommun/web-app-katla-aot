@@ -18,7 +18,7 @@ describe('prepareErrandForApi', () => {
       { id: 'stadigvarande', classification: 'SUBTYPE' },
     ];
 
-    expect(prepareErrandForApi({ ...errand(), labels }, 'NEW', 'AOT').labels).toEqual(labels);
+    expect(prepareErrandForApi({ ...errand(), labels }, 'ACTIVE', 'AOT').labels).toEqual(labels);
   });
 
   it('gives an empty label list when nothing has been categorized', () => {
@@ -37,7 +37,7 @@ describe('prepareErrandForApi', () => {
         ]),
         labels: permanentServingLabels,
       },
-      'NEW',
+      'ACTIVE',
       'AOT'
     );
 
@@ -64,7 +64,7 @@ describe('prepareErrandForApi', () => {
         ]),
         labels: permanentServingLabels,
       },
-      'NEW',
+      'ACTIVE',
       'AOT'
     );
 
@@ -73,15 +73,23 @@ describe('prepareErrandForApi', () => {
     ]);
   });
 
-  it('keeps the stakeholders and sets the given status', () => {
+  it('keeps the stakeholders and files a draft with the given lifecycle', () => {
     const stakeholders = [{ firstName: 'Anna', lastName: 'Andersson', role: 'PRIMARY' }];
     const prepared = prepareErrandForApi({ ...errand(), stakeholders }, 'DRAFT', 'AOT');
 
     expect(prepared.stakeholders).toEqual(stakeholders);
-    expect(prepared.status).toBe('DRAFT');
+    expect(prepared.lifecycle).toBe('DRAFT');
+    expect(prepared.status).toBe('NEW');
+  });
+
+  it('files a registered errand as active with the same initial status', () => {
+    const prepared = prepareErrandForApi(errand(), 'ACTIVE', 'AOT');
+
+    expect(prepared.lifecycle).toBe('ACTIVE');
+    expect(prepared.status).toBe('NEW');
   });
 
   it('gives an empty stakeholder list when the errand has none', () => {
-    expect(prepareErrandForApi(errand(), 'NEW', 'AOT').stakeholders).toEqual([]);
+    expect(prepareErrandForApi(errand(), 'ACTIVE', 'AOT').stakeholders).toEqual([]);
   });
 });

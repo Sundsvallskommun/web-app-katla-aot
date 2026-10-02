@@ -110,10 +110,6 @@ export const mockMetadata: MetadataResponseDTO = {
   },
   statuses: [
     {
-      name: 'DRAFT',
-      created: '2025-12-08T14:35:21.97+01:00',
-    },
-    {
       name: 'NEW',
       created: '2025-12-08T14:06:19.288+01:00',
     },

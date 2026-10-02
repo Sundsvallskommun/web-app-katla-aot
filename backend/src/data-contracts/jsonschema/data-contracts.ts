@@ -16,11 +16,14 @@ export interface JsonNode {
   null?: boolean;
   object?: boolean;
   float?: boolean;
-  valueNode?: boolean;
-  container?: boolean;
-  missingNode?: boolean;
+  string?: boolean;
+  boolean?: boolean;
+  number?: boolean;
   nodeType?: JsonNodeNodeTypeEnum;
   integralNumber?: boolean;
+  missingNode?: boolean;
+  valueNode?: boolean;
+  container?: boolean;
   pojo?: boolean;
   floatingPointNumber?: boolean;
   short?: boolean;
@@ -32,9 +35,6 @@ export interface JsonNode {
   /** @deprecated */
   textual?: boolean;
   binary?: boolean;
-  number?: boolean;
-  string?: boolean;
-  boolean?: boolean;
   embeddedValue?: boolean;
 }
 
@@ -54,8 +54,8 @@ export interface Problem {
   instance?: string;
   /** @format uri */
   type?: string;
-  detail?: string;
   title?: string;
+  detail?: string;
   /** @format int32 */
   status?: number;
 }

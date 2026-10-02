@@ -273,7 +273,7 @@ let reachPerBranch;
 const KEY_OVERRIDES = {
   ange_period_for_servering_till_allmanhet: 'periodServeringAllmanheten',
   ange_period_for_servering_till_slutet_sa: 'periodServeringSlutetSallskap',
-  ar_serveringsstallets_besoksadress_samma: 'besoksadressSammaSomForetaget',
+  ar_serveringsstallets_besoksadress_samma: 'besoksadressSammaSomArendeagare',
   bifoga_egenkontrollprogram_for_servering: 'bifogatEgenkontrollprogramFolkol',
   bifoga_livsmedelsregistrering_fran_miljo: 'bifogadLivsmedelsregistrering',
   du_behover_inte_ansoka_om_serveringstill: 'serveringstillstandBehovsInte',
@@ -294,7 +294,7 @@ const KEY_OVERRIDES = {
   finns_avtal_med_tillverkare_partihandlar: 'avtalMedTillverkareEllerPartihandlare',
   jag_kommer_ocksa_bedriva_distansforsaljn: 'bedriverAvenDistansforsaljning',
   registreringen_omfattar_forsaljning_av_s: 'omfattarSarskiltFarligaProdukter',
-  ar_forsaljningsstallets_besoksadress_sam: 'besoksadressSammaSomForetaget',
+  ar_forsaljningsstallets_besoksadress_sam: 'besoksadressSammaSomArendeagare',
   bifoga_underlag_som_styrker_dispositions: 'bifogatUnderlagDispositionsratt',
   bifoga_registrering_fran_lansstyrelsen: 'bifogadRegistreringLansstyrelsen',
   period_for_tidsbegransad_forsaljning: 'periodTidsbegransadForsaljning',

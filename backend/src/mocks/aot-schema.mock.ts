@@ -1,4 +1,4 @@
-import { MUNICIPALITY_ID } from '@/config';
+import { MUNICIPALITY_ID, SCHEMA_MOCKS_DISABLED } from '@/config';
 import { JsonSchema } from '@/data-contracts/jsonschema/data-contracts';
 
 import folkolSalesNotification from './aot-alcohol-folkol-sales-notification.schema.json';
@@ -75,7 +75,8 @@ const pairs: [StoredSchema, StoredUiSchema][] = [
   [tobaccoFreeNicotineSalesNotification, tobaccoFreeNicotineSalesNotificationUi],
 ];
 
-const mockedSchemas: JsonSchema[] = pairs.map(([schema]) => asJsonSchema(schema));
+/** Empty when SCHEMA_MOCKS_DISABLED=true, so every lookup falls through to the jsonschema API. */
+const mockedSchemas: JsonSchema[] = SCHEMA_MOCKS_DISABLED ? [] : pairs.map(([schema]) => asJsonSchema(schema));
 
 /** UI schemas keyed by schema ID, in the same `value` envelope the API stores them in. */
 const mockedUiSchemas: Record<string, Record<string, unknown>> = Object.fromEntries(

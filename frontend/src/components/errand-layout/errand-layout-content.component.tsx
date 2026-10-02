@@ -44,7 +44,6 @@ const matchesRequestedErrand = (errandNumber: string | undefined, requestedErran
 const createDefaultErrand = (): ErrandFormDTO => ({
   title: 'Empty errand',
   priority: 'MEDIUM',
-  status: 'DRAFT',
   //TODO: Change channel to ESERVICE_KATLA?
   channel: 'ESERVICE',
   resolution: 'INFORMED',
@@ -146,9 +145,8 @@ const ErrandRouteContent: React.FC<ErrandRouteContentProps> = ({ children, route
     };
   }, [pathname, registerNewErrand, requestedErrandNumber, reset, wizardGoToStep, wizardReset]);
 
-  const errandStatus = methods.watch('status');
   const errandNumber = methods.watch('errandNumber');
-  const isDraft = errandStatus === 'DRAFT';
+  const isDraft = methods.watch('lifecycle') === 'DRAFT';
   // A draft is the same unfinished work whether just created or resumed, and the wizard is the
   // interface built for narrow screens. Without this condition a resumed draft switched to the
   // tab view on mobile.

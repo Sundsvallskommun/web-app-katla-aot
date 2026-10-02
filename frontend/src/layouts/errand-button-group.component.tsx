@@ -1,29 +1,14 @@
-import i18nConfig from '@app/i18nConfig';
 import { CancelErrandDialog } from '@components/cancel-errand-dialog.component';
-import {
-  errandFormDataContractErrorMessage,
-  jsonParametersToErrandFormData,
-  schemaNamesForErrand,
-  validateErrandFormData,
-} from '@components/json/utils/schema-utils';
-import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandFormDTO } from '@interfaces/errand-form';
-import { createErrand, updateErrand } from '@services/errand-service/errand-service';
-import { Button, Dialog, useSnackbar } from '@sk-web-gui/react';
+import { Button, Dialog } from '@sk-web-gui/react';
 import { appURL } from '@utils/app-url';
-import { validateErrandAttachments } from '@utils/errand-attachments';
-import { getSelectedLabels } from '@utils/label-tree';
-import { prepareErrandForApi } from '@utils/prepare-errand';
-import { getPrimaryStakeholder } from '@utils/stakeholder';
 import { Inbox } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
 import { REGISTER_ERRAND_PATH } from 'src/constants/routes';
-import { useAttachmentUpload } from 'src/hooks/use-attachment-upload';
-import { useMetadataStore } from 'src/stores/metadata-store';
+import { useSaveErrand } from 'src/hooks/use-save-errand';
 
 import { CenterDiv } from './center-div.component';
 
@@ -33,120 +18,24 @@ interface ErrandButtonGroupProps {
 
 export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErrand }) => {
   const { t } = useTranslation();
-  const { t: tForms, i18n } = useTranslation('forms');
-  const locale = i18n.resolvedLanguage ?? i18nConfig.defaultLocale;
-  const toastMessage = useSnackbar();
-  const router = useRouter();
-  const context = useFormContext<ErrandFormDTO>();
-  const { getValues, reset, watch } = context;
-  const { setShowValidation, focusFirstError } = useFormValidation();
+  const { watch } = useFormContext<ErrandFormDTO>();
+  const { validate, saveDraft, register } = useSaveErrand();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isCancelOpen, setIsCancelOpen] = useState<boolean>(false);
 
-  const namespace = useMetadataStore((state) => state.metadata?.namespace);
-  const uploadAttachments = useAttachmentUpload();
-  const errandStatus = watch('status');
-  const errandId = watch('id');
-
-  const isDraft = errandStatus === 'DRAFT';
+  const isDraft = watch('lifecycle') === 'DRAFT';
   const showButtons = isNewErrand || isDraft;
   const draftEnabled = appConfig.features.draftEnabled;
 
-  const onSaveDraft = async () => {
-    try {
-      const errandData = prepareErrandForApi(getValues(), 'DRAFT', namespace);
-      const errand = await (errandId ? updateErrand(errandId, errandData) : createErrand(errandData));
-      await uploadAttachments(errand.id, getValues('attachments'));
-      const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
-      toastMessage({ position: 'bottom', status: 'success', message: t('errand-information:save_message.draft') });
-      reset({ ...errand, errandFormData });
+  const onSaveDraft = () => saveDraft({ navigate: isNewErrand });
 
-      if (isNewErrand) {
-        router.push(`/arende/${errand.errandNumber}/grundinformation`);
-      }
-    } catch (error: unknown) {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: errandFormDataContractErrorMessage(error, tForms) ?? t('errand-information:save_message.error'),
-      });
-    }
-  };
-
-  const onRegister = async (logout?: boolean) => {
+  const onRegister = (logout?: boolean) => {
     setIsOpen(false);
-
-    try {
-      const errandData = prepareErrandForApi(getValues(), 'NEW', namespace);
-      const errand = await (errandId ? updateErrand(errandId, errandData) : createErrand(errandData));
-      await uploadAttachments(errand.id, getValues('attachments'));
-      const errandFormData = jsonParametersToErrandFormData(errand.jsonParameters);
-      toastMessage({ position: 'bottom', status: 'success', message: t('errand-information:save_message.register') });
-      reset({ ...errand, errandFormData });
-
-      if (logout) {
-        router.push(`/logout`);
-      } else {
-        router.push(`/arende/${errand.errandNumber}/grundinformation`);
-      }
-    } catch (error: unknown) {
-      toastMessage({
-        position: 'bottom',
-        status: 'error',
-        message: errandFormDataContractErrorMessage(error, tForms) ?? t('errand-information:save_message.error'),
-      });
-    }
-  };
-
-  // The message says what is missing and focus moves to the field, so it can be fixed at once
-  // even when the field is far down or inside a collapsed section.
-  const reportValidationError = (message: string) => {
-    toastMessage({ position: 'bottom', status: 'error', message });
-    focusFirstError();
+    return register({ logout });
   };
 
   const onValidateBeforeRegister = async () => {
-    // Turn on validation for the JSON forms.
-    setShowValidation(true);
-
-    const values = getValues();
-
-    const { CATEGORY, TYPE } = getSelectedLabels(values.labels);
-    if (!CATEGORY) {
-      reportValidationError(t('validation:categorization.category_required'));
-      return;
-    }
-    if (!TYPE) {
-      reportValidationError(t('validation:categorization.type_required'));
-      return;
-    }
-
-    // Without an owner the errand falls outside every organisation the session scopes by, so the
-    // citizen who filed it could not read it back.
-    if (!getPrimaryStakeholder(values.stakeholders)) {
-      reportValidationError(t('validation:owner.required'));
-      return;
-    }
-
-    const formDataErrors = await validateErrandFormData(
-      values.errandFormData,
-      tForms,
-      locale,
-      schemaNamesForErrand(values.labels, namespace)
-    );
-
-    if (formDataErrors.length > 0) {
-      reportValidationError(formDataErrors[0]);
-      return;
-    }
-
-    const attachmentErrors = await validateErrandAttachments(values, t, locale, namespace);
-    if (attachmentErrors.length > 0) {
-      reportValidationError(attachmentErrors[0]);
-      return;
-    }
-
-    setIsOpen(true);
+    if (await validate('register')) setIsOpen(true);
   };
 
   if (!showButtons) {

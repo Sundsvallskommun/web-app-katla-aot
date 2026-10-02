@@ -125,6 +125,7 @@
     "remove": "Remove",
     "load_error": "The attachments could not be loaded.",
     "upload_error": "The errand was saved, but one of the attachments could not be submitted.",
+    "category_error": "The attachment type could not be saved.",
     "remove_error": "The attachment could not be removed.",
     "open_error": "The attachment could not be opened.",
     "choose_category": "Select attachment type",

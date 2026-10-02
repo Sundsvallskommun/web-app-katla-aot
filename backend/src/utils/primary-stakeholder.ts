@@ -1,4 +1,4 @@
-import { Parameter, Stakeholder } from '@/data-contracts/supportmanagement/data-contracts';
+import { Parameter, Stakeholder } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { OrganizationDTO } from '@/responses/legal-entity.response';
 import ApiService from '@/services/api.service';

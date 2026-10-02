@@ -45,7 +45,7 @@ export const ErrandTable: React.FC = () => {
             {rows.map((errand, index) => (
               <Table.Row key={`errand-row-${index}`}>
                 <Table.Column>
-                  <StatusLabel status={errand?.status} />
+                  <StatusLabel status={errand?.status} lifecycle={errand?.lifecycle} />
                 </Table.Column>
                 <Table.Column>
                   <Link

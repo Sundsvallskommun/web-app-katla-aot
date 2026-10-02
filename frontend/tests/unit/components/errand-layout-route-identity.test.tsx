@@ -196,7 +196,7 @@ describe('errand layout route identity', () => {
   it('removes A header, status and actions synchronously and never exposes A when B fails', async () => {
     const failedB = createDeferred<ErrandDTO>();
     getErrandMock
-      .mockResolvedValueOnce({ id: 'id-a', errandNumber: 'ERRAND-A', status: 'DRAFT', jsonParameters: [] })
+      .mockResolvedValueOnce({ id: 'id-a', errandNumber: 'ERRAND-A', status: 'NEW', jsonParameters: [] })
       .mockReturnValueOnce(failedB.promise);
 
     const view = render(
@@ -205,7 +205,7 @@ describe('errand layout route identity', () => {
       </ErrandLayoutContent>
     );
 
-    expect(await screen.findByTestId('base-header')).toHaveTextContent('existing:ERRAND-A:DRAFT');
+    expect(await screen.findByTestId('base-header')).toHaveTextContent('existing:ERRAND-A:NEW');
     expect(screen.getByTestId('form-identity')).toHaveTextContent('id-a:ERRAND-A');
     const detachedSaveAction = screen.getByRole('button', { name: 'save-action' });
     const detachedRegisterAction = screen.getByRole('button', { name: 'register-action' });
@@ -267,7 +267,7 @@ describe('errand layout route identity', () => {
     expect(screen.getByTestId('form-identity')).toHaveTextContent('id-b:ERRAND-B');
 
     await act(async () => {
-      slowA.resolve({ id: 'late-id-a', errandNumber: 'ERRAND-A', status: 'DRAFT', jsonParameters: [] });
+      slowA.resolve({ id: 'late-id-a', errandNumber: 'ERRAND-A', status: 'NEW', jsonParameters: [] });
       await slowA.promise;
     });
 
@@ -280,7 +280,7 @@ describe('errand layout route identity', () => {
     getErrandMock.mockResolvedValueOnce({
       id: 'wrong-id',
       errandNumber: 'ERRAND-A',
-      status: 'DRAFT',
+      status: 'NEW',
       jsonParameters: [],
     });
     setExistingRoute('ERRAND-B');
@@ -299,7 +299,7 @@ describe('errand layout route identity', () => {
   });
 
   it('starts the registration route with fresh defaults instead of the previously loaded errand', async () => {
-    getErrandMock.mockResolvedValueOnce({ id: 'id-a', errandNumber: 'ERRAND-A', status: 'DRAFT', jsonParameters: [] });
+    getErrandMock.mockResolvedValueOnce({ id: 'id-a', errandNumber: 'ERRAND-A', status: 'NEW', jsonParameters: [] });
 
     const view = render(
       <ErrandLayoutContent>
@@ -325,7 +325,6 @@ describe('errand layout route identity', () => {
       channel: 'ESERVICE',
       priority: 'MEDIUM',
       resolution: 'INFORMED',
-      status: 'DRAFT',
       title: 'Empty errand',
     };
     expect(mocks.save).toHaveBeenCalledWith(expectedDefaults);
@@ -341,7 +340,7 @@ describe('errand layout route identity', () => {
 
     view.unmount();
     await act(async () => {
-      pending.resolve({ id: 'id-a', errandNumber: 'ERRAND-A', status: 'DRAFT', jsonParameters: [] });
+      pending.resolve({ id: 'id-a', errandNumber: 'ERRAND-A', status: 'NEW', jsonParameters: [] });
       await pending.promise;
     });
 

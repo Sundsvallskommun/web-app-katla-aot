@@ -29,7 +29,7 @@ const uiSchemaWith = (defaultOpen?: boolean): UiSchema<Record<string, unknown>> 
 });
 
 function SectionForm({ defaultOpen, schemaId }: { defaultOpen?: boolean; schemaId: string }) {
-  const methods = useForm({ defaultValues: { status: 'DRAFT' } });
+  const methods = useForm();
 
   return (
     <FormProvider {...methods}>

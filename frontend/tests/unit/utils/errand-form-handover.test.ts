@@ -5,7 +5,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const values: ErrandFormDTO = {
   title: 'Empty errand',
   priority: 'MEDIUM',
-  status: 'DRAFT',
   channel: 'ESERVICE',
   resolution: 'INFORMED',
   description: 'Halvfärdig beskrivning',

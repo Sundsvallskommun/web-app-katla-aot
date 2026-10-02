@@ -12,7 +12,7 @@
       "startdatumForsaljning",
       "periodTidsbegransadForsaljning",
       "forsaljningsstallet",
-      "besoksadressSammaSomForetaget",
+      "besoksadressSammaSomArendeagare",
       "besoksadress",
       "bedriverAvenDistansforsaljning",
       "hemsida",
@@ -51,7 +51,7 @@
           "startdatumForsaljning",
           "periodTidsbegransadForsaljning",
           "forsaljningsstallet",
-          "besoksadressSammaSomForetaget",
+          "besoksadressSammaSomArendeagare",
           "besoksadress",
           "bedriverAvenDistansforsaljning",
           "hemsida",
@@ -169,7 +169,7 @@
         "ui:widget": "TextWidget"
       }
     },
-    "besoksadressSammaSomForetaget": {
+    "besoksadressSammaSomArendeagare": {
       "ui:widget": "RadiobuttonWidget"
     },
     "besoksadress": {

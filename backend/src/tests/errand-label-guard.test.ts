@@ -4,7 +4,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SupportManagementController } from '@/controllers/supportmanagement.controller';
-import { ErrandLabel, Label } from '@/data-contracts/supportmanagement/data-contracts';
+import { ErrandLabel, Label } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 
 import { mockCitizenPartyId, mockErrandId } from './helpers/mock-data';

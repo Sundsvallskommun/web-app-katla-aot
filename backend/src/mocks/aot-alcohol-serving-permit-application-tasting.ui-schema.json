@@ -22,6 +22,8 @@
       "privatlan",
       "annanFinansiering",
       "ovrigaUpplysningarFinansiering",
+      "besoksadressSammaSomArendeagare",
+      "besoksadress",
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen",
       "harDuKassaregister",
@@ -63,6 +65,8 @@
           "privatlan",
           "annanFinansiering",
           "ovrigaUpplysningarFinansiering",
+          "besoksadressSammaSomArendeagare",
+          "besoksadress",
           "sittplatserILokalen",
           "maximaltAntalPersonerILokalen",
           "harDuKassaregister",
@@ -317,6 +321,37 @@
       "ui:options": {
         "className": "w-full min-h-[14rem]"
       }
+    },
+    "besoksadressSammaSomArendeagare": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "besoksadress": {
+      "ui:order": [
+        "gatuadress",
+        "postnummer",
+        "postort"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "gatuadress": {
+        "ui:widget": "TextWidget"
+      },
+      "postnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "postort": {
+        "ui:widget": "TextWidget"
+      },
+      "ui:rows": [
+        {
+          "fields": [
+            "postnummer",
+            "postort"
+          ],
+          "gap": "gap-24"
+        }
+      ]
     },
     "sittplatserILokalen": {
       "ui:order": [

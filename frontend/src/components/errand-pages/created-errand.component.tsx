@@ -5,14 +5,14 @@ import { ErrandAttachments } from '@components/errand-sections/errand-attachment
 import { ErrandDetails } from '@components/errand-sections/errand-details.component';
 import { ErrandOwner } from '@components/errand-sections/errand-owner.component';
 import { OtherParties } from '@components/errand-sections/other-parties.component';
-import { useErrandLockedByStatus } from '@contexts/errand-content-lock-context';
+import { useErrandLocked } from '@contexts/errand-content-lock-context';
 import { Alert } from '@sk-web-gui/react';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
 
 export const CreatedErrand: React.FC = () => {
   const { t } = useTranslation();
-  const isLocked = useErrandLockedByStatus();
+  const isLocked = useErrandLocked();
 
   return (
     <div className="flex flex-col gap-32">

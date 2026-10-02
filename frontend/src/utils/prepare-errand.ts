@@ -3,9 +3,16 @@ import {
   errandFormDataToJsonParameters,
   schemaNamesForErrand,
 } from '@components/json/utils/schema-utils';
-import { ErrandFormDTO } from '@interfaces/errand-form';
+import { ErrandFormDTO, ErrandLifecycle } from '@interfaces/errand-form';
 
-export const prepareErrandForApi = (values: ErrandFormDTO, status: string, namespace: string | undefined) => {
+// Status is the same for a draft and a filed errand: what sets them apart is the lifecycle.
+const INITIAL_STATUS = 'NEW';
+
+export const prepareErrandForApi = (
+  values: ErrandFormDTO,
+  lifecycle: ErrandLifecycle,
+  namespace: string | undefined
+) => {
   // Bilagor are filed straight to SupportManagement, never as part of the errand body.
   const { attachments: _attachments, errandFormData, ...errandWithoutFormData } = values;
   const labels = errandWithoutFormData.labels ?? [];
@@ -14,7 +21,8 @@ export const prepareErrandForApi = (values: ErrandFormDTO, status: string, names
     ...errandWithoutFormData,
     stakeholders: errandWithoutFormData.stakeholders ?? [],
     labels,
-    status,
+    status: INITIAL_STATUS,
+    lifecycle,
     // Only the current ärendetyp's form is filed; a type the citizen changed away from leaves its
     // answers in form state but must not reach the errand.
     jsonParameters: errandFormDataToJsonParameters(

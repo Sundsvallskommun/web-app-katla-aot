@@ -11,6 +11,7 @@ config({ path: `.env.${nodeEnv !== undefined && nodeEnv !== '' ? nodeEnv : 'deve
 export const CREDENTIALS = process.env.CREDENTIALS === 'true';
 export const SWAGGER_ENABLED = process.env.SWAGGER_ENABLED === 'true';
 export const SESSION_MEMORY = process.env.SESSION_MEMORY === 'true';
+export const SCHEMA_MOCKS_DISABLED = process.env.SCHEMA_MOCKS_DISABLED === 'true';
 
 export const {
   APP_NAME,

@@ -31,10 +31,6 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key, i18n: { resolvedLanguage: 'sv' } }),
 }));
 
-vi.mock('src/config/appconfig', () => ({
-  appConfig: { features: { draftEnabled: true } },
-}));
-
 vi.mock('@sk-web-gui/react', () => {
   const Button = ({ children, onClick }: ButtonHTMLAttributes<HTMLButtonElement>) => (
     <button type="button" onClick={onClick}>
@@ -62,7 +58,8 @@ vi.mock('@sk-web-gui/react', () => {
 function TestForm() {
   const methods = useForm<ErrandFormDTO>({
     defaultValues: {
-      status: 'DRAFT',
+      // Registration refuses an errand without an owner before it looks at the form data.
+      stakeholders: [{ role: 'PRIMARY', externalId: 'f1e2d3c4-0000-4000-8000-000000000001' }],
       // Labels select the schema; without them the broken entry is filtered out before the save.
       labels: [
         { id: 'alkohol', classification: 'CATEGORY', resourceName: 'ALCOHOL' },
@@ -100,7 +97,7 @@ describe('ErrandButtonGroup JSON save contract', () => {
   it('handles invalid persisted JSON without calling the save API', async () => {
     render(<TestForm />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'errand-information:save_draft' }));
+    fireEvent.click(screen.getByRole('button', { name: 'errand-information:register' }));
 
     await waitFor(() => {
       expect(snackbarMock).toHaveBeenCalledWith(

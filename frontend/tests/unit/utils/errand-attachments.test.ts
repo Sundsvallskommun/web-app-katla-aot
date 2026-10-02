@@ -36,12 +36,12 @@ const schema = {
   properties: {},
   'x-attachments': [
     {
-      key: 'laddaUppFullmakt',
+      key: 'POWER_OF_ATTORNEY',
       label: 'Fullmakt',
       requiredWhen: { properties: { arDuFirmatecknare: { const: 'NEJ' } }, required: ['arDuFirmatecknare'] },
     },
     {
-      key: 'bifogaRegisterutdragFranSkatteverket',
+      key: 'TAX_AGENCY_EXTRACT',
       label: 'Registerutdrag från Skatteverket',
       description: 'Hämtas på verksamt.se.',
       requiredWhen: {
@@ -50,14 +50,14 @@ const schema = {
       },
     },
     {
-      key: 'bifogaKontoutdrag',
+      key: 'BANK_STATEMENT',
       label: 'Kontoutdrag för egna medel',
       requiredWhen: {
         properties: { finansiering: { contains: { const: 'EGNA_MEDEL' } } },
         required: ['finansiering'],
       },
     },
-    { key: 'bifogaPlanritning', label: 'Planritning' },
+    { key: 'FLOOR_PLAN', label: 'Planritning' },
   ],
 } as unknown as RJSFSchema;
 
@@ -71,12 +71,7 @@ const errand = (answers: Record<string, unknown>, attachments?: ErrandFormDTO['a
 
 describe('errand attachments', () => {
   it('reads the bilagor the schema declares', () => {
-    expect(keysOf(types)).toEqual([
-      'laddaUppFullmakt',
-      'bifogaRegisterutdragFranSkatteverket',
-      'bifogaKontoutdrag',
-      'bifogaPlanritning',
-    ]);
+    expect(keysOf(types)).toEqual(['POWER_OF_ATTORNEY', 'TAX_AGENCY_EXTRACT', 'BANK_STATEMENT', 'FLOOR_PLAN']);
   });
 
   it('has no bilagor for a schema that declares none', () => {
@@ -97,38 +92,36 @@ describe('errand attachments', () => {
   });
 
   it('requires the fullmakt only when the applicant is not a firmatecknare', () => {
-    expect(keysOf(requiredAttachmentTypes(types, { arDuFirmatecknare: 'JA' }))).not.toContain('laddaUppFullmakt');
-    expect(keysOf(requiredAttachmentTypes(types, { arDuFirmatecknare: 'NEJ' }))).toContain('laddaUppFullmakt');
+    expect(keysOf(requiredAttachmentTypes(types, { arDuFirmatecknare: 'JA' }))).not.toContain('POWER_OF_ATTORNEY');
+    expect(keysOf(requiredAttachmentTypes(types, { arDuFirmatecknare: 'NEJ' }))).toContain('POWER_OF_ATTORNEY');
   });
 
   it('reads an enum membership condition', () => {
-    expect(keysOf(requiredAttachmentTypes(types, { foretagsform: 'AKTIEBOLAG' }))).toEqual([
-      'bifogaRegisterutdragFranSkatteverket',
-    ]);
+    expect(keysOf(requiredAttachmentTypes(types, { foretagsform: 'AKTIEBOLAG' }))).toEqual(['TAX_AGENCY_EXTRACT']);
     expect(requiredAttachmentTypes(types, { foretagsform: 'ENSKILD_FIRMA' })).toEqual([]);
   });
 
   it('reads an array-contains condition', () => {
     expect(keysOf(requiredAttachmentTypes(types, { finansiering: ['BANKLAN', 'EGNA_MEDEL'] }))).toEqual([
-      'bifogaKontoutdrag',
+      'BANK_STATEMENT',
     ]);
     expect(requiredAttachmentTypes(types, { finansiering: ['BANKLAN'] })).toEqual([]);
   });
 
   it('counts a required bilaga as delivered once a file carries its category', () => {
     const answers = { arDuFirmatecknare: 'NEJ' };
-    expect(keysOf(missingRequiredAttachments(types, answers, undefined))).toEqual(['laddaUppFullmakt']);
+    expect(keysOf(missingRequiredAttachments(types, answers, undefined))).toEqual(['POWER_OF_ATTORNEY']);
     expect(
-      missingRequiredAttachments(types, answers, [{ category: 'laddaUppFullmakt', fileName: 'fullmakt.pdf' }])
+      missingRequiredAttachments(types, answers, [{ category: 'POWER_OF_ATTORNEY', fileName: 'fullmakt.pdf' }])
     ).toEqual([]);
   });
 
   it('a file of another category does not satisfy the requirement', () => {
     const missing = missingRequiredAttachments(types, { arDuFirmatecknare: 'NEJ' }, [
-      { category: 'bifogaPlanritning', fileName: 'ritning.pdf' },
+      { category: 'FLOOR_PLAN', fileName: 'ritning.pdf' },
     ]);
 
-    expect(keysOf(missing)).toEqual(['laddaUppFullmakt']);
+    expect(keysOf(missing)).toEqual(['POWER_OF_ATTORNEY']);
   });
 
   describe('validating before registration', () => {
