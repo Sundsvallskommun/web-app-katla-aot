@@ -210,14 +210,6 @@
               "title": "Evenemang"
             },
             {
-              "const": "PAUSSERVERING_ENDAST_STARKOL_VIN_CIDER",
-              "title": "Pausservering (endast starköl, vin, cider eller andra jästa alkoholdrycker)"
-            },
-            {
-              "const": "PROVSMAKNINGSSERVERING_AV_EGENTILLVERKADE_ALKOHOLDRYCKER_FRAN",
-              "title": "Provsmakningsservering av egentillverkade alkoholdrycker från råvaror som produceras på egen gård"
-            },
-            {
               "const": "TRAFIKSERVERING_INRIKES_TRAFIK_PA_FARTYG",
               "title": "Trafikservering (inrikes trafik på fartyg, luftfartyg eller järnvägståg)"
             }
@@ -657,6 +649,48 @@
         },
         "title": "Kontaktuppgifter till serveringsstället"
       },
+      "forfoganderattLokal": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "KOPAVTAL",
+              "title": "Köpavtal"
+            },
+            {
+              "const": "OVERLATELSEAVTAL",
+              "title": "Överlåtelseavtal"
+            },
+            {
+              "const": "HYRESAVTAL",
+              "title": "Hyresavtal"
+            },
+            {
+              "const": "MARKUPPLATELSE",
+              "title": "Markupplåtelse"
+            }
+          ]
+        },
+        "title": "Vilka dokument styrker att ni förfogar över lokalen eller ytan?"
+      },
+      "harSamarbetsavtal": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej"
+          }
+        ],
+        "title": "Har ni samarbetsavtal?",
+        "description": "Till exempel med dryckesleverantör eller för delad lokal."
+      },
       "serveringsansvarigPersonal": {
         "type": "array",
         "items": {
@@ -683,6 +717,10 @@
         },
         "title": "Serveringsansvarig personal",
         "description": "Under öppettider måste det alltid finnas en serveringsansvarig person på plats i verksamheten. Om inte någon av företagets företrädare är på plats måste en annan utsedd och anmäld serveringsansvarig vara på plats. Nedan anger du namn och personnummer till den person eller de personer som är ansvariga för servering av alkohol. En person som är serveringsansvarig måste vara minst 20 år.\n\nHar du inte anställt personal ännu kan du fylla i serveringsansvarig personal vid ett senare tillfälle."
+      },
+      "ordningOchNykterhet": {
+        "type": "string",
+        "title": "Hur ska ordning och nykterhet säkerställas?"
       },
       "sittplatserILokalen": {
         "type": "object",
@@ -726,8 +764,11 @@
       "serveringTillAllmanhetenEllerSlutetSallskap",
       "serveringsstalletsNamn",
       "besoksadressSammaSomArendeagare",
+      "forfoganderattLokal",
+      "harSamarbetsavtal",
       "sittplatserILokalen",
-      "maximaltAntalPersonerILokalen"
+      "maximaltAntalPersonerILokalen",
+      "ordningOchNykterhet"
     ],
     "allOf": [
       {
@@ -1575,6 +1616,12 @@
         "label": "Verksamhetsbeskrivning"
       },
       {
+        "key": "BUDGET",
+        "label": "Budget",
+        "description": "Första årets drift, likviditetsbudget för tre månader och samtliga uppstartskostnader.",
+        "requiredWhen": {}
+      },
+      {
         "key": "MENU",
         "label": "Meny"
       },
@@ -1644,18 +1691,88 @@
       },
       {
         "key": "FLOOR_PLAN",
-        "label": "Planritning",
-        "description": "Planritningen ska visa vilken del av lokalen som är serveringsyta, inklusive uteservering och samtliga våningsplan där alkohol serveras. Serveringsytan ska vara överblickbar."
+        "label": "Ritning över serveringsyta och område",
+        "description": "Planritningen ska visa vilken del av lokalen som är serveringsyta, inklusive uteservering och samtliga våningsplan där alkohol serveras. Serveringsytan ska vara överblickbar.",
+        "requiredWhen": {}
       },
       {
-        "key": "PREMISES_AGREEMENT",
-        "label": "Avtal gällande lokal och mark",
-        "description": "Hyreskontrakt, arrendeavtal eller köpeavtal (inklusive bilagor) för lokalen som verksamheten ska bedrivas i, inklusive platsen för eventuell uteservering."
+        "key": "PURCHASE_AGREEMENT",
+        "label": "Köpavtal",
+        "requiredWhen": {
+          "properties": {
+            "forfoganderattLokal": {
+              "contains": {
+                "const": "KOPAVTAL"
+              }
+            }
+          },
+          "required": [
+            "forfoganderattLokal"
+          ]
+        }
+      },
+      {
+        "key": "TRANSFER_AGREEMENT",
+        "label": "Överlåtelseavtal",
+        "requiredWhen": {
+          "properties": {
+            "forfoganderattLokal": {
+              "contains": {
+                "const": "OVERLATELSEAVTAL"
+              }
+            }
+          },
+          "required": [
+            "forfoganderattLokal"
+          ]
+        }
+      },
+      {
+        "key": "LEASE_AGREEMENT",
+        "label": "Hyresavtal",
+        "requiredWhen": {
+          "properties": {
+            "forfoganderattLokal": {
+              "contains": {
+                "const": "HYRESAVTAL"
+              }
+            }
+          },
+          "required": [
+            "forfoganderattLokal"
+          ]
+        }
+      },
+      {
+        "key": "LAND_LEASE_AGREEMENT",
+        "label": "Markupplåtelse",
+        "requiredWhen": {
+          "properties": {
+            "forfoganderattLokal": {
+              "contains": {
+                "const": "MARKUPPLATELSE"
+              }
+            }
+          },
+          "required": [
+            "forfoganderattLokal"
+          ]
+        }
       },
       {
         "key": "BUSINESS_AGREEMENT",
-        "label": "Avtal gällande verksamheten",
-        "description": "Har ditt företag köpt verksamheten bifogar du köpeavtalet, eller arrendeavtalet om företaget arrenderar den. Bilagor ska följa med."
+        "label": "Samarbetsavtal",
+        "description": "Till exempel avtal med dryckesleverantör eller om delad lokal.",
+        "requiredWhen": {
+          "properties": {
+            "harSamarbetsavtal": {
+              "const": "JA"
+            }
+          },
+          "required": [
+            "harSamarbetsavtal"
+          ]
+        }
       },
       {
         "key": "FIRE_SAFETY_DOCUMENTATION",

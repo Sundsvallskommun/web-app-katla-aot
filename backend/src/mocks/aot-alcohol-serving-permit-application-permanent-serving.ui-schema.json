@@ -37,7 +37,10 @@
       "besoksadressSammaSomArendeagare",
       "besoksadress",
       "kontaktuppgifterTillServeringsstallet",
+      "forfoganderattLokal",
+      "harSamarbetsavtal",
       "serveringsansvarigPersonal",
+      "ordningOchNykterhet",
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen"
     ],
@@ -92,7 +95,10 @@
           "besoksadressSammaSomArendeagare",
           "besoksadress",
           "kontaktuppgifterTillServeringsstallet",
+          "forfoganderattLokal",
+          "harSamarbetsavtal",
           "serveringsansvarigPersonal",
+          "ordningOchNykterhet",
           "sittplatserILokalen",
           "maximaltAntalPersonerILokalen"
         ]
@@ -656,6 +662,22 @@
       },
       "antalPersoner": {
         "ui:widget": "TextWidget"
+      }
+    },
+    "forfoganderattLokal": {
+      "ui:widget": "checkboxes",
+      "ui:options": {
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
+      }
+    },
+    "harSamarbetsavtal": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "ordningOchNykterhet": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
       }
     }
   },
