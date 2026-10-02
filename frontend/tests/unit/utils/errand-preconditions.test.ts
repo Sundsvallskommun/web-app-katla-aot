@@ -4,9 +4,10 @@ import { validateErrandForSave } from '@utils/errand-preconditions';
 import type { TFunction } from 'i18next';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { validateErrandAttachmentsMock, validateErrandFormDataMock } = vi.hoisted(() => ({
+const { validateErrandAttachmentsMock, validateErrandFormDataMock, validateErrandStopsMock } = vi.hoisted(() => ({
   validateErrandAttachmentsMock: vi.fn(),
   validateErrandFormDataMock: vi.fn(),
+  validateErrandStopsMock: vi.fn(),
 }));
 
 // What makes a form or its bilagor valid is covered where those rules live; here only the order
@@ -18,6 +19,10 @@ vi.mock('@components/json/utils/schema-utils', async (importOriginal) => ({
 
 vi.mock('@utils/errand-attachments', () => ({
   validateErrandAttachments: validateErrandAttachmentsMock,
+}));
+
+vi.mock('@utils/schema-stops', () => ({
+  validateErrandStops: validateErrandStopsMock,
 }));
 
 const t = ((key: string) => key) as unknown as TFunction;
@@ -44,6 +49,7 @@ const errand = (overrides: Partial<ErrandFormDTO> = {}): ErrandFormDTO => ({
 beforeEach(() => {
   validateErrandAttachmentsMock.mockReset().mockResolvedValue([]);
   validateErrandFormDataMock.mockReset().mockResolvedValue([]);
+  validateErrandStopsMock.mockReset().mockResolvedValue([]);
 });
 
 describe('validateErrandForSave for a registration', () => {
@@ -75,6 +81,17 @@ describe('validateErrandForSave for a registration', () => {
     ]);
   });
 
+  // The stop text is already shown under the answer, so the form's own errors come first.
+  it('reports a stop after the form and before the bilagor', async () => {
+    validateErrandStopsMock.mockResolvedValue(['Du kan inte anmäla försäljning av folköl.']);
+
+    await expect(validateErrandForSave(errand(), 'register', context)).resolves.toEqual([
+      'Du kan inte anmäla försäljning av folköl.',
+    ]);
+    expect(validateErrandFormDataMock).toHaveBeenCalled();
+    expect(validateErrandAttachmentsMock).not.toHaveBeenCalled();
+  });
+
   it('stops at a failing form and leaves the bilagor unchecked', async () => {
     validateErrandFormDataMock.mockResolvedValue(['forms:form_error']);
 
@@ -93,6 +110,13 @@ describe('validateErrandForSave for a draft', () => {
   it('accepts an uncategorized draft and asks for no bilagor', async () => {
     await expect(validateErrandForSave(errand({ labels: [] }), 'draft', context)).resolves.toEqual([]);
     expect(validateErrandAttachmentsMock).not.toHaveBeenCalled();
+  });
+
+  it('saves a draft even while a stop holds', async () => {
+    validateErrandStopsMock.mockResolvedValue(['Stopp']);
+
+    await expect(validateErrandForSave(errand(), 'draft', context)).resolves.toEqual([]);
+    expect(validateErrandStopsMock).not.toHaveBeenCalled();
   });
 
   it('validates only the forms that have been opened', async () => {

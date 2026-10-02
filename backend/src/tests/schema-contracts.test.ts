@@ -309,6 +309,16 @@ describe('JSON schema adapter contracts', () => {
       expect((response.body as { message: string }).message).toContain("bilaga 'bevis' is gated on missing property 'ghost'");
     });
 
+    it('serves a bilaga that is always required', async () => {
+      upstream({
+        type: 'object',
+        properties: { source: { type: 'string' } },
+        'x-attachments': [{ key: 'BUDGET', label: 'Budget', requiredWhen: {} }],
+      });
+
+      await request(app).get('/api/schemas/schema-v1').expect(200);
+    });
+
     it('serves a schema with an unsupported condition keyword but logs the gap', async () => {
       const warnSpy = vi.spyOn(logger, 'warn');
       upstream({
@@ -333,6 +343,41 @@ describe('JSON schema adapter contracts', () => {
       await request(app).get('/api/schemas/schema-v1').expect(200);
 
       expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('malformed x-attachments entry'));
+    });
+
+    it('rejects a stop gated on a property the schema lacks', async () => {
+      upstream({
+        type: 'object',
+        properties: { source: { type: 'string' } },
+        'x-stops': [{ when: { properties: { ghost: { const: 'NEJ' } }, required: ['ghost'] }, text: 'Stopp' }],
+      });
+
+      const response = await request(app).get('/api/schemas/schema-v1').expect(502);
+
+      expect((response.body as { message: string }).message).toContain("a stop is gated on missing property 'ghost'");
+    });
+
+    it('serves a stop on a root property', async () => {
+      upstream({
+        type: 'object',
+        properties: { source: { type: 'string' } },
+        'x-stops': [{ when: { properties: { source: { const: 'NEJ' } }, required: ['source'] }, text: 'Stopp' }],
+      });
+
+      await request(app).get('/api/schemas/schema-v1').expect(200);
+    });
+
+    it('serves a schema with a malformed x-stops entry but logs the drop', async () => {
+      const warnSpy = vi.spyOn(logger, 'warn');
+      upstream({
+        type: 'object',
+        properties: { source: { type: 'string' } },
+        'x-stops': [{ when: { properties: { source: { const: 'NEJ' } } }, text: 'Stopp' }],
+      });
+
+      await request(app).get('/api/schemas/schema-v1').expect(200);
+
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('malformed x-stops entry'));
     });
   });
 });

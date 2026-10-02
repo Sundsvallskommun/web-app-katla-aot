@@ -20,36 +20,6 @@
         ],
         "title": "Är du firmatecknare?"
       },
-      "foretagsform": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "AKTIEBOLAG",
-            "title": "Aktiebolag"
-          },
-          {
-            "const": "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-            "title": "Enskild firma (registrerad hos Skatteverket och Bolagsverket)"
-          },
-          {
-            "const": "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-            "title": "Enskild firma (registrerad endast hos Skatteverket)"
-          },
-          {
-            "const": "FORENING_STIFTELSE",
-            "title": "Förening/stiftelse"
-          },
-          {
-            "const": "HANDELSBOLAG",
-            "title": "Handelsbolag"
-          },
-          {
-            "const": "KOMMANDITBOLAG",
-            "title": "Kommanditbolag"
-          }
-        ],
-        "title": "Företagsform"
-      },
       "fakturaadressSammaSomForetaget": {
         "type": "string",
         "oneOf": [
@@ -122,7 +92,7 @@
         "oneOf": [
           {
             "const": "HAR_GODKANT_KUNSKAPSPROV",
-            "title": "Jag eller annan person som är ansvarig i företaget har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren"
+            "title": "Jag eller annan person som är ansvarig i företaget har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 5 åren"
           },
           {
             "const": "DRIVER_ANNAT_FORETAG_MED_TILLSTAND",
@@ -146,7 +116,7 @@
           }
         },
         "title": "Personnummer",
-        "description": "Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren."
+        "description": "Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 5 åren."
       },
       "organisationsnummer": {
         "type": "object",
@@ -238,14 +208,6 @@
             {
               "const": "EVENEMANG",
               "title": "Evenemang"
-            },
-            {
-              "const": "PAUSSERVERING_ENDAST_STARKOL_VIN_CIDER",
-              "title": "Pausservering (endast starköl, vin, cider eller andra jästa alkoholdrycker)"
-            },
-            {
-              "const": "PROVSMAKNINGSSERVERING_AV_EGENTILLVERKADE_ALKOHOLDRYCKER_FRAN",
-              "title": "Provsmakningsservering av egentillverkade alkoholdrycker från råvaror som produceras på egen gård"
             },
             {
               "const": "TRAFIKSERVERING_INRIKES_TRAFIK_PA_FARTYG",
@@ -687,6 +649,48 @@
         },
         "title": "Kontaktuppgifter till serveringsstället"
       },
+      "forfoganderattLokal": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "oneOf": [
+            {
+              "const": "KOPAVTAL",
+              "title": "Köpavtal"
+            },
+            {
+              "const": "OVERLATELSEAVTAL",
+              "title": "Överlåtelseavtal"
+            },
+            {
+              "const": "HYRESAVTAL",
+              "title": "Hyresavtal"
+            },
+            {
+              "const": "MARKUPPLATELSE",
+              "title": "Markupplåtelse"
+            }
+          ]
+        },
+        "title": "Vilka dokument styrker att ni förfogar över lokalen eller ytan?"
+      },
+      "harSamarbetsavtal": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej"
+          }
+        ],
+        "title": "Har ni samarbetsavtal?",
+        "description": "Till exempel med dryckesleverantör eller för delad lokal."
+      },
       "serveringsansvarigPersonal": {
         "type": "array",
         "items": {
@@ -713,6 +717,10 @@
         },
         "title": "Serveringsansvarig personal",
         "description": "Under öppettider måste det alltid finnas en serveringsansvarig person på plats i verksamheten. Om inte någon av företagets företrädare är på plats måste en annan utsedd och anmäld serveringsansvarig vara på plats. Nedan anger du namn och personnummer till den person eller de personer som är ansvariga för servering av alkohol. En person som är serveringsansvarig måste vara minst 20 år.\n\nHar du inte anställt personal ännu kan du fylla i serveringsansvarig personal vid ett senare tillfälle."
+      },
+      "ordningOchNykterhet": {
+        "type": "string",
+        "title": "Hur ska ordning och nykterhet säkerställas?"
       },
       "sittplatserILokalen": {
         "type": "object",
@@ -743,37 +751,12 @@
           "antalPersoner"
         ],
         "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)"
-      },
-      "harDuKassaregister": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "JA",
-            "title": "Ja"
-          },
-          {
-            "const": "NEJ",
-            "title": "Nej"
-          }
-        ],
-        "title": "Har du kassaregister?"
-      },
-      "angeRegistreringskod": {
-        "type": "object",
-        "properties": {
-          "registreringskod": {
-            "type": "string",
-            "title": "Registreringskod"
-          }
-        },
-        "title": "Ange registreringskod"
       }
     },
     "required": [
       "arDuFirmatecknare",
-      "foretagsform",
+      "verksamhetsbeskrivningsval",
       "fakturaadressSammaSomForetaget",
-      "harDuKassaregister",
       "kunskapOmAlkohollagen",
       "vilkaAlkoholdryckerSkaServeras",
       "finansiering",
@@ -781,34 +764,13 @@
       "serveringTillAllmanhetenEllerSlutetSallskap",
       "serveringsstalletsNamn",
       "besoksadressSammaSomArendeagare",
+      "forfoganderattLokal",
+      "harSamarbetsavtal",
       "sittplatserILokalen",
-      "maximaltAntalPersonerILokalen"
+      "maximaltAntalPersonerILokalen",
+      "ordningOchNykterhet"
     ],
     "allOf": [
-      {
-        "if": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        },
-        "then": {
-          "required": [
-            "verksamhetsbeskrivningsval"
-          ]
-        }
-      },
       {
         "if": {
           "properties": {
@@ -1617,23 +1579,6 @@
             "ovrigaUpplysningarFinansiering": true
           }
         }
-      },
-      {
-        "if": {
-          "properties": {
-            "harDuKassaregister": {
-              "const": "JA"
-            }
-          },
-          "required": [
-            "harDuKassaregister"
-          ]
-        },
-        "then": {
-          "properties": {
-            "angeRegistreringskod": true
-          }
-        }
       }
     ],
     "x-attachments": [
@@ -1654,69 +1599,27 @@
       {
         "key": "CERTIFICATE_OF_REGISTRATION",
         "label": "Registreringsbevis från Bolagsverket",
-        "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        }
+        "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se."
       },
       {
         "key": "OWNERSHIP_INFORMATION",
         "label": "Uppgifter om ägarförhållanden",
-        "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        }
+        "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen."
       },
       {
         "key": "TAX_AGENCY_EXTRACT",
         "label": "Registerutdrag från Skatteverket",
-        "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        }
+        "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se."
       },
       {
         "key": "BUSINESS_DESCRIPTION",
         "label": "Verksamhetsbeskrivning"
+      },
+      {
+        "key": "BUDGET",
+        "label": "Budget",
+        "description": "Första årets drift, likviditetsbudget för tre månader och samtliga uppstartskostnader.",
+        "requiredWhen": {}
       },
       {
         "key": "MENU",
@@ -1788,18 +1691,88 @@
       },
       {
         "key": "FLOOR_PLAN",
-        "label": "Planritning",
-        "description": "Planritningen ska visa vilken del av lokalen som är serveringsyta, inklusive uteservering och samtliga våningsplan där alkohol serveras. Serveringsytan ska vara överblickbar."
+        "label": "Ritning över serveringsyta och område",
+        "description": "Planritningen ska visa vilken del av lokalen som är serveringsyta, inklusive uteservering och samtliga våningsplan där alkohol serveras. Serveringsytan ska vara överblickbar.",
+        "requiredWhen": {}
       },
       {
-        "key": "PREMISES_AGREEMENT",
-        "label": "Avtal gällande lokal och mark",
-        "description": "Hyreskontrakt, arrendeavtal eller köpeavtal (inklusive bilagor) för lokalen som verksamheten ska bedrivas i, inklusive platsen för eventuell uteservering."
+        "key": "PURCHASE_AGREEMENT",
+        "label": "Köpavtal",
+        "requiredWhen": {
+          "properties": {
+            "forfoganderattLokal": {
+              "contains": {
+                "const": "KOPAVTAL"
+              }
+            }
+          },
+          "required": [
+            "forfoganderattLokal"
+          ]
+        }
+      },
+      {
+        "key": "TRANSFER_AGREEMENT",
+        "label": "Överlåtelseavtal",
+        "requiredWhen": {
+          "properties": {
+            "forfoganderattLokal": {
+              "contains": {
+                "const": "OVERLATELSEAVTAL"
+              }
+            }
+          },
+          "required": [
+            "forfoganderattLokal"
+          ]
+        }
+      },
+      {
+        "key": "LEASE_AGREEMENT",
+        "label": "Hyresavtal",
+        "requiredWhen": {
+          "properties": {
+            "forfoganderattLokal": {
+              "contains": {
+                "const": "HYRESAVTAL"
+              }
+            }
+          },
+          "required": [
+            "forfoganderattLokal"
+          ]
+        }
+      },
+      {
+        "key": "LAND_LEASE_AGREEMENT",
+        "label": "Markupplåtelse",
+        "requiredWhen": {
+          "properties": {
+            "forfoganderattLokal": {
+              "contains": {
+                "const": "MARKUPPLATELSE"
+              }
+            }
+          },
+          "required": [
+            "forfoganderattLokal"
+          ]
+        }
       },
       {
         "key": "BUSINESS_AGREEMENT",
-        "label": "Avtal gällande verksamheten",
-        "description": "Har ditt företag köpt verksamheten bifogar du köpeavtalet, eller arrendeavtalet om företaget arrenderar den. Bilagor ska följa med."
+        "label": "Samarbetsavtal",
+        "description": "Till exempel avtal med dryckesleverantör eller om delad lokal.",
+        "requiredWhen": {
+          "properties": {
+            "harSamarbetsavtal": {
+              "const": "JA"
+            }
+          },
+          "required": [
+            "harSamarbetsavtal"
+          ]
+        }
       },
       {
         "key": "FIRE_SAFETY_DOCUMENTATION",

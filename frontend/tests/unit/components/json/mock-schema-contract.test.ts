@@ -7,6 +7,7 @@ import { getConditionalFields } from '@components/json/utils/schema-conditions';
 import { jsonWidgets } from '@components/json/widgets';
 import type { RJSFSchema } from '@rjsf/utils';
 import { attachmentTypesOfSchema } from '@utils/errand-attachments';
+import { stopsOfSchema } from '@utils/schema-stops';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 /**
@@ -110,6 +111,18 @@ describe('mocked schema pairs against the renderer contract', () => {
       if (!Array.isArray(declared)) return;
       // attachmentTypesOfSchema silently drops malformed entries; nothing may be dropped here.
       expect(attachmentTypesOfSchema(schema.value as Record<string, unknown>)).toHaveLength(declared.length);
+    });
+
+    it('declares only well-formed x-stops on root properties', () => {
+      const declared = (schema.value as Record<string, unknown>)['x-stops'];
+      if (!Array.isArray(declared)) return;
+      const stops = stopsOfSchema(schema.value);
+      expect(stops).toHaveLength(declared.length);
+
+      const root = Object.keys(schema.value.properties ?? {});
+      for (const { when } of stops) {
+        expect(root).toEqual(expect.arrayContaining([...Object.keys(when.properties ?? {}), ...(when.required ?? [])]));
+      }
     });
 
     // Draken reads the premises address from this one key in every schema.

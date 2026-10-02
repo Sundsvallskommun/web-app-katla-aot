@@ -3,8 +3,11 @@ import { SectionStatus, SectionStatusLabel } from '@components/disclosure/sectio
 import { ErrandContentLock } from '@components/errand-content-lock/errand-content-lock.component';
 import { ROW_INDEX_PLACEHOLDER } from '@components/json/utils/row-index-placeholder';
 import { visibleFields as fieldsVisibleIn } from '@components/json/utils/schema-conditions';
+import { ErrorAlert } from '@components/misc/error-alert.component';
 import type { ErrorSchema, ObjectFieldTemplateProps, RJSFSchema, UiSchema } from '@rjsf/utils';
 import { Checkbox, Disclosure, Divider, Label } from '@sk-web-gui/react';
+import { INVALID_FIELD_ATTRIBUTE } from '@utils/focus-first-error';
+import { activeStops, stopAnchor, stopsOfSchema } from '@utils/schema-stops';
 import { icons } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -135,6 +138,31 @@ function SectionDisclosure({ section, status, children }: SectionDisclosureProps
   );
 }
 
+/** Stop texts per field they are shown under. Stops are root-level, so only the root has any. */
+function stopsByAnchor(ctx: FormContext | undefined, id: string, formData: unknown): Map<string, string[]> {
+  const byAnchor = new Map<string, string[]>();
+  if (id !== 'root') return byAnchor;
+
+  for (const stop of activeStops(stopsOfSchema(ctx?.originalSchema), formData)) {
+    const anchor = stopAnchor(stop);
+    if (anchor) byAnchor.set(anchor, [...(byAnchor.get(anchor) ?? []), stop.text]);
+  }
+  return byAnchor;
+}
+
+/** Puts the stop texts under the content, and marks it for error navigation while a stop holds. */
+function withStops(key: string, content: React.ReactNode, texts: string[]) {
+  if (texts.length === 0) return content;
+  return (
+    <div key={key} {...{ [INVALID_FIELD_ATTRIBUTE]: key }} data-cy="schema-stop">
+      {content}
+      {texts.map((text) => (
+        <ErrorAlert key={text} className="mt-16" message={text} />
+      ))}
+    </div>
+  );
+}
+
 /**
  * Renders fields based on order, rows, and visibility
  */
@@ -145,7 +173,8 @@ function renderFields(
   rows: RowDefinition[],
   rowFieldNames: Set<string>,
   renderedRows: Set<string>,
-  compact = false
+  compact = false,
+  stops = new Map<string, string[]>()
 ) {
   return fieldNames.map((fieldName) => {
     // Skip hidden fields
@@ -163,7 +192,8 @@ function renderFields(
       const visibleRowFields = row.fields.filter((f) => visibleFields.has(f));
       if (visibleRowFields.length === 0) return null;
 
-      return (
+      return withStops(
+        rowKey,
         <div key={rowKey} className={`flex ${compact ? 'flex-col gap-32' : (row.gap ?? '') || 'gap-32'}`}>
           {visibleRowFields.map((f) => {
             const prop = properties.find((p) => p.name === f);
@@ -173,7 +203,8 @@ function renderFields(
                 </div>
               : null;
           })}
-        </div>
+        </div>,
+        visibleRowFields.flatMap((f) => stops.get(f) ?? [])
       );
     }
 
@@ -182,7 +213,7 @@ function renderFields(
 
     // Standalone field
     const prop = properties.find((p) => p.name === fieldName);
-    return prop ? <div key={fieldName}>{prop.content}</div> : null;
+    return prop ? withStops(fieldName, <div key={fieldName}>{prop.content}</div>, stops.get(fieldName) ?? []) : null;
   });
 }
 
@@ -220,6 +251,8 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
   // Get field order from uiSchema or use properties order
   const order = uiSchema?.['ui:order'] ?? properties.map((p) => p.name);
 
+  const stops = stopsByAnchor(ctx, props.idSchema.$id, formData);
+
   const visibleFields = fieldsVisibleIn(
     objectSchema,
     formData,
@@ -234,7 +267,7 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
     const renderedRows = new Set<string>();
     const renderedFields = (
       <div className="flex flex-col gap-32">
-        {renderFields(order, properties, visibleFields, rows, rowFieldNames, renderedRows, compact)}
+        {renderFields(order, properties, visibleFields, rows, rowFieldNames, renderedRows, compact, stops)}
       </div>
     );
 
@@ -287,7 +320,8 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
                 rows,
                 rowFieldNames,
                 renderedRows,
-                compact
+                compact,
+                stops
               )}
             </div>
           );
@@ -301,7 +335,16 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
         return (
           <SectionDisclosure key={section.id} section={section} status={status}>
             <div className="flex flex-col gap-32 py-16">
-              {renderFields(sectionFieldsInOrder, properties, visibleFields, rows, rowFieldNames, renderedRows)}
+              {renderFields(
+                sectionFieldsInOrder,
+                properties,
+                visibleFields,
+                rows,
+                rowFieldNames,
+                renderedRows,
+                false,
+                stops
+              )}
             </div>
           </SectionDisclosure>
         );
@@ -310,7 +353,16 @@ export function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
       {/* Render fields not in any section */}
       {unsectionedFields.length > 0 && (
         <div className="flex flex-col gap-32">
-          {renderFields(unsectionedFields, properties, visibleFields, rows, rowFieldNames, renderedRows, compact)}
+          {renderFields(
+            unsectionedFields,
+            properties,
+            visibleFields,
+            rows,
+            rowFieldNames,
+            renderedRows,
+            compact,
+            stops
+          )}
         </div>
       )}
     </div>

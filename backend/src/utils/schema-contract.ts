@@ -139,6 +139,27 @@ const checkAttachments = (schema: Record<string, unknown>, schemaId: string, uns
   }
 };
 
+const checkStops = (schema: Record<string, unknown>, schemaId: string, unsupported: Set<string>): void => {
+  if (!('x-stops' in schema)) return;
+  const declared = schema['x-stops'];
+  if (!Array.isArray(declared)) {
+    logger.warn(`Schema ${schemaId}: x-stops is not an array; no answer will stop a registration`);
+    return;
+  }
+  const rootProperties = new Set(Object.keys(isRecord(schema.properties) ? schema.properties : {}));
+  for (const entry of declared) {
+    const required = isRecord(entry) && isRecord(entry.when) ? entry.when.required : undefined;
+    if (!isRecord(entry) || typeof entry.text !== 'string' || !Array.isArray(required) || required.length === 0) {
+      logger.warn(`Schema ${schemaId}: malformed x-stops entry is dropped by the frontend: ${JSON.stringify(entry)}`);
+      continue;
+    }
+    for (const reference of conditionReferences(entry.when)) {
+      if (!rootProperties.has(reference)) fail(schemaId, `a stop is gated on missing property '${reference}'`);
+    }
+    collectUnsupportedKeywords(entry.when, unsupported);
+  }
+};
+
 /**
  * Throws 502 on a structural contract violation; logs a warning per condition keyword the
  * renderer's condition engine does not understand (the guarded field is shown regardless).
@@ -151,6 +172,7 @@ export const assertSchemaContract = (schema: Record<string, unknown>, schemaId: 
   const unsupported = new Set<string>();
   checkObjectSchema(schema, schemaId, '', unsupported);
   checkAttachments(schema, schemaId, unsupported);
+  checkStops(schema, schemaId, unsupported);
 
   for (const keyword of unsupported) {
     logger.warn(`Schema ${schemaId}: condition keyword '${keyword}' is not understood by the renderer; guarded fields are shown regardless`);

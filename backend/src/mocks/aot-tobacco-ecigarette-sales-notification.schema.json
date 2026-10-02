@@ -20,36 +20,6 @@
         ],
         "title": "Är du firmatecknare?"
       },
-      "foretagsform": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "AKTIEBOLAG",
-            "title": "Aktiebolag"
-          },
-          {
-            "const": "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-            "title": "Enskild firma (registrerad hos Skatteverket och Bolagsverket)"
-          },
-          {
-            "const": "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-            "title": "Enskild firma (registrerad endast hos Skatteverket)"
-          },
-          {
-            "const": "FORENING_STIFTELSE",
-            "title": "Förening/stiftelse"
-          },
-          {
-            "const": "HANDELSBOLAG",
-            "title": "Handelsbolag"
-          },
-          {
-            "const": "KOMMANDITBOLAG",
-            "title": "Kommanditbolag"
-          }
-        ],
-        "title": "Företagsform"
-      },
       "fakturaadressSammaSomForetaget": {
         "type": "string",
         "oneOf": [
@@ -259,132 +229,6 @@
         ],
         "title": "Registreringen omfattar försäljning av särskilt farliga kemiska produkter, e-cigaretter och e-vätskor (dödskallemärkta)."
       },
-      "finansiering": {
-        "type": "array",
-        "minItems": 1,
-        "uniqueItems": true,
-        "items": {
-          "type": "string",
-          "oneOf": [
-            {
-              "const": "EGNA_MEDEL",
-              "title": "Egna medel"
-            },
-            {
-              "const": "BANKLAN",
-              "title": "Banklån"
-            },
-            {
-              "const": "PRIVATLAN",
-              "title": "Privatlån"
-            },
-            {
-              "const": "ANNAN_FINANSIERING_EXEMPELVIS_ALMILAN_BRYGGERILAN",
-              "title": "Annan finansiering (exempelvis Almilån, Bryggerilån eller Revers)"
-            }
-          ]
-        },
-        "title": "Finansiering",
-        "description": "För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med."
-      },
-      "egnaMedel": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "bank": {
-              "type": "string",
-              "title": "Bank"
-            },
-            "kontonummer": {
-              "type": "string",
-              "title": "Kontonummer"
-            },
-            "beloppKronor": {
-              "type": "string",
-              "title": "Belopp (kronor)"
-            }
-          },
-          "required": [
-            "bank",
-            "kontonummer",
-            "beloppKronor"
-          ]
-        },
-        "title": "Egna medel"
-      },
-      "banklan": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "langivare": {
-              "type": "string",
-              "title": "Långivare"
-            },
-            "beloppKronor": {
-              "type": "string",
-              "title": "Belopp (kronor)"
-            }
-          },
-          "required": [
-            "langivare",
-            "beloppKronor"
-          ]
-        },
-        "title": "Banklån"
-      },
-      "privatlan": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "langivare": {
-              "type": "string",
-              "title": "Långivare"
-            },
-            "beloppKronor": {
-              "type": "string",
-              "title": "Belopp (kronor)"
-            }
-          },
-          "required": [
-            "langivare",
-            "beloppKronor"
-          ]
-        },
-        "title": "Privatlån"
-      },
-      "annanFinansiering": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "lanetyp": {
-              "type": "string",
-              "title": "Lånetyp"
-            },
-            "langivare": {
-              "type": "string",
-              "title": "Långivare"
-            },
-            "beloppKronor": {
-              "type": "string",
-              "title": "Belopp (kronor)"
-            }
-          },
-          "required": [
-            "lanetyp",
-            "langivare",
-            "beloppKronor"
-          ]
-        },
-        "title": "Annan finansiering"
-      },
-      "ovrigaUpplysningarFinansiering": {
-        "type": "string",
-        "title": "Övriga upplysningar angående finansieringen"
-      },
       "avtalMedTillverkareEllerPartihandlare": {
         "type": "string",
         "oneOf": [
@@ -402,9 +246,8 @@
     },
     "required": [
       "arDuFirmatecknare",
-      "foretagsform",
+      "verksamhetsbeskrivningsval",
       "fakturaadressSammaSomForetaget",
-      "finansiering",
       "besoksadressSammaSomArendeagare",
       "tidsperiodForForsaljningen",
       "forsaljningsstallet",
@@ -413,30 +256,6 @@
       "omfattarSarskiltFarligaProdukter"
     ],
     "allOf": [
-      {
-        "if": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        },
-        "then": {
-          "required": [
-            "verksamhetsbeskrivningsval"
-          ]
-        }
-      },
       {
         "if": {
           "properties": {
@@ -538,106 +357,6 @@
             "hemsida": true
           }
         }
-      },
-      {
-        "if": {
-          "properties": {
-            "finansiering": {
-              "contains": {
-                "const": "EGNA_MEDEL"
-              }
-            }
-          },
-          "required": [
-            "finansiering"
-          ]
-        },
-        "then": {
-          "required": [
-            "egnaMedel"
-          ]
-        }
-      },
-      {
-        "if": {
-          "properties": {
-            "finansiering": {
-              "contains": {
-                "const": "BANKLAN"
-              }
-            }
-          },
-          "required": [
-            "finansiering"
-          ]
-        },
-        "then": {
-          "required": [
-            "banklan"
-          ]
-        }
-      },
-      {
-        "if": {
-          "properties": {
-            "finansiering": {
-              "contains": {
-                "const": "PRIVATLAN"
-              }
-            }
-          },
-          "required": [
-            "finansiering"
-          ]
-        },
-        "then": {
-          "required": [
-            "privatlan"
-          ]
-        }
-      },
-      {
-        "if": {
-          "properties": {
-            "finansiering": {
-              "contains": {
-                "const": "ANNAN_FINANSIERING_EXEMPELVIS_ALMILAN_BRYGGERILAN"
-              }
-            }
-          },
-          "required": [
-            "finansiering"
-          ]
-        },
-        "then": {
-          "required": [
-            "annanFinansiering"
-          ]
-        }
-      },
-      {
-        "if": {
-          "properties": {
-            "finansiering": {
-              "contains": {
-                "enum": [
-                  "EGNA_MEDEL",
-                  "BANKLAN",
-                  "PRIVATLAN",
-                  "ANNAN_FINANSIERING_EXEMPELVIS_ALMILAN_BRYGGERILAN"
-                ]
-              }
-            }
-          },
-          "required": [
-            "finansiering"
-          ]
-        },
-        "then": {
-          "properties": {
-            "ovrigaUpplysningarFinansiering": true
-          }
-        }
       }
     ],
     "x-attachments": [
@@ -658,133 +377,21 @@
       {
         "key": "CERTIFICATE_OF_REGISTRATION",
         "label": "Registreringsbevis från Bolagsverket",
-        "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        }
+        "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se."
       },
       {
         "key": "OWNERSHIP_INFORMATION",
         "label": "Uppgifter om ägarförhållanden",
-        "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        }
+        "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen."
       },
       {
         "key": "TAX_AGENCY_EXTRACT",
         "label": "Registerutdrag från Skatteverket",
-        "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        }
+        "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se."
       },
       {
         "key": "BUSINESS_DESCRIPTION",
         "label": "Verksamhetsbeskrivning"
-      },
-      {
-        "key": "BANK_STATEMENT",
-        "label": "Kontoutdrag för egna medel",
-        "requiredWhen": {
-          "properties": {
-            "finansiering": {
-              "contains": {
-                "const": "EGNA_MEDEL"
-              }
-            }
-          },
-          "required": [
-            "finansiering"
-          ]
-        }
-      },
-      {
-        "key": "BANK_LOAN_CERTIFICATE",
-        "label": "Lånebevis för banklån",
-        "requiredWhen": {
-          "properties": {
-            "finansiering": {
-              "contains": {
-                "const": "BANKLAN"
-              }
-            }
-          },
-          "required": [
-            "finansiering"
-          ]
-        }
-      },
-      {
-        "key": "PRIVATE_LOAN_CERTIFICATE",
-        "label": "Lånebevis för privatlån",
-        "requiredWhen": {
-          "properties": {
-            "finansiering": {
-              "contains": {
-                "const": "PRIVATLAN"
-              }
-            }
-          },
-          "required": [
-            "finansiering"
-          ]
-        }
-      },
-      {
-        "key": "OTHER_FINANCING_CERTIFICATE",
-        "label": "Lånebevis för annan finansiering",
-        "requiredWhen": {
-          "properties": {
-            "finansiering": {
-              "contains": {
-                "const": "ANNAN_FINANSIERING_EXEMPELVIS_ALMILAN_BRYGGERILAN"
-              }
-            }
-          },
-          "required": [
-            "finansiering"
-          ]
-        }
       },
       {
         "key": "COUNTY_BOARD_REGISTRATION",
@@ -817,17 +424,43 @@
       {
         "key": "PRODUCT_LIST",
         "label": "Produktlista",
-        "description": "Produkterna som ska säljas är registrerade hos Folkhälsomyndigheten."
+        "description": "Produkterna som ska säljas är registrerade hos Folkhälsomyndigheten.",
+        "requiredWhen": {}
       },
       {
         "key": "RIGHT_OF_DISPOSAL",
-        "label": "Underlag som styrker dispositionsrätten",
-        "description": "Underlag som visar att företaget har rätt att nyttja lokalen."
+        "label": "Hyresavtal eller markupplåtelse",
+        "description": "Underlag som visar att företaget har rätt att nyttja lokalen.",
+        "requiredWhen": {
+          "properties": {
+            "tidsperiodForForsaljningen": {
+              "const": "TIDSBEGRANSAD_FORSALJNING"
+            }
+          },
+          "required": [
+            "tidsperiodForForsaljningen"
+          ]
+        }
+      },
+      {
+        "key": "SALES_SITE_PHOTO",
+        "label": "Bild på försäljningsplatsen",
+        "requiredWhen": {
+          "properties": {
+            "tidsperiodForForsaljningen": {
+              "const": "TIDSBEGRANSAD_FORSALJNING"
+            }
+          },
+          "required": [
+            "tidsperiodForForsaljningen"
+          ]
+        }
       },
       {
         "key": "SELF_MONITORING_PROGRAM",
         "label": "Egenkontrollprogram",
-        "description": "Lagen om tobak och liknande produkter och lagen om tobaksfria nikotinprodukter kräver att ett egenkontrollprogram bifogas anmälan. Folkhälsomyndigheten har en vägledning för näringsidkare."
+        "description": "Lagen om tobak och liknande produkter och lagen om tobaksfria nikotinprodukter kräver att ett egenkontrollprogram bifogas anmälan. Folkhälsomyndigheten har en vägledning för näringsidkare.",
+        "requiredWhen": {}
       }
     ]
   },
