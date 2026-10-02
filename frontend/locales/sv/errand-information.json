@@ -20,7 +20,8 @@
     "error": "Något gick fel när ärendet sparades"
   },
   "about": {
-    "title": "Om ärendet",
+    "title": "Vad vill du ansöka/anmäla om?",
+    "description": "Välj först kategori för ditt ärende, Alkohol eller Tobak, och sedan vad ärendet gäller. Du kan söka eller bläddra i ärendetyplistan.",
     "category_label": "Kategori",
     "category_placeholder": "Välj kategori…",
     "type_label": "Ärendetyp",
@@ -30,7 +31,7 @@
   },
   "other_parties": {
     "title": "Övriga parter",
-    "description": "En övrig part kan vara en person eller organisation som berörs av ärendet."
+    "description": "Ange kontaktpersoner eller andra personer som är av vikt för ärendet."
   },
   "stakeholder": {
     "no_person_found": "Ingen person hittades",
@@ -92,9 +93,10 @@
     "incomplete": "Ej komplett"
   },
   "owner": {
-    "title": "Ärendeägare",
+    "title": "Kontaktuppgifter",
+    "role_label": "Ärendeägare",
     "description": "Ärendeägaren är det företag eller den organisation som ansöker och är vår primära kontakt när ärendet handläggs.",
-    "select_label": "Välj ärendeägare",
+    "select_label": "Välj företag du representerar",
     "no_organizations": "Du har inga företag eller organisationer att registrera ärendet för.",
     "select_placeholder": "Välj företag eller organisation",
     "serveringsstalle": "Serveringsställe",

@@ -5,7 +5,7 @@ import { expect } from '@playwright/test';
 import { mockCategoryAlkohol, mockSubTypeStadigvarande } from '../fixtures/mockMetadata';
 import { disclosureByTitle } from './stakeholder';
 
-export const aboutErrandSection = (page: Page): Locator => disclosureByTitle(page, 'Om ärendet');
+export const aboutErrandSection = (page: Page): Locator => disclosureByTitle(page, 'Vad vill du ansöka/anmäla om?');
 
 /** The option list stays mounted but hidden, so the combobox has to be opened before clicking. */
 export const selectCategorization = async (

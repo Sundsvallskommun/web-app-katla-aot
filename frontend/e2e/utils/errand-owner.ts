@@ -5,7 +5,7 @@ import { mockOrganization } from '../fixtures/getMyOrganizations';
 import { ownerStakeholderFor } from '../fixtures/getOwnerStakeholder';
 import { disclosureByTitle } from './stakeholder';
 
-export const errandOwnerSection = (page: Page): Locator => disclosureByTitle(page, 'Ärendeägare');
+export const errandOwnerSection = (page: Page): Locator => disclosureByTitle(page, 'Kontaktuppgifter');
 
 /** Picks the errand owner, which registration requires. */
 export const selectErrandOwner = async (page: Page, organization = mockOrganization) => {
