@@ -201,6 +201,20 @@
         },
         "title": "Vilka alkoholdrycker ska serveras?"
       },
+      "kommerNiAttServeraMat": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej"
+          }
+        ],
+        "title": "Kommer ni att servera mat?"
+      },
       "finansiering": {
         "type": "array",
         "minItems": 1,
@@ -327,6 +341,10 @@
         "type": "string",
         "title": "Övriga upplysningar angående finansieringen"
       },
+      "ordningOchNykterhet": {
+        "type": "string",
+        "title": "Hur ska ordning och nykterhet säkerställas?"
+      },
       "godkannaCateringtillfalle": {
         "type": "array",
         "uniqueItems": true,
@@ -348,7 +366,9 @@
       "fakturaadressSammaSomForetaget",
       "kunskapOmAlkohollagen",
       "vilkaAlkoholdryckerSkaServeras",
-      "finansiering"
+      "kommerNiAttServeraMat",
+      "finansiering",
+      "ordningOchNykterhet"
     ],
     "allOf": [
       {
@@ -989,6 +1009,11 @@
         }
       },
       {
+        "key": "BUDGET",
+        "label": "Budget",
+        "requiredWhen": {}
+      },
+      {
         "key": "KITCHEN_FLOOR_PLAN",
         "label": "Planritning kök"
       },
@@ -999,6 +1024,21 @@
       {
         "key": "KITCHEN_LEASE_AGREEMENT",
         "label": "Hyresavtal eller upplåtelseavtal kök"
+      }
+    ],
+    "x-stops": [
+      {
+        "when": {
+          "properties": {
+            "kommerNiAttServeraMat": {
+              "const": "NEJ"
+            }
+          },
+          "required": [
+            "kommerNiAttServeraMat"
+          ]
+        },
+        "text": "Du måste själv servera maten, men du får köpa in den. [TEXT SAKNAS: slutlig text]"
       }
     ]
   },

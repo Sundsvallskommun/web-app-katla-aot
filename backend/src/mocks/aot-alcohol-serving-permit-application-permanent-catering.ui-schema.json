@@ -13,12 +13,14 @@
       "anmalPersonerTillKunskapsprovet",
       "personerTillKunskapsprovet",
       "vilkaAlkoholdryckerSkaServeras",
+      "kommerNiAttServeraMat",
       "finansiering",
       "egnaMedel",
       "banklan",
       "privatlan",
       "annanFinansiering",
       "ovrigaUpplysningarFinansiering",
+      "ordningOchNykterhet",
       "godkannaCateringtillfalle"
     ],
     "ui:sections": [
@@ -48,12 +50,14 @@
           "anmalPersonerTillKunskapsprovet",
           "personerTillKunskapsprovet",
           "vilkaAlkoholdryckerSkaServeras",
+          "kommerNiAttServeraMat",
           "finansiering",
           "egnaMedel",
           "banklan",
           "privatlan",
           "annanFinansiering",
           "ovrigaUpplysningarFinansiering",
+          "ordningOchNykterhet",
           "godkannaCateringtillfalle"
         ]
       }
@@ -293,6 +297,15 @@
       "ui:options": {
         "multiple": true,
         "className": "w-full max-w-[48rem]"
+      }
+    },
+    "kommerNiAttServeraMat": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "ordningOchNykterhet": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
       }
     }
   },
