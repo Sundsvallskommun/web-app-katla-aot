@@ -38,6 +38,12 @@ if (process.env.NEXT_PUBLIC_REDUCED_STAKEHOLDER_INFO === 'true') {
   );
 }
 
+if (process.env.NEXT_PUBLIC_DRAFT_ERRAND !== 'true') {
+  throw new Error(
+    'Playwright requires NEXT_PUBLIC_DRAFT_ERRAND=true because the attachment scenarios save the errand as a draft.'
+  );
+}
+
 export default defineConfig({
   testDir: './e2e/tests',
   // Checks that the target is actually usable before any spec runs; see the file for why.
