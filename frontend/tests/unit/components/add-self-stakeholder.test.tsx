@@ -46,7 +46,7 @@ const currentStakeholders = (): ErrandFormDTO['stakeholders'] => {
 
 const renderList = (allowAddSelf = true, stakeholders: StakeholderDTO[] = []) => {
   const TestForm: React.FC = () => {
-    const methods = useForm<ErrandFormDTO>({ defaultValues: { status: 'DRAFT', stakeholders } });
+    const methods = useForm<ErrandFormDTO>({ defaultValues: { stakeholders } });
 
     return (
       <FormProvider {...methods}>

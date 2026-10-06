@@ -71,7 +71,7 @@ const labelPath = () => currentLabels().map((l) => `${l.classification ?? ''}:${
 
 const renderAbout = (defaultValues: Partial<ErrandFormDTO> = {}) => {
   const TestForm: React.FC = () => {
-    const methods = useForm<ErrandFormDTO>({ defaultValues: { status: 'DRAFT', ...defaultValues } });
+    const methods = useForm<ErrandFormDTO>({ defaultValues });
 
     return (
       <FormProvider {...methods}>
@@ -212,6 +212,7 @@ describe('AboutErrand categorization', () => {
 
   it('renders a submitted errand as text, with no controls to change it', () => {
     renderAbout({
+      id: 'id-1',
       status: 'NEW',
       labels: [
         { id: 'Alkohol', classification: 'CATEGORY', displayName: 'Alkohol' },

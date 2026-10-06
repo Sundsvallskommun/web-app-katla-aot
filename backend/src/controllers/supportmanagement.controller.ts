@@ -3,7 +3,7 @@ import { OpenAPI, ResponseSchema } from 'routing-controllers-openapi';
 
 import { MUNICIPALITY_ID, NAMESPACE } from '@/config';
 import { getApiBase } from '@/config/api-config';
-import { Errand, Label, MetadataResponse, PageErrand } from '@/data-contracts/supportmanagement/data-contracts';
+import { Errand, ErrandLifecycleEnum, Label, PageErrand } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import authMiddleware from '@/middlewares/auth.middleware';
@@ -11,7 +11,8 @@ import { ErrandCountDTO, ErrandDTO, ErrandsQueryDTO, PageErrandDTO } from '@/res
 import { MetadataResponseDTO } from '@/responses/supportmanagement-metadata.response';
 import ApiService from '@/services/api.service';
 import { selectCategorizationSubtree, withCategorizationSubtree } from '@/utils/categorization-root';
-import { assertErrandOwnedByUser, belongsToOrganizations, requireOrganizationPartyIds } from '@/utils/errand-access';
+import { assertDraftOwnedByUser, belongsToOrganizations, requireOrganizationPartyIds } from '@/utils/errand-access';
+import { fetchMetadata } from '@/utils/fetch-metadata';
 import { assertLabelsOffered, labelsChanged } from '@/utils/internal-labels';
 import { completePrimaryStakeholders } from '@/utils/primary-stakeholder';
 import { mapStakeholderDTOToStakeholder, mapStakeholderToStakeholderDTO } from '@/utils/stakeholder-mapping';
@@ -37,6 +38,9 @@ const SAFE_FILTER_KEY_PATTERN = /^[A-Za-z][A-Za-z0-9_.]*$/;
 // A stakeholder's externalId holds the organisation's party id.
 const ORGANIZATION_FILTER_KEY = 'stakeholders.externalId';
 
+// Upstream leaves drafts out of a search unless the filter names lifecycle.
+const DRAFT_FILTER_TERM = `lifecycle:'${ErrandLifecycleEnum.DRAFT}'`;
+
 const toFilterTerm = (key: string, value: string): string => {
   if (!SAFE_FILTER_KEY_PATTERN.test(key)) {
     throw new HttpException(400, 'Invalid filter key');
@@ -49,9 +53,6 @@ const toFilterTerm = (key: string, value: string): string => {
   return `${key}:'${value}'`;
 };
 
-// SupportManagement uses the Spring filter grammar: terms are joined with `and`, alternatives are
-// an `or` group in parentheses. Commas are not an operator — joining with one silently produces a
-// filter that does not mean what it reads like.
 const FILTER_AND = ' and ';
 
 const toFilterOrGroup = (key: string, values: string[]): string => `(${values.map(value => toFilterTerm(key, value)).join(' or ')})`;
@@ -99,15 +100,10 @@ export class SupportManagementController {
   @OpenAPI({ summary: 'Update errand' })
   @UseBefore(authMiddleware)
   @ResponseSchema(ErrandDTO)
-  async updateErrand(
-    @Req() req: RequestWithUser,
-    @Param('id') id: string,
-    // process is set upstream but missing from the generated contract
-    @Body() errand: Partial<Errand> & { process?: unknown },
-  ): Promise<Partial<Errand>> {
+  async updateErrand(@Req() req: RequestWithUser, @Param('id') id: string, @Body() errand: Partial<Errand>): Promise<Partial<Errand>> {
     if (!id.trim()) throw new HttpException(400, 'Errand id is required when updating an errand');
 
-    const storedErrand = await assertErrandOwnedByUser(this.apiService, this.apiBase, id, req);
+    const storedErrand = await assertDraftOwnedByUser(this.apiService, this.apiBase, id, req);
     if (errand.labels?.length && labelsChanged(errand.labels, storedErrand.labels)) {
       assertLabelsOffered(errand.labels, await this.fetchOfferedLabels(req));
     }
@@ -158,14 +154,8 @@ export class SupportManagementController {
   async getErrand(@Req() req: RequestWithUser, @Param('errandNumber') errandNumber: string): Promise<ErrandDTO> {
     const organizationPartyIds = requireOrganizationPartyIds(req);
 
-    const filter = [toFilterTerm('errandNumber', errandNumber), toFilterOrGroup(ORGANIZATION_FILTER_KEY, organizationPartyIds)].join(FILTER_AND);
-    const params = new URLSearchParams({ filter });
-    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands?${params.toString()}`;
-
-    const res = await this.apiService.get<PageErrand>({ url }, req);
-    if (!res.data) throw new HttpException(502, 'Invalid response when reading errand');
-
-    const matchedErrand = res.data.content?.[0];
+    const scope = [toFilterTerm('errandNumber', errandNumber), toFilterOrGroup(ORGANIZATION_FILTER_KEY, organizationPartyIds)];
+    const matchedErrand = (await this.findErrand(scope, req)) ?? (await this.findErrand([...scope, DRAFT_FILTER_TERM], req));
 
     // 404, not 403: errand numbers are enumerable, so another organisation's errand must be
     // indistinguishable from one that does not exist.
@@ -179,6 +169,16 @@ export class SupportManagementController {
       ...matchedErrand,
       stakeholders,
     };
+  }
+
+  private async findErrand(filterParts: string[], req: RequestWithUser): Promise<Errand | undefined> {
+    const params = new URLSearchParams({ filter: filterParts.join(FILTER_AND) });
+    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/errands?${params.toString()}`;
+
+    const res = await this.apiService.get<PageErrand>({ url }, req);
+    if (!res.data) throw new HttpException(502, 'Invalid response when reading errand');
+
+    return res.data.content?.[0];
   }
 
   @Get('/supportmanagement/errands')
@@ -253,18 +253,10 @@ export class SupportManagementController {
   @UseBefore(authMiddleware)
   @ResponseSchema(MetadataResponseDTO)
   async getMetadata(@Req() req: RequestWithUser): Promise<MetadataResponseDTO> {
-    return { ...withCategorizationSubtree(await this.fetchMetadata(req)), namespace: NAMESPACE };
-  }
-
-  private async fetchMetadata(req: RequestWithUser): Promise<MetadataResponse> {
-    const url = `${this.apiBase}/${MUNICIPALITY_ID}/${NAMESPACE}/metadata`;
-    const res = await this.apiService.get<MetadataResponse>({ url }, req);
-    if (!res.data) throw new HttpException(502, 'Invalid response when reading metadata');
-
-    return res.data;
+    return { ...withCategorizationSubtree(await fetchMetadata(this.apiService, this.apiBase, req)), namespace: NAMESPACE };
   }
 
   private async fetchOfferedLabels(req: RequestWithUser): Promise<Label[]> {
-    return selectCategorizationSubtree((await this.fetchMetadata(req)).labels?.labelStructure);
+    return selectCategorizationSubtree((await fetchMetadata(this.apiService, this.apiBase, req)).labels?.labelStructure);
   }
 }

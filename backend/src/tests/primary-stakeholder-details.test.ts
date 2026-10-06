@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Stakeholder } from '@/data-contracts/supportmanagement/data-contracts';
+import { Stakeholder } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import { completePrimaryStakeholders } from '@/utils/primary-stakeholder';
 

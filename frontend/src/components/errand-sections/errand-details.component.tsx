@@ -9,6 +9,7 @@ import {
   schemaNamesForErrand,
   upsertErrandFormDataItem,
 } from '@components/json/utils/schema-utils';
+import { useErrandLocked } from '@contexts/errand-content-lock-context';
 import { useFormValidation } from '@contexts/form-validation-context';
 import { ErrandFormDTO } from '@interfaces/errand-form';
 import { useCallback } from 'react';
@@ -31,8 +32,7 @@ function SchemaFormField({ schemaName, compact }: SchemaFormFieldProps) {
     schemaName,
     entry === undefined ? { kind: 'new' } : { kind: 'persisted', schemaId: entry.schemaId }
   );
-  const status = watch('status');
-  const isDraft = status === 'DRAFT';
+  const isLocked = useErrandLocked();
 
   const rawData = entry?.data ?? '{}';
   const parsedFormData = parseErrandFormData(rawData, schemaName);
@@ -89,7 +89,7 @@ function SchemaFormField({ schemaName, compact }: SchemaFormFieldProps) {
       onChange={handleChange}
       hideSubmitButton
       showValidation={showValidation}
-      disabled={!isDraft}
+      disabled={isLocked}
       compact={compact}
     />
   );

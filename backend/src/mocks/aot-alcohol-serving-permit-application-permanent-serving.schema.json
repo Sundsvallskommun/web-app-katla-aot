@@ -631,7 +631,7 @@
         ],
         "title": "Serveringsställets namn"
       },
-      "besoksadressSammaSomForetaget": {
+      "besoksadressSammaSomArendeagare": {
         "type": "string",
         "oneOf": [
           {
@@ -643,9 +643,9 @@
             "title": "Nej"
           }
         ],
-        "title": "Är serveringsställets besöksadress samma som företagets adress?"
+        "title": "Är serveringsställets besöksadress samma som ärendeägarens adress?"
       },
-      "serveringsstalletsBesoksadress": {
+      "besoksadress": {
         "type": "object",
         "properties": {
           "gatuadress": {
@@ -661,6 +661,11 @@
             "title": "Postort"
           }
         },
+        "required": [
+          "gatuadress",
+          "postnummer",
+          "postort"
+        ],
         "title": "Serveringsställets besöksadress"
       },
       "kontaktuppgifterTillServeringsstallet": {
@@ -775,7 +780,7 @@
       "verksamhetensInriktning",
       "serveringTillAllmanhetenEllerSlutetSallskap",
       "serveringsstalletsNamn",
-      "besoksadressSammaSomForetaget",
+      "besoksadressSammaSomArendeagare",
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen"
     ],
@@ -1227,18 +1232,18 @@
       {
         "if": {
           "properties": {
-            "besoksadressSammaSomForetaget": {
+            "besoksadressSammaSomArendeagare": {
               "const": "NEJ"
             }
           },
           "required": [
-            "besoksadressSammaSomForetaget"
+            "besoksadressSammaSomArendeagare"
           ]
         },
         "then": {
-          "properties": {
-            "serveringsstalletsBesoksadress": true
-          }
+          "required": [
+            "besoksadress"
+          ]
         }
       },
       {
@@ -1255,23 +1260,6 @@
         "then": {
           "properties": {
             "meny": true
-          }
-        }
-      },
-      {
-        "if": {
-          "properties": {
-            "besoksadressSammaSomForetaget": {
-              "const": "NEJ"
-            }
-          },
-          "required": [
-            "besoksadressSammaSomForetaget"
-          ]
-        },
-        "then": {
-          "properties": {
-            "serveringsstalletsBesoksadress": true
           }
         }
       },
@@ -1650,7 +1638,7 @@
     ],
     "x-attachments": [
       {
-        "key": "laddaUppFullmakt",
+        "key": "POWER_OF_ATTORNEY",
         "label": "Fullmakt",
         "requiredWhen": {
           "properties": {
@@ -1664,7 +1652,7 @@
         }
       },
       {
-        "key": "bifogaAktuelltRegistreringsbevisFran",
+        "key": "CERTIFICATE_OF_REGISTRATION",
         "label": "Registreringsbevis från Bolagsverket",
         "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.",
         "requiredWhen": {
@@ -1685,7 +1673,7 @@
         }
       },
       {
-        "key": "bifogaUppgifterOmAgarforhallanden",
+        "key": "OWNERSHIP_INFORMATION",
         "label": "Uppgifter om ägarförhållanden",
         "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen.",
         "requiredWhen": {
@@ -1705,7 +1693,7 @@
         }
       },
       {
-        "key": "bifogaRegisterutdragFranSkatteverket",
+        "key": "TAX_AGENCY_EXTRACT",
         "label": "Registerutdrag från Skatteverket",
         "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se.",
         "requiredWhen": {
@@ -1727,15 +1715,15 @@
         }
       },
       {
-        "key": "bifogaVerksamhetsbeskrivning",
+        "key": "BUSINESS_DESCRIPTION",
         "label": "Verksamhetsbeskrivning"
       },
       {
-        "key": "bifogaMeny",
+        "key": "MENU",
         "label": "Meny"
       },
       {
-        "key": "bifogaKontoutdrag",
+        "key": "BANK_STATEMENT",
         "label": "Kontoutdrag för egna medel",
         "requiredWhen": {
           "properties": {
@@ -1751,7 +1739,7 @@
         }
       },
       {
-        "key": "bifogaLanebevisForBanklan",
+        "key": "BANK_LOAN_CERTIFICATE",
         "label": "Lånebevis för banklån",
         "requiredWhen": {
           "properties": {
@@ -1767,7 +1755,7 @@
         }
       },
       {
-        "key": "bifogaLanebevisForPrivatlan",
+        "key": "PRIVATE_LOAN_CERTIFICATE",
         "label": "Lånebevis för privatlån",
         "requiredWhen": {
           "properties": {
@@ -1783,7 +1771,7 @@
         }
       },
       {
-        "key": "bifogaLanebevisForAnnanFinansiering",
+        "key": "OTHER_FINANCING_CERTIFICATE",
         "label": "Lånebevis för annan finansiering",
         "requiredWhen": {
           "properties": {
@@ -1799,22 +1787,22 @@
         }
       },
       {
-        "key": "bifogaPlanritning",
+        "key": "FLOOR_PLAN",
         "label": "Planritning",
         "description": "Planritningen ska visa vilken del av lokalen som är serveringsyta, inklusive uteservering och samtliga våningsplan där alkohol serveras. Serveringsytan ska vara överblickbar."
       },
       {
-        "key": "bifogaAvtalGallandeLokalOchMark",
+        "key": "PREMISES_AGREEMENT",
         "label": "Avtal gällande lokal och mark",
         "description": "Hyreskontrakt, arrendeavtal eller köpeavtal (inklusive bilagor) för lokalen som verksamheten ska bedrivas i, inklusive platsen för eventuell uteservering."
       },
       {
-        "key": "bifogaAvtalGallandeVerksamheten",
+        "key": "BUSINESS_AGREEMENT",
         "label": "Avtal gällande verksamheten",
         "description": "Har ditt företag köpt verksamheten bifogar du köpeavtalet, eller arrendeavtalet om företaget arrenderar den. Bilagor ska följa med."
       },
       {
-        "key": "bifogaBrandskyddsdokumentation",
+        "key": "FIRE_SAFETY_DOCUMENTATION",
         "label": "Brandskyddsdokumentation",
         "description": "Brandskyddsdokumentation från brandkonsult eller motsvarande."
       }

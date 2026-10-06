@@ -179,7 +179,7 @@
         "title": "Serveringsställets namn",
         "description": "Det namn som du skyltar med till kund."
       },
-      "besoksadressSammaSomForetaget": {
+      "besoksadressSammaSomArendeagare": {
         "type": "string",
         "oneOf": [
           {
@@ -191,9 +191,9 @@
             "title": "Nej"
           }
         ],
-        "title": "Är serveringsställets besöksadress samma som företagets adress?"
+        "title": "Är serveringsställets besöksadress samma som ärendeägarens adress?"
       },
-      "serveringsstalletsBesoksadress": {
+      "besoksadress": {
         "type": "object",
         "properties": {
           "gatuadress": {
@@ -209,6 +209,11 @@
             "title": "Postort"
           }
         },
+        "required": [
+          "gatuadress",
+          "postnummer",
+          "postort"
+        ],
         "title": "Serveringsställets besöksadress"
       },
       "kontaktuppgifterTillServeringsstallet": {
@@ -294,7 +299,7 @@
       "fakturaadressSammaSomForetaget",
       "harDuKassaregister",
       "serveringsstalletsNamn",
-      "besoksadressSammaSomForetaget",
+      "besoksadressSammaSomArendeagare",
       "sittplatserILokalen",
       "maximaltAntalPersonerILokalen",
       "kommerNiAttServeraMat",
@@ -379,18 +384,18 @@
       {
         "if": {
           "properties": {
-            "besoksadressSammaSomForetaget": {
+            "besoksadressSammaSomArendeagare": {
               "const": "NEJ"
             }
           },
           "required": [
-            "besoksadressSammaSomForetaget"
+            "besoksadressSammaSomArendeagare"
           ]
         },
         "then": {
-          "properties": {
-            "serveringsstalletsBesoksadress": true
-          }
+          "required": [
+            "besoksadress"
+          ]
         }
       },
       {
@@ -430,23 +435,6 @@
       {
         "if": {
           "properties": {
-            "besoksadressSammaSomForetaget": {
-              "const": "NEJ"
-            }
-          },
-          "required": [
-            "besoksadressSammaSomForetaget"
-          ]
-        },
-        "then": {
-          "properties": {
-            "serveringsstalletsBesoksadress": true
-          }
-        }
-      },
-      {
-        "if": {
-          "properties": {
             "harDuKassaregister": {
               "const": "JA"
             }
@@ -464,7 +452,7 @@
     ],
     "x-attachments": [
       {
-        "key": "laddaUppFullmakt",
+        "key": "POWER_OF_ATTORNEY",
         "label": "Fullmakt",
         "requiredWhen": {
           "properties": {
@@ -478,7 +466,7 @@
         }
       },
       {
-        "key": "bifogaAktuelltRegistreringsbevisFran",
+        "key": "CERTIFICATE_OF_REGISTRATION",
         "label": "Registreringsbevis från Bolagsverket",
         "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.",
         "requiredWhen": {
@@ -499,7 +487,7 @@
         }
       },
       {
-        "key": "bifogaUppgifterOmAgarforhallanden",
+        "key": "OWNERSHIP_INFORMATION",
         "label": "Uppgifter om ägarförhållanden",
         "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen.",
         "requiredWhen": {
@@ -519,7 +507,7 @@
         }
       },
       {
-        "key": "bifogaRegisterutdragFranSkatteverket",
+        "key": "TAX_AGENCY_EXTRACT",
         "label": "Registerutdrag från Skatteverket",
         "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se.",
         "requiredWhen": {
@@ -541,16 +529,20 @@
         }
       },
       {
-        "key": "bifogaVerksamhetsbeskrivning",
+        "key": "BUSINESS_DESCRIPTION",
         "label": "Verksamhetsbeskrivning"
       },
       {
-        "key": "bifogaMeny",
+        "key": "MENU",
         "label": "Meny"
       },
       {
-        "key": "bifogatEgenkontrollprogramFolkol",
+        "key": "SELF_MONITORING_PROGRAM",
         "label": "Egenkontrollprogram för servering av folköl (klass 2)"
+      },
+      {
+        "key": "FOOD_BUSINESS_REGISTRATION",
+        "label": "Livsmedelsregistrering från miljökontoret"
       }
     ]
   },

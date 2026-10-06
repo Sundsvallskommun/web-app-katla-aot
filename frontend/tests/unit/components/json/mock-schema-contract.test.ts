@@ -111,6 +111,34 @@ describe('mocked schema pairs against the renderer contract', () => {
       // attachmentTypesOfSchema silently drops malformed entries; nothing may be dropped here.
       expect(attachmentTypesOfSchema(schema.value as Record<string, unknown>)).toHaveLength(declared.length);
     });
+
+    // Draken reads the premises address from this one key in every schema.
+    it('keeps the premises address in the root besoksadress object', () => {
+      const root = schema.value.properties ?? {};
+      const holders = objectSchemas(schema.value).filter((object) => object.properties?.gatuadress !== undefined);
+      const address = root.besoksadress;
+
+      if (root.besoksadressSammaSomArendeagare !== undefined) expect(address).toBeDefined();
+      if (typeof address !== 'object') {
+        expect(holders).toEqual([]);
+        return;
+      }
+
+      expect(holders).toEqual([address]);
+      expect(address.required).toEqual(expect.arrayContaining(['gatuadress', 'postnummer', 'postort']));
+
+      if (root.besoksadressSammaSomArendeagare === undefined) {
+        expect(schema.value.required).toContain('besoksadress');
+      } else {
+        expect(schema.value.allOf).toContainEqual({
+          if: {
+            properties: { besoksadressSammaSomArendeagare: { const: 'NEJ' } },
+            required: ['besoksadressSammaSomArendeagare'],
+          },
+          then: { required: ['besoksadress'] },
+        });
+      }
+    });
   });
 
   it('flags a schema declaring draft-07, proving the compile check bites', () => {

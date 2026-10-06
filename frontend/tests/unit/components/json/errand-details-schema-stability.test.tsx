@@ -51,7 +51,6 @@ vi.mock('react-i18next', () => ({
 function TestForm() {
   const methods = useForm<ErrandFormDTO>({
     defaultValues: {
-      status: 'DRAFT',
       labels: TEST_LABELS,
       errandFormData: [
         {

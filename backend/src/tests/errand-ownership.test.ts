@@ -4,6 +4,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SupportManagementController } from '@/controllers/supportmanagement.controller';
+import { ErrandLifecycleEnum } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 
@@ -23,8 +24,8 @@ vi.mock('@/services/api.service', () => ({
 
 const requestAs = (partyId: string): RequestWithUser => ({ user: { partyId } }) as RequestWithUser;
 
-const upstreamReturnsReporter = (reporterUserId: string | undefined) => {
-  get.mockResolvedValue({ data: { id: mockErrandId, reporterUserId } });
+const upstreamReturnsReporter = (reporterUserId: string | undefined, lifecycle = 'DRAFT') => {
+  get.mockResolvedValue({ data: { id: mockErrandId, reporterUserId, lifecycle } });
 };
 
 describe('errand update ownership', () => {
@@ -67,6 +68,26 @@ describe('errand update ownership', () => {
       status: 403,
     });
     expect(patch).not.toHaveBeenCalled();
+  });
+
+  it('refuses to patch an errand that is no longer a draft', async () => {
+    upstreamReturnsReporter(mockCitizenPartyId, 'ACTIVE');
+
+    await expect(
+      new SupportManagementController().updateErrand(requestAs(mockCitizenPartyId), mockErrandId, {
+        title: 'ny titel',
+        lifecycle: ErrandLifecycleEnum.DRAFT,
+      }),
+    ).rejects.toMatchObject({ status: 409 });
+    expect(patch).not.toHaveBeenCalled();
+  });
+
+  it('lets a draft be registered', async () => {
+    upstreamReturnsReporter(mockCitizenPartyId);
+
+    await new SupportManagementController().updateErrand(requestAs(mockCitizenPartyId), mockErrandId, { lifecycle: ErrandLifecycleEnum.ACTIVE });
+
+    expect((patch.mock.calls[0]?.[0] as { data: Record<string, unknown> }).data).toMatchObject({ lifecycle: 'ACTIVE' });
   });
 
   it('accepts a casing difference in the party id', async () => {

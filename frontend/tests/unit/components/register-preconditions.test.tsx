@@ -6,18 +6,21 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { createErrandMock, routerPushMock, snackbarMock, updateErrandMock } = vi.hoisted(() => ({
-  createErrandMock: vi.fn(),
-  routerPushMock: vi.fn(),
-  snackbarMock: vi.fn(),
-  updateErrandMock: vi.fn(),
-}));
+const { createErrandMock, routerPushMock, snackbarMock, updateErrandMock, validateErrandFormDataMock } = vi.hoisted(
+  () => ({
+    createErrandMock: vi.fn(),
+    routerPushMock: vi.fn(),
+    snackbarMock: vi.fn(),
+    updateErrandMock: vi.fn(),
+    validateErrandFormDataMock: vi.fn(),
+  })
+);
 
-// These cases are about categorization and ownership. Whether the required schemas have data is a
-// separate precondition, covered in json/schema-utils.test.ts.
+// These cases are about categorization and ownership. What makes the form data valid is a
+// separate precondition, covered in json/schema-utils.test.ts; here it only answers.
 vi.mock('@components/json/utils/schema-utils', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@components/json/utils/schema-utils')>()),
-  validateErrandFormData: () => Promise.resolve([]),
+  validateErrandFormData: validateErrandFormDataMock,
 }));
 
 vi.mock('@components/cancel-errand-dialog.component', () => ({
@@ -74,7 +77,7 @@ const CLASSIFICATION: ErrandFormDTO['labels'] = [
 
 const renderButtons = (defaultValues: Partial<ErrandFormDTO> = {}) => {
   const TestForm: React.FC = () => {
-    const methods = useForm<ErrandFormDTO>({ defaultValues: { status: 'DRAFT', ...defaultValues } });
+    const methods = useForm<ErrandFormDTO>({ defaultValues });
 
     return (
       <FormProvider {...methods}>
@@ -94,6 +97,8 @@ describe('What registration requires before it will submit', () => {
     routerPushMock.mockReset();
     snackbarMock.mockReset();
     updateErrandMock.mockReset();
+    validateErrandFormDataMock.mockReset();
+    validateErrandFormDataMock.mockResolvedValue([]);
   });
 
   const clickRegister = () => {
@@ -138,5 +143,44 @@ describe('What registration requires before it will submit', () => {
 
     expect(await screen.findByRole('button', { name: 'errand-information:submit_confirm.submit' })).toBeInTheDocument();
     expect(snackbarMock).not.toHaveBeenCalled();
+  });
+
+  const clickSaveDraft = () => {
+    fireEvent.click(screen.getByRole('button', { name: 'errand-information:save_draft' }));
+  };
+
+  // Reading is scoped by the owner's organisation, so a draft saved without one would be lost.
+  it('refuses to save a draft with no owner', async () => {
+    renderButtons({ labels: CLASSIFICATION });
+
+    clickSaveDraft();
+
+    await expectReported('validation:owner.required');
+    expect(createErrandMock).not.toHaveBeenCalled();
+  });
+
+  // Upstream validates the filed answers against the schema, so an invalid form would be a 400.
+  it('refuses to save a draft whose filled-in form fails its schema', async () => {
+    validateErrandFormDataMock.mockResolvedValue(['form_field_error']);
+    renderButtons({ stakeholders: OWNER });
+
+    clickSaveDraft();
+
+    await expectReported('form_field_error');
+    expect(createErrandMock).not.toHaveBeenCalled();
+  });
+
+  it('saves a draft that has an owner, before anything else is filled in', async () => {
+    createErrandMock.mockResolvedValue({ id: 'id-1', errandNumber: 'AOT-1', jsonParameters: [] });
+    renderButtons({ stakeholders: OWNER });
+
+    clickSaveDraft();
+
+    await waitFor(() => {
+      expect(createErrandMock).toHaveBeenCalledWith(
+        expect.objectContaining({ lifecycle: 'DRAFT', stakeholders: OWNER })
+      );
+    });
+    expect(snackbarMock).toHaveBeenCalledWith(expect.objectContaining({ status: 'success' }));
   });
 });

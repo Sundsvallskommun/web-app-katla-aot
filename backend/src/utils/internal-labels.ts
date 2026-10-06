@@ -1,4 +1,4 @@
-import { ErrandLabel, Label } from '@/data-contracts/supportmanagement/data-contracts';
+import { ErrandLabel, Label } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 
 /** Set in Draken on labels that staff use but citizens must neither see nor file errands under. */

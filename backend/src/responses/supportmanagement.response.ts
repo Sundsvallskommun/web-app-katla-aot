@@ -7,6 +7,7 @@ import {
   Errand,
   ErrandAction,
   ErrandLabel,
+  ErrandLifecycleEnum,
   ErrandPhase,
   ExternalTag,
   JsonNode,
@@ -17,7 +18,7 @@ import {
   Priority,
   SortObject,
   Stakeholder,
-} from '@/data-contracts/supportmanagement/data-contracts';
+} from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 
 export class ErrandCountDTO implements CountResponse {
   @IsNumber()
@@ -39,6 +40,11 @@ export class ErrandsQueryDTO {
   @IsOptional()
   @IsString()
   status?: string;
+  // Upstream omits drafts unless the filter names lifecycle. Declared as string: routing-controllers
+  // binds query fields by design:type, and an enum type makes it JSON-parse the raw value.
+  @IsOptional()
+  @IsEnum(ErrandLifecycleEnum)
+  lifecycle?: string;
 }
 
 export class StakeholderDTO implements Partial<Stakeholder> {
@@ -246,6 +252,9 @@ export class ErrandDTO implements Errand {
   @IsString()
   @IsOptional()
   status?: string;
+  @IsEnum(ErrandLifecycleEnum)
+  @IsOptional()
+  lifecycle?: ErrandLifecycleEnum;
   @IsString()
   @IsOptional()
   resolution?: string;

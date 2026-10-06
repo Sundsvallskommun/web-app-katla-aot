@@ -1,4 +1,4 @@
-import { Label, MetadataResponse } from '@/data-contracts/supportmanagement/data-contracts';
+import { Label, MetadataResponse } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { withoutInternalOnly } from '@/utils/internal-labels';
 

@@ -41,7 +41,7 @@ function ErrorNavigationForm({
   showValidation?: boolean;
   formData?: Record<string, unknown>;
 }) {
-  const methods = useForm({ defaultValues: { status: 'DRAFT' } });
+  const methods = useForm();
 
   return (
     <FormProvider {...methods}>

@@ -1,12 +1,12 @@
+import type { ErrandAttachmentDTO } from '@data-contracts/backend/data-contracts';
 import type { ErrandFormAttachment } from '@interfaces/errand-form';
 import { apiService } from '@services/api-service';
 
-export interface ErrandAttachmentDTO {
-  id: string;
-  fileName: string;
-  mimeType?: string;
-  created?: string;
-}
+/** The purpose name is the bilagetyp the citizen picked, so a reopened errand validates as it did. */
+const toFormAttachment = ({ purpose, ...attachment }: ErrandAttachmentDTO): ErrandFormAttachment => ({
+  ...attachment,
+  ...(purpose?.name ? { category: purpose.name } : {}),
+});
 
 /** Mirrors the backend's multer limit; checked here so an oversized file never leaves the browser. */
 export const MAX_ATTACHMENT_SIZE_MB = 50;
@@ -29,8 +29,18 @@ export const ALLOWED_ATTACHMENT_MIME_TYPES = [
   'text/plain',
 ];
 
-export const getErrandAttachments = async (errandId: string): Promise<ErrandAttachmentDTO[]> =>
-  apiService.get<ErrandAttachmentDTO[]>(`supportmanagement/errand/${errandId}/attachments`).then((res) => res.data);
+export const getErrandAttachments = async (errandId: string): Promise<ErrandFormAttachment[]> =>
+  apiService
+    .get<ErrandAttachmentDTO[]>(`supportmanagement/errand/${errandId}/attachments`)
+    .then((res) => res.data.map(toFormAttachment));
+
+export const updateErrandAttachmentCategory = async (
+  errandId: string,
+  attachmentId: string,
+  category: string
+): Promise<void> => {
+  await apiService.patch(`supportmanagement/errand/${errandId}/attachments/${attachmentId}`, { category });
+};
 
 export const uploadErrandAttachment = async (errandId: string, file: File, category?: string): Promise<void> => {
   const formData = new FormData();

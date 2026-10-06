@@ -18,7 +18,7 @@ const SCHEMA = {
   properties: {},
   'x-attachments': [
     {
-      key: 'laddaUppFullmakt',
+      key: 'POWER_OF_ATTORNEY',
       label: 'Fullmakt',
       requiredWhen: { properties: { arDuFirmatecknare: { const: 'NEJ' } }, required: ['arDuFirmatecknare'] },
     },
@@ -35,6 +35,7 @@ vi.mock('@services/errand-service/attachment-service', () => ({
   getErrandAttachments: vi.fn(() => Promise.resolve([])),
   deleteErrandAttachment: vi.fn(),
   downloadErrandAttachment: vi.fn(),
+  updateErrandAttachmentCategory: vi.fn(),
 }));
 
 vi.mock('react-i18next', () => ({
@@ -61,7 +62,7 @@ const ShowValidation: React.FC = () => {
 
 const renderAttachments = (defaultValues: Partial<ErrandFormDTO>) => {
   const TestForm: React.FC = () => {
-    const methods = useForm<ErrandFormDTO>({ defaultValues: { status: 'DRAFT', labels: LABELS, ...defaultValues } });
+    const methods = useForm<ErrandFormDTO>({ defaultValues: { labels: LABELS, ...defaultValues } });
     return (
       <FormProvider {...methods}>
         <FormValidationProvider>

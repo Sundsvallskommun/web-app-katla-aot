@@ -44,6 +44,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
 
   const errandNumber = watch('errandNumber');
   const status = watch('status');
+  const lifecycle = watch('lifecycle');
 
   // A JSX variable rather than a component created during render (static-components).
   const singleErrandTitle = (
@@ -61,7 +62,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
         {registerNewErrand ?
           <strong className="text-large ml-8 font-bold">{appConfig.applicationName}</strong>
         : <>
-            <StatusLabel status={status} />
+            <StatusLabel status={status} lifecycle={lifecycle} />
             <span className="ml-8 text-small">{errandNumber}</span>
           </>
         }

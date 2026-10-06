@@ -249,6 +249,21 @@
             "type": "string",
             "title": "Serveringsställets namn"
           },
+          "telefonnummer": {
+            "type": "string",
+            "title": "Telefonnummer"
+          }
+        },
+        "required": [
+          "serveringsstalletsNamn",
+          "telefonnummer"
+        ],
+        "title": "Serveringsställe",
+        "description": "Om ingen fast telefon finns, lämna mobilnummer till företrädare."
+      },
+      "besoksadress": {
+        "type": "object",
+        "properties": {
           "gatuadress": {
             "type": "string",
             "title": "Gatuadress"
@@ -260,21 +275,14 @@
           "postort": {
             "type": "string",
             "title": "Postort"
-          },
-          "telefonnummer": {
-            "type": "string",
-            "title": "Telefonnummer"
           }
         },
         "required": [
-          "serveringsstalletsNamn",
           "gatuadress",
           "postnummer",
-          "postort",
-          "telefonnummer"
+          "postort"
         ],
-        "title": "Serveringsställe",
-        "description": "Om ingen fast telefon finns, lämna mobilnummer till företrädare."
+        "title": "Serveringsställets besöksadress"
       },
       "serveringsansvarigPersonal": {
         "type": "array",
@@ -387,6 +395,7 @@
       "beraknatAntalGaster",
       "vadArDetForTypAvTillstallning",
       "serveringsstalle",
+      "besoksadress",
       "finnsPolistillstand",
       "gaster",
       "hurHarGasternaBjuditsIn"
@@ -470,7 +479,7 @@
     ],
     "x-attachments": [
       {
-        "key": "laddaUppFullmakt",
+        "key": "POWER_OF_ATTORNEY",
         "label": "Fullmakt",
         "requiredWhen": {
           "properties": {
@@ -484,7 +493,7 @@
         }
       },
       {
-        "key": "bifogaAktuelltRegistreringsbevisFran",
+        "key": "CERTIFICATE_OF_REGISTRATION",
         "label": "Registreringsbevis från Bolagsverket",
         "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.",
         "requiredWhen": {
@@ -505,7 +514,7 @@
         }
       },
       {
-        "key": "bifogaUppgifterOmAgarforhallanden",
+        "key": "OWNERSHIP_INFORMATION",
         "label": "Uppgifter om ägarförhållanden",
         "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen.",
         "requiredWhen": {
@@ -525,7 +534,7 @@
         }
       },
       {
-        "key": "bifogaRegisterutdragFranSkatteverket",
+        "key": "TAX_AGENCY_EXTRACT",
         "label": "Registerutdrag från Skatteverket",
         "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se.",
         "requiredWhen": {
@@ -547,11 +556,11 @@
         }
       },
       {
-        "key": "bifogaVerksamhetsbeskrivning",
+        "key": "BUSINESS_DESCRIPTION",
         "label": "Verksamhetsbeskrivning"
       },
       {
-        "key": "laddaUppPolistillstand",
+        "key": "POLICE_PERMIT",
         "label": "Polistillstånd"
       }
     ]

@@ -4,7 +4,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SupportManagementController } from '@/controllers/supportmanagement.controller';
-import { ErrandLabel, Label } from '@/data-contracts/supportmanagement/data-contracts';
+import { ErrandLabel, Label } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 
 import { mockCitizenPartyId, mockErrandId } from './helpers/mock-data';
@@ -76,7 +76,9 @@ describe('errand label guard', () => {
     const storedErrand = (labels: ErrandLabel[]) => {
       get.mockImplementation((options: { url?: string }) =>
         Promise.resolve(
-          options.url?.endsWith('/metadata') ? { data: metadata } : { data: { id: mockErrandId, reporterUserId: mockCitizenPartyId, labels } },
+          options.url?.endsWith('/metadata')
+            ? { data: metadata }
+            : { data: { id: mockErrandId, reporterUserId: mockCitizenPartyId, lifecycle: 'DRAFT', labels } },
         ),
       );
     };

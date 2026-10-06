@@ -44,7 +44,7 @@ const app = createApp();
 // updateErrand reads the errand first to check the reporter against the session user. These
 // tests are about the update itself, so they hand it an errand the mocked user owns.
 const stubOwnershipLookup = () =>
-  vi.spyOn(ApiService.prototype, 'get').mockResolvedValue({ data: { reporterUserId: mockCitizenPartyId }, message: 'success' });
+  vi.spyOn(ApiService.prototype, 'get').mockResolvedValue({ data: { reporterUserId: mockCitizenPartyId, lifecycle: 'DRAFT' }, message: 'success' });
 
 afterEach(() => {
   vi.restoreAllMocks();

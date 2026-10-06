@@ -1,4 +1,5 @@
 import { ErrandDTO, MetadataResponseDTO, PageErrandDTO } from '@data-contracts/backend/data-contracts';
+import { ErrandLifecycle } from '@interfaces/errand-form';
 import { apiService } from '@services/api-service';
 
 export interface ErrandQuery {
@@ -7,6 +8,8 @@ export interface ErrandQuery {
   sortColumn?: string;
   sortOrder?: 'asc' | 'desc';
   statuses?: string[];
+  // Upstream leaves drafts out of every search that does not name the lifecycle.
+  lifecycle?: ErrandLifecycle;
 }
 
 export const getErrandUsingErrandNumber = async (errandNumber: string): Promise<ErrandDTO> => {
@@ -19,6 +22,7 @@ export const getErrands = async (q?: ErrandQuery): Promise<PageErrandDTO> => {
   if (q?.statuses && q.statuses.length > 0) {
     params.status = q.statuses.join(',');
   }
+  if (q?.lifecycle) params.lifecycle = q.lifecycle;
 
   if (q?.page !== undefined) params.page = q.page;
   if (q?.size !== undefined) params.size = q.size;
@@ -39,6 +43,7 @@ export const getErrandsCount = async (q?: ErrandQuery): Promise<{ count: number 
   if (q?.statuses && q.statuses.length > 0) {
     params.status = q.statuses.join(',');
   }
+  if (q?.lifecycle) params.lifecycle = q.lifecycle;
 
   return apiService
     .get<{ count: number }>('supportmanagement/count', {
