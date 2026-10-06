@@ -213,7 +213,7 @@
         ],
         "title": "Ska du arrangera en mässa?"
       },
-      "vilkaAlkoholdryckerSkaProvsmakas": {
+      "alkoholdrycker": {
         "type": "array",
         "minItems": 1,
         "uniqueItems": true,
@@ -398,7 +398,7 @@
       "finansiering",
       "verksamhetensInriktning",
       "arrangeraMassa",
-      "vilkaAlkoholdryckerSkaProvsmakas",
+      "alkoholdrycker",
       "besoksadressSammaSomArendeagare",
       "ordningOchNykterhet"
     ],

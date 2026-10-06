@@ -7,7 +7,8 @@
       "fakturareferens",
       "verksamhetsbeskrivningsval",
       "verksamhetsbeskrivning",
-      "forsaljningsstalle",
+      "serveringsstalletsNamn",
+      "kontaktuppgifterTillServeringsstallet",
       "besoksadress",
       "alkoholdrycker",
       "literStarkol",
@@ -30,7 +31,7 @@
       "organisationsnummer",
       "anmalPersonerTillKunskapsprovet",
       "personerTillKunskapsprovet",
-      "forsaljningsansvariga",
+      "serveringsansvarigPersonal",
       "finansiering",
       "egnaMedel",
       "banklan",
@@ -59,7 +60,8 @@
         "icon": "file-text",
         "defaultOpen": true,
         "fields": [
-          "forsaljningsstalle",
+          "serveringsstalletsNamn",
+          "kontaktuppgifterTillServeringsstallet",
           "besoksadress",
           "alkoholdrycker",
           "literStarkol",
@@ -82,7 +84,7 @@
           "organisationsnummer",
           "anmalPersonerTillKunskapsprovet",
           "personerTillKunskapsprovet",
-          "forsaljningsansvariga",
+          "serveringsansvarigPersonal",
           "finansiering",
           "egnaMedel",
           "banklan",
@@ -148,17 +150,16 @@
         "className": "w-full min-h-[14rem]"
       }
     },
-    "forsaljningsstalle": {
+    "serveringsstalletsNamn": {
+      "ui:widget": "TextWidget"
+    },
+    "kontaktuppgifterTillServeringsstallet": {
       "ui:order": [
-        "forsaljningsstalletsNamn",
         "telefonnummer",
         "ePostadress"
       ],
       "ui:options": {
         "showObjectFieldset": true
-      },
-      "forsaljningsstalletsNamn": {
-        "ui:widget": "TextWidget"
       },
       "telefonnummer": {
         "ui:widget": "TextWidget"
@@ -376,7 +377,7 @@
         }
       }
     },
-    "forsaljningsansvariga": {
+    "serveringsansvarigPersonal": {
       "ui:options": {
         "addable": true,
         "orderable": false,

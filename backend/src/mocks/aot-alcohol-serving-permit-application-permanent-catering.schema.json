@@ -174,7 +174,7 @@
         },
         "title": "Härmed anmäler jag följande person/personer till att genomföra kunskapsprovet:"
       },
-      "vilkaAlkoholdryckerSkaServeras": {
+      "alkoholdrycker": {
         "type": "array",
         "minItems": 1,
         "uniqueItems": true,
@@ -201,7 +201,7 @@
         },
         "title": "Vilka alkoholdrycker ska serveras?"
       },
-      "kommerNiAttServeraMat": {
+      "serverasMat": {
         "type": "string",
         "oneOf": [
           {
@@ -365,8 +365,8 @@
       "verksamhetsbeskrivningsval",
       "fakturaadressSammaSomForetaget",
       "kunskapOmAlkohollagen",
-      "vilkaAlkoholdryckerSkaServeras",
-      "kommerNiAttServeraMat",
+      "alkoholdrycker",
+      "serverasMat",
       "finansiering",
       "ordningOchNykterhet"
     ],
@@ -1030,12 +1030,12 @@
       {
         "when": {
           "properties": {
-            "kommerNiAttServeraMat": {
+            "serverasMat": {
               "const": "NEJ"
             }
           },
           "required": [
-            "kommerNiAttServeraMat"
+            "serverasMat"
           ]
         },
         "text": "Du måste själv servera maten, men du får köpa in den. [TEXT SAKNAS: slutlig text]"

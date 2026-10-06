@@ -56,7 +56,11 @@
             "title": "Postort"
           }
         },
-        "required": ["utdelningsadress", "postnummer", "postort"],
+        "required": [
+          "utdelningsadress",
+          "postnummer",
+          "postort"
+        ],
         "title": "Fakturamottagare"
       },
       "fakturareferens": {
@@ -143,14 +147,7 @@
         "description": "Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".\n\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.\n\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig försäljningsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.\n\n${serveringfolkolegenkontrollprogram}\n\nVill du bifoga ifyllt egenkontrollprogram i denna anmälan?"
       },
       "serveringsstalletsNamn": {
-        "type": "object",
-        "properties": {
-          "namn": {
-            "type": "string",
-            "title": "Namn"
-          }
-        },
-        "required": ["namn"],
+        "type": "string",
         "title": "Försäljningsställets namn",
         "description": "Det namn som du skyltar med till kund."
       },
@@ -184,7 +181,11 @@
             "title": "Postort"
           }
         },
-        "required": ["gatuadress", "postnummer", "postort"],
+        "required": [
+          "gatuadress",
+          "postnummer",
+          "postort"
+        ],
         "title": "Försäljningsställets besöksadress"
       },
       "kontaktuppgifterTillServeringsstallet": {
@@ -201,10 +202,6 @@
           "hemsida": {
             "type": "string",
             "title": "Hemsida"
-          },
-          "telefon": {
-            "type": "string",
-            "title": "Telefon"
           }
         },
         "title": "Kontaktuppgifter till försäljningsstället"
@@ -228,7 +225,9 @@
               "const": "NEJ"
             }
           },
-          "required": ["fakturaadressSammaSomForetaget"]
+          "required": [
+            "fakturaadressSammaSomForetaget"
+          ]
         },
         "then": {
           "properties": {
@@ -243,7 +242,9 @@
               "const": "JAG_VILL_SKRIVA_VERKSAMHETSBESKRIVNINGEN_I"
             }
           },
-          "required": ["verksamhetsbeskrivningsval"]
+          "required": [
+            "verksamhetsbeskrivningsval"
+          ]
         },
         "then": {
           "properties": {
@@ -258,10 +259,14 @@
               "const": "NEJ"
             }
           },
-          "required": ["besoksadressSammaSomArendeagare"]
+          "required": [
+            "besoksadressSammaSomArendeagare"
+          ]
         },
         "then": {
-          "required": ["besoksadress"]
+          "required": [
+            "besoksadress"
+          ]
         }
       },
       {
@@ -271,10 +276,14 @@
               "const": "JA"
             }
           },
-          "required": ["stadigvarandeForsaljningAvLivsmedel"]
+          "required": [
+            "stadigvarandeForsaljningAvLivsmedel"
+          ]
         },
         "then": {
-          "required": ["dokumentationKanVisasVidTillsyn"]
+          "required": [
+            "dokumentationKanVisasVidTillsyn"
+          ]
         }
       },
       {
@@ -284,10 +293,14 @@
               "const": "JA"
             }
           },
-          "required": ["tillverkarFolkolPaForsaljningsstallet"]
+          "required": [
+            "tillverkarFolkolPaForsaljningsstallet"
+          ]
         },
         "then": {
-          "required": ["dokumentationKanVisasVidTillsyn"]
+          "required": [
+            "dokumentationKanVisasVidTillsyn"
+          ]
         }
       }
     ],
@@ -301,7 +314,9 @@
               "const": "NEJ"
             }
           },
-          "required": ["arDuFirmatecknare"]
+          "required": [
+            "arDuFirmatecknare"
+          ]
         }
       },
       {
@@ -328,7 +343,10 @@
               "const": "NEJ"
             }
           },
-          "required": ["stadigvarandeForsaljningAvLivsmedel", "tillverkarFolkolPaForsaljningsstallet"]
+          "required": [
+            "stadigvarandeForsaljningAvLivsmedel",
+            "tillverkarFolkolPaForsaljningsstallet"
+          ]
         },
         "text": "[TEXT SAKNAS: varför anmälan inte kan göras utan stadigvarande försäljning av livsmedel eller egen tillverkning av folköl]"
       }

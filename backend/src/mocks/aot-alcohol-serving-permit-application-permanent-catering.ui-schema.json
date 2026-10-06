@@ -12,8 +12,8 @@
       "organisationsnummer",
       "anmalPersonerTillKunskapsprovet",
       "personerTillKunskapsprovet",
-      "vilkaAlkoholdryckerSkaServeras",
-      "kommerNiAttServeraMat",
+      "alkoholdrycker",
+      "serverasMat",
       "finansiering",
       "egnaMedel",
       "banklan",
@@ -49,8 +49,8 @@
           "organisationsnummer",
           "anmalPersonerTillKunskapsprovet",
           "personerTillKunskapsprovet",
-          "vilkaAlkoholdryckerSkaServeras",
-          "kommerNiAttServeraMat",
+          "alkoholdrycker",
+          "serverasMat",
           "finansiering",
           "egnaMedel",
           "banklan",
@@ -187,7 +187,7 @@
         }
       }
     },
-    "vilkaAlkoholdryckerSkaServeras": {
+    "alkoholdrycker": {
       "ui:widget": "checkboxes",
       "ui:options": {
         "multiple": true,
@@ -299,7 +299,7 @@
         "className": "w-full max-w-[48rem]"
       }
     },
-    "kommerNiAttServeraMat": {
+    "serverasMat": {
       "ui:widget": "RadiobuttonWidget"
     },
     "ordningOchNykterhet": {
