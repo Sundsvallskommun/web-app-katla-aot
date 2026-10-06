@@ -233,3 +233,16 @@ positiva formuleringen av allt ovan; adaptern och kontraktstestet kontrollerar d
     efter formulärets egna fel; utkast kan fortfarande sparas. `text` lokaliseras inte, precis som
     bilagornas etiketter. Ett villkor som pekar på en egenskap som saknas stoppas i adaptern; en
     post utan `text` eller `when.required` släpps och loggas.
+11. **Beslutsflikens nycklar**: Drakens beslutsunderlag läser serverings- eller
+    försäljningsstället ur fasta rotnycklar, på samma sätt som besöksadressen i punkt 9
+    (`docs/beslutsflik-nycklar.md`). Namnet är rotsträngen `serveringsstalletsNamn`;
+    kontaktuppgifterna ligger i `kontaktuppgifterTillServeringsstallet` med enbart
+    `telefonnummer`, `ePostadress` och `hemsida`, och inget annat objekt bär de fälten; sittplatser i
+    `sittplatserILokalen` med `antalSittplatserInomhus` och `antalSittplatserUteservering`;
+    dryckerna i `alkoholdrycker` med de fyra konstanterna; maten som `serverasMat`, `menyval`
+    (`JAG_VILL_BESKRIVA` | `JAG_VILL_LADDA_UPP`) och `menyBeskrivning`, där bilagan `MENU` krävs
+    vid `JAG_VILL_LADDA_UPP`; ansvariga personer i `serveringsansvarigPersonal` med `fornamn`,
+    `efternamn` och `personnummer`. Titlarna får skilja sig per schema, nycklarna inte. Ett schema
+    utan frågan utelämnar nyckeln; Draken visar då "—". Kontrolleras i kontraktstestet.
+    Undantag: tobakens `hemsida` är en rotsträng som visas vid distansförsäljning, eftersom
+    villkorsmotorn bara kan visa rotegenskaper (punkt 4) — Draken läser den från roten för tobak.

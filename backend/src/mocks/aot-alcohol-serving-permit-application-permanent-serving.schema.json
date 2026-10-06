@@ -407,7 +407,7 @@
         ],
         "title": "Serveringstider utomhus slutet sällskap"
       },
-      "vilkaAlkoholdryckerSkaServeras": {
+      "alkoholdrycker": {
         "type": "array",
         "minItems": 1,
         "uniqueItems": true,
@@ -434,22 +434,22 @@
         },
         "title": "Vilka alkoholdrycker ska serveras?"
       },
-      "beskrivUtbudetAvMat": {
+      "menyval": {
         "type": "string",
         "oneOf": [
           {
-            "const": "JAG_VILL_BIFOGA_MENY_SOM",
+            "const": "JAG_VILL_LADDA_UPP",
             "title": "Jag vill bifoga meny som bilaga"
           },
           {
-            "const": "JAG_VILL_SKRIVA_IN_MENYN",
+            "const": "JAG_VILL_BESKRIVA",
             "title": "Jag vill skriva in menyn i formuläret"
           }
         ],
         "title": "Beskriv utbudet av mat",
         "description": "En förutsättning för att få servera alkoholdrycker är att det även serveras mat. Utbudet av mat ska vara tillrett, tillräckligt och tillgängligt. Detta innebär att du ska ha mat som du har kapacitet att tillreda på plats i restaurangen och matutbudet ska även alltid vara tillgängligt för gästerna i verksamheten. Du kan välja att bifoga en meny om du har en sådan. Annars kan du välja att skriva in denna i formuläret. Om du har en annan, enklare meny efter kl. 23 ska du även bifoga den eller skriva in denna i formuläret nedan. Exempel på rätter i en enklare meny är hamburgare, sallad, paj, varma smörgåsar och bakad potatis."
       },
-      "meny": {
+      "menyBeskrivning": {
         "type": "string",
         "title": "Meny",
         "description": "(den mat som kommer att serveras)"
@@ -581,16 +581,7 @@
         "title": "Övriga upplysningar angående finansieringen"
       },
       "serveringsstalletsNamn": {
-        "type": "object",
-        "properties": {
-          "namn": {
-            "type": "string",
-            "title": "Namn"
-          }
-        },
-        "required": [
-          "namn"
-        ],
+        "type": "string",
         "title": "Serveringsställets namn"
       },
       "besoksadressSammaSomArendeagare": {
@@ -729,7 +720,7 @@
             "type": "string",
             "title": "Antal sittplatser inomhus"
           },
-          "antalSittplatserPaEventuellUteserver": {
+          "antalSittplatserUteservering": {
             "type": "string",
             "title": "Antal sittplatser på eventuell uteservering"
           }
@@ -758,7 +749,7 @@
       "verksamhetsbeskrivningsval",
       "fakturaadressSammaSomForetaget",
       "kunskapOmAlkohollagen",
-      "vilkaAlkoholdryckerSkaServeras",
+      "alkoholdrycker",
       "finansiering",
       "verksamhetensInriktning",
       "serveringTillAllmanhetenEllerSlutetSallskap",
@@ -897,7 +888,7 @@
         },
         "then": {
           "required": [
-            "beskrivUtbudetAvMat"
+            "menyval"
           ]
         }
       },
@@ -1077,17 +1068,17 @@
       {
         "if": {
           "properties": {
-            "beskrivUtbudetAvMat": {
-              "const": "JAG_VILL_SKRIVA_IN_MENYN"
+            "menyval": {
+              "const": "JAG_VILL_BESKRIVA"
             }
           },
           "required": [
-            "beskrivUtbudetAvMat"
+            "menyval"
           ]
         },
         "then": {
           "properties": {
-            "meny": true
+            "menyBeskrivning": true
           }
         }
       },
@@ -1211,17 +1202,17 @@
       {
         "if": {
           "properties": {
-            "beskrivUtbudetAvMat": {
-              "const": "JAG_VILL_SKRIVA_IN_MENYN"
+            "menyval": {
+              "const": "JAG_VILL_BESKRIVA"
             }
           },
           "required": [
-            "beskrivUtbudetAvMat"
+            "menyval"
           ]
         },
         "then": {
           "properties": {
-            "meny": true
+            "menyBeskrivning": true
           }
         }
       },
@@ -1623,7 +1614,17 @@
       },
       {
         "key": "MENU",
-        "label": "Meny"
+        "label": "Meny",
+        "requiredWhen": {
+          "properties": {
+            "menyval": {
+              "const": "JAG_VILL_LADDA_UPP"
+            }
+          },
+          "required": [
+            "menyval"
+          ]
+        }
       },
       {
         "key": "BANK_STATEMENT",

@@ -87,26 +87,24 @@
         "type": "string",
         "title": "Verksamhetsbeskrivning"
       },
-      "forsaljningsstalle": {
+      "serveringsstalletsNamn": {
+        "type": "string",
+        "title": "Försäljningsställets namn"
+      },
+      "kontaktuppgifterTillServeringsstallet": {
         "type": "object",
         "properties": {
-          "forsaljningsstalletsNamn": {
-            "type": "string",
-            "title": "Försäljningsställets namn"
-          },
           "telefonnummer": {
             "type": "string",
             "title": "Telefonnummer"
           },
           "ePostadress": {
             "type": "string",
-            "title": "E-postadress"
+            "title": "E-postadress",
+            "format": "email"
           }
         },
-        "required": [
-          "forsaljningsstalletsNamn"
-        ],
-        "title": "Försäljningsställe"
+        "title": "Kontaktuppgifter till försäljningsstället"
       },
       "besoksadress": {
         "type": "object",
@@ -383,7 +381,7 @@
         },
         "title": "Härmed anmäler jag följande person/personer till att genomföra kunskapsprovet:"
       },
-      "forsaljningsansvariga": {
+      "serveringsansvarigPersonal": {
         "type": "array",
         "items": {
           "type": "object",
@@ -541,7 +539,7 @@
       "arDuFirmatecknare",
       "verksamhetsbeskrivningsval",
       "fakturaadressSammaSomForetaget",
-      "forsaljningsstalle",
+      "serveringsstalletsNamn",
       "besoksadress",
       "alkoholdrycker",
       "produktionenStartade",

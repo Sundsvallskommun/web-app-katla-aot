@@ -126,19 +126,9 @@
         ],
         "title": "Period för tidsbegränsad försäljning"
       },
-      "forsaljningsstallet": {
-        "type": "object",
-        "properties": {
-          "forsaljningsstalletsNamn": {
-            "type": "string",
-            "title": "Försäljningsställets namn"
-          }
-        },
-        "required": [
-          "forsaljningsstalletsNamn"
-        ],
-        "title": "Försäljningsstället",
-        "description": ".cke{visibility:hidden;}"
+      "serveringsstalletsNamn": {
+        "type": "string",
+        "title": "Försäljningsställets namn"
       },
       "besoksadressSammaSomArendeagare": {
         "type": "string",
@@ -168,24 +158,32 @@
           "postort": {
             "type": "string",
             "title": "Postort"
-          },
-          "telefonnummer": {
-            "type": "string",
-            "title": "Telefonnummer"
-          },
-          "ePost": {
-            "type": "string",
-            "title": "E-post",
-            "format": "email"
           }
         },
         "required": [
           "gatuadress",
           "postnummer",
-          "postort",
-          "telefonnummer"
+          "postort"
         ],
         "title": "Besöksadress"
+      },
+      "kontaktuppgifterTillServeringsstallet": {
+        "type": "object",
+        "properties": {
+          "telefonnummer": {
+            "type": "string",
+            "title": "Telefonnummer"
+          },
+          "ePostadress": {
+            "type": "string",
+            "title": "E-postadress",
+            "format": "email"
+          }
+        },
+        "required": [
+          "telefonnummer"
+        ],
+        "title": "Kontaktuppgifter till försäljningsstället"
       },
       "bedriverAvenDistansforsaljning": {
         "type": "string",
@@ -203,16 +201,7 @@
         "description": "Distansförsäljning är försäljning av varor via postorder, telefon eller internet där leverantören ansvarar för leveransen av varorna."
       },
       "hemsida": {
-        "type": "object",
-        "properties": {
-          "hemsida": {
-            "type": "string",
-            "title": "Hemsida"
-          }
-        },
-        "required": [
-          "hemsida"
-        ],
+        "type": "string",
         "title": "Hemsida"
       },
       "avtalMedTillverkareEllerPartihandlare": {
@@ -236,9 +225,10 @@
       "fakturaadressSammaSomForetaget",
       "besoksadressSammaSomArendeagare",
       "tidsperiodForForsaljningen",
-      "forsaljningsstallet",
+      "serveringsstalletsNamn",
       "bedriverAvenDistansforsaljning",
-      "avtalMedTillverkareEllerPartihandlare"
+      "avtalMedTillverkareEllerPartihandlare",
+      "kontaktuppgifterTillServeringsstallet"
     ],
     "allOf": [
       {
@@ -338,9 +328,9 @@
           ]
         },
         "then": {
-          "properties": {
-            "hemsida": true
-          }
+          "required": [
+            "hemsida"
+          ]
         }
       }
     ],

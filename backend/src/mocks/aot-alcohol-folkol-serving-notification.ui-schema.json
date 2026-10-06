@@ -107,15 +107,7 @@
       "ui:description": "<p>Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".<br />\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.<br />\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig serveringsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.</p>\n\n<p>${serveringfolkolegenkontrollprogram}</p>\n\n<p><strong>Vill du bifoga ifyllt egenkontrollprogram i denna anmälan?</strong></p>"
     },
     "serveringsstalletsNamn": {
-      "ui:order": [
-        "namn"
-      ],
-      "ui:options": {
-        "showObjectFieldset": true
-      },
-      "namn": {
-        "ui:widget": "TextWidget"
-      },
+      "ui:widget": "TextWidget",
       "ui:description": "<p>Det namn som du skyltar med till kund.</p>"
     },
     "besoksadressSammaSomArendeagare": {
@@ -153,8 +145,7 @@
       "ui:order": [
         "telefonnummer",
         "ePostadress",
-        "hemsida",
-        "telefon"
+        "hemsida"
       ],
       "ui:options": {
         "showObjectFieldset": true
@@ -166,9 +157,6 @@
         "ui:widget": "TextWidget"
       },
       "hemsida": {
-        "ui:widget": "TextWidget"
-      },
-      "telefon": {
         "ui:widget": "TextWidget"
       }
     },

@@ -15,7 +15,7 @@
       "angeMellanVilkaDatumDetTillfalliga",
       "ovrigaUppgifterGallandeDatum",
       "klockslagForServeringen",
-      "vilkaAlkoholdryckerSkaServeras",
+      "alkoholdrycker",
       "dryckesmenyval",
       "dryckesmeny",
       "serverasMat",
@@ -29,7 +29,8 @@
       "ovrigaUpplysningarFinansiering",
       "beraknatAntalGaster",
       "vadArDetForTypAvTillstallning",
-      "serveringsstalle",
+      "serveringsstalletsNamn",
+      "kontaktuppgifterTillServeringsstallet",
       "besoksadress",
       "serveringsansvarigPersonal",
       "ordningOchNykterhet",
@@ -66,7 +67,7 @@
           "angeMellanVilkaDatumDetTillfalliga",
           "ovrigaUppgifterGallandeDatum",
           "klockslagForServeringen",
-          "vilkaAlkoholdryckerSkaServeras",
+          "alkoholdrycker",
           "dryckesmenyval",
           "dryckesmeny",
           "serverasMat",
@@ -80,7 +81,8 @@
           "ovrigaUpplysningarFinansiering",
           "beraknatAntalGaster",
           "vadArDetForTypAvTillstallning",
-          "serveringsstalle",
+          "serveringsstalletsNamn",
+          "kontaktuppgifterTillServeringsstallet",
           "besoksadress",
           "serveringsansvarigPersonal",
           "ordningOchNykterhet",
@@ -207,7 +209,7 @@
       ],
       "ui:description": "<p>Ange när servering önskas påbörjas, samt avslutas (standard är 11:00-01:00 om inte annat beslutas).</p>"
     },
-    "vilkaAlkoholdryckerSkaServeras": {
+    "alkoholdrycker": {
       "ui:widget": "checkboxes",
       "ui:options": {
         "multiple": true,
@@ -231,16 +233,15 @@
         "className": "w-full min-h-[14rem]"
       }
     },
-    "serveringsstalle": {
+    "serveringsstalletsNamn": {
+      "ui:widget": "TextWidget"
+    },
+    "kontaktuppgifterTillServeringsstallet": {
       "ui:order": [
-        "serveringsstalletsNamn",
         "telefonnummer"
       ],
       "ui:options": {
         "showObjectFieldset": true
-      },
-      "serveringsstalletsNamn": {
-        "ui:widget": "TextWidget"
       },
       "telefonnummer": {
         "ui:widget": "TextWidget"
@@ -301,12 +302,12 @@
     },
     "sittplatserILokalen": {
       "ui:order": [
-        "antalSittplatserIBordsavdelningMatsa"
+        "antalSittplatserInomhus"
       ],
       "ui:options": {
         "showObjectFieldset": true
       },
-      "antalSittplatserIBordsavdelningMatsa": {
+      "antalSittplatserInomhus": {
         "ui:widget": "TextWidget"
       }
     },

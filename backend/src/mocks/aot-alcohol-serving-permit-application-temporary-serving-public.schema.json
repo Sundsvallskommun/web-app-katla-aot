@@ -219,7 +219,7 @@
         "title": "Klockslag för serveringen",
         "description": "Ange när servering önskas påbörjas, samt avslutas (standard är 11:00-01:00 om inte annat beslutas)."
       },
-      "vilkaAlkoholdryckerSkaServeras": {
+      "alkoholdrycker": {
         "type": "array",
         "minItems": 1,
         "uniqueItems": true,
@@ -441,23 +441,22 @@
         "type": "string",
         "title": "Vad är det för typ av tillställning"
       },
-      "serveringsstalle": {
+      "serveringsstalletsNamn": {
+        "type": "string",
+        "title": "Serveringsställets namn"
+      },
+      "kontaktuppgifterTillServeringsstallet": {
         "type": "object",
         "properties": {
-          "serveringsstalletsNamn": {
-            "type": "string",
-            "title": "Serveringsställets namn"
-          },
           "telefonnummer": {
             "type": "string",
             "title": "Telefonnummer"
           }
         },
         "required": [
-          "serveringsstalletsNamn",
           "telefonnummer"
         ],
-        "title": "Serveringsställe",
+        "title": "Kontaktuppgifter till serveringsstället",
         "description": "Om ingen fast telefon finns, lämna mobilnummer till företrädare."
       },
       "besoksadress": {
@@ -518,13 +517,13 @@
       "sittplatserILokalen": {
         "type": "object",
         "properties": {
-          "antalSittplatserIBordsavdelningMatsa": {
+          "antalSittplatserInomhus": {
             "type": "string",
             "title": "Antal sittplatser i bordsavdelning/matsal"
           }
         },
         "required": [
-          "antalSittplatserIBordsavdelningMatsa"
+          "antalSittplatserInomhus"
         ],
         "title": "Sittplatser i lokalen"
       },
@@ -564,7 +563,7 @@
       "arDuFirmatecknare",
       "verksamhetsbeskrivningsval",
       "fakturaadressSammaSomForetaget",
-      "vilkaAlkoholdryckerSkaServeras",
+      "alkoholdrycker",
       "dryckesmenyval",
       "serverasMat",
       "serveringsansvarigPersonal",
@@ -574,7 +573,8 @@
       "klockslagForServeringen",
       "beraknatAntalGaster",
       "vadArDetForTypAvTillstallning",
-      "serveringsstalle",
+      "serveringsstalletsNamn",
+      "kontaktuppgifterTillServeringsstallet",
       "besoksadress",
       "finnsPolistillstand",
       "kunskapOmAlkohollagen",

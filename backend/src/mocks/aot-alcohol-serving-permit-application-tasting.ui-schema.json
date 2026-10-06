@@ -15,7 +15,7 @@
       "verksamhetensInriktning",
       "beskrivVerksamhetensInriktning",
       "arrangeraMassa",
-      "vilkaAlkoholdryckerSkaProvsmakas",
+      "alkoholdrycker",
       "finansiering",
       "egnaMedel",
       "banklan",
@@ -55,7 +55,7 @@
           "verksamhetensInriktning",
           "beskrivVerksamhetensInriktning",
           "arrangeraMassa",
-          "vilkaAlkoholdryckerSkaProvsmakas",
+          "alkoholdrycker",
           "finansiering",
           "egnaMedel",
           "banklan",
@@ -340,7 +340,7 @@
     "arrangeraMassa": {
       "ui:widget": "RadiobuttonWidget"
     },
-    "vilkaAlkoholdryckerSkaProvsmakas": {
+    "alkoholdrycker": {
       "ui:widget": "checkboxes",
       "ui:options": {
         "multiple": true,

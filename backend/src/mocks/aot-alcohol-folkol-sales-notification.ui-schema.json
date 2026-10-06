@@ -56,7 +56,12 @@
       "ui:description": "<p>Kommunen kan komma att ta ut en avgift. Om du vill att fakturan ska gå till den adress som företaget är registrerad på anger du \"Ja\" i fältet nedan. Om du vill att fakturan ska gå till en annan adress anger du \"Nej\" och fyller sedan i den. Du har även möjlighet att ange en fakturareferens.</p>"
     },
     "fakturamottagare": {
-      "ui:order": ["cO", "utdelningsadress", "postnummer", "postort"],
+      "ui:order": [
+        "cO",
+        "utdelningsadress",
+        "postnummer",
+        "postort"
+      ],
       "ui:options": {
         "showObjectFieldset": true
       },
@@ -74,7 +79,10 @@
       },
       "ui:rows": [
         {
-          "fields": ["postnummer", "postort"],
+          "fields": [
+            "postnummer",
+            "postort"
+          ],
           "gap": "gap-24"
         }
       ]
@@ -101,20 +109,18 @@
       "ui:description": "<p>Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".<br />\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.<br />\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig försäljningsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.</p>\n\n<p>${serveringfolkolegenkontrollprogram}</p>\n\n<p><strong>Vill du bifoga ifyllt egenkontrollprogram i denna anmälan?</strong></p>"
     },
     "serveringsstalletsNamn": {
-      "ui:order": ["namn"],
-      "ui:options": {
-        "showObjectFieldset": true
-      },
-      "namn": {
-        "ui:widget": "TextWidget"
-      },
+      "ui:widget": "TextWidget",
       "ui:description": "<p>Det namn som du skyltar med till kund.</p>"
     },
     "besoksadressSammaSomArendeagare": {
       "ui:widget": "RadiobuttonWidget"
     },
     "besoksadress": {
-      "ui:order": ["gatuadress", "postnummer", "postort"],
+      "ui:order": [
+        "gatuadress",
+        "postnummer",
+        "postort"
+      ],
       "ui:options": {
         "showObjectFieldset": true
       },
@@ -129,13 +135,20 @@
       },
       "ui:rows": [
         {
-          "fields": ["postnummer", "postort"],
+          "fields": [
+            "postnummer",
+            "postort"
+          ],
           "gap": "gap-24"
         }
       ]
     },
     "kontaktuppgifterTillServeringsstallet": {
-      "ui:order": ["telefonnummer", "ePostadress", "hemsida", "telefon"],
+      "ui:order": [
+        "telefonnummer",
+        "ePostadress",
+        "hemsida"
+      ],
       "ui:options": {
         "showObjectFieldset": true
       },
@@ -146,9 +159,6 @@
         "ui:widget": "TextWidget"
       },
       "hemsida": {
-        "ui:widget": "TextWidget"
-      },
-      "telefon": {
         "ui:widget": "TextWidget"
       }
     },

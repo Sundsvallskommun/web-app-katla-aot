@@ -152,6 +152,94 @@ describe('mocked schema pairs against the renderer contract', () => {
         });
       }
     });
+
+    // The decision tab in Draken reads these premises fields by key; docs/beslutsflik-nycklar.md.
+    describe('keeps the premises keys Draken reads canonical', () => {
+      const root = (schema.value.properties ?? {}) as Record<string, RJSFSchema>;
+      const rootObjects = Object.entries(root).filter(([, child]) => child.type === 'object');
+      const propertyNames = (object: RJSFSchema) => Object.keys(object.properties ?? {});
+
+      it('names the premises in a root serveringsstalletsNamn string', () => {
+        for (const object of objectSchemas(schema.value)) {
+          expect(propertyNames(object)).not.toContain('forsaljningsstalletsNamn');
+          expect(propertyNames(object)).not.toContain('namn');
+        }
+        if (root.serveringsstalletsNamn !== undefined) expect(root.serveringsstalletsNamn.type).toBe('string');
+      });
+
+      it('keeps contact details in kontaktuppgifterTillServeringsstallet only', () => {
+        const contactFields = ['telefonnummer', 'ePostadress', 'hemsida'];
+        for (const [name, object] of rootObjects) {
+          const held = propertyNames(object).filter((field) => contactFields.includes(field));
+          if (name === 'kontaktuppgifterTillServeringsstallet') {
+            expect(propertyNames(object)).toEqual(held);
+          } else {
+            expect(held, `${name} carries contact fields`).toEqual([]);
+          }
+        }
+        expect(root.ePost).toBeUndefined();
+      });
+
+      it('counts seats under sittplatserILokalen with the shared child names', () => {
+        const holders = objectSchemas(schema.value).filter((object) =>
+          propertyNames(object).some((field) => field.startsWith('antalSittplatser'))
+        );
+        if (root.sittplatserILokalen === undefined) {
+          expect(holders).toEqual([]);
+          return;
+        }
+        expect(holders).toEqual([root.sittplatserILokalen]);
+        for (const field of propertyNames(root.sittplatserILokalen)) {
+          expect(['antalSittplatserInomhus', 'antalSittplatserUteservering']).toContain(field);
+        }
+      });
+
+      it('lists the drinks under alkoholdrycker', () => {
+        const drinkKeys = Object.keys(root).filter((field) => /alkoholdrycker/i.test(field));
+        expect(drinkKeys.length).toBeLessThanOrEqual(1);
+        if (drinkKeys.length === 0) return;
+        expect(drinkKeys).toEqual(['alkoholdrycker']);
+        const items = root.alkoholdrycker.items as RJSFSchema;
+        expect(items.oneOf?.map((option) => (option as RJSFSchema).const)).toEqual([
+          'STARKOL',
+          'VIN',
+          'SPRITDRYCKER',
+          'CIDER_ELLER_ANDRA_JASTA_ALKOHOLDRYCKER',
+        ]);
+      });
+
+      it('describes the menu as serverasMat, menyval and menyBeskrivning', () => {
+        for (const legacy of ['beskrivUtbudetAvMat', 'meny', 'kommerNiAttServeraMat']) {
+          expect(root[legacy], `${legacy} is a retired key`).toBeUndefined();
+        }
+        if (root.menyval === undefined) {
+          expect(root.menyBeskrivning).toBeUndefined();
+          return;
+        }
+        expect(root.menyval.oneOf?.map((option) => (option as RJSFSchema).const).sort()).toEqual([
+          'JAG_VILL_BESKRIVA',
+          'JAG_VILL_LADDA_UPP',
+        ]);
+        expect(root.menyBeskrivning.type).toBe('string');
+        const menu = attachmentTypesOfSchema(schema.value as Record<string, unknown>).find(
+          (type) => type.key === 'MENU'
+        );
+        expect(menu?.requiredWhen).toEqual({
+          properties: { menyval: { const: 'JAG_VILL_LADDA_UPP' } },
+          required: ['menyval'],
+        });
+      });
+
+      it('lists responsible staff under serveringsansvarigPersonal', () => {
+        const staffShape = ['fornamn', 'efternamn', 'personnummer'];
+        const holders = Object.entries(root).filter(([, child]) => {
+          const items =
+            child.type === 'array' && typeof child.items === 'object' ? (child.items as RJSFSchema) : undefined;
+          return items !== undefined && [...propertyNames(items)].sort().join() === [...staffShape].sort().join();
+        });
+        for (const [name] of holders) expect(name).toBe('serveringsansvarigPersonal');
+      });
+    });
   });
 
   it('flags a schema declaring draft-07, proving the compile check bites', () => {
