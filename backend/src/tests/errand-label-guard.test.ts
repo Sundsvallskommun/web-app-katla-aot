@@ -76,7 +76,9 @@ describe('errand label guard', () => {
     const storedErrand = (labels: ErrandLabel[]) => {
       get.mockImplementation((options: { url?: string }) =>
         Promise.resolve(
-          options.url?.endsWith('/metadata') ? { data: metadata } : { data: { id: mockErrandId, reporterUserId: mockCitizenPartyId, labels } },
+          options.url?.endsWith('/metadata')
+            ? { data: metadata }
+            : { data: { id: mockErrandId, reporterUserId: mockCitizenPartyId, lifecycle: 'DRAFT', labels } },
         ),
       );
     };

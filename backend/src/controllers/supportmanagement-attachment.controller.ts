@@ -17,7 +17,7 @@ import authMiddleware from '@/middlewares/auth.middleware';
 import { CreateErrandAttachmentDTO, ErrandAttachmentDTO, UpdateErrandAttachmentDTO } from '@/responses/supportmanagement-attachment.response';
 import ApiService from '@/services/api.service';
 import { attachmentIdFromLocation, resolveAttachmentPurpose } from '@/utils/attachment-purposes';
-import { assertErrandOwnedByUser, assertErrandReadableByUser } from '@/utils/errand-access';
+import { assertDraftOwnedByUser, assertErrandOwnedByUser, assertErrandReadableByUser } from '@/utils/errand-access';
 import { fetchMetadata } from '@/utils/fetch-metadata';
 import { fileUploadOptions } from '@/utils/file-upload-options';
 import { apiURL } from '@/utils/util';
@@ -74,6 +74,9 @@ export class SupportManagementAttachmentController {
     @UploadedFiles('files', { options: fileUploadOptions, required: false }) files: Express.Multer.File[],
     @Body() attachment: CreateErrandAttachmentDTO,
   ): Promise<{ message: string }> {
+    // TODO
+    // Ownership only: registration activates the errand before its pending bilagor are sent
+    // (DRAKEN-5075 moves activation last, after which this becomes a draft check too).
     await assertErrandOwnedByUser(this.apiService, this.apiBase, id, req);
     const purpose = attachment.category === undefined ? undefined : await this.resolvePurpose(attachment.category, req);
 
@@ -114,7 +117,7 @@ export class SupportManagementAttachmentController {
     @Param('attachmentId') attachmentId: string,
     @Body() attachment: UpdateErrandAttachmentDTO,
   ): Promise<{ message: string }> {
-    await assertErrandOwnedByUser(this.apiService, this.apiBase, id, req);
+    await assertDraftOwnedByUser(this.apiService, this.apiBase, id, req);
     const purpose = await this.resolvePurpose(attachment.category, req);
 
     await this.setPurpose(id, attachmentId, purpose, req);
@@ -143,7 +146,7 @@ export class SupportManagementAttachmentController {
     @Param('id') id: string,
     @Param('attachmentId') attachmentId: string,
   ): Promise<{ message: string }> {
-    await assertErrandOwnedByUser(this.apiService, this.apiBase, id, req);
+    await assertDraftOwnedByUser(this.apiService, this.apiBase, id, req);
 
     await this.apiService.delete(
       { baseURL: apiURL(this.apiBase), url: `${this.attachmentsUrl(id)}/${attachmentId}`, propagateClientError: true },

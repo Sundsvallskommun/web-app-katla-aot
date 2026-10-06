@@ -11,7 +11,7 @@ import { ErrandCountDTO, ErrandDTO, ErrandsQueryDTO, PageErrandDTO } from '@/res
 import { MetadataResponseDTO } from '@/responses/supportmanagement-metadata.response';
 import ApiService from '@/services/api.service';
 import { selectCategorizationSubtree, withCategorizationSubtree } from '@/utils/categorization-root';
-import { assertErrandOwnedByUser, belongsToOrganizations, requireOrganizationPartyIds } from '@/utils/errand-access';
+import { assertDraftOwnedByUser, belongsToOrganizations, requireOrganizationPartyIds } from '@/utils/errand-access';
 import { fetchMetadata } from '@/utils/fetch-metadata';
 import { assertLabelsOffered, labelsChanged } from '@/utils/internal-labels';
 import { completePrimaryStakeholders } from '@/utils/primary-stakeholder';
@@ -103,7 +103,7 @@ export class SupportManagementController {
   async updateErrand(@Req() req: RequestWithUser, @Param('id') id: string, @Body() errand: Partial<Errand>): Promise<Partial<Errand>> {
     if (!id.trim()) throw new HttpException(400, 'Errand id is required when updating an errand');
 
-    const storedErrand = await assertErrandOwnedByUser(this.apiService, this.apiBase, id, req);
+    const storedErrand = await assertDraftOwnedByUser(this.apiService, this.apiBase, id, req);
     if (errand.labels?.length && labelsChanged(errand.labels, storedErrand.labels)) {
       assertLabelsOffered(errand.labels, await this.fetchOfferedLabels(req));
     }

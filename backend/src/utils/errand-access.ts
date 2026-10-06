@@ -1,5 +1,5 @@
 import { MUNICIPALITY_ID, NAMESPACE } from '@/config';
-import { Errand, Stakeholder } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
+import { Errand, ErrandLifecycleEnum, Stakeholder } from '@/data-contracts/support-management-alkt-sprint/data-contracts';
 import { HttpException } from '@/exceptions/HttpException';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import ApiService from '@/services/api.service';
@@ -59,6 +59,20 @@ export async function assertErrandOwnedByUser(apiService: ApiService, apiBase: s
   // their own errand.
   if (errand?.reporterUserId?.toLowerCase() !== req.user.partyId.toLowerCase()) {
     throw new HttpException(403, 'Errand belongs to another user');
+  }
+
+  return errand;
+}
+
+/**
+ * Only a draft may be changed. An active errand is locked in the client, and the same lock here
+ * keeps a crafted request from reopening or editing a submitted errand.
+ */
+export async function assertDraftOwnedByUser(apiService: ApiService, apiBase: string, id: string, req: RequestWithUser): Promise<Partial<Errand>> {
+  const errand = await assertErrandOwnedByUser(apiService, apiBase, id, req);
+
+  if (errand.lifecycle !== ErrandLifecycleEnum.DRAFT) {
+    throw new HttpException(409, 'Errand is not a draft');
   }
 
   return errand;

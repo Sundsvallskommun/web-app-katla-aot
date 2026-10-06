@@ -35,9 +35,9 @@ const requestAs = (partyId: string, organizationPartyIds: string[] = [mockOrgani
     session: { representingBusinessChoices: organizationPartyIds.map(representing) },
   }) as never;
 
-const upstreamErrand = (reporterUserId: string, organizationPartyId: string) => {
+const upstreamErrand = (reporterUserId: string, organizationPartyId: string, lifecycle = 'DRAFT') => {
   get.mockResolvedValue({
-    data: { id: mockErrandId, reporterUserId, stakeholders: [{ role: 'PRIMARY', externalId: organizationPartyId }] },
+    data: { id: mockErrandId, reporterUserId, lifecycle, stakeholders: [{ role: 'PRIMARY', externalId: organizationPartyId }] },
   });
 };
 
@@ -48,7 +48,7 @@ const ATTACHMENTS_URL = `2281/test/errands/${mockErrandId}/attachments`;
 const upstreamErrandAndPurposes = (reporterUserId: string) => {
   get
     .mockResolvedValueOnce({
-      data: { id: mockErrandId, reporterUserId, stakeholders: [{ role: 'PRIMARY', externalId: mockOrganizationPartyId }] },
+      data: { id: mockErrandId, reporterUserId, lifecycle: 'DRAFT', stakeholders: [{ role: 'PRIMARY', externalId: mockOrganizationPartyId }] },
     })
     .mockResolvedValueOnce({
       data: {
@@ -120,6 +120,23 @@ describe('errand attachment access', () => {
     await expect(
       new SupportManagementAttachmentController().deleteAttachment(requestAs(mockCitizenPartyId), mockErrandId, 'attachment-id'),
     ).rejects.toMatchObject({ status: 403 });
+    expect(deleteRequest).not.toHaveBeenCalled();
+  });
+
+  it('still takes an upload for an active errand, since registration activates before sending', async () => {
+    upstreamErrand(mockCitizenPartyId, mockOrganizationPartyId, 'ACTIVE');
+
+    await new SupportManagementAttachmentController().createAttachment(requestAs(mockCitizenPartyId), mockErrandId, [pdf()], attachmentDto());
+
+    expect(post).toHaveBeenCalledTimes(1);
+  });
+
+  it('refuses to delete from an errand that is no longer a draft', async () => {
+    upstreamErrand(mockCitizenPartyId, mockOrganizationPartyId, 'ACTIVE');
+
+    await expect(
+      new SupportManagementAttachmentController().deleteAttachment(requestAs(mockCitizenPartyId), mockErrandId, 'attachment-id'),
+    ).rejects.toMatchObject({ status: 409 });
     expect(deleteRequest).not.toHaveBeenCalled();
   });
 
@@ -226,6 +243,17 @@ describe('errand attachment access', () => {
         category: 'FLOOR_PLAN',
       }),
     ).rejects.toMatchObject({ status: 403 });
+    expect(patch).not.toHaveBeenCalled();
+  });
+
+  it('refuses to retype an attachment on an errand that is no longer a draft', async () => {
+    upstreamErrand(mockCitizenPartyId, mockOrganizationPartyId, 'ACTIVE');
+
+    await expect(
+      new SupportManagementAttachmentController().updateAttachment(requestAs(mockCitizenPartyId), mockErrandId, 'attachment-id', {
+        category: 'FLOOR_PLAN',
+      }),
+    ).rejects.toMatchObject({ status: 409 });
     expect(patch).not.toHaveBeenCalled();
   });
 
