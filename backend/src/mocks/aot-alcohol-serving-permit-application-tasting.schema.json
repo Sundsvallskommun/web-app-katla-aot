@@ -20,36 +20,6 @@
         ],
         "title": "Är du firmatecknare?"
       },
-      "foretagsform": {
-        "type": "string",
-        "oneOf": [
-          {
-            "const": "AKTIEBOLAG",
-            "title": "Aktiebolag"
-          },
-          {
-            "const": "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-            "title": "Enskild firma (registrerad hos Skatteverket och Bolagsverket)"
-          },
-          {
-            "const": "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-            "title": "Enskild firma (registrerad endast hos Skatteverket)"
-          },
-          {
-            "const": "FORENING_STIFTELSE",
-            "title": "Förening/stiftelse"
-          },
-          {
-            "const": "HANDELSBOLAG",
-            "title": "Handelsbolag"
-          },
-          {
-            "const": "KOMMANDITBOLAG",
-            "title": "Kommanditbolag"
-          }
-        ],
-        "title": "Företagsform"
-      },
       "fakturaadressSammaSomForetaget": {
         "type": "string",
         "oneOf": [
@@ -122,7 +92,7 @@
         "oneOf": [
           {
             "const": "HAR_GODKANT_KUNSKAPSPROV",
-            "title": "Jag eller annan person som är ansvarig i företaget har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren"
+            "title": "Jag eller annan person som är ansvarig i företaget har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 5 åren"
           },
           {
             "const": "DRIVER_ANNAT_FORETAG_MED_TILLSTAND",
@@ -146,7 +116,7 @@
           }
         },
         "title": "Personnummer",
-        "description": "Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 3 åren."
+        "description": "Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 5 åren."
       },
       "organisationsnummer": {
         "type": "object",
@@ -212,72 +182,63 @@
           "type": "string",
           "oneOf": [
             {
-              "const": "RESTAURANG",
-              "title": "Restaurang"
+              "const": "PARTIHANDLARE",
+              "title": "Partihandlare"
             },
             {
-              "const": "NATTKLUBB_DANS",
-              "title": "Nattklubb/dans"
-            },
-            {
-              "const": "SPEL_OBS_KRAVER_TILLSTAND_FRAN",
-              "title": "Spel (OBS! Kräver tillstånd från Lotteriinspektionen)"
-            },
-            {
-              "const": "UNDERHALLNING",
-              "title": "Underhållning"
-            },
-            {
-              "const": "HOTELL",
-              "title": "Hotell"
-            },
-            {
-              "const": "CATERING_TILL_SLUTNA_SALLSKAP",
-              "title": "Catering till slutna sällskap"
-            },
-            {
-              "const": "EVENEMANG",
-              "title": "Evenemang"
-            },
-            {
-              "const": "PAUSSERVERING_ENDAST_STARKOL_VIN_CIDER",
-              "title": "Pausservering (endast starköl, vin, cider eller andra jästa alkoholdrycker)"
-            },
-            {
-              "const": "PROVSMAKNINGSSERVERING_AV_EGENTILLVERKADE_ALKOHOLDRYCKER_FRAN",
-              "title": "Provsmakningsservering av egentillverkade alkoholdrycker från råvaror som produceras på egen gård"
-            },
-            {
-              "const": "TRAFIKSERVERING_INRIKES_TRAFIK_PA_FARTYG",
-              "title": "Trafikservering (inrikes trafik på fartyg, luftfartyg eller järnvägståg)"
+              "const": "TILLVERKARE",
+              "title": "Tillverkare"
             }
           ]
         },
         "title": "Verksamhetens inriktning",
         "description": "Här ska du ange vilken inriktning du har med din verksamhet. Du ska också förtydliga din inriktning genom att skriva in ytterligare information om verksamheten nedan. Det är ett underlag för kommunens bedömning av din tillståndsansökan. När det gäller den alkoholpolitiska prövningen kontaktar kommunen även andra instanser för deras synpunkter på verksamheten."
       },
-      "harNi": {
+      "beskrivVerksamhetensInriktning": {
+        "type": "string",
+        "title": "Beskriv verksamhetens inriktning",
+        "description": "Här ska du med egna ord förtydliga inriktningen på din verksamhet.\n\nExempel på information som är viktig att ange är typ av restaurang, vilka öppettider som gäller, eventuella åldersgränser eller särskild \"profil\" på verksamheten (sportbar, live-musik etc). Ange även verksamhetens primära målgrupp."
+      },
+      "arrangeraMassa": {
+        "type": "string",
+        "oneOf": [
+          {
+            "const": "JA",
+            "title": "Ja"
+          },
+          {
+            "const": "NEJ",
+            "title": "Nej"
+          }
+        ],
+        "title": "Ska du arrangera en mässa?"
+      },
+      "alkoholdrycker": {
         "type": "array",
+        "minItems": 1,
         "uniqueItems": true,
         "items": {
           "type": "string",
           "oneOf": [
             {
-              "const": "RUMSSERVERING",
-              "title": "Rumsservering"
+              "const": "STARKOL",
+              "title": "Starköl"
             },
             {
-              "const": "MINIBAR",
-              "title": "Minibar"
+              "const": "VIN",
+              "title": "Vin"
+            },
+            {
+              "const": "SPRITDRYCKER",
+              "title": "Spritdrycker"
+            },
+            {
+              "const": "CIDER_ELLER_ANDRA_JASTA_ALKOHOLDRYCKER",
+              "title": "Cider eller andra jästa alkoholdrycker"
             }
           ]
         },
-        "title": "Har ni:"
-      },
-      "beskrivVerksamhetensInriktning": {
-        "type": "string",
-        "title": "Beskriv verksamhetens inriktning",
-        "description": "Här ska du med egna ord förtydliga inriktningen på din verksamhet.\n\nExempel på information som är viktig att ange är typ av restaurang, vilka öppettider som gäller, eventuella åldersgränser eller särskild \"profil\" på verksamheten (sportbar, live-musik etc). Ange även verksamhetens primära målgrupp."
+        "title": "Vilka alkoholdrycker ska provsmakas?"
       },
       "finansiering": {
         "type": "array",
@@ -424,98 +385,24 @@
         ],
         "title": "Serveringsställets besöksadress"
       },
-      "sittplatserILokalen": {
-        "type": "object",
-        "properties": {
-          "antalSittplatserInomhus": {
-            "type": "string",
-            "title": "Antal sittplatser inomhus"
-          },
-          "antalSittplatserPaEventuellUteserver": {
-            "type": "string",
-            "title": "Antal sittplatser på eventuell uteservering"
-          }
-        },
-        "required": [
-          "antalSittplatserInomhus"
-        ],
-        "title": "Sittplatser i lokalen"
-      },
-      "maximaltAntalPersonerILokalen": {
-        "type": "object",
-        "properties": {
-          "antalPersoner": {
-            "type": "string",
-            "title": "Antal personer"
-          }
-        },
-        "required": [
-          "antalPersoner"
-        ],
-        "title": "Maximalt antal personer som kommer att vistas i lokalen samtidigt (inklusive personal)"
-      },
-      "harDuKassaregister": {
+      "ordningOchNykterhet": {
         "type": "string",
-        "oneOf": [
-          {
-            "const": "JA",
-            "title": "Ja"
-          },
-          {
-            "const": "NEJ",
-            "title": "Nej"
-          }
-        ],
-        "title": "Har du kassaregister?"
-      },
-      "angeRegistreringskod": {
-        "type": "object",
-        "properties": {
-          "registreringskod": {
-            "type": "string",
-            "title": "Registreringskod"
-          }
-        },
-        "title": "Ange registreringskod"
+        "title": "Hur ska ordning och nykterhet säkerställas?"
       }
     },
     "required": [
       "arDuFirmatecknare",
-      "foretagsform",
+      "verksamhetsbeskrivningsval",
       "fakturaadressSammaSomForetaget",
-      "harDuKassaregister",
       "kunskapOmAlkohollagen",
       "finansiering",
       "verksamhetensInriktning",
+      "arrangeraMassa",
+      "alkoholdrycker",
       "besoksadressSammaSomArendeagare",
-      "sittplatserILokalen",
-      "maximaltAntalPersonerILokalen"
+      "ordningOchNykterhet"
     ],
     "allOf": [
-      {
-        "if": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        },
-        "then": {
-          "required": [
-            "verksamhetsbeskrivningsval"
-          ]
-        }
-      },
       {
         "if": {
           "properties": {
@@ -615,25 +502,6 @@
         "then": {
           "properties": {
             "personerTillKunskapsprovet": true
-          }
-        }
-      },
-      {
-        "if": {
-          "properties": {
-            "verksamhetensInriktning": {
-              "contains": {
-                "const": "HOTELL"
-              }
-            }
-          },
-          "required": [
-            "verksamhetensInriktning"
-          ]
-        },
-        "then": {
-          "properties": {
-            "harNi": true
           }
         }
       },
@@ -976,25 +844,6 @@
       {
         "if": {
           "properties": {
-            "verksamhetensInriktning": {
-              "contains": {
-                "const": "HOTELL"
-              }
-            }
-          },
-          "required": [
-            "verksamhetensInriktning"
-          ]
-        },
-        "then": {
-          "properties": {
-            "harNi": true
-          }
-        }
-      },
-      {
-        "if": {
-          "properties": {
             "finansiering": {
               "contains": {
                 "const": "EGNA_MEDEL"
@@ -1108,23 +957,6 @@
             "besoksadress"
           ]
         }
-      },
-      {
-        "if": {
-          "properties": {
-            "harDuKassaregister": {
-              "const": "JA"
-            }
-          },
-          "required": [
-            "harDuKassaregister"
-          ]
-        },
-        "then": {
-          "properties": {
-            "angeRegistreringskod": true
-          }
-        }
       }
     ],
     "x-attachments": [
@@ -1145,65 +977,17 @@
       {
         "key": "CERTIFICATE_OF_REGISTRATION",
         "label": "Registreringsbevis från Bolagsverket",
-        "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        }
+        "description": "Har du inte något registreringsbevis tillgängligt så kan du hämta ett på verksamt.se."
       },
       {
         "key": "OWNERSHIP_INFORMATION",
         "label": "Uppgifter om ägarförhållanden",
-        "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        }
+        "description": "Handlingar som styrker vilka fysiska personer som finns bakom organisationsnumret. Aktiebolag: dokumentation som visar aktiefördelningen, exempelvis en aktiebok. Handelsbolag och kommanditbolag: dokumentation som visar ägarfördelningen, exempelvis ett bolagsavtal. Förening eller stiftelse: stadgar eller protokoll från konstituerande möte som visar vilka som är firmatecknare. Koncern: information om ägarförhållanden för koncernbolaget utöver handlingen för bolagsformen."
       },
       {
         "key": "TAX_AGENCY_EXTRACT",
         "label": "Registerutdrag från Skatteverket",
-        "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se.",
-        "requiredWhen": {
-          "properties": {
-            "foretagsform": {
-              "enum": [
-                "AKTIEBOLAG",
-                "ENSKILD_FIRMA_REGISTRERAD_HOS_SKATTEVERKET",
-                "ENSKILD_FIRMA_REGISTRERAD_ENDAST_HOS",
-                "FORENING_STIFTELSE",
-                "HANDELSBOLAG",
-                "KOMMANDITBOLAG"
-              ]
-            }
-          },
-          "required": [
-            "foretagsform"
-          ]
-        }
+        "description": "Av registerutdraget framgår om du eller ditt företag är godkänt för F-skatt eller FA-skatt, är momsregistrerat och registrerat som arbetsgivare. Du hämtar ett registerutdrag på verksamt.se."
       },
       {
         "key": "BUSINESS_DESCRIPTION",
@@ -1275,13 +1059,29 @@
       },
       {
         "key": "FLOOR_PLAN",
-        "label": "Planritning",
-        "description": "Planritningen ska visa vilken del av lokalen som är serveringsyta, inklusive uteservering och samtliga våningsplan där alkohol serveras. Serveringsytan ska vara överblickbar."
+        "label": "Ritning över serveringsstället",
+        "description": "Planritningen ska visa vilken del av lokalen som är serveringsyta, inklusive uteservering och samtliga våningsplan där alkohol serveras. Serveringsytan ska vara överblickbar.",
+        "requiredWhen": {}
       },
       {
         "key": "PREMISES_AGREEMENT",
-        "label": "Avtal gällande lokal och mark",
-        "description": "Hyreskontrakt, arrendeavtal eller köpeavtal (inklusive bilagor) för lokalen som verksamheten ska bedrivas i, inklusive platsen för eventuell uteservering."
+        "label": "Hyresavtal eller markupplåtelse",
+        "description": "Hyreskontrakt, arrendeavtal eller köpeavtal (inklusive bilagor) för lokalen som verksamheten ska bedrivas i, inklusive platsen för eventuell uteservering.",
+        "requiredWhen": {}
+      },
+      {
+        "key": "EXHIBITORS_LIST",
+        "label": "Mässdeltagare",
+        "requiredWhen": {
+          "properties": {
+            "arrangeraMassa": {
+              "const": "JA"
+            }
+          },
+          "required": [
+            "arrangeraMassa"
+          ]
+        }
       },
       {
         "key": "FIRE_SAFETY_DOCUMENTATION",

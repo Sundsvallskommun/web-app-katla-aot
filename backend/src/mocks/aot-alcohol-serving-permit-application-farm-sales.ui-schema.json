@@ -2,23 +2,42 @@
   "value": {
     "ui:order": [
       "arDuFirmatecknare",
-      "foretagsform",
       "fakturaadressSammaSomForetaget",
       "fakturamottagare",
       "fakturareferens",
       "verksamhetsbeskrivningsval",
       "verksamhetsbeskrivning",
-      "forsaljningsstalle",
+      "serveringsstalletsNamn",
+      "kontaktuppgifterTillServeringsstallet",
       "besoksadress",
       "alkoholdrycker",
+      "literStarkol",
+      "literVin",
+      "literSpritdrycker",
+      "literCider",
+      "produktionenStartade",
+      "beroendeTillAnnanTillverkare",
+      "beskrivBeroende",
+      "produktionsbeskrivningsval",
+      "produktionsbeskrivning",
       "forsaljningsperiod",
       "angePeriodForForsaljning",
       "forsaljningstider",
       "besoksarrangemang",
       "beskrivBesoksarrangemanget",
       "beskrivForsaljningsplats",
-      "harDuKassaregister",
-      "angeRegistreringskod"
+      "kunskapOmAlkohollagen",
+      "personnummer",
+      "organisationsnummer",
+      "anmalPersonerTillKunskapsprovet",
+      "personerTillKunskapsprovet",
+      "serveringsansvarigPersonal",
+      "finansiering",
+      "egnaMedel",
+      "banklan",
+      "privatlan",
+      "annanFinansiering",
+      "ovrigaUpplysningarFinansiering"
     ],
     "ui:sections": [
       {
@@ -28,7 +47,6 @@
         "defaultOpen": true,
         "fields": [
           "arDuFirmatecknare",
-          "foretagsform",
           "fakturaadressSammaSomForetaget",
           "fakturamottagare",
           "fakturareferens",
@@ -42,24 +60,41 @@
         "icon": "file-text",
         "defaultOpen": true,
         "fields": [
-          "forsaljningsstalle",
+          "serveringsstalletsNamn",
+          "kontaktuppgifterTillServeringsstallet",
           "besoksadress",
           "alkoholdrycker",
+          "literStarkol",
+          "literVin",
+          "literSpritdrycker",
+          "literCider",
+          "produktionenStartade",
+          "beroendeTillAnnanTillverkare",
+          "beskrivBeroende",
+          "produktionsbeskrivningsval",
+          "produktionsbeskrivning",
           "forsaljningsperiod",
           "angePeriodForForsaljning",
           "forsaljningstider",
           "besoksarrangemang",
           "beskrivBesoksarrangemanget",
           "beskrivForsaljningsplats",
-          "harDuKassaregister",
-          "angeRegistreringskod"
+          "kunskapOmAlkohollagen",
+          "personnummer",
+          "organisationsnummer",
+          "anmalPersonerTillKunskapsprovet",
+          "personerTillKunskapsprovet",
+          "serveringsansvarigPersonal",
+          "finansiering",
+          "egnaMedel",
+          "banklan",
+          "privatlan",
+          "annanFinansiering",
+          "ovrigaUpplysningarFinansiering"
         ]
       }
     ],
     "arDuFirmatecknare": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "foretagsform": {
       "ui:widget": "RadiobuttonWidget"
     },
     "fakturaadressSammaSomForetaget": {
@@ -115,17 +150,16 @@
         "className": "w-full min-h-[14rem]"
       }
     },
-    "forsaljningsstalle": {
+    "serveringsstalletsNamn": {
+      "ui:widget": "TextWidget"
+    },
+    "kontaktuppgifterTillServeringsstallet": {
       "ui:order": [
-        "forsaljningsstalletsNamn",
         "telefonnummer",
         "ePostadress"
       ],
       "ui:options": {
         "showObjectFieldset": true
-      },
-      "forsaljningsstalletsNamn": {
-        "ui:widget": "TextWidget"
       },
       "telefonnummer": {
         "ui:widget": "TextWidget"
@@ -241,18 +275,228 @@
         "className": "w-full min-h-[14rem]"
       }
     },
-    "harDuKassaregister": {
+    "literStarkol": {
+      "ui:widget": "TextWidget"
+    },
+    "literVin": {
+      "ui:widget": "TextWidget"
+    },
+    "literSpritdrycker": {
+      "ui:widget": "TextWidget"
+    },
+    "literCider": {
+      "ui:widget": "TextWidget"
+    },
+    "produktionenStartade": {
+      "ui:widget": "DateWidget"
+    },
+    "beroendeTillAnnanTillverkare": {
       "ui:widget": "RadiobuttonWidget"
     },
-    "angeRegistreringskod": {
+    "beskrivBeroende": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "produktionsbeskrivningsval": {
+      "ui:widget": "RadiobuttonWidget"
+    },
+    "produktionsbeskrivning": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
+      }
+    },
+    "kunskapOmAlkohollagen": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>[TEXT SAKNAS: anpassas till gårdsförsäljning] För att få ett serveringstillstånd behöver du eller annan person som är ansvarig i företaget ha kunskap om ansvarsfull alkoholservering och alkohollagen. Denna kunskap kan du visa på flera sätt.</p>"
+    },
+    "personnummer": {
       "ui:order": [
-        "registreringskod"
+        "personnummer"
       ],
       "ui:options": {
         "showObjectFieldset": true
       },
-      "registreringskod": {
-        "ui:widget": "TextWidget"
+      "personnummer": {
+        "ui:widget": "TextWidget",
+        "ui:options": {
+          "hideLabel": true
+        }
+      },
+      "ui:description": "<p>Ange personnummer på den person i företaget som har genomfört och fått godkänt på Folkhälsomyndighetens kunskapsprov under de senaste 5 åren.</p>"
+    },
+    "organisationsnummer": {
+      "ui:order": [
+        "organisationsnummer"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "organisationsnummer": {
+        "ui:widget": "TextWidget",
+        "ui:options": {
+          "hideLabel": true
+        }
+      },
+      "ui:description": "<p>[TEXT SAKNAS: anpassas till gårdsförsäljning] Vilket företag med gällande serveringstillstånd driver du eller annan person som är ansvarig i företaget idag?<br />\nOm du eller annan företrädare för organisationen har ett serveringstillstånd idag som minst motsvarar den aktuella ansökan, och det inte finns skäl att ifrågasätta kunskaperna, kan det vara så att kunskaperna inte behöver styrkas med ett kunskapsprov.</p>"
+    },
+    "anmalPersonerTillKunskapsprovet": {
+      "ui:widget": "RadiobuttonWidget",
+      "ui:description": "<p>[TEXT SAKNAS: anpassas till gårdsförsäljning] Om ditt ärende gäller en ansökan om stadigvarande serveringstillstånd så kan inte tillståndet beviljas innan minst en av de personer som du uppger här har genomfört och fått godkänt på kunskapsprovet.</p>"
+    },
+    "personerTillKunskapsprovet": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "fornamn",
+          "efternamn",
+          "personnummer",
+          "telefonnummer",
+          "ePostadress"
+        ],
+        "fornamn": {
+          "ui:widget": "TextWidget"
+        },
+        "efternamn": {
+          "ui:widget": "TextWidget"
+        },
+        "personnummer": {
+          "ui:widget": "TextWidget"
+        },
+        "telefonnummer": {
+          "ui:widget": "TextWidget"
+        },
+        "ePostadress": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "serveringsansvarigPersonal": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "fornamn",
+          "efternamn",
+          "personnummer"
+        ],
+        "fornamn": {
+          "ui:widget": "TextWidget"
+        },
+        "efternamn": {
+          "ui:widget": "TextWidget"
+        },
+        "personnummer": {
+          "ui:widget": "TextWidget"
+        }
+      },
+      "ui:description": "<p>[TEXT SAKNAS: anpassas till gårdsförsäljning] Under öppettider måste det alltid finnas en serveringsansvarig person på plats i verksamheten. Om inte någon av företagets företrädare är på plats måste en annan utsedd och anmäld serveringsansvarig vara på plats. Nedan anger du namn och personnummer till den person eller de personer som är ansvariga för servering av alkohol. En person som är serveringsansvarig måste vara <u>minst 20 år</u>.<br />\nHar du inte anställt personal ännu kan du fylla i serveringsansvarig personal vid ett senare tillfälle.</p>"
+    },
+    "finansiering": {
+      "ui:widget": "checkboxes",
+      "ui:options": {
+        "multiple": true,
+        "className": "w-full max-w-[48rem]"
+      },
+      "ui:description": "<p>För att så långt det är möjligt säkerställa att restaurangbranschens präglas av sund konkurrens på lika villkor prövas finansieringen av verksamheten när du ansöker om serveringstillstånd. Du måste därför visa hur köpet och investeringar i verksamheten är finansierade samt hur första årets drift av verksamheten är finansierad. Verksamheten kan till exempel vara finansierad med banklån eller privatlån (lån från privatpersoner) och egna sparade medel. Du visar hur verksamheten är finansierad genom att bifoga lånehandlingar från långivaren eller genom kontoutdrag som visar att du sparat ihop till de pengar som du finansierar verksamheten med.</p>"
+    },
+    "egnaMedel": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "bank",
+          "kontonummer",
+          "beloppKronor"
+        ],
+        "bank": {
+          "ui:widget": "TextWidget"
+        },
+        "kontonummer": {
+          "ui:widget": "TextWidget"
+        },
+        "beloppKronor": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "banklan": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "langivare",
+          "beloppKronor"
+        ],
+        "langivare": {
+          "ui:widget": "TextWidget"
+        },
+        "beloppKronor": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "privatlan": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "langivare",
+          "beloppKronor"
+        ],
+        "langivare": {
+          "ui:widget": "TextWidget"
+        },
+        "beloppKronor": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "annanFinansiering": {
+      "ui:options": {
+        "addable": true,
+        "orderable": false,
+        "addButtonLabel": "Lägg till"
+      },
+      "items": {
+        "ui:order": [
+          "lanetyp",
+          "langivare",
+          "beloppKronor"
+        ],
+        "lanetyp": {
+          "ui:widget": "TextWidget"
+        },
+        "langivare": {
+          "ui:widget": "TextWidget"
+        },
+        "beloppKronor": {
+          "ui:widget": "TextWidget"
+        }
+      }
+    },
+    "ovrigaUpplysningarFinansiering": {
+      "ui:widget": "TexteditorWidget",
+      "ui:options": {
+        "className": "w-full min-h-[14rem]"
       }
     }
   },

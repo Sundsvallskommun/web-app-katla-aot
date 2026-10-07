@@ -2,7 +2,6 @@
   "value": {
     "ui:order": [
       "arDuFirmatecknare",
-      "foretagsform",
       "fakturaadressSammaSomForetaget",
       "fakturamottagare",
       "fakturareferens",
@@ -11,9 +10,10 @@
       "tidsperiodForForsaljningen",
       "startdatumForsaljning",
       "periodTidsbegransadForsaljning",
-      "forsaljningsstallet",
+      "serveringsstalletsNamn",
       "besoksadressSammaSomArendeagare",
       "besoksadress",
+      "kontaktuppgifterTillServeringsstallet",
       "bedriverAvenDistansforsaljning",
       "hemsida",
       "omfattarSarskiltFarligaProdukter",
@@ -33,7 +33,6 @@
         "defaultOpen": true,
         "fields": [
           "arDuFirmatecknare",
-          "foretagsform",
           "fakturaadressSammaSomForetaget",
           "fakturamottagare",
           "fakturareferens",
@@ -50,9 +49,10 @@
           "tidsperiodForForsaljningen",
           "startdatumForsaljning",
           "periodTidsbegransadForsaljning",
-          "forsaljningsstallet",
+          "serveringsstalletsNamn",
           "besoksadressSammaSomArendeagare",
           "besoksadress",
+          "kontaktuppgifterTillServeringsstallet",
           "bedriverAvenDistansforsaljning",
           "hemsida",
           "omfattarSarskiltFarligaProdukter",
@@ -67,9 +67,6 @@
       }
     ],
     "arDuFirmatecknare": {
-      "ui:widget": "RadiobuttonWidget"
-    },
-    "foretagsform": {
       "ui:widget": "RadiobuttonWidget"
     },
     "fakturaadressSammaSomForetaget": {
@@ -158,16 +155,8 @@
         }
       ]
     },
-    "forsaljningsstallet": {
-      "ui:order": [
-        "forsaljningsstalletsNamn"
-      ],
-      "ui:options": {
-        "showObjectFieldset": true
-      },
-      "forsaljningsstalletsNamn": {
-        "ui:widget": "TextWidget"
-      }
+    "serveringsstalletsNamn": {
+      "ui:widget": "TextWidget"
     },
     "besoksadressSammaSomArendeagare": {
       "ui:widget": "RadiobuttonWidget"
@@ -176,9 +165,7 @@
       "ui:order": [
         "gatuadress",
         "postnummer",
-        "postort",
-        "telefonnummer",
-        "ePost"
+        "postort"
       ],
       "ui:options": {
         "showObjectFieldset": true
@@ -192,12 +179,6 @@
       "postort": {
         "ui:widget": "TextWidget"
       },
-      "telefonnummer": {
-        "ui:widget": "TextWidget"
-      },
-      "ePost": {
-        "ui:widget": "TextWidget"
-      },
       "ui:rows": [
         {
           "fields": [
@@ -208,23 +189,27 @@
         }
       ]
     },
+    "kontaktuppgifterTillServeringsstallet": {
+      "ui:order": [
+        "telefonnummer",
+        "ePostadress"
+      ],
+      "ui:options": {
+        "showObjectFieldset": true
+      },
+      "telefonnummer": {
+        "ui:widget": "TextWidget"
+      },
+      "ePostadress": {
+        "ui:widget": "TextWidget"
+      }
+    },
     "bedriverAvenDistansforsaljning": {
       "ui:widget": "RadiobuttonWidget",
       "ui:description": "<p>Distansförsäljning är försäljning av varor via postorder, telefon eller internet där leverantören ansvarar för leveransen av varorna.</p>"
     },
     "hemsida": {
-      "ui:order": [
-        "hemsida"
-      ],
-      "ui:options": {
-        "showObjectFieldset": true
-      },
-      "hemsida": {
-        "ui:widget": "TextWidget",
-        "ui:options": {
-          "hideLabel": true
-        }
-      }
+      "ui:widget": "TextWidget"
     },
     "omfattarSarskiltFarligaProdukter": {
       "ui:widget": "RadiobuttonWidget"
