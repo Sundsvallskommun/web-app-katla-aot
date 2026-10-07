@@ -237,7 +237,7 @@ describe('ErrandOwner', () => {
     });
     expect(queryCy('stakeholder-name')).toHaveTextContent('Acme Restaurang AB');
     expect(queryCy('stakeholder-organizationNumber')).toHaveTextContent(ACME.organizationNumber);
-    expect(queryCy('stakeholder-role')).toHaveTextContent('errand-information:owner.title');
+    expect(queryCy('stakeholder-role')).toHaveTextContent('errand-information:owner.role_label');
     // An organisation has no person contact details to show.
     expect(queryCy('stakeholder-email')).toBeNull();
   });

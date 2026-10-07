@@ -49,7 +49,7 @@ test.describe('Language switching', () => {
     test.use({ viewport: { width: 390, height: 844 } });
 
     test('changes language from the registration header without leaving the wizard', async ({ page }) => {
-      // Step 1 is "Om ärendet", which the wizard will not leave uncategorized.
+      // Step 1 is the categorization step, which the wizard will not leave uncategorized.
       await selectCategorization(page);
       await page.getByRole('button', { name: 'Nästa' }).click();
       // Only the position matters here; the total follows the wizard's step list.

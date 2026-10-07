@@ -137,7 +137,7 @@ export const ErrandOwnerContent: React.FC = () => {
                 stakeholder={owner}
                 roles={[PRIMARY_STAKEHOLDER_ROLE]}
                 organizationNumber={organizationNumber}
-                roleLabel={t('errand-information:owner.title')}
+                roleLabel={t('errand-information:owner.role_label')}
                 headerActions={
                   <>
                     <Button
