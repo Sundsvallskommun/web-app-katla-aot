@@ -3,3 +3,5 @@
 .playwright-mcp
 # dependencies
 /node_modules
+# pm2 process definitions are machine-local, like .env files
+ecosystem.config.js

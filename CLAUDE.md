@@ -67,7 +67,7 @@ yarn e2e -g "namn på scenariot"         # Playwright: filter på testnamn
 - **Next.js 16** with App Router, React 19, TypeScript
 - **Routing**: `src/app/[locale]/` — locale-based dynamic routing (`sv` default, `en` finns)
 - **Startsida**: `/` listar appens e-tjänster (`src/components/start/`). Varje tjänst äger sitt eget prefix: AoT ligger under `/alkoholtillstand` (registreringsformuläret) och `/alkoholtillstand/arende/[errandnumber]/...` (befintligt ärende), se `src/constants/routes.ts`.
-- **Auth**: `src/proxy.ts` är Next-middlewaren. Den slår upp skyddade rutter (utan språkprefix, via `pathWithoutLocale`), anropar backendens `/me` med sessionskakan och redirectar till `/login?path=…` vid 401. Klientsidans motsvarighet ligger i `handleError` i `src/services/api-service.ts`.
+- **Auth**: `src/proxy.ts` är Next-middlewaren. Den slår upp skyddade rutter (utan språkprefix, via `pathWithoutLocale`), anropar backendens `/me` med sessionskakan och redirectar till `/login?path=…` vid 401. Serverside-anrop (middlewaren och `/api/health/up`) går till `API_URL_INTERNAL` om den är satt, annars `NEXT_PUBLIC_API_URL` — sätt den till backendens lokala adress när bägge kör på samma värd, så slipper Node lita på proxyns certifikat. Klientsidans motsvarighet ligger i `handleError` i `src/services/api-service.ts`.
 - **API layer**: alla anrop går genom `apiService` i `src/services/api-service.ts` (axios, `withCredentials`, central 401-hantering). Domänservices i `src/services/*` bygger ovanpå den.
 - **State**: Zustand stores in `src/stores/` (persisted to localStorage/sessionStorage)
 - **Forms**: React Hook Form + Yup validation; JSON Schema forms via `@rjsf/core`
