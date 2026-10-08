@@ -24,7 +24,7 @@ test.describe('Language switching', () => {
   test.beforeEach(async ({ appUrl, page }) => {
     await page.route('**/supportmanagement/errand/create', jsonRoute(mockErrand));
     await page.route('**/supportmanagement/metadata', jsonRoute(mockMetadata));
-    await page.goto(appUrl('/arende/registrera'));
+    await page.goto(appUrl('/alkoholtillstand'));
   });
 
   test('keeps the entered registration form when the language changes', async ({ page }) => {
@@ -38,7 +38,7 @@ test.describe('Language switching', () => {
 
     await switchLanguageTo(page, 'English');
 
-    await expect(page).toHaveURL(/\/en\/arende\/registrera$/);
+    await expect(page).toHaveURL(/\/en\/alkoholtillstand$/);
 
     // Switching language remounts the whole errand tree. Without the handover the user faces an
     // empty form, and changing language costs them a fresh start.
@@ -57,7 +57,7 @@ test.describe('Language switching', () => {
 
       await switchLanguageTo(page, 'English');
 
-      await expect(page).toHaveURL(/\/en\/arende\/registrera$/);
+      await expect(page).toHaveURL(/\/en\/alkoholtillstand$/);
 
       // Still in the wizard, on the same step: switching language must not force the user out of
       // registration.

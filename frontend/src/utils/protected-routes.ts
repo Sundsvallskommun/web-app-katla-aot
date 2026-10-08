@@ -8,7 +8,7 @@ export const parseProtectedRoutes = (routes: string | undefined): string[] =>
 
 export const protectedRoutes = parseProtectedRoutes(process.env.NEXT_PUBLIC_PROTECTED_ROUTES);
 
-/** Prefix match, so /arende covers /arende/AOT-1/grundinformation. Takes a path from routePath. */
+/** Prefix match, so /alkoholtillstand covers its errand pages. Takes a path from routePath. */
 export const isProtectedRoute = (path: string, routes: string[] = protectedRoutes): boolean =>
   routes.some((route) => path === route || path.startsWith(`${route}/`));
 

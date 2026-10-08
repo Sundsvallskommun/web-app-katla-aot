@@ -11,7 +11,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isProduction } from 'src/config/appconfig';
-import { REGISTER_ERRAND_PATH } from 'src/constants/routes';
+import { ALCOHOL_PERMIT_SERVICE_PATH } from 'src/constants/routes';
 
 // Turn on/off automatic login
 const autoLogin = false;
@@ -42,7 +42,7 @@ export const LoginContent: React.FC = () => {
     const path =
       nonLoginPath ? nonLoginPath
       : nonLoginSearch ? nonLoginSearch
-      : `${process.env.NEXT_PUBLIC_BASE_PATH}${REGISTER_ERRAND_PATH}`;
+      : `${process.env.NEXT_PUBLIC_BASE_PATH}${ALCOHOL_PERMIT_SERVICE_PATH}`;
 
     const url = new URL(apiURL('/saml/login'));
     const queries = new URLSearchParams({

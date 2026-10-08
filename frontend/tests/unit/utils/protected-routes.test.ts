@@ -1,21 +1,21 @@
 import { isProtectedRoute, parseProtectedRoutes, routePath } from '@utils/protected-routes';
 import { describe, expect, it } from 'vitest';
 
-const routes = parseProtectedRoutes('/oversikt,/arende');
+const routes = parseProtectedRoutes('/oversikt,/alkoholtillstand');
 
 describe('parseProtectedRoutes', () => {
   it('drops the empty entries an unset env var would otherwise produce', () => {
     expect(parseProtectedRoutes('')).toEqual([]);
     expect(parseProtectedRoutes(undefined)).toEqual([]);
-    expect(parseProtectedRoutes(' /oversikt , /arende ,')).toEqual(['/oversikt', '/arende']);
+    expect(parseProtectedRoutes(' /oversikt , /alkoholtillstand ,')).toEqual(['/oversikt', '/alkoholtillstand']);
   });
 });
 
 describe('isProtectedRoute', () => {
   it('guards the listed pages and everything nested under them', () => {
     expect(isProtectedRoute('/oversikt', routes)).toBe(true);
-    expect(isProtectedRoute('/arende/registrera', routes)).toBe(true);
-    expect(isProtectedRoute('/arende/AOT-26090002/grundinformation', routes)).toBe(true);
+    expect(isProtectedRoute('/alkoholtillstand', routes)).toBe(true);
+    expect(isProtectedRoute('/alkoholtillstand/arende/AOT-26090002/grundinformation', routes)).toBe(true);
   });
 
   it('leaves the public pages alone', () => {

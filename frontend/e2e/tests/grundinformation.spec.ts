@@ -24,7 +24,7 @@ const longContact = {
   phoneNumbers: [MOCK_COUNTRY_CODE_PHONE_NUMBER],
 };
 
-const errandPath = `/arende/${mockErrand.errandNumber}/grundinformation`;
+const errandPath = `/alkoholtillstand/arende/${mockErrand.errandNumber}/grundinformation`;
 
 // boundingBox() returns null for elements that are not visible. Without this check an
 // unmeasurable element would quietly reduce the comparisons below to 0 <= 0 instead of failing.

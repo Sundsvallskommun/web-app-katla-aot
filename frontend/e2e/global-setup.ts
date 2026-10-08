@@ -1,6 +1,6 @@
 import type { FullConfig } from '@playwright/test';
 
-const PROBE_PATH = '/arende/registrera';
+const PROBE_PATH = '/alkoholtillstand';
 const PROBE_TIMEOUT_MS = 60_000;
 
 const PROTECTED_TARGET_MESSAGE = `The target server redirects ${PROBE_PATH} to /login, so every spec would fail on missing elements.

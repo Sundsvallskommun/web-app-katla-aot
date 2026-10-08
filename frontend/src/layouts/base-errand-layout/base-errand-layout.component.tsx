@@ -10,12 +10,13 @@ import { useUserStore } from '@services/user-service/user-service';
 import { Divider, Link, Logo, PopupMenu } from '@sk-web-gui/react';
 import { storeErrandFormHandover } from '@utils/errand-form-handover';
 import { Menu } from 'lucide-react';
+import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
-import { REGISTER_ERRAND_PATH } from 'src/constants/routes';
+import { ALCOHOL_PERMIT_SERVICE_PATH } from 'src/constants/routes';
 import { useWizardStore } from 'src/stores/wizard-store';
 
 interface BaseErrandLayoutProps {
@@ -49,15 +50,9 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
   // A JSX variable rather than a component created during render (static-components).
   const singleErrandTitle = (
     <div className="flex items-center gap-12 md:gap-24 py-8 md:py-10">
-      {registerNewErrand ?
+      <NextLink href="/" title={t('layout:controls.go_to_start', { app: process.env.NEXT_PUBLIC_APP_NAME })}>
         <Logo variant="symbol" className="h-32 md:h-40" />
-      : <a
-          href={`${process.env.NEXT_PUBLIC_BASE_PATH}${REGISTER_ERRAND_PATH}`}
-          title={t('layout:controls.go_to_start', { app: process.env.NEXT_PUBLIC_APP_NAME })}
-        >
-          <Logo variant="symbol" className="h-32 md:h-40" />
-        </a>
-      }
+      </NextLink>
       <span className="text-large">
         {registerNewErrand ?
           <strong className="text-large ml-8 font-bold">{appConfig.applicationName}</strong>
@@ -95,7 +90,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
                   <>
                     <Divider orientation="vertical" className="mx-24" />
                     <LinkButton
-                      href={REGISTER_ERRAND_PATH}
+                      href={ALCOHOL_PERMIT_SERVICE_PATH}
                       data-cy="register-new-errand-button"
                       color="primary"
                       variant="tertiary"
@@ -122,7 +117,7 @@ export default function BaseErrandLayout({ children, registerNewErrand }: BaseEr
                         <PopupMenu.Items>
                           <PopupMenu.Group>
                             <PopupMenu.Item>
-                              <Link href={`${process.env.NEXT_PUBLIC_BASE_PATH}${REGISTER_ERRAND_PATH}`}>
+                              <Link href={`${process.env.NEXT_PUBLIC_BASE_PATH}${ALCOHOL_PERMIT_SERVICE_PATH}`}>
                                 {t('filtering:new_errand')}
                               </Link>
                             </PopupMenu.Item>

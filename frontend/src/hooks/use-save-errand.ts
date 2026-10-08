@@ -14,11 +14,10 @@ import { prepareErrandForApi } from '@utils/prepare-errand';
 import { useRouter } from 'next/navigation';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { errandPath } from 'src/constants/routes';
 import { useAttachmentUpload } from 'src/hooks/use-attachment-upload';
 import { useReportValidationError } from 'src/hooks/use-report-validation-error';
 import { useMetadataStore } from 'src/stores/metadata-store';
-
-const errandPath = (errand: ErrandDTO): string => `/arende/${errand.errandNumber}/grundinformation`;
 
 /**
  * Saving is the same sequence for the desktop button group and the wizard: check the
@@ -70,12 +69,12 @@ export const useSaveErrand = () => {
     if (!(await validate('draft'))) return;
 
     const errand = await save('DRAFT', t('errand-information:save_message.draft'));
-    if (errand && navigate) router.push(errandPath(errand));
+    if (errand && navigate) router.push(errandPath(errand.errandNumber));
   };
 
   const register = async ({ logout = false }: { logout?: boolean } = {}): Promise<void> => {
     const errand = await save('ACTIVE', t('errand-information:save_message.register'));
-    if (errand) router.push(logout ? '/logout' : errandPath(errand));
+    if (errand) router.push(logout ? '/logout' : errandPath(errand.errandNumber));
   };
 
   return { validate, saveDraft, register };
