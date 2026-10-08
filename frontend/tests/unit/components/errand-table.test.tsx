@@ -55,7 +55,7 @@ describe('ErrandTable', () => {
     );
 
     const link = screen.getByRole('link', { name: 'Öppna ärende AIA-25120019' });
-    expect(link).toHaveAttribute('href', '/arende/AIA-25120019/grundinformation');
+    expect(link).toHaveAttribute('href', '/alkoholtillstand/arende/AIA-25120019/grundinformation');
     expect(link.closest('tr')).not.toHaveAttribute('tabindex');
     expect(link.closest('tbody')).toBe(container.querySelector('table > tbody'));
   });

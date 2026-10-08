@@ -8,7 +8,7 @@ import { ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
-import { REGISTER_ERRAND_PATH } from 'src/constants/routes';
+import { ALCOHOL_PERMIT_SERVICE_PATH } from 'src/constants/routes';
 
 export const ErrandFilter: React.FC = () => {
   const { t } = useTranslation();
@@ -34,7 +34,12 @@ export const ErrandFilter: React.FC = () => {
             {show ? t('filtering:hide_filter') : t('filtering:show_filter')}
           </Button>
         )}
-        <LinkButton href={REGISTER_ERRAND_PATH} data-cy="register-new-errand-button" color="vattjom" variant="primary">
+        <LinkButton
+          href={ALCOHOL_PERMIT_SERVICE_PATH}
+          data-cy="register-new-errand-button"
+          color="vattjom"
+          variant="primary"
+        >
           {t('filtering:new_errand')}
         </LinkButton>
       </div>

@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
-import { REGISTER_ERRAND_PATH } from 'src/constants/routes';
+import { ALCOHOL_PERMIT_SERVICE_PATH } from 'src/constants/routes';
 import { useActiveWizardSteps } from 'src/hooks/use-active-wizard-steps';
 import { useReportValidationError } from 'src/hooks/use-report-validation-error';
 import { useSaveErrand } from 'src/hooks/use-save-errand';
@@ -135,7 +135,7 @@ export const WizardBottomBar: React.FC = () => {
           setIsCancelOpen(false);
         }}
         onConfirm={() => {
-          window.location.assign(appURL(`${process.env.NEXT_PUBLIC_BASE_PATH}${REGISTER_ERRAND_PATH}`));
+          window.location.assign(appURL(`${process.env.NEXT_PUBLIC_BASE_PATH}${ALCOHOL_PERMIT_SERVICE_PATH}`));
         }}
       />
 

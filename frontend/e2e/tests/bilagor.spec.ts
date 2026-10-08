@@ -29,7 +29,7 @@ test.describe('Bilagor', () => {
     // The namespace is what maps the errand type to its schema.
     await page.route('**/supportmanagement/metadata', jsonRoute({ ...mockMetadata, namespace: 'AOT' }));
     await page.route('**/schemas/**', jsonRoute(schemaWithPowerOfAttorney));
-    await page.goto(appUrl('/arende/registrera'));
+    await page.goto(appUrl('/alkoholtillstand'));
     await expect(page.getByTestId('register-errand')).toBeEnabled();
   });
 

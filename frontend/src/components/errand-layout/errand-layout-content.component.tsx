@@ -29,7 +29,7 @@ import * as yup from 'yup';
 const FormSchema = yup.object({}).required();
 const REGISTER_ROUTE_IDENTITY = 'new-errand';
 const INVALID_ROUTE_IDENTITY = 'invalid-errand-route';
-const REGISTER_ROUTE_PATTERN = /\/arende\/registrera\/?$/;
+const REGISTER_ROUTE_PATTERN = /\/alkoholtillstand\/?$/;
 
 type ErrandRoute =
   | { identity: typeof REGISTER_ROUTE_IDENTITY; kind: 'register' }

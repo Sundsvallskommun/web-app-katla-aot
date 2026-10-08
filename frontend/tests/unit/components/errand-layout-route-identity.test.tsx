@@ -11,7 +11,7 @@ const mocks = vi.hoisted(() => ({
   getErrandUsingErrandNumber: vi.fn(),
   jsonParametersToErrandFormData: vi.fn(() => []),
   metadataLoadState: { value: 'ready' },
-  pathname: { value: '/arende/ERRAND-A/grundinformation' },
+  pathname: { value: '/alkoholtillstand/arende/ERRAND-A/grundinformation' },
   params: { value: { errandnumber: undefined as string | undefined } },
   register: vi.fn(),
   save: vi.fn(),
@@ -154,7 +154,7 @@ const createDeferred = <T,>() => {
 };
 
 const setExistingRoute = (errandNumber: string): void => {
-  mocks.pathname.value = `/arende/${errandNumber}/grundinformation`;
+  mocks.pathname.value = `/alkoholtillstand/arende/${errandNumber}/grundinformation`;
   mocks.params.value = { errandnumber: errandNumber };
 };
 
@@ -175,7 +175,7 @@ afterEach(() => {
 
 describe('errand layout route identity', () => {
   it('waits for the current metadata request even when the store contains previous metadata', () => {
-    mocks.pathname.value = '/arende/registrera';
+    mocks.pathname.value = '/alkoholtillstand';
     mocks.params.value.errandnumber = undefined;
     mocks.metadataLoadState.value = 'loading';
 
@@ -308,7 +308,7 @@ describe('errand layout route identity', () => {
     );
     expect(await screen.findByTestId('form-identity')).toHaveTextContent('id-a:ERRAND-A');
 
-    mocks.pathname.value = '/arende/registrera';
+    mocks.pathname.value = '/alkoholtillstand';
     mocks.params.value.errandnumber = undefined;
     view.rerender(
       <ErrandLayoutContent>

@@ -50,7 +50,7 @@ test.describe('Stopp', () => {
     await page.route('**/supportmanagement/errand/create', jsonRoute(mockErrand));
     await page.route('**/supportmanagement/metadata', jsonRoute({ ...mockMetadata, namespace: 'AOT' }));
     await page.route('**/schemas/**', jsonRoute(schemaWithStop));
-    await page.goto(appUrl('/arende/registrera'));
+    await page.goto(appUrl('/alkoholtillstand'));
     await expect(page.getByTestId('register-errand')).toBeEnabled();
     await selectCategorization(page);
     await selectErrandOwner(page);

@@ -62,7 +62,7 @@ test.describe('Overview page', () => {
 
     await expect(page.getByTestId('register-new-errand-button')).toHaveAttribute(
       'href',
-      `${basePath}/arende/registrera`
+      `${basePath}/alkoholtillstand`
     );
   });
 

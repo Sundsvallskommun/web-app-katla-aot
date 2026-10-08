@@ -86,17 +86,10 @@ test.describe('Register new errand page', () => {
     await page.route('**/supportmanagement/metadata', jsonRoute(mockMetadata));
     // 404 is the errand type having no form yet, not a failure.
     await page.route('**/schemas/**', emptyRoute(404));
-    await page.goto(appUrl('/arende/registrera'));
+    await page.goto(appUrl('/alkoholtillstand'));
 
     // Visible sections do not prove the server-rendered page has hydrated.
     // The client enables the register button, so it is the flow's readiness boundary.
-    await expect(page.getByTestId('register-errand')).toBeEnabled();
-  });
-
-  test('Is what the application root serves', async ({ appUrl, page }) => {
-    await page.goto(appUrl(''));
-
-    await expect(page).toHaveURL(/\/arende\/registrera$/);
     await expect(page.getByTestId('register-errand')).toBeEnabled();
   });
 
@@ -374,7 +367,7 @@ test.describe('Register new errand page', () => {
     const response = await failedResponse;
     expect(response.status()).toBe(502);
 
-    await expect(page).toHaveURL(/\/arende\/registrera$/);
+    await expect(page).toHaveURL(/\/alkoholtillstand$/);
     await expect(ovrigaParter.getByTestId('stakeholder-card')).toHaveCount(1);
     await expect(page.getByText('Något gick fel när ärendet sparades')).toBeVisible();
     await expect(page.getByText('Ärendet skickades in')).toHaveCount(0);

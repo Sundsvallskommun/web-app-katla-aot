@@ -1,5 +1,8 @@
 {
-  "/arende/registrera": {
+  "/": {
+    "title": "E-services"
+  },
+  "/alkoholtillstand": {
     "title": "New case",
     "description": "Apply for a serving permit or report sales of tobacco and nicotine products."
   },

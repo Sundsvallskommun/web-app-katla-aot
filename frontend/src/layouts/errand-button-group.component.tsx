@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { appConfig } from 'src/config/appconfig';
-import { REGISTER_ERRAND_PATH } from 'src/constants/routes';
+import { ALCOHOL_PERMIT_SERVICE_PATH } from 'src/constants/routes';
 import { useSaveErrand } from 'src/hooks/use-save-errand';
 
 import { CenterDiv } from './center-div.component';
@@ -81,7 +81,7 @@ export const ErrandButtonGroup: React.FC<ErrandButtonGroupProps> = ({ isNewErran
           setIsCancelOpen(false);
         }}
         onConfirm={() => {
-          window.location.assign(appURL(`${process.env.NEXT_PUBLIC_BASE_PATH}${REGISTER_ERRAND_PATH}`));
+          window.location.assign(appURL(`${process.env.NEXT_PUBLIC_BASE_PATH}${ALCOHOL_PERMIT_SERVICE_PATH}`));
         }}
       />
       <Dialog show={isOpen}>

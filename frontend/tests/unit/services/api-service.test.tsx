@@ -59,7 +59,7 @@ describe('Api service route guard', () => {
   const loadLoginRedirectUrl = async () => {
     vi.resetModules();
     vi.stubEnv('NEXT_PUBLIC_BASE_PATH', '/registrering/aot');
-    vi.stubEnv('NEXT_PUBLIC_PROTECTED_ROUTES', '/oversikt,/arende');
+    vi.stubEnv('NEXT_PUBLIC_PROTECTED_ROUTES', '/oversikt,/alkoholtillstand');
     return (await import('@services/api-service')).loginRedirectUrl;
   };
 
@@ -70,10 +70,16 @@ describe('Api service route guard', () => {
   it('sends an unauthenticated visitor to the login page rather than leaving the page half rendered', async () => {
     const loginRedirectUrl = await loadLoginRedirectUrl();
 
-    const target = loginRedirectUrl(unauthorized, '/registrering/aot/arende/AOT-26090002/grundinformation', origin);
+    const target = loginRedirectUrl(
+      unauthorized,
+      '/registrering/aot/alkoholtillstand/arende/AOT-26090002/grundinformation',
+      origin
+    );
 
     expect(target?.pathname).toBe('/registrering/aot/login');
-    expect(target?.searchParams.get('path')).toBe('/registrering/aot/arende/AOT-26090002/grundinformation');
+    expect(target?.searchParams.get('path')).toBe(
+      '/registrering/aot/alkoholtillstand/arende/AOT-26090002/grundinformation'
+    );
     expect(target?.searchParams.get('failMessage')).toBe('NOT_AUTHORIZED');
   });
 

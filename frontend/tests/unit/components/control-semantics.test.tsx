@@ -107,12 +107,12 @@ describe('control semantics', () => {
     );
 
     const link = screen.getByRole('link', { name: 'Öppna ärende AIA-25120019' });
-    expect(link).toHaveAttribute('href', '/arende/AIA-25120019/grundinformation');
+    expect(link).toHaveAttribute('href', '/alkoholtillstand/arende/AIA-25120019/grundinformation');
     expect(link.querySelector('button')).not.toBeInTheDocument();
   });
 
   it('keeps the design-system tab identity while rendering a single link', () => {
-    const linkProps = { as: NextLink, href: '/arende/ett/grundinformation' };
+    const linkProps = { as: NextLink, href: '/alkoholtillstand/arende/ett/grundinformation' };
 
     render(
       <Tabs>
@@ -125,7 +125,7 @@ describe('control semantics', () => {
 
     const tab = screen.getByRole('tab', { name: 'Grundinformation' });
     expect(tab.tagName).toBe('A');
-    expect(tab).toHaveAttribute('href', '/arende/ett/grundinformation');
+    expect(tab).toHaveAttribute('href', '/alkoholtillstand/arende/ett/grundinformation');
     expect(tab.querySelector('button')).not.toBeInTheDocument();
   });
 
@@ -180,7 +180,7 @@ describe('control semantics', () => {
   });
 
   it('switches language by navigating to the same page under an explicit locale prefix', () => {
-    pathnameMock.value = '/arende/AIA-25120019/grundinformation';
+    pathnameMock.value = '/alkoholtillstand/arende/AIA-25120019/grundinformation';
 
     renderLocalized(
       <PopupMenu open>
@@ -194,12 +194,13 @@ describe('control semantics', () => {
     fireEvent.click(screen.getByRole('menuitemradio', { name: 'English' }));
 
     // The same page, not a return to the start page, or the user loses their place.
-    expect(routerPushMock).toHaveBeenCalledWith('/en/arende/AIA-25120019/grundinformation');
+    expect(routerPushMock).toHaveBeenCalledWith('/en/alkoholtillstand/arende/AIA-25120019/grundinformation');
   });
 
   it('keeps the query string when switching language', () => {
     pathnameMock.value = '/login';
-    searchParamsMock.value = 'path=%2Farende%2FAIA-25120019%2Fgrundinformation&failMessage=NOT_AUTHORIZED';
+    searchParamsMock.value =
+      'path=%2Falkoholtillstand%2Farende%2FAIA-25120019%2Fgrundinformation&failMessage=NOT_AUTHORIZED';
 
     renderLocalized(
       <PopupMenu open>
@@ -216,7 +217,7 @@ describe('control semantics', () => {
     // A language switch that drops the query string sends the user to the overview instead of
     // the page they were trying to reach.
     expect(routerPushMock).toHaveBeenCalledWith(
-      '/en/login?path=%2Farende%2FAIA-25120019%2Fgrundinformation&failMessage=NOT_AUTHORIZED'
+      '/en/login?path=%2Falkoholtillstand%2Farende%2FAIA-25120019%2Fgrundinformation&failMessage=NOT_AUTHORIZED'
     );
   });
 

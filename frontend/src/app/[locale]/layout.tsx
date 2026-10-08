@@ -24,6 +24,7 @@ const namespaces = [
   'session',
   'validation',
   'forms',
+  'start',
 ];
 
 const LocaleLayout = async ({ children, params }: LocaleLayoutProps) => {

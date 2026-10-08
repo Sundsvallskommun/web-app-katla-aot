@@ -1,5 +1,8 @@
 {
-  "/arende/registrera": {
+  "/": {
+    "title": "E-tjänster"
+  },
+  "/alkoholtillstand": {
     "title": "Nytt ärende",
     "description": "Ansök om serveringstillstånd eller anmäl försäljning av tobak och nikotinprodukter."
   },
