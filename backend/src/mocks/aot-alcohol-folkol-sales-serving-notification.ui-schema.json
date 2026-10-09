@@ -6,17 +6,13 @@
     "fakturareferens",
     "verksamhetsbeskrivningsval",
     "verksamhetsbeskrivning",
-    "tidsperiodForForsaljningen",
-    "startdatumForsaljning",
-    "periodTidsbegransadForsaljning",
+    "livsmedelsregistrerad",
+    "livsmedelsregistreringKanVisasVidTillsyn",
+    "egenkontrollprogramFolkol",
     "serveringsstalletsNamn",
     "besoksadressSammaSomArendeagare",
     "besoksadress",
-    "kontaktuppgifterTillServeringsstallet",
-    "bedriverAvenDistansforsaljning",
-    "hemsida",
-    "omfattarSarskiltFarligaProdukter",
-    "avtalMedTillverkareEllerPartihandlare"
+    "kontaktuppgifterTillServeringsstallet"
   ],
   "ui:sections": [
     {
@@ -35,21 +31,17 @@
     },
     {
       "id": "ansokan",
-      "title": "Anmälan om försäljning av elektroniska cigaretter och påfyllnadsbehållare",
+      "title": "Servering och försäljning av folköl (klass 2)",
       "icon": "file-text",
       "defaultOpen": true,
       "fields": [
-        "tidsperiodForForsaljningen",
-        "startdatumForsaljning",
-        "periodTidsbegransadForsaljning",
+        "livsmedelsregistrerad",
+        "livsmedelsregistreringKanVisasVidTillsyn",
+        "egenkontrollprogramFolkol",
         "serveringsstalletsNamn",
         "besoksadressSammaSomArendeagare",
         "besoksadress",
-        "kontaktuppgifterTillServeringsstallet",
-        "bedriverAvenDistansforsaljning",
-        "hemsida",
-        "omfattarSarskiltFarligaProdukter",
-        "avtalMedTillverkareEllerPartihandlare"
+        "kontaktuppgifterTillServeringsstallet"
       ]
     }
   ],
@@ -109,41 +101,13 @@
       "className": "w-full min-h-[14rem]"
     }
   },
-  "tidsperiodForForsaljningen": {
-    "ui:widget": "RadiobuttonWidget"
-  },
-  "startdatumForsaljning": {
-    "ui:order": [],
-    "ui:options": {
-      "showObjectFieldset": true
-    }
-  },
-  "periodTidsbegransadForsaljning": {
-    "ui:order": [
-      "startDate",
-      "endDate"
-    ],
-    "ui:options": {
-      "showObjectFieldset": true
-    },
-    "startDate": {
-      "ui:widget": "DateWidget"
-    },
-    "endDate": {
-      "ui:widget": "DateWidget"
-    },
-    "ui:rows": [
-      {
-        "fields": [
-          "startDate",
-          "endDate"
-        ],
-        "gap": "gap-24"
-      }
-    ]
+  "egenkontrollprogramFolkol": {
+    "ui:widget": "RadiobuttonWidget",
+    "ui:description": "<p>Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".<br />\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.<br />\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig serveringsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.</p>\n\n<p><strong>Vill du bifoga ifyllt egenkontrollprogram i denna anmälan?</strong></p>"
   },
   "serveringsstalletsNamn": {
-    "ui:widget": "TextWidget"
+    "ui:widget": "TextWidget",
+    "ui:description": "<p>Det namn som du skyltar med till kund.</p>"
   },
   "besoksadressSammaSomArendeagare": {
     "ui:widget": "RadiobuttonWidget"
@@ -179,7 +143,8 @@
   "kontaktuppgifterTillServeringsstallet": {
     "ui:order": [
       "telefonnummer",
-      "ePostadress"
+      "ePostadress",
+      "hemsida"
     ],
     "ui:options": {
       "showObjectFieldset": true
@@ -189,19 +154,19 @@
     },
     "ePostadress": {
       "ui:widget": "TextWidget"
+    },
+    "hemsida": {
+      "ui:widget": "TextWidget"
     }
   },
-  "bedriverAvenDistansforsaljning": {
-    "ui:widget": "RadiobuttonWidget",
-    "ui:description": "<p>Distansförsäljning är försäljning av varor via postorder, telefon eller internet där leverantören ansvarar för leveransen av varorna.</p>"
-  },
-  "hemsida": {
-    "ui:widget": "TextWidget"
-  },
-  "omfattarSarskiltFarligaProdukter": {
+  "livsmedelsregistrerad": {
     "ui:widget": "RadiobuttonWidget"
   },
-  "avtalMedTillverkareEllerPartihandlare": {
-    "ui:widget": "RadiobuttonWidget"
+  "livsmedelsregistreringKanVisasVidTillsyn": {
+    "ui:widget": "checkboxes",
+    "ui:options": {
+      "multiple": true,
+      "className": "w-full max-w-[48rem]"
+    }
   }
 }
