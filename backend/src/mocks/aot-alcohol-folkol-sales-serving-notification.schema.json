@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Försäljning av folköl (klass 2)",
+  "title": "Servering och försäljning av folköl (klass 2)",
   "type": "object",
   "properties": {
     "arDuFirmatecknare": {
@@ -84,7 +84,7 @@
       "type": "string",
       "title": "Verksamhetsbeskrivning"
     },
-    "stadigvarandeForsaljningAvLivsmedel": {
+    "livsmedelsregistrerad": {
       "type": "string",
       "oneOf": [
         {
@@ -96,24 +96,9 @@
           "title": "Nej"
         }
       ],
-      "title": "Kommer du att ha stadigvarande försäljning av livsmedel?",
-      "description": "Exempelvis mejerivaror, grönsaker och frukt. [TEXT SAKNAS: slutlig hjälptext]"
+      "title": "Är verksamheten livsmedelsregistrerad hos kommunen?"
     },
-    "tillverkarFolkolPaForsaljningsstallet": {
-      "type": "string",
-      "oneOf": [
-        {
-          "const": "JA",
-          "title": "Ja"
-        },
-        {
-          "const": "NEJ",
-          "title": "Nej"
-        }
-      ],
-      "title": "Kommer du att tillverka folköl på försäljningsstället?"
-    },
-    "dokumentationKanVisasVidTillsyn": {
+    "livsmedelsregistreringKanVisasVidTillsyn": {
       "type": "array",
       "uniqueItems": true,
       "minItems": 1,
@@ -121,12 +106,12 @@
         "type": "string",
         "oneOf": [
           {
-            "const": "JAG_KAN_VISA_DOKUMENTATION",
-            "title": "Jag kan visa dokumentation om detta vid tillsyn"
+            "const": "JAG_KAN_VISA_LIVSMEDELSREGISTRERINGEN",
+            "title": "Jag kan visa livsmedelsregistreringen vid tillsyn"
           }
         ]
       },
-      "title": "Dokumentation vid tillsyn"
+      "title": "Livsmedelsregistrering vid tillsyn"
     },
     "egenkontrollprogramFolkol": {
       "type": "string",
@@ -140,12 +125,12 @@
           "title": "Nej, det finns ett egenkontrollprogram och det kan visas vid tillsyn"
         }
       ],
-      "title": "Egenkontrollprogram vid försäljning av folköl (klass 2)",
-      "description": "Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".\n\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.\n\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig försäljningsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.\n\nVill du bifoga ifyllt egenkontrollprogram i denna anmälan?"
+      "title": "Egenkontrollprogram vid servering av folköl (klass 2)",
+      "description": "Din verksamhet behöver ha ett så kallat \"egenkontrollprogram\".\n\nEtt egenkontrollprogram fungerar som ett stöd för dig som näringsidkare i egenkontrollen och är ett viktigt underlag för kommunen när det blir tillsyn.\n\nOm du och din verksamhet inte följer alkohollagens bestämmelser kan kommunen ge dig serveringsförbud eller en varning. Det gäller också om din verksamhet inte har ett egenkontrollprogram.\n\nVill du bifoga ifyllt egenkontrollprogram i denna anmälan?"
     },
     "serveringsstalletsNamn": {
       "type": "string",
-      "title": "Försäljningsställets namn",
+      "title": "Servering och försäljningsställets namn",
       "description": "Det namn som du skyltar med till kund."
     },
     "besoksadressSammaSomArendeagare": {
@@ -160,7 +145,7 @@
           "title": "Nej"
         }
       ],
-      "title": "Är försäljningsställets besöksadress samma som ärendeägarens adress?"
+      "title": "Är servering/försäljningsställets besöksadress samma som ärendeägarens adress?"
     },
     "besoksadress": {
       "type": "object",
@@ -183,7 +168,7 @@
         "postnummer",
         "postort"
       ],
-      "title": "Försäljningsställets besöksadress"
+      "title": "Servering/försäljningsställets besöksadress"
     },
     "kontaktuppgifterTillServeringsstallet": {
       "type": "object",
@@ -201,25 +186,7 @@
           "title": "Hemsida"
         }
       },
-      "title": "Kontaktuppgifter till försäljningsstället"
-    },
-    "harDuKassaregister": {
-      "type": "string",
-      "oneOf": [
-        {
-          "const": "JA",
-          "title": "Ja"
-        },
-        {
-          "const": "NEJ",
-          "title": "Nej"
-        }
-      ],
-      "title": "Har du kassaregister?"
-    },
-    "registreringskod": {
-      "type": "string",
-      "title": "Ange registreringskod"
+      "title": "Kontaktuppgifter till servering/försäljningsstället"
     }
   },
   "required": [
@@ -228,10 +195,8 @@
     "fakturaadressSammaSomForetaget",
     "serveringsstalletsNamn",
     "besoksadressSammaSomArendeagare",
-    "stadigvarandeForsaljningAvLivsmedel",
-    "tillverkarFolkolPaForsaljningsstallet",
-    "egenkontrollprogramFolkol",
-    "harDuKassaregister"
+    "livsmedelsregistrerad",
+    "egenkontrollprogramFolkol"
   ],
   "allOf": [
     {
@@ -288,52 +253,18 @@
     {
       "if": {
         "properties": {
-          "stadigvarandeForsaljningAvLivsmedel": {
+          "livsmedelsregistrerad": {
             "const": "JA"
           }
         },
         "required": [
-          "stadigvarandeForsaljningAvLivsmedel"
+          "livsmedelsregistrerad"
         ]
       },
       "then": {
         "required": [
-          "dokumentationKanVisasVidTillsyn"
+          "livsmedelsregistreringKanVisasVidTillsyn"
         ]
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "tillverkarFolkolPaForsaljningsstallet": {
-            "const": "JA"
-          }
-        },
-        "required": [
-          "tillverkarFolkolPaForsaljningsstallet"
-        ]
-      },
-      "then": {
-        "required": [
-          "dokumentationKanVisasVidTillsyn"
-        ]
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "harDuKassaregister": {
-            "const": "JA"
-          }
-        },
-        "required": [
-          "harDuKassaregister"
-        ]
-      },
-      "then": {
-        "properties": {
-          "registreringskod": true
-        }
       }
     }
   ],
@@ -379,19 +310,15 @@
     {
       "when": {
         "properties": {
-          "stadigvarandeForsaljningAvLivsmedel": {
-            "const": "NEJ"
-          },
-          "tillverkarFolkolPaForsaljningsstallet": {
+          "livsmedelsregistrerad": {
             "const": "NEJ"
           }
         },
         "required": [
-          "stadigvarandeForsaljningAvLivsmedel",
-          "tillverkarFolkolPaForsaljningsstallet"
+          "livsmedelsregistrerad"
         ]
       },
-      "text": "[TEXT SAKNAS: varför anmälan inte kan göras utan stadigvarande försäljning av livsmedel eller egen tillverkning av folköl]"
+      "text": "[TEXT SAKNAS: varför anmälan inte kan göras när verksamheten inte är livsmedelsregistrerad]"
     }
   ]
 }
