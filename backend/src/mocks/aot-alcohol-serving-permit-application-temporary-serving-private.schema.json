@@ -640,9 +640,9 @@
           ]
         },
         "then": {
-          "properties": {
-            "verksamhetsbeskrivning": true
-          }
+          "required": [
+            "verksamhetsbeskrivning"
+          ]
         }
       },
       {
