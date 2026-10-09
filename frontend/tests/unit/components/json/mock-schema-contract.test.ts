@@ -19,12 +19,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const mocksDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../../../backend/src/mocks');
 
-interface StoredSchema {
-  name: string;
-  version: string;
-  value: RJSFSchema;
-}
-
 const schemaFiles = fs
   .readdirSync(mocksDir)
   .filter((file) => file.endsWith('.schema.json'))
@@ -34,8 +28,8 @@ const loadJson = (file: string): unknown => JSON.parse(fs.readFileSync(path.join
 
 const pairs = schemaFiles.map((file) => ({
   file,
-  schema: loadJson(file) as StoredSchema,
-  uiSchema: (loadJson(file.replace('.schema.json', '.ui-schema.json')) as { value: Record<string, unknown> }).value,
+  schema: loadJson(file) as RJSFSchema,
+  uiSchema: loadJson(file.replace('.schema.json', '.ui-schema.json')) as Record<string, unknown>,
 }));
 
 const collectWidgetNames = (node: unknown, found: Set<string>): void => {
@@ -72,12 +66,12 @@ describe('mocked schema pairs against the renderer contract', () => {
     expect(pairs.length).toBeGreaterThanOrEqual(10);
   });
 
-  describe.each(pairs)('$file', ({ schema, uiSchema }) => {
+  describe.each(pairs)('$file', ({ file, schema, uiSchema }) => {
     it('compiles with the real form validator', () => {
-      const validator = getFormSchemaValidator(`${schema.name}_${schema.version}`);
+      const validator = getFormSchemaValidator(file);
       // A schema AJV cannot compile does not throw here — the failure surfaces as an error whose
       // stack carries the compile message instead of a field path.
-      const result = validator.validateFormData({}, schema.value);
+      const result = validator.validateFormData({}, schema);
       expect(result.errors.filter((error) => error.stack.includes('no schema with key or ref'))).toEqual([]);
     });
 
@@ -92,7 +86,7 @@ describe('mocked schema pairs against the renderer contract', () => {
     it('places every root property in exactly one section', () => {
       const sections = (uiSchema['ui:sections'] ?? []) as { id: string; fields: string[] }[];
       const sectioned = sections.flatMap((section) => section.fields);
-      const propertyNames = Object.keys(schema.value.properties ?? {});
+      const propertyNames = Object.keys(schema.properties ?? {});
 
       expect(new Set(sectioned).size, 'a field appears in more than one section').toBe(sectioned.length);
       expect([...sectioned].sort(), 'sections and schema properties must partition each other').toEqual(
@@ -102,24 +96,24 @@ describe('mocked schema pairs against the renderer contract', () => {
 
     it('uses only condition keywords the renderer understands', () => {
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-      for (const objectSchema of objectSchemas(schema.value)) getConditionalFields(objectSchema);
+      for (const objectSchema of objectSchemas(schema)) getConditionalFields(objectSchema);
       expect(warnSpy).not.toHaveBeenCalled();
     });
 
     it('declares only well-formed x-attachments entries', () => {
-      const declared = (schema.value as Record<string, unknown>)['x-attachments'];
+      const declared = (schema as Record<string, unknown>)['x-attachments'];
       if (!Array.isArray(declared)) return;
       // attachmentTypesOfSchema silently drops malformed entries; nothing may be dropped here.
-      expect(attachmentTypesOfSchema(schema.value as Record<string, unknown>)).toHaveLength(declared.length);
+      expect(attachmentTypesOfSchema(schema as Record<string, unknown>)).toHaveLength(declared.length);
     });
 
     it('declares only well-formed x-stops on root properties', () => {
-      const declared = (schema.value as Record<string, unknown>)['x-stops'];
+      const declared = (schema as Record<string, unknown>)['x-stops'];
       if (!Array.isArray(declared)) return;
-      const stops = stopsOfSchema(schema.value);
+      const stops = stopsOfSchema(schema);
       expect(stops).toHaveLength(declared.length);
 
-      const root = Object.keys(schema.value.properties ?? {});
+      const root = Object.keys(schema.properties ?? {});
       for (const { when } of stops) {
         expect(root).toEqual(expect.arrayContaining([...Object.keys(when.properties ?? {}), ...(when.required ?? [])]));
       }
@@ -127,8 +121,8 @@ describe('mocked schema pairs against the renderer contract', () => {
 
     // Draken reads the premises address from this one key in every schema.
     it('keeps the premises address in the root besoksadress object', () => {
-      const root = schema.value.properties ?? {};
-      const holders = objectSchemas(schema.value).filter((object) => object.properties?.gatuadress !== undefined);
+      const root = schema.properties ?? {};
+      const holders = objectSchemas(schema).filter((object) => object.properties?.gatuadress !== undefined);
       const address = root.besoksadress;
 
       if (root.besoksadressSammaSomArendeagare !== undefined) expect(address).toBeDefined();
@@ -141,9 +135,9 @@ describe('mocked schema pairs against the renderer contract', () => {
       expect(address.required).toEqual(expect.arrayContaining(['gatuadress', 'postnummer', 'postort']));
 
       if (root.besoksadressSammaSomArendeagare === undefined) {
-        expect(schema.value.required).toContain('besoksadress');
+        expect(schema.required).toContain('besoksadress');
       } else {
-        expect(schema.value.allOf).toContainEqual({
+        expect(schema.allOf).toContainEqual({
           if: {
             properties: { besoksadressSammaSomArendeagare: { const: 'NEJ' } },
             required: ['besoksadressSammaSomArendeagare'],
@@ -155,12 +149,12 @@ describe('mocked schema pairs against the renderer contract', () => {
 
     // The decision tab in Draken reads these premises fields by key; docs/beslutsflik-nycklar.md.
     describe('keeps the premises keys Draken reads canonical', () => {
-      const root = (schema.value.properties ?? {}) as Record<string, RJSFSchema>;
+      const root = (schema.properties ?? {}) as Record<string, RJSFSchema>;
       const rootObjects = Object.entries(root).filter(([, child]) => child.type === 'object');
       const propertyNames = (object: RJSFSchema) => Object.keys(object.properties ?? {});
 
       it('names the premises in a root serveringsstalletsNamn string', () => {
-        for (const object of objectSchemas(schema.value)) {
+        for (const object of objectSchemas(schema)) {
           expect(propertyNames(object)).not.toContain('forsaljningsstalletsNamn');
           expect(propertyNames(object)).not.toContain('namn');
         }
@@ -181,7 +175,7 @@ describe('mocked schema pairs against the renderer contract', () => {
       });
 
       it('counts seats under sittplatserILokalen with the shared child names', () => {
-        const holders = objectSchemas(schema.value).filter((object) =>
+        const holders = objectSchemas(schema).filter((object) =>
           propertyNames(object).some((field) => field.startsWith('antalSittplatser'))
         );
         if (root.sittplatserILokalen === undefined) {
@@ -221,9 +215,7 @@ describe('mocked schema pairs against the renderer contract', () => {
           'JAG_VILL_LADDA_UPP',
         ]);
         expect(root.menyBeskrivning.type).toBe('string');
-        const menu = attachmentTypesOfSchema(schema.value as Record<string, unknown>).find(
-          (type) => type.key === 'MENU'
-        );
+        const menu = attachmentTypesOfSchema(schema as Record<string, unknown>).find((type) => type.key === 'MENU');
         expect(menu?.requiredWhen).toEqual({
           properties: { menyval: { const: 'JAG_VILL_LADDA_UPP' } },
           required: ['menyval'],

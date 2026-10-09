@@ -202,44 +202,6 @@ describe('JSON schema adapter contracts', () => {
       expect(body.schemaId).toBe('schema-v1');
     });
   });
-  describe('mocked AoT schema', () => {
-    // One schema per errand type, named after the namespace and the whole categorization path.
-    it.each([
-      'aot_alcohol_serving_permit_application_permanent_serving',
-      'aot_alcohol_serving_permit_application_temporary_serving_public',
-      'aot_alcohol_serving_permit_application_temporary_serving_private',
-      'aot_alcohol_folkol_serving_notification',
-      'aot_alcohol_folkol_sales_notification',
-      'aot_alcohol_serving_permit_application_farm_sales',
-      'aot_alcohol_serving_permit_application_permanent_catering',
-      'aot_alcohol_serving_permit_application_tasting',
-      'aot_tobacco_sales_permit_application',
-      'aot_tobacco_ecigarette_sales_notification',
-      'aot_tobacco_tobacco_free_nicotine_sales_notification',
-    ])('serves %s without calling the jsonschema API', async schemaName => {
-      const getSpy = vi.spyOn(ApiService.prototype, 'get');
-
-      const response = await request(app).get(`/api/schemas/latest/${schemaName}`).expect(200);
-      const body = response.body as SchemaResponseDTO;
-
-      expect(getSpy).not.toHaveBeenCalled();
-      expect(body.schemaId).toBe(`2281_${schemaName}_0.1`);
-      expect(body.name).toBe(schemaName);
-      expect(body.version).toBe('0.1');
-      expect(Object.keys(body.schema.properties as Record<string, unknown>).length).toBeGreaterThan(0);
-      expect(Object.keys(body.uiSchema).length).toBeGreaterThan(0);
-    });
-
-    it('serves the same schema by its immutable ID', async () => {
-      const getSpy = vi.spyOn(ApiService.prototype, 'get');
-
-      const response = await request(app).get('/api/schemas/2281_aot_alcohol_folkol_serving_notification_0.1').expect(200);
-
-      expect(getSpy).not.toHaveBeenCalled();
-      expect((response.body as SchemaResponseDTO).schemaId).toBe('2281_aot_alcohol_folkol_serving_notification_0.1');
-    });
-  });
-
   // The generator that once refused to emit these is retired; the adapter is the guard now.
   describe('authoring contract', () => {
     const upstream = (value: Record<string, unknown>) =>
